@@ -1,0 +1,31 @@
+<!-- cSpell:ignoreRegExp /[^\s]{40,}/ -->
+
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<script src="js/auth2.js"></script>
+
+<!-- Main Site -->
+<main>
+  <div class="authForm">
+    <img src="/img/SE-GitHub-image.png" alt="Huskie code logo" />
+
+    <!-- from https://developers.google.com/identity/gsi/web/guides/migration#popup-mode_1 -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div>
+      <div
+        id="g_id_onload"
+        data-client_id="1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse"
+      ></div>
+      <div class="g_id_signin" data-type="standard"></div>
+    </div>
+  </div>
+</main>
+
+<!-- /Main Site -->
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "christian-kohler.npm-intellisense",
+    "dbaeumer.vscode-eslint",
+    "humao.rest-client",
+    "esbenp.prettier-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "l13rary.l13-diff"
+  ]
+}

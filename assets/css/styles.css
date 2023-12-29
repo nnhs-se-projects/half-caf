@@ -1,0 +1,51 @@
+/* styling for the authentication page */
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.authForm img {
+  width: 100px;
+  height: 100px;
+}
+
+.indexTopBar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.indexTopBar img {
+  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+}
+
+.indexTopBar h1 {
+  margin-right: auto;
+}
+
+.entry {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  border: black 1px solid;
+}
+
+.entryHabit {
+  flex-basis: 200px;
+}
+
+.entryContent {
+  flex-grow: 1;
+}
