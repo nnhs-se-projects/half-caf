@@ -13,7 +13,27 @@ route.get("/", async (req, res) => {
   //  of properties
   console.log("path requested: " + req.path);
 
-  const entries = await Entry.find();
+  const { habit } = req.query;
+
+  let entries;
+
+  if (habit && habit !== "All Habits") {
+    entries = await Entry.find({ habit });
+  } else {
+    entries = await Entry.find();
+  }
+
+  entries.sort((a, b) => {
+    const aDate = a.date;
+    const bDate = b.date;
+    if (aDate > bDate) {
+      return -1;
+    }
+    if (aDate < bDate) {
+      return 1;
+    }
+    return 0;
+  });
 
   // convert MongoDB objects to objects formatted for the EJS template
   const formattedEntries = entries.map((entry) => {
@@ -26,7 +46,11 @@ route.get("/", async (req, res) => {
   });
 
   // the res parameter references the HTTP response object
-  res.render("index", { entries: formattedEntries });
+  res.render("index", {
+    entries: formattedEntries,
+    habits: habitsOfMind,
+    selectedHabit: habit,
+  });
 });
 
 route.get("/createEntry", (req, res) => {
@@ -41,14 +65,28 @@ route.post("/createEntry", async (req, res) => {
     content: req.body.content,
   });
   await entry.save();
-
   res.status(201).end();
 });
 
 route.get("/editEntry/:id", async (req, res) => {
   const entry = await Entry.findById(req.params.id);
   console.log(entry);
-  res.send(entry);
+  res.render("editEntry", { entry, id: req.params.id, habits: habitsOfMind });
+});
+
+route.post("/editEntry/:id", async (req, res) => {
+  const entry = await Entry.findById(req.params.id);
+  entry.content = req.body.content;
+  entry.date = req.body.date;
+  entry.habit = req.body.habit;
+  await entry.save();
+  res.status(201).end();
+});
+
+route.delete("/removeEntry/:id", async (req, res) => {
+  const entryId = req.params.id;
+  await Entry.findByIdAndRemove(entryId);
+  res.status(201).end();
 });
 
 // delegate all authentication to the auth.js router
