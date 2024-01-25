@@ -31,21 +31,3 @@
 .indexTopBar h1 {
   margin-right: auto;
 }
-
-.entry {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  border: black 1px solid;
-}
-
-.entryHabit {
-  flex-basis: 200px;
-}
-
-.entryContent {
-  flex-grow: 1;
-}
