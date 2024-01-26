@@ -17,7 +17,7 @@ submitButton.addEventListener("click", async () => {
   const content = document.querySelector("textarea.content").value;
   const entry = { date, habit: habitOfMind, content };
 
-  const response = await fetch("/createEntry", {
+  const response = await fetch("/barista", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

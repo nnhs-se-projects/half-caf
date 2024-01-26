@@ -53,19 +53,8 @@ route.get("/", async (req, res) => {
   });
 });
 
-route.get("/createEntry", (req, res) => {
-  res.render("createEntry", { habits: habitsOfMind });
-});
-
-route.post("/createEntry", async (req, res) => {
-  const entry = new Entry({
-    date: req.body.date,
-    email: req.session.email,
-    habit: req.body.habit,
-    content: req.body.content,
-  });
-  await entry.save();
-  res.status(201).end();
+route.get("/barista", (req, res) => {
+  res.render("barista");
 });
 
 route.get("/editEntry/:id", async (req, res) => {
