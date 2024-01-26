@@ -49,3 +49,18 @@
 .entryContent {
   flex-grow: 1;
 }
+
+.notification {
+  color: white;
+  background-color: rgb(255, 156, 7);
+  padding: 5px 10px;
+  margin: 10px;
+}
+
+.notification .badge {
+  background: red;
+  border-radius: 50%;
+  padding: 1px 10px;
+  position: absolute;
+  top: 95px;
+}

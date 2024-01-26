@@ -57,6 +57,10 @@ route.get("/barista", (req, res) => {
   res.render("barista");
 });
 
+route.get("/completed", (req, res) => {
+  res.render("completed");
+});
+
 route.get("/editEntry/:id", async (req, res) => {
   const entry = await Entry.findById(req.params.id);
   console.log(entry);
