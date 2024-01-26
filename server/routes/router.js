@@ -93,6 +93,14 @@ route.get("/teacherLanding", async (req, res) => {
   res.render("teacherLanding");
 });
 
+route.get("/teacherMyOrder", async (req, res) => {
+  res.render("teacherMyOrder");
+});
+
+route.get("/teacherMyFavorites", async (req, res) => {
+  res.render("teacherMyFavorites");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
