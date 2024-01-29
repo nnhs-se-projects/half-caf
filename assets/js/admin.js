@@ -54,22 +54,22 @@ deleteUserButton.addEventListener("click", async () => {
 //   }
 // });
 
-// const addDrinkButton = document.querySelector("input.submit");
-// addDrinkButton.addEventListener("click", async () => {
-//   const response = await fetch("/addDrink", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(entry),
-//   });
+const addDrinkButton = document.querySelector("input.submit");
+addDrinkButton.addEventListener("click", async () => {
+  const response = await fetch("/addDrink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(entry),
+  });
 
-//   if (response.ok) {
-//     window.location = "/";
-//   } else {
-//     console.log("error adding drink");
-//   }
-// });
+  if (response.ok) {
+    window.location = "/";
+  } else {
+    console.log("error adding drink");
+  }
+});
 
 // const modifyDrinkButton = document.querySelector("input.submit");
 // modifyDrinkButton.addEventListener("click", async () => {
