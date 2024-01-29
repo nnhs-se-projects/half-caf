@@ -89,8 +89,8 @@ route.delete("/removeEntry/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/teacherLanding", async (req, res) => {
-  res.render("teacherLanding");
+route.get("/teacherPopularDrinks", async (req, res) => {
+  res.render("teacherPopularDrinks");
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
