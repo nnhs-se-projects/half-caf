@@ -8,6 +8,10 @@ route.get("/addUser", (req, res) => {
   res.render("addUser", {});
 });
 
+route.get("/deleteUser", (req, res) => {
+  res.render("deleteUser", {});
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
