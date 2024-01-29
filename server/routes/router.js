@@ -105,6 +105,10 @@ route.get("/teacherOrderHistory", async (req, res) => {
   res.render("teacherOrderHistory");
 });
 
+route.get("/orderConfirmation", async (req, res) => {
+  res.render("orderConfirmation");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
