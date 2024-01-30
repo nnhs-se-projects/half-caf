@@ -89,6 +89,11 @@ route.delete("/removeEntry/:id", async (req, res) => {
   res.status(201).end();
 });
 
+// Route Teacher Menu
+route.get("/teacherMenu/", async (req, res) => {
+  res.render("teacherMenu");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
