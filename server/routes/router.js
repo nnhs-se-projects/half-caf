@@ -89,6 +89,26 @@ route.delete("/removeEntry/:id", async (req, res) => {
   res.status(201).end();
 });
 
+route.get("/teacherPopularDrinks", async (req, res) => {
+  res.render("teacherPopularDrinks");
+});
+
+route.get("/teacherMyOrder", async (req, res) => {
+  res.render("teacherMyOrder");
+});
+
+route.get("/teacherMyFavorites", async (req, res) => {
+  res.render("teacherMyFavorites");
+});
+
+route.get("/teacherOrderHistory", async (req, res) => {
+  res.render("teacherOrderHistory");
+});
+
+route.get("/orderConfirmation", async (req, res) => {
+  res.render("orderConfirmation");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
