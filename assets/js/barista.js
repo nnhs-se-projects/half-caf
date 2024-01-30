@@ -32,8 +32,16 @@
 //   }
 // });
 
-const disableEnableButton = document.querySelector("dis-en");
+const disableEnableButton = document.querySelector("dis/en");
 
 disableEnableButton.addEventListener("click", function () {
-  changeText.textContent = "Text has been changed!";
+  disableEnableButton.changeText();
 });
+
+function changeText() {
+  if (disableEnableButton.textContent == "Enable") {
+    disableEnableButton.textContent == "Disable";
+  } else {
+    disableEnableButton.textContent == "Enable";
+  }
+}

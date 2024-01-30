@@ -64,3 +64,9 @@
   position: absolute;
   top: 95px;
 }
+.dis-en {
+  width: 100px;
+  padding: 5px;
+  background-color: rgb(255, 156, 7);
+  border-color: white;
+}
