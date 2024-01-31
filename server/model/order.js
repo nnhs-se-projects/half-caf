@@ -5,6 +5,7 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 const RoomNum = require("./roomNum");
+const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   user: {
@@ -27,10 +28,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  /**
-   * Figure out how to dynamically accommodate
-   * number of drinks in order
-   */
+  drink: {
+    type: [Drink],
+    required: true,
+  },
 });
 
 const Order = mongoose.model("Order", schema);
