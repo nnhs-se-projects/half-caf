@@ -113,6 +113,10 @@ route.get("/orderConfirmation", async (req, res) => {
   res.render("orderConfirmation");
 });
 
+route.get("/customizeDrink", async (req, res) => {
+  res.render("customizeDrink");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
