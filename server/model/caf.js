@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
   type: {
-    type: [String],
+    type: Boolean,
     required: true,
   },
 });

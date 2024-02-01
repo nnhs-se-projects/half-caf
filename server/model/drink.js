@@ -19,7 +19,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   caffeination: {
-    type: [String],
+    type: Boolean,
     required: true,
   },
   instructions: {
