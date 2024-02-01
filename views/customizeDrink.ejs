@@ -1,4 +1,4 @@
-<%- include('include/_header') %>
+<%- include('include/_teacherHeader') %>
 <main>
   <head>
     <h1>Customize Drink</h1>
@@ -6,6 +6,7 @@
   <body>
     <h2>Drink Name</h2>
     <h3>$Price</h3>
+    <p>Please fill out the following form to order this Drink</p>
     <div>
       <label>Choose Flavor:</label>
       <select class="select" name="filter" id="filter">
@@ -13,6 +14,21 @@
         <option>chocolaste</option>
         <option>strawberry</option>
       </select>
+      <label>Choose Temperature</label>
+      <select class="select" name="filter" id="filter">
+        <option>Temperature</option>
+        <option>Hot</option>
+        <option>Cold</option>
+        <option>Blended</option>
+      </select>
+      <label>Choose Decaf or Caffeinated</label>
+      <select class="select" name="filter" id="filter">
+        <option>Choose</option>
+        <option>Caffeinated</option>
+        <option>Decaf</option>
+      </select>
+      <label>Type Any Special Instructions Here:</label>
+      <textarea rows="4" cols="50">Enter text here...</textarea>
     </div>
   </body>
 </main>
