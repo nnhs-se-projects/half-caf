@@ -6,13 +6,16 @@
 
 <div class="adminPage">
   <div class="userHdr">Delete User</div>
-  <select name="allUsers"></select>
-  <button type="button">Delete User</button>
+  <select id="toDelete">
+    <option>user1</option>
+    <option>user2</option>
+  </select>
+  <button class="delUserBt" type="button">Delete User</button>
 </div>
 
 <!-- /Main Site -->
 
-<script src="/js/admin.js"></script>
+<script src="/js/deleteUser.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
