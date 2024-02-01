@@ -58,5 +58,5 @@ app.use("/", require("./server/routes/router"));
 
 // start the server on port 8080
 app.listen(8080, () => {
-  console.log("server is listening on http://localhost:8081");
+  console.log("server is listening on http://localhost:8080");
 });
