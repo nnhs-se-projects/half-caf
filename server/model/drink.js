@@ -11,18 +11,17 @@ const schema = new mongoose.Schema({
     required: true,
   },
   flavors: {
-    type: String,
+    type: [String],
     required: true,
   },
   temp: {
-    type: String,
+    type: [String],
     required: true,
   },
   caffeination: {
-    type: String,
+    type: [String],
     required: true,
   },
-
   instructions: {
     type: String,
     required: false,
@@ -30,6 +29,10 @@ const schema = new mongoose.Schema({
   sugarFree: {
     type: Boolean,
     required: false,
+  },
+  favorite: {
+    type: Boolean,
+    required: true,
   },
 });
 

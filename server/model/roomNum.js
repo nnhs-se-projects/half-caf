@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
   number: {
-    type: Number,
+    type: [Number],
     required: true,
   },
 });

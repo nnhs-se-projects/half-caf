@@ -3,9 +3,11 @@
  */
 
 const mongoose = require("mongoose");
+/**
 const Flavor = require("./flavor");
 const Temp = require("./temp");
 const Caf = require("./caf");
+*/
 
 const schema = new mongoose.Schema({
   name: {
@@ -25,15 +27,15 @@ const schema = new mongoose.Schema({
     required: true,
   },
   flavor: {
-    type: [Flavor],
+    type: [String],
     required: true,
   },
   temp: {
-    type: [Temp],
+    type: [String],
     required: true,
   },
   caffination: {
-    type: [Caf],
+    type: [String],
     required: true,
   },
 });
