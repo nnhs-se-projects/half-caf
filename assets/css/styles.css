@@ -50,11 +50,16 @@
   flex-grow: 1;
 }
 
-.notification {
+.notification .dropdown {
   color: white;
   background-color: rgb(255, 156, 7);
   padding: 5px 10px;
-  margin: 10px;
+  margin: 5px;
+  width: 130px;
+}
+
+.dropdown {
+  font-size: 15px;
 }
 
 .notification .badge {
@@ -63,6 +68,8 @@
   padding: 1px 10px;
   position: absolute;
   top: 95px;
+  left: 390px;
+  color: white;
 }
 
 .on-off {

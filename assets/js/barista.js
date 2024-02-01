@@ -45,3 +45,5 @@
 //     disableEnableButton.textContent == "Enable";
 //   }
 // }
+
+let num = $("#orders option").length;
