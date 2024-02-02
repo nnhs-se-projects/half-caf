@@ -1,39 +1,40 @@
 const express = require("express");
 const route = express.Router();
-const Entry = require("../model/entry");
 
-route.get("/", async (req, res) => {});
+route.get("/", async (req, res) => {
+  res.render("auth");
+});
 
 route.get("/addUser", (req, res) => {
-  res.render("addUser", {});
+  res.render("addUser");
 });
 
 route.get("/deleteUser", (req, res) => {
-  res.render("deleteUser", {});
+  res.render("deleteUser");
 });
 
 route.get("/viewUser", (req, res) => {
-  res.render("viewUser", {});
+  res.render("viewUser");
 });
 
 route.get("/addDrink", (req, res) => {
-  res.render("addDrink", {});
+  res.render("addDrink");
 });
 
 route.get("/modifyDrink", (req, res) => {
-  res.render("modifyDrink", {});
+  res.render("modifyDrink");
 });
 
 route.get("/deleteDrink", (req, res) => {
-  res.render("deleteDrink", {});
+  res.render("deleteDrink");
 });
 
 route.get("/addFlavor", (req, res) => {
-  res.render("addFlavor", {});
+  res.render("addFlavor");
 });
 
 route.get("/deleteFlavor", (req, res) => {
-  res.render("deleteFlavor", {});
+  res.render("deleteFlavor");
 });
 
 // delegate all authentication to the auth.js router
