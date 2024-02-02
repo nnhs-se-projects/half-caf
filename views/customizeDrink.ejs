@@ -22,11 +22,18 @@
         <option>Blended</option>
       </select>
       <label>Choose Decaf or Caffeinated</label>
-      <select class="select" name="filter" id="filter">
-        <option>Choose</option>
-        <option>Caffeinated</option>
-        <option>Decaf</option>
-      </select>
+      <input type="radio" id="decaf" name="caffeine" />
+      <label for="decaf">Decaf</label>
+      <input type="radio" id="caf" name="caffeine" />
+      <label for="caf">Caffeine</label>
+      <br /><br />
+      <label>Sugar Free?</label>
+      <input type="radio" id="yes" name="sugarFree" />
+      <label for="yes">Yes</label>
+      <input type="radio" id="no" name="sugarFree" />
+      <label for="no">No</label>
+      <br />
+      <br />
       <label>Type Any Special Instructions Here:</label>
       <textarea rows="4" cols="50">Enter text here...</textarea>
     </div>
