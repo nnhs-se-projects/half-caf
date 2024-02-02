@@ -173,3 +173,11 @@ https://www.w3schools.com/howto/howto_css_switch.asp
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
+h1 {
+  margin: 3%;
+}
+
+h2 {
+  margin: 2%;
+}
+

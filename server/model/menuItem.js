@@ -35,7 +35,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   caffination: {
-    type: [String],
+    type: Boolean,
     required: true,
   },
 });
