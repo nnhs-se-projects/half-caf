@@ -50,6 +50,85 @@
   flex-grow: 1;
 }
 
+
+.notification .dropdown {
+  color: white;
+  background-color: rgb(255, 156, 7);
+  padding: 5px 10px;
+  margin: 5px;
+  width: 130px;
+}
+
+.dropdown {
+  font-size: 15px;
+}
+
+.notification .badge {
+  background: red;
+  border-radius: 50%;
+  padding: 1px 10px;
+  position: absolute;
+  top: 95px;
+  left: 390px;
+  color: white;
+}
+
+.on-off {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-left: 10px;
+}
+
+.on-off input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.dis-en {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: hsl(0, 0%, 69%);
+  -webkit-transition: 60s;
+  transition: 60s;
+  border-radius: 34px;
+}
+
+.dis-en:before {
+  position: absolute;
+  content: "";
+  height: 25px;
+  width: 25px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 60s;
+  transition: 60s;
+  border-radius: 50%;
+}
+
+input:checked + .dis-en {
+  background-color: rgb(255, 156, 7);
+  content: "yay";
+}
+
+input:checked + .dis-en:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* 
+toggle switch citation:
+https://www.w3schools.com/howto/howto_css_switch.asp
+*/
+=======
 .topnav {
   background-color: #a8a8a8;
   overflow: hidden;
@@ -93,3 +172,4 @@
 .column:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
+
