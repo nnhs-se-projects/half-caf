@@ -52,7 +52,6 @@
   margin-top: 10px;
 }
 
-
 .notification .dropdown {
   color: white;
   background-color: rgb(255, 156, 7);
@@ -130,7 +129,7 @@ input:checked + .dis-en:before {
 toggle switch citation:
 https://www.w3schools.com/howto/howto_css_switch.asp
 */
-=======
+
 .topnav {
   background-color: #a8a8a8;
   overflow: hidden;
@@ -182,4 +181,3 @@ h1 {
 h2 {
   margin: 2%;
 }
-

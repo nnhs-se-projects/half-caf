@@ -35,6 +35,7 @@ route.get("/addFlavor", (req, res) => {
 
 route.get("/deleteFlavor", (req, res) => {
   res.render("deleteFlavor");
+});
 
 route.get("/barista", (req, res) => {
   res.render("barista");
