@@ -1,0 +1,33 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+<div class="adminPage">
+  <div class="userHdr">Modify Drink</div>
+  <select name="drinks">
+    <!-- similar to createEntry radio button except habits are drinks -->
+  </select>
+  <!-- for loop for flavor checkboxes goes here -->
+  <input type="checkbox" id="flavor" />
+  <label for="flavor">Flavor</label>
+  <br />
+  <!-- for loop for temp checkboxes goes here -->
+  <input type="checkbox" id="temp" />
+  <label for="temp">Iced</label>
+
+  <!-- figure out to make fill this w/ og -->
+  <input type="text" id="misc" placeholder="Misc Options..." />
+  <input type="text" id="desc" placeholder="Edit Description..." />
+  <input type="text" id="price" placeholder="Price..." />
+  <!-- make ^this^ only allow ints -->
+  <button type="button">Add Drink</button>
+</div>
+
+<!-- /Main Site -->
+
+<script src="/js/admin.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

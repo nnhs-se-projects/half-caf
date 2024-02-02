@@ -1,11 +1,40 @@
 const express = require("express");
 const route = express.Router();
 
-// pass a path (e.g., "/") and callback function to the get method
-//  when the client makes an HTTP GET request to the specified path,
-//  the callback function is executed
 route.get("/", async (req, res) => {
   res.render("auth");
+});
+
+route.get("/addUser", (req, res) => {
+  res.render("addUser");
+});
+
+route.get("/deleteUser", (req, res) => {
+  res.render("deleteUser");
+});
+
+route.get("/viewUser", (req, res) => {
+  res.render("viewUser");
+});
+
+route.get("/addDrink", (req, res) => {
+  res.render("addDrink");
+});
+
+route.get("/modifyDrink", (req, res) => {
+  res.render("modifyDrink");
+});
+
+route.get("/deleteDrink", (req, res) => {
+  res.render("deleteDrink");
+});
+
+route.get("/addFlavor", (req, res) => {
+  res.render("addFlavor");
+});
+
+route.get("/deleteFlavor", (req, res) => {
+  res.render("deleteFlavor");
 });
 
 route.get("/barista", (req, res) => {
