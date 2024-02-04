@@ -56,7 +56,7 @@
   color: white;
   background-color: rgb(255, 156, 7);
   padding: 5px 10px;
-  margin: 5px;
+  margin: 0px;
   width: 130px;
 }
 
@@ -85,9 +85,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: hsl(0, 0%, 69%);
-  -webkit-transition: 60s;
-  transition: 60s;
+  background-color: hsl(0, 0%, 75%);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border-radius: 34px;
 }
 
@@ -99,8 +99,8 @@
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: 60s;
-  transition: 60s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
@@ -126,12 +126,12 @@ https://www.w3schools.com/howto/howto_css_switch.asp
 }
 
 .topnav a {
-  float: left;
   color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
+  display: inline-block;
 }
 
 .topnav a:hover {
