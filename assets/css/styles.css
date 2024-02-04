@@ -64,16 +64,6 @@
   font-size: 15px;
 }
 
-.notification .badge {
-  background: red;
-  border-radius: 50%;
-  padding: 1px 10px;
-  position: absolute;
-  top: 95px;
-  left: 390px;
-  color: white;
-}
-
 .on-off {
   position: relative;
   display: inline-block;
