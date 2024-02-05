@@ -2,7 +2,17 @@
 <main>
   <head>
     <h1>Customize Drink</h1>
+    <style>
+      .select {
+        width: 200px;
+      }
+      body {
+        display: grid;
+        align-items: menu;
+      }
+    </style>
   </head>
+
   <body>
     <h2>Drink Name</h2>
     <h3>$Price</h3>
@@ -13,6 +23,7 @@
         <option>choose flavor</option>
         <option>chocolaste</option>
         <option>strawberry</option>
+        <option>SF vanilloa</option>
       </select>
       <label>Choose Temperature</label>
       <select class="select" name="filter" id="filter">
@@ -27,13 +38,6 @@
       <input type="radio" id="caf" name="caffeine" />
       <label for="caf">Caffeine</label>
       <br /><br />
-      <label>Sugar Free?</label>
-      <input type="radio" id="yes" name="sugarFree" />
-      <label for="yes">Yes</label>
-      <input type="radio" id="no" name="sugarFree" />
-      <label for="no">No</label>
-      <br />
-      <br />
       <label>Type Any Special Instructions Here:</label>
       <textarea rows="4" cols="50">Enter text here...</textarea>
     </div>
