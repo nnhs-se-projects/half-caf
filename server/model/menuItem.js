@@ -26,7 +26,11 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  flavor: {
+  flavors: {
+    type: [String],
+    required: true,
+  },
+  toppings: {
     type: [String],
     required: true,
   },
@@ -34,9 +38,13 @@ const schema = new mongoose.Schema({
     type: [String],
     required: true,
   },
-  caffination: {
+  caffeination: {
     type: Boolean,
     required: true,
+  },
+  special: {
+    type: Boolean,
+    required: false,
   },
 });
 

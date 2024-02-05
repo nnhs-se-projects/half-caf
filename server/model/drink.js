@@ -14,6 +14,10 @@ const schema = new mongoose.Schema({
     type: [String],
     required: true,
   },
+  toppings: {
+    type: [String],
+    required: true,
+  },
   temp: {
     type: [String],
     required: true,
@@ -24,10 +28,6 @@ const schema = new mongoose.Schema({
   },
   instructions: {
     type: String,
-    required: false,
-  },
-  sugarFree: {
-    type: Boolean,
     required: false,
   },
   favorite: {
