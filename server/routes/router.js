@@ -66,6 +66,6 @@ route.get("/orderConfirmation", async (req, res) => {
 });
 
 // delegate all authentication to the auth.js router
-route.use("/auth", require("./auth"));
+// route.use("/auth", require("./auth"));
 
 module.exports = route;

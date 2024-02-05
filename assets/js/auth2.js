@@ -6,11 +6,12 @@
 
 // eslint-disable-next-line no-unused-vars
 async function handleCredentialResponse(res) {
-  await fetch("/auth", {
+  await fetch("/", {
     // send the googleUser's id_token which has all the data we want to the server with a POST request
     method: "POST",
     body: JSON.stringify({
       token: res.credential,
+      email: res.email,
     }),
     headers: {
       "Content-Type": "application/json",
@@ -18,5 +19,5 @@ async function handleCredentialResponse(res) {
   });
 
   // redirect to the index page
-  window.location = "/";
+  window.location = "/addUser";
 }
