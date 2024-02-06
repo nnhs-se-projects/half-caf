@@ -1,5 +1,4 @@
-<%- include('include/_teacherHeader') %>
-<%- include('include/_popularDrinks') %>
+
 <main>
   <h2>Popular Drinks</h2>
   <div class="card">
