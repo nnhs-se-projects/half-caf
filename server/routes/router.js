@@ -49,6 +49,10 @@ route.get("/teacherPopularDrinks", async (req, res) => {
   res.render("teacherPopularDrinks");
 });
 
+route.get("/homePopularDrinks", async (req, res) => {
+  res.render("homePopularDrinks");
+});
+
 route.get("/teacherMyOrder", async (req, res) => {
   res.render("teacherMyOrder");
 });
