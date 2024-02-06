@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
   },
   popular: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   flavors: {
     type: [String],
@@ -40,7 +40,7 @@ const schema = new mongoose.Schema({
   },
   caffeination: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   special: {
     type: Boolean,

@@ -5,7 +5,7 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  type: {
+  isCaffeinated: {
     type: Boolean,
     required: true,
   },

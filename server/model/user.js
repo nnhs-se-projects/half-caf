@@ -22,6 +22,10 @@ const schema = new mongoose.Schema({
     type: Order,
     required: true,
   },
+  orderHistory: {
+    type: [Order],
+    required: false,
+  },
 });
 
 const User = mongoose.model("User", schema);
