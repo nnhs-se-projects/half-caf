@@ -8,7 +8,11 @@
       }
       body {
         display: grid;
-        align-items: menu;
+        justify-content: center;
+        align-items: center;
+      }
+      textArea {
+        width: 600px;
       }
     </style>
   </head>
@@ -19,11 +23,12 @@
     <p>Please fill out the following form to order this Drink</p>
     <div>
       <label>Choose Flavor:</label>
-      <select class="select" name="filter" id="filter">
-        <option>choose flavor</option>
-        <option>chocolaste</option>
-        <option>strawberry</option>
-        <option>SF vanilloa</option>
+      <input type="checkbox">
+        <label>vanilla</label><br>
+      <input type="checkbox">
+        <label>chocolate</label><br>
+      <input type="checkbox">
+        <label>SF vanilla</label><br>
       </select>
       <label>Choose Temperature</label>
       <select class="select" name="filter" id="filter">
@@ -31,15 +36,23 @@
         <option>Hot</option>
         <option>Cold</option>
         <option>Blended</option>
-      </select>
-      <label>Choose Decaf or Caffeinated</label>
+      </select><br>
+      <label>Choose Topping:</label><br>
+      <input type="checkbox">
+        <label>cream</label><br>
+      <input type="checkbox">
+        <label>sauce</label><br>
+      <input type="checkbox">
+        <label>boba</label><br><br>
+      <label>Choose Decaf or Caffeinated</label><br>
       <input type="radio" id="decaf" name="caffeine" />
       <label for="decaf">Decaf</label>
       <input type="radio" id="caf" name="caffeine" />
       <label for="caf">Caffeine</label>
       <br /><br />
-      <label>Type Any Special Instructions Here:</label>
+      <label>Type Any Special Instructions Here:</label><br />
       <textarea rows="4" cols="50">Enter text here...</textarea>
+      <input type="submit" class="submit" value="Place Order" />
     </div>
   </body>
 </main>
