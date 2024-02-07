@@ -18,6 +18,6 @@ async function handleCredentialResponse(res) {
     },
   });
 
-  // redirect to the index page
+  // redirect to the admin
   window.location = "/addUser";
 }

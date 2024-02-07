@@ -13,9 +13,12 @@ const CLIENT_ID =
   "1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com";
 const oAuth2 = new OAuth2Client(CLIENT_ID);
 
+route.get("/", (req, res) => {
+  res.render("auth");
+});
+
 route.post("/", async (req, res) => {
   const token = req.body.token;
-  console.log("Token..." + token);
   const ticket = await oAuth2.verifyIdToken({
     idToken: token,
     audience: CLIENT_ID,
@@ -27,5 +30,21 @@ route.post("/", async (req, res) => {
   console.log(sub, email);
   res.status(201).end();
 });
+
+// possible OAuth code, need to set up link to the database
+
+// async function getUserRole(userEmail) {
+//   try {
+//     const user = await User.findOne({ email: userEmail }); // Find the user by email
+//     if (user) {
+//       return user.userType; // Return the userType if the user is found
+//     } else {
+//       return null; // Return null or some default value if no user is found
+//     }
+//   } catch (error) {
+//     console.error("Error fetching user role:", error);
+//     throw error; // Rethrow or handle the error appropriately
+//   }
+// }
 
 module.exports = route;
