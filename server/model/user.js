@@ -15,13 +15,13 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userType: {
+  type: {
     type: String,
     required: true,
   },
   currentOrder: {
     type: Order,
-    required: true,
+    required: false,
   },
   orderHistory: {
     type: [Order],

@@ -1,5 +1,6 @@
 const express = require("express");
 const route = express.Router();
+// const User = require("../model/user");
 
 route.get("/", async (req, res) => {
   res.render("auth");
@@ -9,6 +10,15 @@ route.get("/addUser", (req, res) => {
   res.render("addUser");
 });
 
+/* route.post("/addUser", async (req, res) => {
+  const user = new User({
+    isActivated: true,
+    email: req.body.email,
+    type: req.body.type,
+  });
+  await user.save();
+});
+ */
 route.get("/deleteUser", (req, res) => {
   res.render("deleteUser");
 });
