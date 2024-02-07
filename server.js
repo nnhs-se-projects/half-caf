@@ -40,17 +40,15 @@ app.use("/js", express.static("assets/js"));
 
 // app.use takes a function that is added to the chain of a request.
 //  When we call next(), it goes to the next function in the chain.
-/*
-app.use(async (req, res, next) => {
-  // if the student is already logged in, fetch the student object from the database
-  if (req.session.email === undefined && !req.path.startsWith("/auth")) {
-    res.redirect("/auth");
-    return;
-  }
+// app.use(async (req, res, next) => {
+//   // if the student is already logged in, fetch the student object from the database
+//   if (req.session.email === undefined && !req.path.startsWith("/auth")) {
+//     res.redirect("/auth");
+//     return;
+//   }
 
-  next();
-});
-*/
+//   next();
+// });
 
 // to keep this file manageable, we will move the routes to a separate file
 //  the exported router object is an example of middleware
@@ -58,5 +56,5 @@ app.use("/", require("./server/routes/router"));
 
 // start the server on port 8080
 app.listen(8080, () => {
-  console.log("server is listening on http://localhost:8081");
+  console.log("server is listening on http://localhost:8080");
 });
