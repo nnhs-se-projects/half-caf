@@ -1,0 +1,33 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<div class="adminPage">
+  <div class="userHdr">Users</div>
+
+  <label>Filter by Status:</label>
+  <select class="select" id="filter-users">
+    <option>All</option>
+    <option>Activated</option>
+    <option>Unactivated</option>
+  </select>
+
+  <label for="users"></label>
+  <select name="users" id="users" multiple>
+    <option value="a">Admin</option>
+    <option value="b">Teacher</option>
+    <option value="c">Barista</option>
+    <option value="d">Barista2</option>
+  </select>
+
+  <button type="button" class="user-buttons">Activate User</button>
+  <button type="button" class="user-buttons">Deactivate User</button>
+</div>
+
+<!-- /Main Site -->
+<script src="/js/viewUser.js"></script>
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
