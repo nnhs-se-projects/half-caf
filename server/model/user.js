@@ -3,8 +3,8 @@
  */
 
 const mongoose = require("mongoose");
-// const Order = require("./order");
-// const Drink = require("./drink");
+const Order = require("./order");
+//const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   isActivated: {
@@ -15,24 +15,13 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  type: {
+  userType: {
     type: String,
     required: true,
   },
   currentOrder: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Order",
-    required: false,
-  },
-  orderHistory: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "Drink",
-    required: false,
-  },
-  favoriteDrinks: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "Drink",
-    required: false,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Order", // Replace 'OtherModel' with the name of the model you're referencing
   },
 });
 
