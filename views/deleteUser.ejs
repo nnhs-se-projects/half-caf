@@ -7,8 +7,9 @@
 <div class="adminPage">
   <div class="userHdr">Delete User</div>
   <select id="toDelete">
-    <option>user1</option>
-    <option>user2</option>
+    <% for (let user of usersJs) { %>
+    <option><%=user.email%></option>
+    <% } %>
   </select>
   <button class="delUserBt" type="button">Delete User</button>
 </div>

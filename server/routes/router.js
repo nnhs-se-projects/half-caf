@@ -20,8 +20,15 @@ route.post("/addUser", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/deleteUser", (req, res) => {
-  res.render("deleteUser");
+route.get("/deleteUser", async (req, res) => {
+  const users = await User.find();
+
+  const formattedUsers = users.map((user) => {
+    return {
+      email: user.email,
+    };
+  });
+  res.render("deleteUser", { usersJs: formattedUsers });
 });
 
 route.get("/viewUser", (req, res) => {
