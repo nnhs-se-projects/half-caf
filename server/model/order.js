@@ -3,12 +3,13 @@
  */
 
 const mongoose = require("mongoose");
-const User = require("./user");
+// const User = require("./user");
 // const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   user: {
-    type: User,
+    type: [mongoose.Schema.ObjectId],
+    ref: "User",
     required: true,
   },
   room: {

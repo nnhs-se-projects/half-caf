@@ -1,6 +1,6 @@
 const express = require("express");
 const route = express.Router();
-// const User = require("../model/user");
+const User = require("../model/user");
 
 route.get("/", async (req, res) => {
   res.render("auth");
@@ -10,15 +10,17 @@ route.get("/addUser", (req, res) => {
   res.render("addUser");
 });
 
-/* route.post("/addUser", async (req, res) => {
+route.post("/addUser", async (req, res) => {
+  console.log("here.....");
   const user = new User({
     isActivated: true,
     email: req.body.email,
-    type: req.body.type,
+    userType: req.body.userType,
   });
   await user.save();
+  res.status(201).end();
 });
- */
+
 route.get("/deleteUser", (req, res) => {
   res.render("deleteUser");
 });
