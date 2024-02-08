@@ -20,8 +20,19 @@ const schema = new mongoose.Schema({
     required: true,
   },
   currentOrder: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Order", // Replace 'OtherModel' with the name of the model you're referencing
+    type: mongoose.Schema.ObjectId,
+    ref: "Order",
+    required: false,
+  },
+  orderHistory: {
+    type: [mongoose.Schema.ObjectId],
+    ref: "Drink",
+    required: false,
+  },
+  favoriteDrinks: {
+    type: [mongoose.Schema.ObjectId],
+    ref: "Drink",
+    required: false,
   },
 });
 
