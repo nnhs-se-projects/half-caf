@@ -4,7 +4,7 @@
 
 const mongoose = require("mongoose");
 const User = require("./user");
-const Drink = require("./drink");
+// const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   user: {
@@ -28,7 +28,8 @@ const schema = new mongoose.Schema({
     required: false,
   },
   drink: {
-    type: [Drink],
+    type: [mongoose.Schema.ObjectId],
+    ref: "Drink",
     required: true,
   },
 });

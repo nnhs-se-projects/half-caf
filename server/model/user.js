@@ -3,8 +3,8 @@
  */
 
 const mongoose = require("mongoose");
-const Order = require("./order");
-const Drink = require("./drink");
+// const Order = require("./order");
+// const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   isActivated: {
@@ -20,15 +20,18 @@ const schema = new mongoose.Schema({
     required: true,
   },
   currentOrder: {
-    type: Order,
+    type: mongoose.Schema.ObjectId,
+    ref: "Order",
     required: false,
   },
   orderHistory: {
-    type: [Order],
+    type: [mongoose.Schema.ObjectId],
+    ref: "Drink",
     required: false,
   },
   favoriteDrinks: {
-    type: [Drink],
+    type: [mongoose.Schema.ObjectId],
+    ref: "Drink",
     required: false,
   },
 });
