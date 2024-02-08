@@ -11,7 +11,6 @@ route.get("/addUser", (req, res) => {
 });
 
 route.post("/addUser", async (req, res) => {
-  console.log("here.....");
   const user = new User({
     isActivated: true,
     email: req.body.email,

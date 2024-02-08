@@ -3,8 +3,6 @@
  */
 
 const mongoose = require("mongoose");
-const Order = require("./order");
-//const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   isActivated: {
