@@ -26,9 +26,15 @@ route.get("/deleteUser", async (req, res) => {
   const formattedUsers = users.map((user) => {
     return {
       email: user.email,
+      id: user._id,
     };
   });
   res.render("deleteUser", { usersJs: formattedUsers });
+});
+
+route.delete("/deleteUser/:id", async (req, res) => {
+  const userId = req.params.id;
+  await User.findByIdAndRemove(userId);
 });
 
 route.get("/viewUser", (req, res) => {
