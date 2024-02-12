@@ -1,16 +1,16 @@
 /**
- * schema for caffeination
+ * schema for enabling orders
  */
 
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  isCaffeinated: {
+  enabled: {
     type: Boolean,
     required: true,
   },
 });
 
-const Caf = mongoose.model("Caf", schema);
+const Enabled = mongoose.model("Enabled", schema);
 
-module.exports = Caf;
+module.exports = Enabled;

@@ -4,7 +4,6 @@
 
 const mongoose = require("mongoose");
 const User = require("./user");
-const RoomNum = require("./roomNum");
 const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
@@ -13,7 +12,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   room: {
-    type: RoomNum,
+    type: Number,
     required: true,
   },
   timestamp: {

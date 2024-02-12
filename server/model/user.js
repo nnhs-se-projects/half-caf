@@ -4,6 +4,7 @@
 
 const mongoose = require("mongoose");
 const Order = require("./order");
+const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   isActivated: {
@@ -21,6 +22,14 @@ const schema = new mongoose.Schema({
   currentOrder: {
     type: Order,
     required: true,
+  },
+  orderHistory: {
+    type: [Order],
+    required: false,
+  },
+  favoriteDrinks: {
+    type: [Drink],
+    required: false,
   },
 });
 
