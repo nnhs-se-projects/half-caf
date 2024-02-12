@@ -1,29 +1,19 @@
 /* eslint-disable no-unused-vars */
-const deleteUser = document.querySelector("input.submit");
-console.log("delUser: " + deleteUser);
-deleteUser.addEventListener("click", async () => {
-  var selectedUser = document.getElementById("toDelete");
-  selectedUser.remove(selectedUser.selectedIndex);
-});
+const selectedId = document.querySelector("select#toDelete").value;
 
-const selectedEmail = document.querySelector("select#toDelete");
-
-function test() {
-  console.log("heyyy");
-}
-
-// temp deletes temp users
-// eslint-disable-next-line no-unused-vars
-async function deleteUsers(id) {
-  console.log(id);
-  const response = await fetch(`/removeUser/${id}`, {
+async function deleteUsers() {
+  console.log(selectedId);
+  const response = await fetch(`/deleteUser/${selectedId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
   });
+  console.log("hi");
 
   if (response.ok) {
     window.location = "/deleteUser";
+  } else {
+    console.log("error");
   }
 }

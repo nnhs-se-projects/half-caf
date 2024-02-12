@@ -35,6 +35,7 @@ route.get("/deleteUser", async (req, res) => {
 route.delete("/deleteUser/:id", async (req, res) => {
   const userId = req.params.id;
   await User.findByIdAndRemove(userId);
+  res.end();
 });
 
 route.get("/viewUser", (req, res) => {

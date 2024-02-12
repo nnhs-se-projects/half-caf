@@ -8,13 +8,13 @@
   <div class="userHdr">Delete User</div>
   <select id="toDelete">
     <% for (let user of usersJs) { %>
-    <option onclick="test"><%=user.email%></option>
+    <option value="<%= user.id %>"><%=user.email%></option>
     <% } %>
   </select>
   <input
     id="delUser"
     type="submit"
-    onclick="deleteUsers(`<%= usersJs.id %>`)"
+    onclick="deleteUsers()"
     value="Delete User"
   />
 </div>
