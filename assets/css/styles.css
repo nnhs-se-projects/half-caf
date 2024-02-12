@@ -165,6 +165,7 @@ https://www.w3schools.com/howto/howto_css_switch.asp
 }
 
 h1 {
+  font-size: 35px;
   margin: 3%;
 }
 
@@ -175,4 +176,12 @@ h2 {
 img {
   margin: 10px;
   padding: 10px;
+}
+
+.container {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: left;
 }
