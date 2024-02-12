@@ -17,9 +17,9 @@
     </style>
   </head>
 
-  <body>
-    <h2>Drink Name</h2>
-    <h3>$Price</h3>
+  <body class="container">
+    <h2 id="drinkName">drinkName</h2>
+    <h3 id="drinkPrice">drinkPrice</h3>
     <p>Please fill out this form to customize your drink.</p>
     <div>
       <form action = "/teacherMyOrder">
@@ -56,6 +56,21 @@
       <input type="submit" class="submit" value="Place Order" />
       </form>
     </div>
+
+    <script>
+    // Extracting parameters from the URL
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    
+    // Getting values of parameters
+    const drinkName = urlParams.get('drink');
+    const drinkPrice = urlParams.get('price');
+    const drinkDescription = urlParams.get('description');
+
+        // Populating HTML elements with parameter values
+    document.getElementById('drinkName').innerText = drinkName;
+    document.getElementById('drinkPrice').innerText = "$" + drinkPrice;
+    </script>
   </body>
 </main>
 <%- include('include/_footer') %>

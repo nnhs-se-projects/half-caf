@@ -70,7 +70,8 @@ route.get("/orderConfirmation", async (req, res) => {
 });
 
 route.get("/customizeDrink", async (req, res) => {
-  res.render("customizeDrink");
+  const { drink, price, description } = req.query; // Extract query parameters
+  res.render("customizeDrink", { drink, price, description }); // Pass parameters to view renderer
 });
 
 // delegate all authentication to the auth.js router
