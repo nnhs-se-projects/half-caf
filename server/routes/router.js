@@ -2,7 +2,7 @@ const express = require("express");
 const route = express.Router();
 
 route.get("/", async (req, res) => {
-  res.render("auth");
+  res.render("homePopularDrinks");
 });
 
 route.get("/addUser", (req, res) => {
@@ -47,6 +47,10 @@ route.get("/completed", (req, res) => {
 
 route.get("/teacherPopularDrinks", async (req, res) => {
   res.render("teacherPopularDrinks");
+});
+
+route.get("/homePopularDrinks", async (req, res) => {
+  res.render("homePopularDrinks");
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
