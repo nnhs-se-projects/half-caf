@@ -69,6 +69,14 @@ route.get("/orderConfirmation", async (req, res) => {
   res.render("orderConfirmation");
 });
 
+route.get("/addTopping", async (req, res) => {
+  res.render("addTopping");
+});
+
+route.get("/deleteTopping", async (req, res) => {
+  res.render("deleteTopping");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
