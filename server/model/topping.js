@@ -5,8 +5,12 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  toppings: {
-    type: [String],
+  topping: {
+    type: String,
+    required: true,
+  },
+  isAvailable: {
+    type: Boolean,
     required: true,
   },
 });

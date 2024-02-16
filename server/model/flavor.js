@@ -5,7 +5,7 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  flavors: {
+  flavor: {
     type: String,
     required: true,
   },
