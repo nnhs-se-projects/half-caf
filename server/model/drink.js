@@ -3,11 +3,12 @@
  */
 
 const mongoose = require("mongoose");
-const MenuItem = require("./menuItem");
+// const MenuItem = require("./menuItem");
 
 const schema = new mongoose.Schema({
   menuItem: {
-    type: MenuItem,
+    type: mongoose.Schema.ObjectId,
+    ref: "MenuItem",
     required: true,
   },
   flavors: {
