@@ -1,7 +1,9 @@
 const addToppingButton = document.querySelector("input.submit");
 console.log(addToppingButton);
 addToppingButton.addEventListener("click", async () => {
-  const topping = { toppings: document.getElementById("topping").value };
+  const getTopping = document.getElementById("topping").value;
+  console.log(getTopping);
+  const topping = { toppings: getTopping };
 
   const response = await fetch("/addTopping", {
     method: "POST",

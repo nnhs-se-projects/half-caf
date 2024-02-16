@@ -1,5 +1,6 @@
 const express = require("express");
 const route = express.Router();
+const Topping = require("../model/topping");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -71,6 +72,14 @@ route.get("/orderConfirmation", async (req, res) => {
 
 route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
+});
+
+route.post("/addTopping", async (req, res) => {
+  const topping = new Topping({
+    type: req.body.topping,
+  });
+  await topping.save();
+  res.status(201).end();
 });
 
 route.get("/deleteTopping", async (req, res) => {
