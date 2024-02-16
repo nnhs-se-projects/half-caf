@@ -31,20 +31,4 @@ route.post("/", async (req, res) => {
   res.status(201).end();
 });
 
-// possible OAuth code, need to set up link to the database
-
-// async function getUserRole(userEmail) {
-//   try {
-//     const user = await User.findOne({ email: userEmail }); // Find the user by email
-//     if (user) {
-//       return user.userType; // Return the userType if the user is found
-//     } else {
-//       return null; // Return null or some default value if no user is found
-//     }
-//   } catch (error) {
-//     console.error("Error fetching user role:", error);
-//     throw error; // Rethrow or handle the error appropriately
-//   }
-// }
-
 module.exports = route;

@@ -39,17 +39,16 @@ app.use("/img", express.static("assets/img"));
 app.use("/js", express.static("assets/js"));
 
 // app.use takes a function that is added to the chain of a request.
-//  When we call next(), it goes to the next function in the chain.
+//  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
-  if (req.path === "/") {
-    return next(); // Allow access to index without authentication
+  if (req.path === "/" || req.path === "/menu") {
+    return next(); // allow access to index without authentication
   }
   // if the student is already logged in, fetch the student object from the database
-  if (req.session.email === undefined && !req.path.startsWith("/auth")) {
+  else if (req.session.email === undefined && !req.path.startsWith("/auth")) {
     res.redirect("/auth");
     return;
   }
-
   next();
 });
 
