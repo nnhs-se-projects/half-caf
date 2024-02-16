@@ -7,10 +7,16 @@
 <div class="adminPage">
   <div class="userHdr">Delete User</div>
   <select id="toDelete">
-    <option>user1</option>
-    <option>user2</option>
+    <% for (let user of usersJs) { %>
+    <option value="<%= user.id %>"><%=user.email%></option>
+    <% } %>
   </select>
-  <button class="delUserBt" type="button">Delete User</button>
+  <input
+    id="delUser"
+    type="submit"
+    onclick="deleteUsers()"
+    value="Delete User"
+  />
 </div>
 
 <!-- /Main Site -->

@@ -3,11 +3,6 @@
  */
 
 const mongoose = require("mongoose");
-/**
-const Flavor = require("./flavor");
-const Temp = require("./temp");
-const Caf = require("./caf");
-*/
 
 const schema = new mongoose.Schema({
   name: {
@@ -26,16 +21,19 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  flavors: {
-    type: [String],
+  flavor: {
+    type: [mongoose.Schema.ObjectId],
+    ref: "Flavor",
     required: true,
   },
   toppings: {
-    type: [String],
+    type: [mongoose.Schema.ObjectId],
+    ref: "Topping",
     required: true,
   },
   temp: {
-    type: [String],
+    type: [mongoose.Schema.ObjectId],
+    ref: "Temp",
     required: true,
   },
   caffeination: {
