@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-const selectedId = document.querySelector("select#toDelete").value;
 
 async function deleteUsers() {
+  const selectedId = document.querySelector("#toDelete").value;
   console.log(selectedId);
   const response = await fetch(`/deleteUser/${selectedId}`, {
     method: "DELETE",
