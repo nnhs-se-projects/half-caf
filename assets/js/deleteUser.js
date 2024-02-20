@@ -9,7 +9,6 @@ async function deleteUsers() {
       "Content-Type": "application/json",
     },
   });
-  console.log("hi");
 
   if (response.ok) {
     window.location = "/deleteUser";
