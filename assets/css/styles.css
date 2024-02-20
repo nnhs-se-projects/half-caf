@@ -178,7 +178,7 @@ img {
   padding: 10px;
 }
 
-.container {
+.container#logo {
   margin: 0;
   padding: 0;
   display: flex;
