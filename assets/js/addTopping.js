@@ -3,7 +3,7 @@ console.log(addToppingButton);
 addToppingButton.addEventListener("click", async () => {
   const getTopping = document.getElementById("topping").value;
   console.log(getTopping);
-  const topping = { toppings: getTopping };
+  const topping = { topping: getTopping };
 
   const response = await fetch("/addTopping", {
     method: "POST",
