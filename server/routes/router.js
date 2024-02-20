@@ -1,6 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
+const Topping = require("../model/topping");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -96,6 +97,15 @@ route.get("/orderConfirmation", async (req, res) => {
 
 route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
+});
+
+route.post("/addTopping", async (req, res) => {
+  const topping = new Topping({
+    topping: req.body.topping,
+    isAvailable: true,
+  });
+  await topping.save();
+  res.status(201).end();
 });
 
 route.get("/deleteTopping", async (req, res) => {
