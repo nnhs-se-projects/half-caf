@@ -71,6 +71,10 @@ route.get("/completed", (req, res) => {
   res.render("completed");
 });
 
+// Route Teacher Menu
+route.get("/teacherMenu/", async (req, res) => {
+  res.render("teacherMenu");
+});
 route.get("/teacherPopularDrinks", async (req, res) => {
   res.render("teacherPopularDrinks");
 });
@@ -94,6 +98,11 @@ route.get("/teacherOrderHistory", async (req, res) => {
 route.get("/orderConfirmation", async (req, res) => {
   res.render("orderConfirmation");
 });
+
+route.get("/customizeDrink", async (req, res) => {
+  const { drink, price, description } = req.query; // Extract query parameters
+  res.render("customizeDrink", { drink, price, description });
+}); // Pass parameters to view renderer
 
 route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
