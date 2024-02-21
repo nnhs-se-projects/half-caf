@@ -99,11 +99,11 @@ route.get("/orderConfirmation", async (req, res) => {
   res.render("orderConfirmation");
 });
 
-
 route.get("/customizeDrink", async (req, res) => {
   const { drink, price, description } = req.query; // Extract query parameters
-  res.render("customizeDrink", { drink, price, description }); // Pass parameters to view renderer
-  
+  res.render("customizeDrink", { drink, price, description });
+}); // Pass parameters to view renderer
+
 route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
 });
