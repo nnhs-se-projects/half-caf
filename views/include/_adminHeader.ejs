@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Half Caf</title>
-    <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
+    <div class="container" id="logo">
+      <%- include('_header') %>
+      <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
+    </div>
 
     <div class="topnav">
       <a href="/addUser">Add User</a>
@@ -15,6 +18,8 @@
       <a href="/deleteDrink">Delete Drink</a>
       <a href="/addFlavor">Add Flavor</a>
       <a href="/deleteFlavor">Delete Flavor</a>
+      <a href="/addTopping">Add Topping</a>
+      <a href="/DeleteTopping">Delete Topping</a>
       <a href="/auth">Logout</a>
       <!-- Rounded switch -->
       <label class="on-off">

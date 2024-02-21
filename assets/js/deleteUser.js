@@ -1,8 +1,18 @@
-const deleteUser = document.querySelector("button.delUserBt");
-console.log("delUser: " + deleteUser);
-deleteUser.addEventListener("click", async () => {
-  var selectedUser = document.getElementById("toDelete");
-  selectedUser.remove(selectedUser.selectedIndex);
-});
+/* eslint-disable no-unused-vars */
 
-// temp deletes temp users
+async function deleteUsers() {
+  const selectedId = document.querySelector("#toDelete").value;
+  console.log(selectedId);
+  const response = await fetch(`/deleteUser/${selectedId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.ok) {
+    window.location = "/deleteUser";
+  } else {
+    console.log("error");
+  }
+}
