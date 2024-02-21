@@ -118,7 +118,21 @@ route.post("/addTopping", async (req, res) => {
 });
 
 route.get("/deleteTopping", async (req, res) => {
-  res.render("deleteTopping");
+  const toppings = await Topping.find();
+
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
+  res.render("deleteTopping", { toppings: formattedToppings });
+});
+
+route.delete("/deleteTopping/:id", async (req, res) => {
+  const toppingId = req.params.id;
+  await Topping.findByIdAndRemove(toppingId);
+  res.end();
 });
 
 // delegate all authentication to the auth.js router
