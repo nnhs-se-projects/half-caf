@@ -2,6 +2,7 @@ const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
 const Topping = require("../model/topping");
+const Flavor = require("../model/flavor");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -57,6 +58,15 @@ route.get("/deleteDrink", (req, res) => {
 
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
+});
+
+route.post("/addFlavor", async (req, res) => {
+  const flavor = new Flavor({
+    flavor: req.body.flavor,
+    isAvailable: true,
+  });
+  await flavor.save();
+  res.status(201).end();
 });
 
 route.get("/deleteFlavor", (req, res) => {
