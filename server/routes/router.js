@@ -81,6 +81,12 @@ route.get("/deleteFlavor", async (req, res) => {
   res.render("deleteFlavor", { flavors: formattedFlavors });
 });
 
+route.delete("/deleteFlavor/:id", async (req, res) => {
+  const flavorId = req.params.id;
+  await Flavor.findByIdAndRemove(flavorId);
+  res.end();
+});
+
 route.get("/barista", (req, res) => {
   res.render("barista");
 });

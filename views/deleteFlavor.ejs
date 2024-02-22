@@ -6,13 +6,22 @@
 
 <div class="adminPage">
   <div class="userHdr">Delete Flavor</div>
-  <select name="drinks"></select>
-  <button type="button">Delete Flavor</button>
+  <select id="toDelete">
+    <% for (let flavor of flavors) { %>
+    <option value="<%= flavor.id %>"><%= flavor.flavor %></option>
+    <% } %>
+  </select>
+  <input
+    id="delFlavor"
+    type="submit"
+    onclick="deleteFlavor()"
+    value="Delete Flavor"
+  />
 </div>
 
 <!-- /Main Site -->
 
-<script src="/js/admin.js"></script>
+<script src="/js/deleteFlavor.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
