@@ -69,8 +69,22 @@ route.post("/addFlavor", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/deleteFlavor", (req, res) => {
-  res.render("deleteFlavor");
+route.get("/deleteFlavor", async (req, res) => {
+  const flavors = await Flavor.find();
+
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
+  res.render("deleteFlavor", { flavors: formattedFlavors });
+});
+
+route.delete("/deleteFlavor/:id", async (req, res) => {
+  const flavorId = req.params.id;
+  await Flavor.findByIdAndRemove(flavorId);
+  res.end();
 });
 
 route.get("/barista", (req, res) => {
