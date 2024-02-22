@@ -8,6 +8,20 @@ addDrinkButton.addEventListener("click", async () => {
   const menuItem = { name, description, price, popular };
   console.log(menuItem);
 
+  const response = await fetch("/addDrink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(menuItem),
+  });
+
+  if (response.ok) {
+    window.location = "/addDrink";
+  } else {
+    console.log("error adding drink");
+  }
+
   /* const response = await fetch("/addDrink", {
     method: "POST",
     headers: {

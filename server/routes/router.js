@@ -3,6 +3,7 @@ const route = express.Router();
 const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
+const MenuItem = require("../model/menuItem");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -46,6 +47,17 @@ route.get("/viewUser", (req, res) => {
 
 route.get("/addDrink", (req, res) => {
   res.render("addDrink");
+});
+
+route.post("/addDrink", async (req, res) => {
+  const drink = new menuItem({
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    popular: req.body.popular,
+  });
+  await drink.save();
+  res.status(201).end();
 });
 
 route.get("/modifyDrink", (req, res) => {

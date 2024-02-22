@@ -10,6 +10,13 @@
   <input type="text" id="price" placeholder="Price..." />
   <input type="checkbox" id="popular" />
   <label for="popular">Popular</label>
+  <label for="special">Specials</label>
+  <% for(let temp of temps){ %>
+  <label>
+    <input type="radio" class="temps" name="temps" value="<%temp%>" />
+    <%=temp%>
+  </label>
+  <%} %>
   <input type="submit" class="submit" value="Add Drink" />
 </div>
 
