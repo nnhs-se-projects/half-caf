@@ -3,6 +3,8 @@ const route = express.Router();
 const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
+// const Drink = require("../model/drink");
+const MenuItem = require("../model/menuItem");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -52,8 +54,16 @@ route.get("/modifyDrink", (req, res) => {
   res.render("modifyDrink");
 });
 
-route.get("/deleteDrink", (req, res) => {
-  res.render("deleteDrink");
+route.get("/deleteDrink", async (req, res) => {
+  const menuItems = await MenuItem.find();
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+  res.render("deleteDrink", { menuItems: formattedMenuItems });
 });
 
 route.get("/addFlavor", (req, res) => {
