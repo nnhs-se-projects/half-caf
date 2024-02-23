@@ -66,6 +66,12 @@ route.get("/deleteDrink", async (req, res) => {
   res.render("deleteDrink", { menuItems: formattedMenuItems });
 });
 
+route.delete("/deleteDrink/:id", async (req, res) => {
+  const menuItemId = req.params.id;
+  await MenuItem.findByIdAndRemove(menuItemId);
+  res.end();
+});
+
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
