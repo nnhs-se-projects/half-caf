@@ -3,9 +3,11 @@ addDrinkButton.addEventListener("click", async () => {
   const name = document.getElementById("name").value;
   const description = document.getElementById("description").value;
   const price = document.getElementById("price").value;
-  let popular = document.getElementById("popular");
+  const popular = document.getElementById("popular");
+  const temps = document.querySelectorAll("input.temps:checked");
+  const temp = temps.length > 0 ? temps[0].value : null;
 
-  const menuItem = { name, description, price, popular };
+  const menuItem = { name, description, price, popular, temp };
   console.log(menuItem);
 
   const response = await fetch("/addDrink", {

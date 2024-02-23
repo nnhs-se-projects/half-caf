@@ -8,15 +8,27 @@
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
-  <input type="checkbox" id="popular" />
-  <label for="popular">Popular</label>
-  <label for="special">Specials</label>
-  <% for(let temp of temps){ %>
-  <label>
-    <input type="radio" class="temps" name="temps" value="<%temp%>" />
-    <%=temp%>
-  </label>
-  <%} %>
+
+  <div class="tempBox">
+    <% console.log(temps)%> <% for(let temp of temps){ %>
+    <label>
+      <input
+        type="checkbox"
+        id="temp"
+        class="temps"
+        name="temps"
+        value="<%temp%>"
+      />
+      <%=temp%>
+    </label>
+    <%} %>
+  </div>
+  <div>
+    <input type="checkbox" id="popular" />
+    <label for="popular">Popular</label>
+    <input type="checkbox" id="special" />
+    <label for="special">Special</label>
+  </div>
   <input type="submit" class="submit" value="Add Drink" />
 </div>
 
