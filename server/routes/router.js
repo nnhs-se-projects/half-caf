@@ -47,6 +47,22 @@ route.get("/viewUser", (req, res) => {
 });
 
 route.get("/addDrink", (req, res) => {
+  const flavors = Flavor.find();
+  const toppings = Topping.find();
+
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
+
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
   res.render("addDrink", { temps: TempJson });
 });
 
