@@ -33,13 +33,31 @@
     <input type="checkbox" id="caffeinated" value="Caffeinated" />
     <label for="caffeinated">Caffeinated</label>
   </div>
-  <input type="submit" class="submit" value="Add Drink" />
+  <div class="multiselect">
+    <div class="selectBox" onclick="showCheckBoxes()">
+      <select>
+        <option>
+          Select a flavor
+        </option>
+      </select>
+      <div class = "overSelect"></div>
+    </div>
+    <div id = "checkboxes"
+        <%for(let flavor of flavors){%>
+        <input type="checkbox" id="flavor" value="flavor">
+          <%=flavor.flavor%>
+        </input>
+        <%}%>
+      </select>
+    </div>
+    <input type="submit" class="submit" value="Add Drink" />
+  </div>
+
+  <!-- /Main Site -->
+
+  <script src="/js/addDrink.js"></script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
 </div>
-
-<!-- /Main Site -->
-
-<script src="/js/addDrink.js"></script>
-
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->

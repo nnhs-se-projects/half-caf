@@ -46,9 +46,9 @@ route.get("/viewUser", (req, res) => {
   res.render("viewUser");
 });
 
-route.get("/addDrink", (req, res) => {
-  const flavors = Flavor.find();
-  const toppings = Topping.find();
+route.get("/addDrink", async (req, res) => {
+  const flavors = await Flavor.find();
+  const toppings = await Topping.find();
 
   const formattedFlavors = flavors.map((flavor) => {
     return {
@@ -63,7 +63,11 @@ route.get("/addDrink", (req, res) => {
       id: topping._id,
     };
   });
-  res.render("addDrink", { temps: TempJson });
+  res.render("addDrink", {
+    temps: TempJson,
+    toppings: formattedToppings,
+    flavors: formattedFlavors,
+  });
 });
 
 route.post("/addDrink", async (req, res) => {
