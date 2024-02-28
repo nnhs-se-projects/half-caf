@@ -136,6 +136,7 @@ route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
     topping: req.body.topping,
     isAvailable: true,
+    price: req.body.price,
   });
   await topping.save();
   res.status(201).end();
