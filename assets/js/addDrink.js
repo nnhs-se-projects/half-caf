@@ -24,17 +24,6 @@ addDrinkButton.addEventListener("click", async () => {
     console.log("error adding drink");
   }
 
-  var expanded = false;
-  function showCheckBoxes() {
-    var checkboxes = document.getElementById("checkboxes");
-    if (!expanded) {
-      checkboxes.style.display = "block";
-      expanded = true;
-    } else {
-      checkboxes.style.display = "none";
-      expanded = false;
-    }
-  }
   /* const response = await fetch("/addDrink", {
     method: "POST",
     headers: {

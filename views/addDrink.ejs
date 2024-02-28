@@ -9,49 +9,59 @@
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
 
-  <div class="tempBox">
-    <% console.log(temps)%> <% for(let temp of temps){ %>
-    <label>
-      <input
-        type="checkbox"
-        id="temp"
-        class="temps"
-        name="temps"
-        value="<=%temp%>"
-      />
-      <%=temp%>
-    </label>
-    <%} %>
+  <div id="flavorList" class="dropdown-check-list" tabindex="100">
+    <span class="anchor">Select Flavors</span>
+    <ul class="items">
+      <% for (let flavor of flavors) {%>
+      <li><input type="checkbox" /><%= flavor.flavor %></li>
+      <%}%>
+    </ul>
+  </div>
+
+  <div id="toppingList" class="dropdown-check-list" tabindex="100">
+    <span class="anchor">Select Toppings</span>
+    <ul class="items">
+      <% for (let topping of toppings) {%>
+      <li><input type="checkbox" /><%= topping.topping %></li>
+      <%}%>
+    </ul>
   </div>
   <div>
-    <input type="checkbox" id="popular" />
-    <label for="popular">Popular</label>
-    <input type="checkbox" id="special" />
-    <label for="special">Special</label>
-  </div>
-  <div>
-    <input type="checkbox" id="caffeinated" value="Caffeinated" />
-    <label for="caffeinated">Caffeinated</label>
-  </div>
-  <div class="multiselect">
-    <div class="selectBox" onclick="showCheckBoxes()">
-      <select>
-        <option>
-          Select a flavor
-        </option>
-      </select>
-      <div class = "overSelect"></div>
+    <div class="tempBox">
+      <% for(let temp of temps){ %>
+      <label id="tempLabel">
+        <input
+          type="checkbox"
+          id="temp"
+          class="temps"
+          name="temps"
+          value="<%=temp%>"
+        />
+        <%=temp%>
+      </label>
+      <%} %>
     </div>
-    <div id = "checkboxes"
-        <%for(let flavor of flavors){%>
-        <input type="checkbox" id="flavor" value="flavor">
-          <%=flavor.flavor%>
-        </input>
-        <%}%>
-      </select>
+    <div>
+      <input type="checkbox" id="popular" />
+      <label for="popular">Popular</label>
     </div>
-    <input type="submit" class="submit" value="Add Drink" />
+    <div>
+      <input type="checkbox" id="special" />
+      <label for="special">Special</label>
+    </div>
+    <div>
+      <input type="checkbox" id="caffeinated" value="Caffeinated" />
+      <label for="caffeinated">Caffeinated</label>
+    </div>
   </div>
+
+  <input type="submit" class="submit" value="Add Drink" />\
+
+  <style>
+    #tempLabel {
+      margin-right: 10px;
+    }
+  </style>
 
   <!-- /Main Site -->
 
