@@ -2,6 +2,7 @@ const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
 const Topping = require("../model/topping");
+const Enabled = require("../model/user");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
