@@ -4,6 +4,10 @@
  * @param {Object} res - the response object from the Google Sign-In popup
  */
 
+const express = require("express");
+const route = express.Router();
+const UserInfo = require("../../server/model/user");
+
 // eslint-disable-next-line no-unused-vars
 async function handleCredentialResponse(res) {
   await fetch("/auth", {
@@ -11,19 +15,47 @@ async function handleCredentialResponse(res) {
     method: "POST",
     body: JSON.stringify({
       token: res.credential,
-      email: res.email,
-      role: res.userType,
     }),
     headers: {
       "Content-Type": "application/json",
     },
   });
-  parseToken(role);
+  let jsonRes = parseJwt(res.credential);
+  //alert("Email..." + jsonRes.email);
+  getUserRoles(jsonRes.email);
+
   // redirect to the admin
   window.location = "/addUser";
 }
 
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+  //alert("json..." + jsonPayload);
+  return JSON.parse(jsonPayload);
+}
+
+async function getUserRoles(email) {
+  alert("In getUserRoles..." + UserInfo);
+  email = "tkgadhoke@stu.naperville203.org";
+  try {
+    const user1 = await UserInfo.findOne({ email: email }, "userType");
+    alert("role: " + user1.roles);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function parseToken(role) {
+  alert("role===" + role);
   if (role === "admin") {
     console.log("admin!!");
   } else if (role === "barista") {
