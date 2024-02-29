@@ -76,7 +76,11 @@ route.post("/addDrink", async (req, res) => {
     description: req.body.description,
     price: req.body.price,
     popular: req.body.popular,
-    temp: req.body.temps,
+    flavor: req.body.flavor,
+    toppings: req.body.topping,
+    temp: req.body.temp,
+    caffeination: req.body.caf,
+    special: req.body.special,
   });
   await drink.save();
   res.status(201).end();
