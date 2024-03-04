@@ -1,5 +1,6 @@
 const express = require("express");
 const route = express.Router();
+const User = require("../model/user");
 
 route.get("/", async (req, res) => {
   res.render("index");
@@ -9,7 +10,18 @@ route.get("/auth", (req, res) => {
   res.render("auth");
 });
 
+async function getUserRoles(email1) {
+  try {
+    const user = await User.findOne({ email: email1 }, "userType");
+    // console.log("role: " + user1.userType);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 route.get("/addUser", (req, res) => {
+  // console.log("In xxxxx..." + req.session.email);
+  getUserRoles(req.session.email);
   res.render("addUser");
 });
 

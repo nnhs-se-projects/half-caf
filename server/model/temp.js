@@ -5,8 +5,12 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  options: {
-    type: [String],
+  temp: {
+    type: String,
+    required: true,
+  },
+  isAvailable: {
+    type: Boolean,
     required: true,
   },
 });

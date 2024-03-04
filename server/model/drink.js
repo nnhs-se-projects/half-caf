@@ -3,31 +3,32 @@
  */
 
 const mongoose = require("mongoose");
-const MenuItem = require("./menuItem");
+// const MenuItem = require("./menuItem");
 
 const schema = new mongoose.Schema({
   menuItem: {
-    type: MenuItem,
+    type: mongoose.Schema.ObjectId,
+    ref: "MenuItem",
     required: true,
   },
   flavors: {
-    type: [String],
+    type: String,
+    required: true,
+  },
+  toppings: {
+    type: String,
     required: true,
   },
   temp: {
-    type: [String],
+    type: String,
     required: true,
   },
   caffeination: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   instructions: {
     type: String,
-    required: false,
-  },
-  sugarFree: {
-    type: Boolean,
     required: false,
   },
   favorite: {

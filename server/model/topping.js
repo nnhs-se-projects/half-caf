@@ -1,11 +1,11 @@
 /**
- * schema for flavoring
+ * schema for toppings
  */
 
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  flavor: {
+  topping: {
     type: String,
     required: true,
   },
@@ -13,8 +13,12 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  price: {
+    type: String,
+    required: false,
+  },
 });
 
-const Flavor = mongoose.model("Flavor", schema);
+const Topping = mongoose.model("Topping", schema);
 
-module.exports = Flavor;
+module.exports = Topping;
