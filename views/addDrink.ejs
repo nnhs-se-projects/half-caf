@@ -3,13 +3,13 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<div class="adminPage">
+<div class="adminPage" id="page">
   <div class="userHdr">Add Drink</div>
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
 
-  <div id="flavors" class="dropdown-check-list" tabindex="100">
+  <div id="flavors" class="dropdown-check-list">
     <span class="anchor">Select Flavors</span>
     <ul class="items">
       <% for (let flavor of flavors) {%>
@@ -18,15 +18,17 @@
     </ul>
   </div>
 
-  <div id="toppings" class="dropdown-check-list" tabindex="100">
-    <span class="anchor">Select Toppings</span>
-    <ul class="items">
-      <% for (let topping of toppings) {%>
-      <li><input type="checkbox" /><%= topping.topping %></li>
-      <%}%>
-    </ul>
-  </div>
-  <div>
+  <div id="pageRight">
+    <div id="toppings" class="dropdown-check-list">
+      <span class="anchor">Select Toppings</span>
+      <ul class="items">
+        <% for (let topping of toppings) {%>
+        <li><input type="checkbox" /><%= topping.topping %></li>
+        <%}%>
+      </ul>
+    </div>
+
+    <span class="anchor">Select Options</span>
     <div class="tempBox">
       <% for(let temp of temps){ %>
       <label id="tempLabel">
@@ -55,11 +57,20 @@
     </div>
   </div>
 
-  <input type="submit" class="submit" value="Add Drink" />\
+  <input type="submit" class="submit" value="Add Drink" />
 
   <style>
     #tempLabel {
       margin-right: 10px;
+    }
+    #pageRight {
+      float: right;
+    }
+    #flavors {
+      float: left;
+    }
+    #page {
+      width: auto/2;
     }
   </style>
 
