@@ -13,8 +13,16 @@ addDrinkButton.addEventListener("click", async () => {
   }
   console.log(checkedTemps);
   const special = document.getElementById("special").checked;
-  const flavors = document.querySelectorAll("input.flavors:checked");
-  const flavor = flavors.length > 0 ? flavors[0].value : null;
+  const flavors = document.querySelectorAll("input.flavors");
+  console.log(flavors);
+  const checkedFlavors = [];
+  for (let i = 0; i < flavors.length; i++) {
+    if (flavors[i].checked) {
+      checkedFlavors.push(flavors[i].value);
+    }
+  }
+  console.log(checkedFlavors);
+
   const toppings = document.querySelectorAll("input.toppings:checked");
   const topping = toppings.length > 0 ? toppings[0].value : null;
   const caf = document.getElementById("caffeinated").checked;

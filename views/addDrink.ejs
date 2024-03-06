@@ -9,11 +9,14 @@
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
 
-  <div id="flavors" class="dropdown-check-list">
+  <div id="flavorsList" class="dropdown-check-list">
     <span class="anchor">Select Flavors</span>
     <ul class="items">
       <% for (let flavor of flavors) {%>
-      <li><input type="checkbox" /><%= flavor.flavor %></li>
+      <li>
+        <input id="flavors" type="checkbox" value="<%= flavor.flavor %>" /><%=
+        flavor.flavor %>
+      </li>
       <%}%>
     </ul>
   </div>
@@ -66,7 +69,7 @@
     #pageRight {
       float: right;
     }
-    #flavors {
+    #flavorsList {
       float: left;
     }
     #page {
