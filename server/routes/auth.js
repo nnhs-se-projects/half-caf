@@ -13,9 +13,9 @@ const CLIENT_ID =
   "1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com";
 const oAuth2 = new OAuth2Client(CLIENT_ID);
 
-route.get("/", (req, res) => {
-  res.render("auth");
-});
+// route.get("/", (req, res) => {
+//   res.render("auth");
+// });
 
 route.post("/", async (req, res) => {
   const token = req.body.token;
