@@ -1,14 +1,15 @@
 const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
+const Topping = require("../model/topping");
+const Flavor = require("../model/flavor");
 
 route.get("/", async (req, res) => {
-  res.render("index");
+  res.render("homePopularDrinks");
 });
-
+  
 route.get("/auth", (req, res) => {
   res.render("auth");
-});
 
 async function getUserRoles(email) {
   try {
@@ -43,8 +44,32 @@ route.get("/addUser", (req, res) => {
   res.render("addUser");
 });
 
-route.get("/deleteUser", (req, res) => {
-  res.render("deleteUser");
+route.post("/addUser", async (req, res) => {
+  const user = new User({
+    isActivated: true,
+    email: req.body.email,
+    userType: req.body.userType,
+  });
+  await user.save();
+  res.status(201).end();
+});
+
+route.get("/deleteUser", async (req, res) => {
+  const users = await User.find();
+
+  const formattedUsers = users.map((user) => {
+    return {
+      email: user.email,
+      id: user._id,
+    };
+  });
+  res.render("deleteUser", { usersJs: formattedUsers });
+});
+
+route.delete("/deleteUser/:id", async (req, res) => {
+  const userId = req.params.id;
+  await User.findByIdAndRemove(userId);
+  res.end();
 });
 
 route.get("/viewUser", (req, res) => {
@@ -67,8 +92,31 @@ route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
 
-route.get("/deleteFlavor", (req, res) => {
-  res.render("deleteFlavor");
+route.post("/addFlavor", async (req, res) => {
+  const flavor = new Flavor({
+    flavor: req.body.flavor,
+    isAvailable: true,
+  });
+  await flavor.save();
+  res.status(201).end();
+});
+
+route.get("/deleteFlavor", async (req, res) => {
+  const flavors = await Flavor.find();
+
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
+  res.render("deleteFlavor", { flavors: formattedFlavors });
+});
+
+route.delete("/deleteFlavor/:id", async (req, res) => {
+  const flavorId = req.params.id;
+  await Flavor.findByIdAndRemove(flavorId);
+  res.end();
 });
 
 route.get("/barista", (req, res) => {
@@ -79,8 +127,16 @@ route.get("/completed", (req, res) => {
   res.render("completed");
 });
 
+// Route Teacher Menu
+route.get("/teacherMenu/", async (req, res) => {
+  res.render("teacherMenu");
+});
 route.get("/teacherPopularDrinks", async (req, res) => {
   res.render("teacherPopularDrinks");
+});
+
+route.get("/homePopularDrinks", async (req, res) => {
+  res.render("homePopularDrinks");
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
@@ -97,6 +153,43 @@ route.get("/teacherOrderHistory", async (req, res) => {
 
 route.get("/orderConfirmation", async (req, res) => {
   res.render("orderConfirmation");
+});
+
+route.get("/customizeDrink", async (req, res) => {
+  const { drink, price, description } = req.query; // Extract query parameters
+  res.render("customizeDrink", { drink, price, description });
+}); // Pass parameters to view renderer
+
+route.get("/addTopping", async (req, res) => {
+  res.render("addTopping");
+});
+
+route.post("/addTopping", async (req, res) => {
+  const topping = new Topping({
+    topping: req.body.topping,
+    isAvailable: true,
+    price: req.body.price,
+  });
+  await topping.save();
+  res.status(201).end();
+});
+
+route.get("/deleteTopping", async (req, res) => {
+  const toppings = await Topping.find();
+
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
+  res.render("deleteTopping", { toppings: formattedToppings });
+});
+
+route.delete("/deleteTopping/:id", async (req, res) => {
+  const toppingId = req.params.id;
+  await Topping.findByIdAndRemove(toppingId);
+  res.end();
 });
 
 // delegate all authentication to the auth.js router

@@ -7,17 +7,17 @@
 <div class="adminPage">
   <div class="userHdr">Add User</div>
   <input type="text" id="email" placeholder="Email..." />
-  <select name="userType">
-    <option value="user">Teacher</option>
-    <option value="user">Barista</option>
-    <option value="user">Admin</option>
+  <select name="userType" id="userType">
+    <option value="teacher">Teacher</option>
+    <option value="barista">Barista</option>
+    <option value="admin">Admin</option>
   </select>
-  <button type="button">Add User</button>
+  <input type="submit" class="submit" value="Add User" />
 </div>
 
 <!-- /Main Site -->
 
-<!-- <script src="/js/addUser.js"></script> -->
+<script src="/js/addUser.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
