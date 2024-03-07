@@ -7,9 +7,10 @@ const Flavor = require("../model/flavor");
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
 });
-  
+
 route.get("/auth", (req, res) => {
   res.render("auth");
+});
 
 async function getUserRoles(email) {
   try {
