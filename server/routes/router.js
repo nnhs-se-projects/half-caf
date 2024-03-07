@@ -10,18 +10,36 @@ route.get("/auth", (req, res) => {
   res.render("auth");
 });
 
-async function getUserRoles(email1) {
+async function getUserRoles(email) {
   try {
-    const user = await User.findOne({ email: email1 }, "userType");
-    // console.log("role: " + user1.userType);
+    var user = await User.findOne({ email: email }, "userType");
+    var userRole = user.userType;
+    return userRole;
   } catch (error) {
     console.error(error);
   }
 }
 
+route.get("/redirectUser", async (req, res) => {
+  try {
+    var role = await getUserRoles(req.session.email);
+    if (role === "admin") {
+      res.redirect("/addUser");
+    } else if (role === "barista") {
+      res.redirect("/barista");
+    } else if (role === "teacher") {
+      res.redirect("/teacherPopularDrinks");
+    } else {
+      console.log("Role Not Recognized");
+      res.redirect("/");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
 route.get("/addUser", (req, res) => {
-  // console.log("In xxxxx..." + req.session.email);
-  getUserRoles(req.session.email);
   res.render("addUser");
 });
 
