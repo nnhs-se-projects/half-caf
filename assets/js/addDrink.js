@@ -5,7 +5,7 @@ addDrinkButton.addEventListener("click", async () => {
   const price = document.getElementById("price").value;
   const popular = document.getElementById("popular").checked;
   const temps = document.querySelectorAll("input.temps");
-  const checkedTemps = [];
+  let checkedTemps = [];
   for (let i = 0; i < temps.length; i++) {
     if (temps[i].checked) {
       checkedTemps.push(temps[i].value);
@@ -13,9 +13,8 @@ addDrinkButton.addEventListener("click", async () => {
   }
   console.log(checkedTemps);
   const special = document.getElementById("special").checked;
-  const flavors = document.querySelectorAll("input.flavors");
-  console.log(flavors);
-  const checkedFlavors = [];
+  const flavors = document.querySelectorAll("input#flavors");
+  let checkedFlavors = [];
   for (let i = 0; i < flavors.length; i++) {
     if (flavors[i].checked) {
       checkedFlavors.push(flavors[i].value);
@@ -23,8 +22,15 @@ addDrinkButton.addEventListener("click", async () => {
   }
   console.log(checkedFlavors);
 
-  const toppings = document.querySelectorAll("input.toppings:checked");
-  const topping = toppings.length > 0 ? toppings[0].value : null;
+  const toppings = document.querySelectorAll("input#toppings");
+  let checkedToppings = [];
+  for (let i = 0; i < toppings.length; i++) {
+    if (toppings[i].checked) {
+      checkedToppings.push(toppings[i].value);
+    }
+  }
+  console.log(checkedToppings);
+
   const caf = document.getElementById("caffeinated").checked;
 
   const menuItem = {
@@ -32,9 +38,9 @@ addDrinkButton.addEventListener("click", async () => {
     description,
     price,
     popular,
-    flavor,
-    topping,
-    temps,
+    checkedFlavors,
+    checkedToppings,
+    checkedTemps,
     caf,
     special,
   };

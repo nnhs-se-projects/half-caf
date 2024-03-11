@@ -14,7 +14,7 @@
     <ul class="items">
       <% for (let flavor of flavors) {%>
       <li>
-        <input id="flavors" type="checkbox" value="<%= flavor.flavor %>" /><%=
+        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
         flavor.flavor %>
       </li>
       <%}%>
@@ -26,7 +26,10 @@
       <span class="anchor">Select Toppings</span>
       <ul class="items">
         <% for (let topping of toppings) {%>
-        <li><input type="checkbox" /><%= topping.topping %></li>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          topping.topping %>
+        </li>
         <%}%>
       </ul>
     </div>
