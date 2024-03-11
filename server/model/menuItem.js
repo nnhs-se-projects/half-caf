@@ -32,8 +32,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   temp: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "Temp",
+    type: [String],
     required: true,
   },
   caffeination: {

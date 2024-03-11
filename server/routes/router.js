@@ -3,6 +3,8 @@ const route = express.Router();
 const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
+const MenuItem = require("../model/menuItem");
+const TempJson = require("../model/temp.json");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -77,8 +79,44 @@ route.get("/viewUser", (req, res) => {
   res.render("viewUser");
 });
 
-route.get("/addDrink", (req, res) => {
-  res.render("addDrink");
+route.get("/addDrink", async (req, res) => {
+  const flavors = await Flavor.find();
+  const toppings = await Topping.find();
+
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
+
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
+  res.render("addDrink", {
+    temps: TempJson,
+    toppings: formattedToppings,
+    flavors: formattedFlavors,
+  });
+});
+
+route.post("/addDrink", async (req, res) => {
+  const drink = new MenuItem({
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    popular: req.body.popular,
+    flavor: req.body.checkedFlavors,
+    toppings: req.body.checkedToppings,
+    temp: req.body.checkedTemps,
+    caffeination: req.body.caf,
+    special: req.body.special,
+  });
+  await drink.save();
+  res.status(201).end();
 });
 
 route.get("/modifyDrink", (req, res) => {
