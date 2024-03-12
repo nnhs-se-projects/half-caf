@@ -133,6 +133,7 @@ route.get("/modifyDrink", async (req, res) => {
       temps: menuItem.temps,
       caffeination: menuItem.caf,
       special: menuItem.special,
+      id: menuItem._id,
     };
   });
 

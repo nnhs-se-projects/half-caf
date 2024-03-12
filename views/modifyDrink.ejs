@@ -5,22 +5,30 @@
 <!-- Main Site -->
 <div class="adminPage">
   <div class="userHdr">Modify Drink</div>
-  <select name="drinks">
-    <!-- similar to createEntry radio button except habits are drinks -->
+  <select class="select" id="filter">
+    <% for (let menuItem of menuItems) { %>
+    <option value="<%=menuItem.id %>"><%= menuItem.name %></option>
+    <% } %>
   </select>
+
+  <!-- figure out to make fill this w/ og -->
+  <input type="text" id="name" placeholder="Edit Name..." />
+  <input type="text" id="description" placeholder="Edit Description..." />
+  <input type="text" id="price" placeholder="Price..." />
+  <!-- make ^this^ only allow ints -->
+
   <!-- for loop for flavor checkboxes goes here -->
+  <span class="anchor">Flavors</span>
   <input type="checkbox" id="flavor" />
   <label for="flavor">Flavor</label>
   <br />
   <!-- for loop for temp checkboxes goes here -->
+  <span class="anchor">Toppings</span>
   <input type="checkbox" id="temp" />
   <label for="temp">Iced</label>
 
-  <!-- figure out to make fill this w/ og -->
-  <input type="text" id="misc" placeholder="Misc Options..." />
-  <input type="text" id="desc" placeholder="Edit Description..." />
-  <input type="text" id="price" placeholder="Price..." />
-  <!-- make ^this^ only allow ints -->
+  <span class="anchor">Options</span>
+
   <button type="button">Add Drink</button>
 </div>
 
