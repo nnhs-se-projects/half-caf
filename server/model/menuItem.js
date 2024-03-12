@@ -21,7 +21,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  flavor: {
+  flavors: {
     type: [mongoose.Schema.ObjectId],
     ref: "Flavor",
     required: true,
@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
     ref: "Topping",
     required: true,
   },
-  temp: {
+  temps: {
     type: [String],
     required: true,
   },

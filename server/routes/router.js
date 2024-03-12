@@ -119,8 +119,24 @@ route.post("/addDrink", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/modifyDrink", (req, res) => {
-  res.render("modifyDrink");
+route.get("/modifyDrink", async (req, res) => {
+  const menuItems = await MenuItem.find();
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      description: menuItem.description,
+      price: menuItem.price,
+      popular: menuItem.popular,
+      flavors: menuItem.flavors,
+      toppings: menuItem.toppings,
+      temps: menuItem.temps,
+      caffeination: menuItem.caf,
+      special: menuItem.special,
+    };
+  });
+
+  res.render("modifyDrink", { menuItems: formattedMenuItems });
 });
 
 route.get("/deleteDrink", async (req, res) => {
