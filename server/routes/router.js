@@ -3,11 +3,44 @@ const route = express.Router();
 const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
-// const Drink = require("../model/drink");
 const MenuItem = require("../model/menuItem");
+const TempJson = require("../model/temp.json");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
+});
+
+route.get("/auth", (req, res) => {
+  res.render("auth");
+});
+
+async function getUserRoles(email) {
+  try {
+    var user = await User.findOne({ email: email }, "userType");
+    var userRole = user.userType;
+    return userRole;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+route.get("/redirectUser", async (req, res) => {
+  try {
+    var role = await getUserRoles(req.session.email);
+    if (role === "admin") {
+      res.redirect("/addUser");
+    } else if (role === "barista") {
+      res.redirect("/barista");
+    } else if (role === "teacher") {
+      res.redirect("/teacherPopularDrinks");
+    } else {
+      console.log("Role Not Recognized");
+      res.redirect("/");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
 });
 
 route.get("/addUser", (req, res) => {
@@ -46,8 +79,44 @@ route.get("/viewUser", (req, res) => {
   res.render("viewUser");
 });
 
-route.get("/addDrink", (req, res) => {
-  res.render("addDrink");
+route.get("/addDrink", async (req, res) => {
+  const flavors = await Flavor.find();
+  const toppings = await Topping.find();
+
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
+
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
+  res.render("addDrink", {
+    temps: TempJson,
+    toppings: formattedToppings,
+    flavors: formattedFlavors,
+  });
+});
+
+route.post("/addDrink", async (req, res) => {
+  const drink = new MenuItem({
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    popular: req.body.popular,
+    flavor: req.body.checkedFlavors,
+    toppings: req.body.checkedToppings,
+    temp: req.body.checkedTemps,
+    caffeination: req.body.caf,
+    special: req.body.special,
+  });
+  await drink.save();
+  res.status(201).end();
 });
 
 route.get("/modifyDrink", (req, res) => {
@@ -152,6 +221,7 @@ route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
     topping: req.body.topping,
     isAvailable: true,
+    price: req.body.price,
   });
   await topping.save();
   res.status(201).end();

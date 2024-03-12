@@ -3,20 +3,88 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<div class="adminPage">
+<div class="adminPage" id="page">
   <div class="userHdr">Add Drink</div>
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
-  <input type="checkbox" id="popular" />
-  <label for="popular">Popular</label>
+
+  <div id="flavorsList" class="dropdown-check-list">
+    <span class="anchor">Select Flavors</span>
+    <ul class="items">
+      <% for (let flavor of flavors) {%>
+      <li>
+        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+        flavor.flavor %>
+      </li>
+      <%}%>
+    </ul>
+  </div>
+
+  <div id="pageRight">
+    <div id="toppings" class="dropdown-check-list">
+      <span class="anchor">Select Toppings</span>
+      <ul class="items">
+        <% for (let topping of toppings) {%>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          topping.topping %>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+
+    <span class="anchor">Select Options</span>
+    <div class="tempBox">
+      <% for(let temp of temps){ %>
+      <label id="tempLabel">
+        <input
+          type="checkbox"
+          id="temp"
+          class="temps"
+          name="temps"
+          value="<%=temp%>"
+        />
+        <%=temp%>
+      </label>
+      <%} %>
+    </div>
+    <div>
+      <input type="checkbox" id="popular" />
+      <label for="popular">Popular</label>
+    </div>
+    <div>
+      <input type="checkbox" id="special" />
+      <label for="special">Special</label>
+    </div>
+    <div>
+      <input type="checkbox" id="caffeinated" value="Caffeinated" />
+      <label for="caffeinated">Caffeinated</label>
+    </div>
+  </div>
+
   <input type="submit" class="submit" value="Add Drink" />
+
+  <style>
+    #tempLabel {
+      margin-right: 10px;
+    }
+    #pageRight {
+      float: right;
+    }
+    #flavorsList {
+      float: left;
+    }
+    #page {
+      width: auto/2;
+    }
+  </style>
+
+  <!-- /Main Site -->
+
+  <script src="/js/addDrink.js"></script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
 </div>
-
-<!-- /Main Site -->
-
-<script src="/js/addDrink.js"></script>
-
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->
