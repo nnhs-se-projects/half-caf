@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 async function deleteTopping() {
   const selectedId = document.querySelector("#toDelete").value;
-  console.log(selectedId);
   const response = await fetch(`/deleteTopping/${selectedId}`, {
     method: "DELETE",
     headers: {
@@ -12,6 +11,6 @@ async function deleteTopping() {
   if (response.ok) {
     window.location = "/deleteTopping";
   } else {
-    console.log("error");
+    console.log("error delete topping");
   }
 }

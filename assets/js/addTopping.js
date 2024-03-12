@@ -3,7 +3,6 @@ const addToppingButton = document.querySelector("input.submit");
 addToppingButton.addEventListener("click", async () => {
   const getTopping = document.getElementById("topping").value;
   let getToppingPrice = document.getElementById("toppingPrice").value;
-  console.log(getToppingPrice + "!");
   if (getToppingPrice === "") {
     getToppingPrice = "0$";
   }

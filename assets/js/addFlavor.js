@@ -1,8 +1,6 @@
 const addFlavorButton = document.querySelector("input.submit");
-console.log(addFlavorButton);
 addFlavorButton.addEventListener("click", async () => {
   const getFlavor = document.getElementById("flavor").value;
-  console.log(getFlavor);
   const flavor = { flavor: getFlavor };
 
   const response = await fetch("/addFlavor", {
