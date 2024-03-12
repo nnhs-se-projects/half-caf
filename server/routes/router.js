@@ -125,4 +125,13 @@ route.get("/deleteTopping", async (req, res) => {
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
+/** 
+// updating toggleEnabled
+route.get("/_adminHeader", async (req, res) => {
+  Enabled.updateOne(); // add parameter
+  await Enabled.save();
+  res.status(201).end();
+});
+*/
+
 module.exports = route;

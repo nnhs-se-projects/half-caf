@@ -1,6 +1,9 @@
 const toggleEnabled = document.querySelector("input.toggle");
 console.log(toggleEnabled.checked);
-toggleEnabled.addEventListener("change");
+toggleEnabled.addEventListener("change", async () => {
+  const getEnabled = document.getElementById("enabled").value;
+  console.log(getEnabled);
+});
 /** 
 const toggleEnabled = document.querySelector("input.toggle");
 console.log(toggleEnabled.checked); // boolean value
