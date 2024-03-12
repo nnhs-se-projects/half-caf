@@ -16,17 +16,19 @@ route.get("/auth", (req, res) => {
 
 async function getUserRoles(email) {
   try {
-    var user = await User.findOne({ email: email }, "userType");
-    var userRole = user.userType;
+    let user = await User.findOne({ email: email }, "userType");
+    let userRole = user.userType;
     return userRole;
   } catch (error) {
     console.error(error);
   }
 }
 
+// Separate redirectUser route is used to easily redirect
+//    the user dependent on their role
 route.get("/redirectUser", async (req, res) => {
   try {
-    var role = await getUserRoles(req.session.email);
+    let role = await getUserRoles(req.session.email);
     if (role === "admin") {
       res.redirect("/addUser");
     } else if (role === "barista") {
@@ -41,6 +43,29 @@ route.get("/redirectUser", async (req, res) => {
     console.error(error);
     res.status(500).send("Server error");
   }
+});
+
+route.get("/logout", async (req, res) => {
+  if (req.session.token) {
+    // Revoke Google's access token
+    await fetch(
+      `https://oauth2.googleapis.com/revoke?token=${req.session.token}`,
+      {
+        method: "POST",
+      }
+    ).catch((err) => {
+      console.error("Error revoking token:", err);
+    });
+  }
+
+  // Destroy session or remove user data from session
+  req.session.destroy((err) => {
+    if (err) {
+      return console.error("Logout error:", err);
+    }
+    // Redirect to home page or login page after logout
+    res.redirect("/");
+  });
 });
 
 route.get("/addUser", (req, res) => {
