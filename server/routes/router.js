@@ -75,8 +75,11 @@ route.delete("/deleteUser/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/viewUser", (req, res) => {
-  res.render("viewUser");
+route.get("/viewUser", async (req, res) => {
+  const allUsers = await User.find();
+  res.render("viewUser", {
+    users: allUsers,
+  });
 });
 
 route.get("/addDrink", async (req, res) => {

@@ -11,15 +11,22 @@
   <select class="select" id="filter-users">
     <option>All</option>
     <option>Activated</option>
-    <option>Unactivated</option>
+    <option>Deactivated</option>
   </select>
 
   <label for="users"></label>
   <select name="users" id="users" multiple>
+    <% for (let user of users) {%>
+    <option>
+      <input id="users" value="<%= user.email %>" /><%= user.email %>
+    </option>
+    <%}%>
+    <!--
     <option value="a">Admin</option>
     <option value="b">Teacher</option>
     <option value="c">Barista</option>
     <option value="d">Barista2</option>
+    -->
   </select>
 
   <button type="button" class="user-buttons">Activate User</button>
