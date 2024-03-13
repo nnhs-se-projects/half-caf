@@ -120,7 +120,16 @@ route.post("/addDrink", async (req, res) => {
 });
 
 route.get("/modifyDrink", async (req, res) => {
-  const menuItems = await MenuItem.find();
+  const { name } = req.query;
+
+  let menuItems;
+  if (name != null) {
+    menuItems = await MenuItem.findById(name);
+  } else {
+    menuItems = await MenuItem.find();
+  }
+
+  console.log(menuItems);
 
   const formattedMenuItems = menuItems.map((menuItem) => {
     return {
