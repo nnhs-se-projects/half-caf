@@ -15,11 +15,9 @@
   </select>
 
   <label for="users"></label>
-  <select name="users" id="users" multiple>
+  <select multiple name="users" id="users" multiple>
     <% for (let user of users) {%>
-    <option>
-      <input id="users" value="<%= user.email %>" /><%= user.email %>
-    </option>
+    <option><%= user.email %></option>
     <%}%>
     <!--
     <option value="a">Admin</option>
