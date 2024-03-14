@@ -120,33 +120,33 @@ route.post("/addDrink", async (req, res) => {
 });
 
 route.get("/modifyDrink", async (req, res) => {
-  const { name } = req.query;
+  const { id } = req.query;
 
-  let menuItems;
-  if (name != null) {
-    menuItems = await MenuItem.findById(name);
+  console.log(id + "!!!");
+
+  const menuItems = await MenuItem.find();
+
+  let selectedMenuItem;
+
+  if (id != null) {
+    selectedMenuItem = await MenuItem.findById(id);
   } else {
-    menuItems = await MenuItem.find();
+    selectedMenuItem = undefined;
   }
 
-  console.log(menuItems);
+  console.log("selected item: " + selectedMenuItem);
 
   const formattedMenuItems = menuItems.map((menuItem) => {
     return {
       name: menuItem.name,
-      description: menuItem.description,
-      price: menuItem.price,
-      popular: menuItem.popular,
-      flavors: menuItem.flavors,
-      toppings: menuItem.toppings,
-      temps: menuItem.temps,
-      caffeination: menuItem.caf,
-      special: menuItem.special,
       id: menuItem._id,
     };
   });
 
-  res.render("modifyDrink", { menuItems: formattedMenuItems });
+  res.render("modifyDrink", {
+    menuItems: formattedMenuItems,
+    selectedMenuItem,
+  });
 });
 
 route.get("/deleteDrink", async (req, res) => {

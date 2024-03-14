@@ -6,9 +6,14 @@
 <div class="adminPage">
   <div class="userHdr">Modify Drink</div>
   <select class="select" id="filter">
-    <% for (let menuItem of menuItems) { %>
+    <% for (let menuItem of menuItems) { %> <% if(selectedMenuItem !== undefined
+    && selectedMenuItem.id == menuItem.id) { %>
+    <option value="<%=menuItem.id %>" selected="selected">
+      <%= menuItem.name %>
+    </option>
+    <% } else {%>
     <option value="<%=menuItem.id %>"><%= menuItem.name %></option>
-    <% } %>
+    <% } } %>
   </select>
 
   <!-- figure out to make fill this w/ og -->

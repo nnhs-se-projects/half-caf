@@ -2,7 +2,7 @@ function handleSelectChange() {
   const selectedValue = document.getElementById("filter").value;
 
   const urlParams = new URLSearchParams(window.location.search);
-  urlParams.set("name", selectedValue);
+  urlParams.set("id", selectedValue);
 
   // Create the updated URL with the new query parameter
   const updatedURL = `${window.location.origin}${
