@@ -1,28 +1,24 @@
+<!-- include header -->
 <%- include('include/_teacherHeader') %>
-<Main>
+<!-- /include header -->
+
+<!-- Main Site -->
   <head>
     <h2>Menu</h2>
   </head>
   <body>
-    <div >
-    <h3>Coffee</h3>
-     <a href="/customizeDrink?drink=Latte&price=4&description=Add+a+flavor!+Hot+or+iced.+Available+in+decaf.">
-      <div class="card">
-        <div class="container">
-          <h4><b>Latte</b></h4>
-          <h5>$4</h5>
-          <p>Add a flavor! Hot or iced. Available in decaf.</p>
-        </div></a
-    >
-    <a href="/customizeDrink?drink=Cafe+Mocha&price=4&description=Creamy+chocolatey+espresso+based,+hot+or+iced,+available+in+decaf.">
-      </div>
-      <div class="card">
-        <div class="container">
-          <h4><b>Cafe Mocha</b></h4>
-          <h5>$4</h5>
-          <p>Creamy chocolatey espresso based, hot or iced, available in decaf.</p>
+    <!-- <h3>Coffee</h3> -->
+    <!-- <a href="/customizeDrink?drink=Cafe+Mocha&price=4&description=Creamy+chocolatey+espresso+based,+hot+or+iced,+available+in+decaf."> -->
+      <% for (let drink of menuItems){%>
+        <div class="card">
+          <div class="container">
+            <h4><b><%=drink.name%></h4>
+            <h5><%=drink.price%></h5>
+            <p><%=drink.description%></p>
+          </div>
         </div>
-      </div></a>
+      <%}%>
+      
       <a href="/customizeDrink?drink=Caramel+Macchiato&price=4&description=Creamy+caramel+espresso+base,+hot+or+iced,+available+in+decaf">
       </div>
       <div class="card">
@@ -137,5 +133,12 @@
       </div></a>
   </body>
  
-</Main>
-<%- include('include/_footer') %>
+  <!-- /Main Site -->
+
+  <!-- <script src="/js/teacherMenu.js"></script> -->
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
+
+

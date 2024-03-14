@@ -193,7 +193,10 @@ route.get("/completed", (req, res) => {
 
 // Route Teacher Menu
 route.get("/teacherMenu/", async (req, res) => {
-  res.render("teacherMenu");
+  const menu = await MenuItem.find();
+  res.render("teacherMenu", {
+    menuItems: menu,
+  });
 });
 route.get("/teacherPopularDrinks", async (req, res) => {
   res.render("teacherPopularDrinks");
