@@ -14,21 +14,21 @@
     <option>Deactivated</option>
   </select>
 
+  <!--Displays users in view user in a select multiple-->
   <label for="users"></label>
   <select multiple name="users" id="users" multiple>
     <% for (let user of users) {%>
     <option><%= user.email %></option>
     <%}%>
-    <!--
-    <option value="a">Admin</option>
-    <option value="b">Teacher</option>
-    <option value="c">Barista</option>
-    <option value="d">Barista2</option>
-    -->
   </select>
 
-  <button type="button" class="user-buttons">Activate User</button>
-  <button type="button" class="user-buttons">Deactivate User</button>
+  <button id="activate" type="button" class="user-buttons">
+    Activate User
+  </button>
+
+  <button id="deactivate" type="button" class="user-buttons">
+    Deactivate User
+  </button>
 </div>
 
 <!-- /Main Site -->
