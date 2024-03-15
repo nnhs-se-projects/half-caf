@@ -120,21 +120,20 @@ route.post("/addDrink", async (req, res) => {
 });
 
 route.get("/modifyDrink", async (req, res) => {
+  // get id of selected drink
   const { id } = req.query;
 
-  console.log(id + "!!!");
-
   const menuItems = await MenuItem.find();
+  const toppings = await Topping.find();
+  const flavors = await Flavor.find();
 
   let selectedMenuItem;
-
+  // check if any drink has been selected
   if (id != null) {
     selectedMenuItem = await MenuItem.findById(id);
   } else {
     selectedMenuItem = undefined;
   }
-
-  console.log("selected item: " + selectedMenuItem);
 
   const formattedMenuItems = menuItems.map((menuItem) => {
     return {
@@ -146,6 +145,9 @@ route.get("/modifyDrink", async (req, res) => {
   res.render("modifyDrink", {
     menuItems: formattedMenuItems,
     selectedMenuItem,
+    toppings,
+    flavors,
+    temps: TempJson,
   });
 });
 

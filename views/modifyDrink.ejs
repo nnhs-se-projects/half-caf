@@ -4,6 +4,9 @@
 
 <!-- Main Site -->
 <div class="adminPage">
+  <!-- Check if drink has been chosen -->
+  <% let chosenDrink = false; %> <% if(selectedMenuItem == undefined) {
+  chosenDrink = false; } else {chosenDrink = true; } %>
   <div class="userHdr">Modify Drink</div>
   <select class="select" id="filter">
     <% for (let menuItem of menuItems) { %> <% if(selectedMenuItem !== undefined
@@ -17,30 +20,73 @@
   </select>
 
   <!-- figure out to make fill this w/ og -->
-  <input type="text" id="name" placeholder="Edit Name..." />
+  <% if(chosenDrink = true) { %>
+  <textarea class="content" placeholder="Edit Name...">
+<%= selectedMenuItem.name %></textarea
+  >
+  <% } else { %>
+  <textarea class="content" placeholder="Edit Name..."></textarea>
+  <% } %>
   <input type="text" id="description" placeholder="Edit Description..." />
-  <input type="text" id="price" placeholder="Price..." />
-  <!-- make ^this^ only allow ints -->
+  <input type="text" id="price" placeholder="Edit Price..." />
 
-  <!-- for loop for flavor checkboxes goes here -->
-  <span class="anchor">Flavors</span>
-  <input type="checkbox" id="flavor" />
-  <label for="flavor">Flavor</label>
-  <br />
-  <!-- for loop for temp checkboxes goes here -->
-  <span class="anchor">Toppings</span>
-  <input type="checkbox" id="temp" />
-  <label for="temp">Iced</label>
+  <!-- for loop for all option checkboxes -->
+  <div id="flavorsList" class="dropdown-check-list">
+    <span class="anchor">Edit Flavors</span>
+    <ul class="items">
+      <% for (let flavor of flavors) {%>
+      <li>
+        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+        flavor.flavor %>
+      </li>
+      <% } %>
+    </ul>
+  </div>
 
-  <span class="anchor">Options</span>
+  <div id="pageRight">
+    <div id="toppings" class="dropdown-check-list">
+      <span class="anchor">Edit Toppings</span>
+      <ul class="items">
+        <% for (let topping of toppings) {%>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          topping.topping %>
+        </li>
+        <%}%>
+      </ul>
+    </div>
 
-  <button type="button">Add Drink</button>
+    <span class="anchor">Edit Options</span>
+    <div class="tempBox">
+      <% for(let temp of temps){ %>
+      <label id="tempLabel">
+        <input
+          type="checkbox"
+          id="temp"
+          class="temps"
+          name="temps"
+          value="<%=temp%>"
+        />
+        <%=temp%>
+      </label>
+      <%} %>
+    </div>
+  </div>
+  <button type="button">Save Drink</button>
+  <!-- /Main Site -->
+
+  <style>
+    #pageRight {
+      float: right;
+    }
+    #flavorsList {
+      float: left;
+    }
+  </style>
+
+  <script src="/js/modifyDrink.js"></script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
 </div>
-
-<!-- /Main Site -->
-
-<script src="/js/modifyDrink.js"></script>
-
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->

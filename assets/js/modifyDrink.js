@@ -9,10 +9,12 @@ function handleSelectChange() {
     window.location.pathname
   }?${urlParams.toString()}`;
 
+  // redirect window
   window.location = updatedURL;
   console.log(updatedURL);
 }
 
+// listen for change in the dropdown menu
 document
   .getElementById("filter")
   .addEventListener("change", handleSelectChange);

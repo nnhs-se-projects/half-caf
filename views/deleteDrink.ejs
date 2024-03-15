@@ -6,6 +6,7 @@
 
 <div class="adminPage">
   <div class="userHdr">Delete Drink</div>
+  <!-- Loop through menuItems to populate dropdown -->
   <select id="toDelete">
     <% for (let menuItem of menuItems) { %>
     <option value="<%= menuItem.id %>"><%= menuItem.name %></option>
