@@ -10,12 +10,13 @@ userStatus.addEventListener("change", (event) => {
   }
 });
 
-const activate = document.getElementById("activated");
+const activate = document.getElementById("activate");
 activate.addEventListener("click", async () => {
   user.isActivated = true;
   console.log("clicked");
 });
-const deactivate = document.getElementById("deactivated");
+console.log(activate);
+const deactivate = document.getElementById("deactivate");
 deactivate.addEventListener("click", async () => {
   user.isActivated = false;
   console.log("clicked");
