@@ -12,12 +12,18 @@ userStatus.addEventListener("change", (event) => {
 
 const activate = document.getElementById("activate");
 activate.addEventListener("click", async () => {
-  user.isActivated = true;
-  console.log("clicked");
+  for (let user of users) {
+    user.isActivated = true;
+    console.log("is activated:" + user.isActivated);
+  }
+  console.log("activate");
 });
-console.log(activate);
+
 const deactivate = document.getElementById("deactivate");
 deactivate.addEventListener("click", async () => {
-  user.isActivated = false;
-  console.log("clicked");
+  for (let user of users) {
+    user.isActivated = false;
+    console.log("is activated: " + user.isActivated);
+  }
+  console.log("deactivate");
 });
