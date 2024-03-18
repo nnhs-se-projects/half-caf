@@ -20,26 +20,42 @@
   </select>
 
   <!-- figure out to make fill this w/ og -->
-  <% if(chosenDrink = true) { %>
+  <% if(chosenDrink == true) { %>
   <textarea class="content" placeholder="Edit Name...">
 <%= selectedMenuItem.name %></textarea
   >
+  <textarea class="content" placeholder="Edit Description...">
+<%= selectedMenuItem.description %></textarea
+  >
+  <textarea class="content" placeholder="Edit Price...">
+<%= selectedMenuItem.price %></textarea
+  >
   <% } else { %>
   <textarea class="content" placeholder="Edit Name..."></textarea>
+  <textarea class="content" placeholder="Edit Description..."></textarea>
+  <textarea class="content" placeholder="Edit Price..."></textarea>
   <% } %>
-  <input type="text" id="description" placeholder="Edit Description..." />
-  <input type="text" id="price" placeholder="Edit Price..." />
 
   <!-- for loop for all option checkboxes -->
   <div id="flavorsList" class="dropdown-check-list">
     <span class="anchor">Edit Flavors</span>
     <ul class="items">
-      <% for (let flavor of flavors) {%>
+      <%for (let flavor of flavors) { if(chosenDrink == true &&
+      selectedMenuItem.flavors.includes(flavor._id) == true) { %>
       <li>
-        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+        <input
+          id="flavor"
+          type="checkbox"
+          checked="checked"
+          value="<%= flavor._id %>"
+        /><%= flavor.flavor %>
+      </li>
+      <% } else { %>
+      <li>
+        <input id="flavor" type="checkbox" value="<%= flavor._id %>" /><%=
         flavor.flavor %>
       </li>
-      <% } %>
+      <% } }%>
     </ul>
   </div>
 
@@ -47,12 +63,22 @@
     <div id="toppings" class="dropdown-check-list">
       <span class="anchor">Edit Toppings</span>
       <ul class="items">
-        <% for (let topping of toppings) {%>
+        <%for (let topping of toppings) { if(chosenDrink == true &&
+        selectedMenuItem.toppings.includes(topping._id) == true) { %>
         <li>
-          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          <input
+            id="toppings"
+            type="checkbox"
+            checked="checked"
+            value="<%= topping._id %>"
+          /><%= topping.topping %>
+        </li>
+        <% } else { %>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping._id %>" /><%=
           topping.topping %>
         </li>
-        <%}%>
+        <% } }%>
       </ul>
     </div>
 
