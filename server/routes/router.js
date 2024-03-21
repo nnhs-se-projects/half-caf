@@ -127,7 +127,7 @@ route.get("/addDrink", async (req, res) => {
     flavors: formattedFlavors,
   });
 });
-
+//updates database with new menu item
 route.post("/addDrink", async (req, res) => {
   const drink = new MenuItem({
     name: req.body.name,
@@ -155,7 +155,7 @@ route.get("/deleteDrink", (req, res) => {
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
-
+//updates database with new flavor options
 route.post("/addFlavor", async (req, res) => {
   const flavor = new Flavor({
     flavor: req.body.flavor,
@@ -228,6 +228,7 @@ route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
 });
 
+//updates database with new topping options
 route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
     topping: req.body.topping,

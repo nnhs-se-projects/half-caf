@@ -1,3 +1,5 @@
+// creates a menu item with the selected name, description, price if its popular, temperatures available
+  // if its a special, the selected flavors and the selected toppings and if it can be caffinated
 const addDrinkButton = document.querySelector("input.submit");
 addDrinkButton.addEventListener("click", async () => {
   const name = document.getElementById("name").value;

@@ -1,3 +1,4 @@
+// creates a topping with a name chosen by an admin
 const addToppingButton = document.querySelector("input.submit");
 
 addToppingButton.addEventListener("click", async () => {
