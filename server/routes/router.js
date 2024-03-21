@@ -76,12 +76,14 @@ route.delete("/deleteUser/:id", async (req, res) => {
 });
 
 route.get("/viewUser", async (req, res) => {
+  // access all the users in the database
   const allUsers = await User.find();
   res.render("viewUser", {
     users: allUsers,
   });
 });
 
+// not working yet but will update the database based on if the user is activated or deactivated
 route.post("/viewUser", async (req, res) => {
   const userId = req.params.id;
   const user = await User.findById(userId);
