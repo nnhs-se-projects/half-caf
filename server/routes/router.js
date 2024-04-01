@@ -5,6 +5,7 @@ const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
+const Drink = require("../model/drink");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -183,50 +184,6 @@ route.delete("/deleteFlavor/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/barista", (req, res) => {
-  res.render("barista");
-});
-
-route.get("/completed", (req, res) => {
-  res.render("completed");
-});
-
-// Route Teacher Menu
-route.get("/teacherMenu/", async (req, res) => {
-  const menu = await MenuItem.find();
-  res.render("teacherMenu", {
-    menuItems: menu,
-  });
-});
-route.get("/teacherPopularDrinks", async (req, res) => {
-  res.render("teacherPopularDrinks");
-});
-
-route.get("/homePopularDrinks", async (req, res) => {
-  res.render("homePopularDrinks");
-});
-
-route.get("/teacherMyOrder", async (req, res) => {
-  res.render("teacherMyOrder");
-});
-
-route.get("/teacherMyFavorites", async (req, res) => {
-  res.render("teacherMyFavorites");
-});
-
-route.get("/teacherOrderHistory", async (req, res) => {
-  res.render("teacherOrderHistory");
-});
-
-route.get("/orderConfirmation", async (req, res) => {
-  res.render("orderConfirmation");
-});
-
-route.get("/customizeDrink", async (req, res) => {
-  const { drink, price, description } = req.query; // Extract query parameters
-  res.render("customizeDrink", { drink, price, description });
-}); // Pass parameters to view renderer
-
 route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
 });
@@ -257,6 +214,95 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   const toppingId = req.params.id;
   await Topping.findByIdAndRemove(toppingId);
   res.end();
+});
+
+route.get("/barista", (req, res) => {
+  res.render("barista");
+});
+
+route.get("/completed", (req, res) => {
+  res.render("completed");
+});
+
+// Route Teacher Menu
+route.get("/teacherMenu/", async (req, res) => {
+  const menu = await MenuItem.find();
+  res.render("teacherMenu", {
+    menuItems: menu,
+  });
+});
+
+route.get("/customizeDrink/:name", async (req, res) => {
+  const selectedDrink = req.params.name; // params holds parameters from the URL path
+  const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
+  try {
+    const drink = await findDrinkByName(drinkName); // finds drink by name
+    const flavors = []; // gets array of flavors
+    for (let i = 0; i < drink.flavor.length; i++) {
+      flavors[i] = await findFlavorById(drink.flavor[i]);
+    }
+    if (drink) {
+      res.render("customizeDrink", { drink: drink, flavors: flavors });
+    } else {
+      res.status(404).send("Drink not found");
+    }
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink:", error);
+    res.status(500);
+  }
+});
+
+// finds flavor object by id given by drink.flavor
+async function findFlavorById(id) {
+  try {
+    const flavor = await Flavor.findOne({ _id: id });
+    return flavor;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the flavor:", error);
+    res.status(500);
+  }
+}
+
+// gets drink object by its name
+async function findDrinkByName(drinkName) {
+  try {
+    const drink = await MenuItem.findOne({ name: drinkName });
+    return drink;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink by name:", error);
+    res.status(500);
+  }
+}
+
+route.get("/customizeDrink/:name", async (req, res) => {
+  //to make the selected options into a drink
+});
+
+route.get("/teacherPopularDrinks", async (req, res) => {
+  res.render("teacherPopularDrinks");
+});
+
+route.get("/homePopularDrinks", async (req, res) => {
+  res.render("homePopularDrinks");
+});
+
+route.get("/teacherMyOrder", async (req, res) => {
+  res.render("teacherMyOrder");
+});
+
+route.get("/teacherMyFavorites", async (req, res) => {
+  res.render("teacherMyFavorites");
+});
+
+route.get("/teacherOrderHistory", async (req, res) => {
+  res.render("teacherOrderHistory");
+});
+
+route.get("/orderConfirmation", async (req, res) => {
+  res.render("orderConfirmation");
 });
 
 // delegate all authentication to the auth.js router

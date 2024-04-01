@@ -5,14 +5,8 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  flavor: {
-    type: String,
-    required: true,
-  },
-  isAvailable: {
-    type: Boolean,
-    required: true,
-  },
+  flavor: String,
+  isAvailable: Boolean,
 });
 
 const Flavor = mongoose.model("Flavor", schema);
