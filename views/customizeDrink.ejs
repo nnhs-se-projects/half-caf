@@ -9,45 +9,40 @@
 
 <body>
   <h2 id="drinkName"><%=drink.name%></h2>
-  <h4 id="drinkPrice"><%=drink.price%></h4>
+  <h4 id="drinkPrice">Price: $<%=drink.price%></h4>
   <p>Please fill out this form to customize your drink.</p>
-  <div id="flavorsList" class="dropdown-check-list">
+  <div class="dropdown-check-list">
+    <h6>Choose a Flavor:</h6>
     <ul class="items">
       <% for (let flavor of flavors) {%>
       <li>
-        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
-        flavor.flavor %>
+        <input id="<%= flavor.id %>" type="checkbox" /><%= flavor.flavor %>
       </li>
       <%}%>
     </ul>
   </div>
-  <div></div>
-  <!-- 
-      <label>Choose Temperature</label>
-      <select class="select" name="filter" id="filter">
-        <option>Temperature</option>
-        <option>Hot</option>
-        <option>Cold</option>
-        <option>Blended</option></select
-      ><br />
-      <label>Choose Topping:</label><br />
-      <input type="checkbox" />
-      <label>cream</label><br />
-      <input type="checkbox" />
-      <label>sauce</label><br />
-      <input type="checkbox" />
-      <label>boba</label><br /><br />
-      <label>Choose Decaf or Caffeinated</label><br />
-      <input type="radio" id="decaf" name="caffeine" />
-      <label for="decaf">Decaf</label>
-      <input type="radio" id="caf" name="caffeine" />
-      <label for="caf">Caffeine</label>
-      <br /><br />
-      <label>Type Any Special Instructions Here:</label><br />
-      <textarea rows="4" cols="50">Enter text here...</textarea>
-      <input type="submit" class="submit" value="Place Order" />
-    </form>
-  </div> -->
+  <div class="dropdown-check-list">
+    <h6>Choose a Temperature:</h6>
+    <ul class="items">
+      <% for (let temp of temps) {%>
+      <li><input id="<%= temp.id %>" type="checkbox" /><%= temp %></li>
+      <%}%>
+    </ul>
+  </div>
+  <div class="dropdown-check-list">
+    <h6>Choose a Topping:</h6>
+    <ul class="items">
+      <% for (let topping of toppings) {%>
+      <li>
+        <input id="<%= topping.id %>" type="checkbox" /><%= topping.topping %>
+      </li>
+      <%}%>
+    </ul>
+  </div>
+  <form>
+    <textarea>Add Special Instructions Here...</textarea>
+    <input type="submit" class="submit" value="Place Order" />
+  </form>
 </body>
 
 <!-- /Main Site -->

@@ -5,7 +5,7 @@ const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
-const Drink = require("../model/drink");
+const Toppings = require("../model/topping");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -237,12 +237,27 @@ route.get("/customizeDrink/:name", async (req, res) => {
   const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
   try {
     const drink = await findDrinkByName(drinkName); // finds drink by name
-    const flavors = []; // gets array of flavors
+
+    // available flavors array
+    const flavors = [];
     for (let i = 0; i < drink.flavor.length; i++) {
       flavors[i] = await findFlavorById(drink.flavor[i]);
     }
+
+    // available toppings array
+    const toppings = [];
+    for (let i = 0; i < drink.toppings.length; i++) {
+      toppings[i] = await findToppingsById(drink.toppings[i]);
+    }
+
     if (drink) {
-      res.render("customizeDrink", { drink: drink, flavors: flavors });
+      res.render("customizeDrink", {
+        drink: drink,
+        flavors: flavors,
+        temps: drink.temp,
+        toppings: toppings,
+      });
+      //toppings: toppings,
     } else {
       res.status(404).send("Drink not found");
     }
@@ -252,6 +267,18 @@ route.get("/customizeDrink/:name", async (req, res) => {
     res.status(500);
   }
 });
+
+// gets drink object by its name
+async function findDrinkByName(drinkName) {
+  try {
+    const drink = await MenuItem.findOne({ name: drinkName });
+    return drink;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink by name:", error);
+    res.status(500);
+  }
+}
 
 // finds flavor object by id given by drink.flavor
 async function findFlavorById(id) {
@@ -265,11 +292,11 @@ async function findFlavorById(id) {
   }
 }
 
-// gets drink object by its name
-async function findDrinkByName(drinkName) {
+// finds topping objects by id given by drink.toppings
+async function findToppingsById(id) {
   try {
-    const drink = await MenuItem.findOne({ name: drinkName });
-    return drink;
+    const toppings = await Toppings.findOne({ _id: id });
+    return toppings;
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the drink by name:", error);
