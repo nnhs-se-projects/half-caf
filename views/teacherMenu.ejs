@@ -16,7 +16,11 @@
             <div class="container">
               <h4><b><%=drink.name%></h4>
               <h5><%=drink.price%></h5>
-              <p><%=drink.description%></p>
+              <%if(drink.description.length > 40) { %>
+              <p><%=drink.description.slice(0,40) + "..."%></p>
+              <% } else { %>
+                <p><%=drink.description%></p>
+              <% } %>
             </div>
           </div>
         </a>
