@@ -83,11 +83,13 @@ route.get("/viewUser", async (req, res) => {
 });
 
 route.post("/viewUser", async (req, res) => {
-  const userId = req.params.id;
-  const user = await User.findById(userId);
-  entry.isActivated = req.body.content;
-  await user.save();
-  res.status(201).end();
+  for (let i = 0; i < allUsers.size(); i++) {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    user.isActivated = req.body.isActivated;
+    await user.save();
+    res.status(201).end();
+  }
 });
 
 route.get("/addDrink", async (req, res) => {
