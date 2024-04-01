@@ -7,10 +7,8 @@
     <h2>Menu</h2>
   </head>
   <body>
-    <!-- <a href="/customizeDrink?drink=Cafe+Mocha&price=4&description=Creamy+chocolatey+espresso+based,+hot+or+iced,+available+in+decaf."> -->
       <% for (let drink of menuItems){%>
-        <% let link = "/customizeDrink?drink=" + drink.name.replace(" ", "+"); %>
-        <% console.log(link); %>  
+        <% let link = "/customizeDrink/" + drink.name; %>
         <a href = "<%=link%>">
           <div class="card">
             <div class="container">
