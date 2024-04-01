@@ -10,6 +10,8 @@ userStatus.addEventListener("change", (event) => {
   }
 });
 
+// the activate user button on the view user page, updates the isActivated property to true
+  // currently updates all users, will need to change to just the selected users
 const activate = document.getElementById("activate");
 activate.addEventListener("click", async () => {
   for (let user of users) {
@@ -19,6 +21,8 @@ activate.addEventListener("click", async () => {
   console.log("activate");
 });
 
+// the deactivate user button on the view user page, updates the isActivated property to false
+  // currently updates all users, will need to change to just the selected users
 const deactivate = document.getElementById("deactivate");
 deactivate.addEventListener("click", async () => {
   for (let user of users) {
