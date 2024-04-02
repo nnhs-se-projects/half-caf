@@ -6,6 +6,7 @@ const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
 const Toppings = require("../model/topping");
+const Drink = require("../model/drink");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
