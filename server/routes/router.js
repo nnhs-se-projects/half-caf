@@ -85,11 +85,12 @@ route.get("/viewUser", async (req, res) => {
 
 // not working yet but will update the database based on if the user is activated or deactivated
 route.post("/viewUser", async (req, res) => {
-  for (let i = 0; i < allUsers.size(); i++) {
+  for (let use of allUsers) {
     const userId = req.params.id;
-    const user = await User.findById(userId);
+    let user = await use.findById(userId);
     user.isActivated = req.body.isActivated;
     await user.save();
+    console.log(user);
     res.status(201).end();
   }
 });
