@@ -8,44 +8,67 @@
 </head>
 
 <body>
-  <h2 id="drinkName"><%=drink.name%></h2>
-  <h4 id="drinkPrice">Price: $<%=drink.price%></h4>
-  <p>Please fill out this form to customize your drink.</p>
-  <div class="dropdown-check-list">
-    <h6>Choose a Flavor:</h6>
-    <ul class="items">
-      <% for (let flavor of flavors) {%>
-      <li>
-        <input id="<%= flavor.id %>" type="checkbox" /><%= flavor.flavor %>
-      </li>
-      <%}%>
-    </ul>
+  <div id="mainPage">
+    <h2 id="drinkName"><%=drink.name%></h2>
+    <h4 id="drinkPrice">Price: $<%=drink.price%></h4>
+    <p>Please fill out this form to customize your drink.</p>
+    <div class="dropdown-check-list">
+      <h6>Choose a Flavor:</h6>
+      <ul class="items">
+        <% for (let flavor of flavors) {%>
+        <li>
+          <input id="<%= flavor.id %>" type="checkbox" /><%= flavor.flavor %>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+    <div class="dropdown-check-list">
+      <h6>Choose a Temperature:</h6>
+      <ul class="items">
+        <% for (let temp of temps) {%>
+        <li><input id="<%= temp.id %>" type="checkbox" /><%= temp %></li>
+        <%}%>
+      </ul>
+    </div>
+    <div class="dropdown-check-list">
+      <h6>Choose a Topping:</h6>
+      <ul class="items">
+        <% for (let topping of toppings) {%>
+        <li>
+          <input id="<%= topping.id %>" type="checkbox" /><%= topping.topping %>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+    <form>
+      <textarea
+        rows="3"
+        cols="50"
+        placeholder="Add Special Instructions Here..."
+      ></textarea>
+      <input type="submit" class="submit" value="Place Order" />
+    </form>
   </div>
-  <div class="dropdown-check-list">
-    <h6>Choose a Temperature:</h6>
-    <ul class="items">
-      <% for (let temp of temps) {%>
-      <li><input id="<%= temp.id %>" type="checkbox" /><%= temp %></li>
-      <%}%>
-    </ul>
-  </div>
-  <div class="dropdown-check-list">
-    <h6>Choose a Topping:</h6>
-    <ul class="items">
-      <% for (let topping of toppings) {%>
-      <li>
-        <input id="<%= topping.id %>" type="checkbox" /><%= topping.topping %>
-      </li>
-      <%}%>
-    </ul>
-  </div>
-  <form>
-    <textarea>Add Special Instructions Here...</textarea>
-    <input type="submit" class="submit" value="Place Order" />
-  </form>
 </body>
 
 <!-- /Main Site -->
+<style>
+  #mainPage {
+    width: 60%;
+    align-items: center;
+    margin-left: 7%;
+  }
+  #drinkName {
+    margin: 0px;
+    margin-bottom: 5%;
+  }
+  #drinkPrice {
+    margin-bottom: 3%;
+  }
+  h6 {
+    margin-bottom: 1.5%;
+  }
+</style>
 
 <!-- <script src="/js/teacherMenu.js"></script> -->
 

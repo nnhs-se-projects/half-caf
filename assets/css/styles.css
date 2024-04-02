@@ -147,11 +147,12 @@ https://www.w3schools.com/howto/howto_css_switch.asp
 .card {
   width: 40%;
   max-width: 400px;
-  height: 10%;
+  height: auto;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
   margin: 75px;
   font-size: 6vmin;
+  overflow-wrap: normal;
 }
 
 .card:hover {
@@ -190,4 +191,8 @@ img {
 
 .tempBox {
   display: flex;
+}
+
+textarea {
+  resize: none;
 }
