@@ -5,6 +5,7 @@ const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
+const Enabled = require("../model/enabled.js");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -127,7 +128,7 @@ route.get("/addDrink", async (req, res) => {
     flavors: formattedFlavors,
   });
 });
-//updates database with new menu item
+// updates database with new menu item
 route.post("/addDrink", async (req, res) => {
   const drink = new MenuItem({
     name: req.body.name,
@@ -155,7 +156,7 @@ route.get("/deleteDrink", (req, res) => {
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
-//updates database with new flavor options
+// updates database with new flavor options
 route.post("/addFlavor", async (req, res) => {
   const flavor = new Flavor({
     flavor: req.body.flavor,
@@ -228,7 +229,7 @@ route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
 });
 
-//updates database with new topping options
+// updates database with new topping options
 route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
     topping: req.body.topping,
@@ -260,13 +261,13 @@ route.delete("/deleteTopping/:id", async (req, res) => {
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
-/** 
+route.get("/toggle");
+
 // updating toggleEnabled
-route.get("/_adminHeader", async (req, res) => {
-  Enabled.updateOne(); // add parameter
-  await Enabled.save();
-  res.status(201).end();
+route.post("/toggle", async (req, res) => {
+  const toggle = await Enabled.findById("65d77b1087449294679afc91");
+  toggle.enabled = req.body.isEnabled;
+  await toggle.save();
 });
-*/
 
 module.exports = route;

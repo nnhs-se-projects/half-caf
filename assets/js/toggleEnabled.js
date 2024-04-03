@@ -1,11 +1,31 @@
 const toggleEnabled = document.querySelector("input.toggle");
 console.log(toggleEnabled.checked);
 toggleEnabled.addEventListener("change", async () => {
-  const getEnabled = document.getElementById("enabled").value;
+  const getEnabled = document.getElementById("myCheckbox").checked;
   console.log(getEnabled);
+
+  const url = window.location.pathname;
+
+  const isEnabled = { enabled: getEnabled };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: isEnabled,
+  });
+
+  window.location = "/toggle";
+
+  if (response.ok) {
+    console.log("success");
+  } else {
+    console.log("error");
+  }
 });
 /** 
-const toggleEnabled = document.querySelector("input.toggle");
+const toggleEnabled = document.querySelector("input.toggle"); `
 console.log(toggleEnabled.checked); // boolean value
 // const id = "65d77b1087449294679afc91";
 toggleEnabled.addEventListener("change", async () => {
