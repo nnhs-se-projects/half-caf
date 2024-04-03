@@ -4,6 +4,8 @@
  * @param {Object} res - the response object from the Google Sign-In popup
  */
 
+//const UserInfo = require("../server/model/User");
+
 // eslint-disable-next-line no-unused-vars
 async function handleCredentialResponse(res) {
   await fetch("/auth", {
@@ -16,7 +18,5 @@ async function handleCredentialResponse(res) {
       "Content-Type": "application/json",
     },
   });
-
-  // redirect to the index page
-  window.location = "/";
+  window.location = "/redirectUser";
 }

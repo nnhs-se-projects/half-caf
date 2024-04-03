@@ -3,20 +3,94 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<div class="adminPage">
+<div class="adminPage" id="page">
   <div class="userHdr">Add Drink</div>
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
-  <input type="checkbox" id="popular" />
-  <label for="popular">Popular</label>
+  <!--accesses all the flavors and displays them in a list of checkboxes-->
+  <div id="flavorsList" class="dropdown-check-list">
+    <span class="anchor">Select Flavors</span>
+    <ul class="items">
+      <% for (let flavor of flavors) {%>
+      <li>
+        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+        flavor.flavor %>
+      </li>
+      <%}%>
+    </ul>
+  </div>
+  <!--accesses all the toppings and displays them in a list of checkboxes-->
+  <div id="pageRight">
+    <div id="toppings" class="dropdown-check-list">
+      <span class="anchor">Select Toppings</span>
+      <ul class="items">
+        <% for (let topping of toppings) {%>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          topping.topping %>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+    <!--accesses all the temps from the json and displays them as checkboxes-->
+    <span class="anchor">Select Options</span>
+    <div class="tempBox">
+      <% for(let temp of temps){ %>
+      <label id="tempLabel">
+        <input
+          type="checkbox"
+          id="temp"
+          class="temps"
+          name="temps"
+          value="<%=temp%>"
+        />
+        <%=temp%>
+      </label>
+      <%} %>
+    </div>
+
+    <!--checkboxes for if a drink is popular, special or if it can be caffeinated-->
+    <div>
+      <input type="checkbox" id="popular" />
+      <label for="popular">Popular</label>
+    </div>
+    <div>
+      <input type="checkbox" id="special" />
+      <label for="special">Special</label>
+    </div>
+    <div>
+      <input type="checkbox" id="caffeinated" value="Caffeinated" />
+      <label for="caffeinated">Caffeinated</label>
+    </div>
+  </div>
+
   <input type="submit" class="submit" value="Add Drink" />
+  <style>
+    #tempLabel {
+      margin-right: 10px;
+    }
+  </style>
+
+  <!--
+  <style>
+    #pageRight {
+      float: right;
+    }
+    #flavorsList {
+      float: left;
+    }
+    #page {
+      width: auto/2;
+    }
+  </style>
+-->
+
+  <!-- /Main Site -->
+
+  <script src="/js/addDrink.js"></script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
 </div>
-
-<!-- /Main Site -->
-
-<script src="/js/addDrink.js"></script>
-
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->

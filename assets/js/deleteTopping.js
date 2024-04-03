@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
-
-async function deleteUsers() {
+async function deleteTopping() {
   const selectedId = document.querySelector("#toDelete").value;
-  const response = await fetch(`/deleteUser/${selectedId}`, {
+  const response = await fetch(`/deleteTopping/${selectedId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -10,8 +9,8 @@ async function deleteUsers() {
   });
 
   if (response.ok) {
-    window.location = "/deleteUser";
+    window.location = "/deleteTopping";
   } else {
-    console.log("error deleting user");
+    console.log("error delete topping");
   }
 }
