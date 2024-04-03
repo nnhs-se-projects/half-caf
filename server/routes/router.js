@@ -84,15 +84,26 @@ route.get("/viewUser", async (req, res) => {
 });
 
 // not working yet but will update the database based on if the user is activated or deactivated
-route.post("/viewUser", async (req, res) => {
-  for (let use of allUsers) {
-    const userId = req.params.id;
-    let user = await use.findById(userId);
-    user.isActivated = req.body.isActivated;
-    await user.save();
-    console.log(user);
-    res.status(201).end();
+route.post("/updateUserStatus", async (req, res) => {
+  const { userEmails, isActivated } = req.body;
+  try {
+    await User.updateMany(
+      { _id: { $in: userEmails } },
+      { $set: { isActivated: isActivated } }
+    );
+    res.status(200).json({ message: "User status updated successfully." });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
+  // for (let use of allUsers) {
+  //   const userId = req.params.id;
+  //   let user = await use.findById(userId);
+  //   user.isActivated = req.body.isActivated;
+  //   await user.save();
+  //   console.log(user);
+  //   res.status(201).end();
+  // }
 });
 
 route.get("/addDrink", async (req, res) => {
