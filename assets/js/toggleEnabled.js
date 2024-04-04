@@ -5,15 +5,15 @@ toggleEnabled.addEventListener("change", async () => {
   console.log(getEnabled);
 
   const url = window.location.pathname;
-
+  console.log(url);
   const isEnabled = { enabled: getEnabled };
 
-  const response = await fetch(url, {
+  const response = await fetch("/toggle", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: isEnabled,
+    body: JSON.stringify(isEnabled),
   });
 
   window.location = "/toggle";
