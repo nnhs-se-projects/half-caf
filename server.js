@@ -6,7 +6,7 @@
 // import the express module, which exports the express function
 const express = require("express");
 
-// invoke the express function to create an Express application
+// invoke the express function to create an Express
 const app = express();
 
 // load environment variables from the .env file into process.env

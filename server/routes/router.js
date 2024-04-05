@@ -258,7 +258,6 @@ route.get("/customizeDrink/:name", async (req, res) => {
         temps: drink.temp,
         toppings: toppings,
       });
-      //toppings: toppings,
     } else {
       res.status(404).send("Drink not found");
     }
@@ -305,8 +304,20 @@ async function findToppingsById(id) {
   }
 }
 
-route.get("/customizeDrink/:name", async (req, res) => {
-  //to make the selected options into a drink
+route.post("/customizeDrink/:name", async (req, res) => {
+  console.log("$$$$body:" + req.body);
+  const drink = new Drink({
+    name: req.body.name,
+    price: req.body.price,
+    flavors: req.body.checkedFlavors,
+    toppings: req.body.checkedToppings,
+    temp: req.body.temp,
+    // caffeination: req.body.caf,
+    instructions: req.body.instructions,
+    favorite: req.body.favorite,
+  });
+  await drink.save();
+  res.status(201).end();
 });
 
 route.get("/teacherPopularDrinks", async (req, res) => {

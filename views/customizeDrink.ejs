@@ -9,15 +9,16 @@
 
 <body>
   <div id="mainPage">
-    <h2 id="drinkName"><%=drink.name%></h2>
-    <h4 id="drinkPrice">Price: $<%=drink.price%></h4>
+    <h2 id="name"><%=drink.name%></h2>
+    <h4 id="price">$<%=drink.price%></h4>
     <p>Please fill out this form to customize your drink.</p>
     <div class="dropdown-check-list">
       <h6>Choose a Flavor:</h6>
       <ul class="items">
         <% for (let flavor of flavors) {%>
         <li>
-          <input id="<%= flavor.id %>" type="checkbox" /><%= flavor.flavor %>
+          <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+          flavor.flavor %>
         </li>
         <%}%>
       </ul>
@@ -26,7 +27,9 @@
       <h6>Choose a Temperature:</h6>
       <ul class="items">
         <% for (let temp of temps) {%>
-        <li><input id="<%= temp.id %>" type="checkbox" /><%= temp %></li>
+        <li>
+          <input id="temp" type="checkbox" value="<%= temp.id %>" /><%= temp %>
+        </li>
         <%}%>
       </ul>
     </div>
@@ -35,23 +38,24 @@
       <ul class="items">
         <% for (let topping of toppings) {%>
         <li>
-          <input id="<%= topping.id %>" type="checkbox" /><%= topping.topping %>
+          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          topping.topping %>
         </li>
         <%}%>
       </ul>
     </div>
-    <form>
-      <textarea
-        rows="3"
-        cols="50"
-        placeholder="Add Special Instructions Here..."
-      ></textarea>
-      <input type="submit" class="submit" value="Place Order" />
-    </form>
+    <div><input id="favorite" type="checkbox" />Save to Favorite</div>
+    <input
+      type="text"
+      id="instructions"
+      placeholder="Add Any Special Instructions..."
+    />
+    <input type="submit" class="submit" value="Place Order" />
   </div>
 </body>
 
 <!-- /Main Site -->
+
 <style>
   #mainPage {
     width: 60%;
@@ -70,7 +74,7 @@
   }
 </style>
 
-<!-- <script src="/js/teacherMenu.js"></script> -->
+<script src="/js/customizeDrink.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
