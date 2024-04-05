@@ -5,7 +5,7 @@ const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
-const Enabled = require("../model/enabled.js");
+const Enabled = require("../model/enabled");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -265,8 +265,9 @@ route.get("/toggle");
 
 // updating toggleEnabled
 route.post("/toggle", async (req, res) => {
-  const toggle = await Enabled.findById("65d77b1087449294679afc91");
-  toggle.enabled = req.body.isEnabled;
+  const toggle = await Enabled.find();
+  console.log("toggle: " + toggle);
+  toggle.enabled = req.body.enabled;
   await toggle.save();
 });
 
