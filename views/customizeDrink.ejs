@@ -10,7 +10,7 @@
 <body>
   <div id="mainPage">
     <h2 id="name"><%=drink.name%></h2>
-    <h4 id="price">$<%=drink.price%></h4>
+    <h4 id="price">Price: $<%=drink.price%></h4>
     <p>Please fill out this form to customize your drink.</p>
     <div class="dropdown-check-list">
       <h6>Choose a Flavor:</h6>
@@ -27,9 +27,7 @@
       <h6>Choose a Temperature:</h6>
       <ul class="items">
         <% for (let temp of temps) {%>
-        <li>
-          <input id="temp" type="checkbox" value="<%= temp.id %>" /><%= temp %>
-        </li>
+        <li><input id="temp" type="radio" value="<%= temp %>" /><%= temp %></li>
         <%}%>
       </ul>
     </div>

@@ -2,7 +2,8 @@ const placeToOrderButton = document.querySelector("input.submit");
 placeToOrderButton.addEventListener("click", async () => {
   // alert("clicked");
   const name = document.getElementById("name").textContent;
-  const price = document.getElementById("price").textContent;
+  const price = document.getElementById("price").textContent.match(/(\d+)/)[0];
+  console.log(price);
   const flavors = document.querySelectorAll("input#flavors");
   let checkedFlavors = [];
   for (let i = 0; i < flavors.length; i++) {
@@ -17,7 +18,7 @@ placeToOrderButton.addEventListener("click", async () => {
       checkedToppings.push(toppings[i].value);
     }
   }
-  const temp = document.querySelectorAll("input#temp").value;
+  const temp = document.querySelector("input#temp:checked").value;
   console.log(temp);
 
   const instructions = document.getElementById("instructions").value;
@@ -31,20 +32,20 @@ placeToOrderButton.addEventListener("click", async () => {
     checkedFlavors,
     checkedToppings,
     temp,
-    // caf,
     instructions,
     favorite,
   };
+  // caf,
   console.log(drink);
   // let urlSlug = name.replace("%20/", " ");
   // console.log(urlSlug);
-  //   const response = await fetch("/customizeDrink/${encodeURIComponent(name)}", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(drink),
-  //   });
+  const response = await fetch(`/customizeDrink/${encodeURIComponent(name)}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(drink),
+  });
 
   if (response.ok) {
     window.location = "/teacherMyOrder";
