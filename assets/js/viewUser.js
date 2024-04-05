@@ -1,5 +1,4 @@
 const userStatus = document.getElementById("filter-users");
-console.log("userStatus: " + userStatus);
 userStatus.addEventListener("change", (event) => {
   if (userStatus.value === "All") {
     // alert("All");
@@ -17,8 +16,9 @@ const deactivate = document.getElementById("deactivate");
 activate.addEventListener("click", async () => {
   // Get the selected user IDs
   const selectedUserIds = Array.from(userSelect.selectedOptions).map(
-    (option) => option.value
+    (option) => option.id
   );
+  console.log(selectedUserIds);
 
   // Call the updateUserStatus function with the selected user IDs
   await updateUserStatus(selectedUserIds, true);
@@ -38,8 +38,9 @@ activate.addEventListener("click", async () => {
 deactivate.addEventListener("click", async () => {
   // Get the selected user IDs
   const selectedUserIds = Array.from(userSelect.selectedOptions).map(
-    (option) => option.value
+    (option) => option.id
   );
+  console.log(selectedUserIds);
 
   // Call the updateUserStatus function with the selected user IDs
   await updateUserStatus(selectedUserIds, false);
@@ -61,6 +62,7 @@ async function updateUserStatus(userIds, isActivated) {
     console.log(
       `${isActivated ? "Activated" : "Deactivated"} users successfully.`
     );
+    console.log("users activated/deactivated: " + userIds);
   } catch (error) {
     console.error("Error:", error);
   }
