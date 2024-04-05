@@ -265,8 +265,7 @@ route.get("/toggle");
 
 // updating toggleEnabled
 route.post("/toggle", async (req, res) => {
-  const toggle = await Enabled.find();
-  console.log("toggle: " + toggle);
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
   await toggle.save();
 });
