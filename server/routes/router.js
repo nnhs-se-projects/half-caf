@@ -86,8 +86,6 @@ route.get("/viewUser", async (req, res) => {
 // not working yet but will update the database based on if the user is activated or deactivated
 route.post("/updateUserStatus", async (req, res) => {
   const { userIds, isActivated } = req.body;
-  console.log(isActivated);
-  console.log(userIds);
   try {
     await User.updateMany(
       { _id: { $in: userIds } },
