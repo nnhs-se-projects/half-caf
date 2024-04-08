@@ -1,8 +1,6 @@
 const toggleEnabled = document.querySelector("input.toggle");
-console.log(toggleEnabled.checked);
 toggleEnabled.addEventListener("change", async () => {
   const getEnabled = document.getElementById("myCheckbox").checked;
-  console.log(getEnabled);
 
   const url = window.location.pathname;
   console.log(url);

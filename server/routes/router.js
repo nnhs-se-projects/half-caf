@@ -24,6 +24,21 @@ route.use(async (req, res, next) => {
   next();
 });
 
+let pastValue;
+route.get("/checkForUpdates", async (req, res) => {
+  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
+  let updated = false;
+  if (enabled.enabled === pastValue) {
+    updated = false;
+  } else {
+    updated = true;
+  }
+
+  pastValue = enabled.enabled;
+  // Respond with JSON indicating whether updates have occurred
+  res.json({ updated });
+});
+
 async function getUserRoles(email) {
   try {
     const user = await User.findOne({ email }, "userType");
