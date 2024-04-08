@@ -15,6 +15,15 @@ route.get("/auth", (req, res) => {
   res.render("auth");
 });
 
+route.use(async (req, res, next) => {
+  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
+  const toggle = enabled.enabled;
+  res.locals.headerData = {
+    enabled: toggle,
+  };
+  next();
+});
+
 async function getUserRoles(email) {
   try {
     let user = await User.findOne({ email: email }, "userType");

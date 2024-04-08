@@ -24,11 +24,21 @@
       <!-- Rounded switch -->
       <!-- (clicked/orange/right means enabled)-->
       <label class="on-off">
+        <% if(headerData.enabled == false) { %>
         <input class="toggle" type="checkbox" id="myCheckbox" />
         <span class="dis-en"></span>
+        <% } else { %>
+        <input
+          class="toggle"
+          type="checkbox"
+          id="myCheckbox"
+          checked="checked"
+        />
+        <span class="dis-en"></span>
+        <% } %>
       </label>
     </div>
-    <%console.log(enabled)%>
+
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
     <script src="/js/toggleEnabled.js"></script>
