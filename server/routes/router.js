@@ -261,7 +261,10 @@ route.delete("/deleteTopping/:id", async (req, res) => {
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
-route.get("/toggle");
+route.get("/toggle", async (req, res) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+  res.render("_adminHeader", { enabled: toggle });
+});
 
 // updating toggleEnabled
 route.post("/toggle", async (req, res) => {
