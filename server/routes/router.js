@@ -26,8 +26,8 @@ route.use(async (req, res, next) => {
 
 async function getUserRoles(email) {
   try {
-    let user = await User.findOne({ email: email }, "userType");
-    let userRole = user.userType;
+    const user = await User.findOne({ email }, "userType");
+    const userRole = user.userType;
     return userRole;
   } catch (error) {
     console.error(error);
@@ -38,7 +38,7 @@ async function getUserRoles(email) {
 //    the user dependent on their role
 route.get("/redirectUser", async (req, res) => {
   try {
-    let role = await getUserRoles(req.session.email);
+    const role = await getUserRoles(req.session.email);
     if (role === "admin") {
       res.redirect("/addUser");
     } else if (role === "barista") {
