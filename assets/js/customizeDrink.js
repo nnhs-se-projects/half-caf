@@ -3,7 +3,6 @@ placeToOrderButton.addEventListener("click", async () => {
   // alert("clicked");
   const name = document.getElementById("name").textContent;
   const price = document.getElementById("price").textContent.match(/(\d+)/)[0];
-  console.log(price);
   const flavors = document.querySelectorAll("input#flavors");
   let checkedFlavors = [];
   for (let i = 0; i < flavors.length; i++) {
@@ -19,8 +18,6 @@ placeToOrderButton.addEventListener("click", async () => {
     }
   }
   const temp = document.querySelector("input#temp:checked").value;
-  console.log(temp);
-
   const instructions = document.getElementById("instructions").value;
   const favorite = document.getElementById("favorite").checked;
 
@@ -36,9 +33,6 @@ placeToOrderButton.addEventListener("click", async () => {
     favorite,
   };
   // caf,
-  console.log(drink);
-  // let urlSlug = name.replace("%20/", " ");
-  // console.log(urlSlug);
   const response = await fetch(`/customizeDrink/${encodeURIComponent(name)}`, {
     method: "POST",
     headers: {

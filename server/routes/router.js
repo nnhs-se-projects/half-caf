@@ -7,6 +7,7 @@ const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
+const Order = require("../model/order");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -142,7 +143,6 @@ route.post("/addDrink", async (req, res) => {
     caffeination: req.body.caf,
     special: req.body.special,
   });
-  await drink.save();
   res.status(201).end();
 });
 
@@ -305,7 +305,7 @@ async function findToppingsById(id) {
 }
 
 route.post("/customizeDrink/:name", async (req, res) => {
-  console.log("$$$$body:" + req.body);
+  // drink user is adding to order
   const drink = new Drink({
     name: req.body.name,
     price: req.body.price,
@@ -316,7 +316,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
     instructions: req.body.instructions,
     favorite: req.body.favorite,
   });
-  await drink.save();
+  // await drink.save();
   res.status(201).end();
 });
 
@@ -330,6 +330,14 @@ route.get("/homePopularDrinks", async (req, res) => {
 
 route.get("/teacherMyOrder", async (req, res) => {
   res.render("teacherMyOrder");
+});
+
+route.post("/teacherMyOrder", async (req, res) => {
+  console.log(req.rm);
+  const order = new Order({
+    email: req.session.email,
+    room: req.body.rm,
+  });
 });
 
 route.get("/teacherMyFavorites", async (req, res) => {

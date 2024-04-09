@@ -7,9 +7,8 @@ const mongoose = require("mongoose");
 // const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
-  user: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "User",
+  email: {
+    type: String,
     required: true,
   },
   room: {
