@@ -1,3 +1,4 @@
+// \/ Drop down menu that will filter through All, Activated, and Deactivated and only display users of that type
 const userStatus = document.getElementById("filter-users");
 userStatus.addEventListener("change", (event) => {
   if (userStatus.value === "All") {
@@ -13,7 +14,7 @@ const userSelect = document.getElementById("users");
 const activate = document.getElementById("activate");
 const deactivate = document.getElementById("deactivate");
 
-async function displayUsers() {}
+// async function displayUsers() {}
 
 activate.addEventListener("click", async () => {
   // Get the selected user IDs
