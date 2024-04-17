@@ -1,4 +1,16 @@
-// refresh.js
+// Client-side code
+const ws = new WebSocket("localhost:8080/addUser");
+
+ws.onmessage = function (event) {
+  // Handle message from server
+  if (event.data === "Data updated") {
+    // Reload the page if data has been updated
+    console.log("reload page");
+    location.reload();
+  }
+};
+
+/* // refresh.js
 
 // Function to check for updates
 function checkForUpdates() {
@@ -28,3 +40,4 @@ function checkForUpdates() {
 
 // Call checkForUpdates() every 5 seconds (adjust as needed)
 setInterval(checkForUpdates, 5000);
+ */

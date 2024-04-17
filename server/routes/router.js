@@ -6,6 +6,7 @@ const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temp.json");
 const Enabled = require("../model/enabled");
+const WebSocket = require("ws");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -24,8 +25,23 @@ route.use(async (req, res, next) => {
   next();
 });
 
+const wss = new WebSocket.Server({ port: 8081 });
+
+// Client connections storage
+let clients = [];
+
+// WebSocket connection handling
+wss.on("connection", (ws) => {
+  clients.push(ws); // Add client to storage
+
+  // Handle client disconnection
+  ws.on("close", () => {
+    clients = clients.filter((client) => client !== ws);
+  });
+});
+
 let pastValue;
-route.get("/checkForUpdates", async (req, res) => {
+async function checkForUpdates() {
   const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
   let updated = false;
   if (enabled.enabled === pastValue) {
@@ -35,9 +51,15 @@ route.get("/checkForUpdates", async (req, res) => {
   }
 
   pastValue = enabled.enabled;
-  // Respond with JSON indicating whether updates have occurred
-  res.json({ updated });
-});
+  if (updated === true) {
+    console.log("boolean updated");
+    // If updates detected, notify all connected clients
+    clients.forEach((client) => {
+      client.send("Data updated");
+    });
+  }
+}
+setInterval(checkForUpdates, 5000);
 
 async function getUserRoles(email) {
   try {
