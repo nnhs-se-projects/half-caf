@@ -3,8 +3,6 @@
  */
 
 const mongoose = require("mongoose");
-// const User = require("./user");
-// const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
   email: {

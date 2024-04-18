@@ -8,6 +8,7 @@ const TempJson = require("../model/temp.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+let orderMap = new Map();
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -317,7 +318,27 @@ route.post("/customizeDrink/:name", async (req, res) => {
     favorite: req.body.favorite,
   });
   // await drink.save();
+  orderMap.set(req.session.email, drink);
+  console.log(orderMap);
   res.status(201).end();
+});
+
+route.post("/teacherMyOrder", async (req, res) => {
+  console.log("room number:" + req.body.rm);
+  let arr = [];
+  for (let i = 0; i < orderMap.size; i++) {
+    if (req.session.email === orderMap.key) {
+    }
+  }
+
+  const order = new Order({
+    email: req.session.email,
+    // room: req.body.rm,
+    // timestamp: today's date,
+    complete: false,
+    read: false,
+    // drink:
+  });
 });
 
 route.get("/teacherPopularDrinks", async (req, res) => {
@@ -330,14 +351,6 @@ route.get("/homePopularDrinks", async (req, res) => {
 
 route.get("/teacherMyOrder", async (req, res) => {
   res.render("teacherMyOrder");
-});
-
-route.post("/teacherMyOrder", async (req, res) => {
-  console.log(req.rm);
-  const order = new Order({
-    email: req.session.email,
-    room: req.body.rm,
-  });
 });
 
 route.get("/teacherMyFavorites", async (req, res) => {
