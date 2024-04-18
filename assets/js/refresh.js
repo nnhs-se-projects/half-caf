@@ -1,9 +1,10 @@
 // Client-side code
-const ws = new WebSocket("localhost:8080/addUser");
+const ws = new WebSocket("ws://localhost:8081");
 
 ws.onmessage = function (event) {
-  // Handle message from server
-  if (event.data === "Data updated") {
+  const jsonData = JSON.parse(event.data);
+  console.log(jsonData.message);
+  if (jsonData.message === "Data updated") {
     // Reload the page if data has been updated
     console.log("reload page");
     location.reload();

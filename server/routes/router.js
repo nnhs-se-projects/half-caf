@@ -16,11 +16,30 @@ route.get("/auth", (req, res) => {
   res.render("auth");
 });
 
-route.use(async (req, res, next) => {
-  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
-  const toggle = enabled.enabled;
+route.get("/toggle", async (req, res) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+  res.render("_adminHeader", { enabled: toggle });
+});
+
+// updating toggleEnabled
+route.post("/toggle", async (req, res) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+  toggle.enabled = req.body.enabled;
+  await toggle.save();
+});
+
+let sendToggle;
+route.use((req, res, next) => {
+  const ws = new WebSocket("ws://localhost:8081");
+
+  ws.on("message", (message) => {
+    const jsonData = JSON.parse(message);
+    console.log("jsonData.toggle: " + jsonData.toggle);
+    sendToggle = jsonData.toggle;
+  });
+  console.log("sendToggle: " + sendToggle);
   res.locals.headerData = {
-    enabled: toggle,
+    enabled: sendToggle,
   };
   next();
 });
@@ -51,15 +70,23 @@ async function checkForUpdates() {
   }
 
   pastValue = enabled.enabled;
+
+  const sendData = {
+    message: "Data updated",
+    toggle: enabled.enabled,
+  };
+
+  const jsonData = JSON.stringify(sendData);
+
   if (updated === true) {
-    console.log("boolean updated");
+    console.log("boolean updated: " + enabled.enabled);
     // If updates detected, notify all connected clients
     clients.forEach((client) => {
-      client.send("Data updated");
+      client.send(jsonData);
     });
   }
 }
-setInterval(checkForUpdates, 5000);
+setInterval(checkForUpdates, 1000);
 
 async function getUserRoles(email) {
   try {
@@ -306,17 +333,5 @@ route.delete("/deleteTopping/:id", async (req, res) => {
 
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
-
-route.get("/toggle", async (req, res) => {
-  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-  res.render("_adminHeader", { enabled: toggle });
-});
-
-// updating toggleEnabled
-route.post("/toggle", async (req, res) => {
-  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-  toggle.enabled = req.body.enabled;
-  await toggle.save();
-});
 
 module.exports = route;
