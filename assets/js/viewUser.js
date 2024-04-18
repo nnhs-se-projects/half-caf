@@ -3,13 +3,34 @@ const userStatus = document.getElementById("filter-users");
 userStatus.addEventListener("change", (event) => {
   if (userStatus.value === "All") {
     alert("All");
+    let users = [{ _id: 1, email: "user1@example.com" }]; // all the users in the database
   } else if (userStatus.value === "Activated") {
     alert("Activated");
+    let users = [{}]; // the users with isActivated value == true
+    updateUsersSelect();
   } else if (userStatus.value === "Deactivated") {
     alert("Deactivated");
+    let users = [{}]; // the users with isActivated value == false
   }
 });
 
+// let users = [{ _id: 1, email: "user1@example.com" }]; // test to see if the below function works in using the dropdown menu to filter the options in the select multiple
+// function to update users for selected element (all, activated, deactivated)
+function updateUsersSelect() {
+  let selectElement = document.getElementById("users");
+
+  // Clear existing options
+  selectElement.innerHTML = "";
+
+  // Add options for each user
+  users.forEach((user) => {
+    let option = document.createElement("option");
+    option.value = user._id;
+    option.textContent = user.email;
+    selectElement.appendChild(option);
+  });
+}
+// Select Multiple, Activate button, and Deactivate button Ids
 const userSelect = document.getElementById("users");
 const activate = document.getElementById("activate");
 const deactivate = document.getElementById("deactivate");
