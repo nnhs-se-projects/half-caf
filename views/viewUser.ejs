@@ -18,7 +18,7 @@
   <label for="users"></label>
   <select multiple name="users" id="users" multiple>
     <% for (let user of users) {%>
-    <option id="<%=user._id%>"><%= user.email %></option>
+    <option value="<%=user._id%>"><%= user.email %></option>
     <%}%>
   </select>
 

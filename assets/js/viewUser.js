@@ -1,36 +1,45 @@
 // \/ Drop down menu that will filter through All, Activated, and Deactivated and only display users of that type
+let users;
 const userStatus = document.getElementById("filter-users");
-userStatus.addEventListener("change", (event) => {
+userStatus.addEventListener("change", async (event) => {
   if (userStatus.value === "All") {
-    alert("All");
-    let users = [{ _id: 1, email: "user1@example.com" }]; // all the users in the database
+    users = await fetchUsersFromServer("all");
   } else if (userStatus.value === "Activated") {
-    alert("Activated");
-    let users = [{}]; // the users with isActivated value == true
-    updateUsersSelect();
+    users = await fetchUsersFromServer("activated");
   } else if (userStatus.value === "Deactivated") {
-    alert("Deactivated");
-    let users = [{}]; // the users with isActivated value == false
+    users = await fetchUsersFromServer("deactivated");
   }
+  updateUsersSelect(users);
 });
 
-// let users = [{ _id: 1, email: "user1@example.com" }]; // test to see if the below function works in using the dropdown menu to filter the options in the select multiple
-// function to update users for selected element (all, activated, deactivated)
-function updateUsersSelect() {
-  let selectElement = document.getElementById("users");
+async function fetchUsersFromServer(status) {
+  const response = await fetch(`/users/${status}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch users with status: ${status}`);
+  }
+  return response.json();
+}
+// Used to test if the function below will update the select multiple based on value in dropped down selected
+// let users = [
+//   { _id: 1, email: "user1@example.com" },
+//   { _id: 2, email: "user2@example.com" },
+// ];
+// Function to update the users in the select element
+function updateUsersSelect(users) {
+  const selectElement = document.getElementById("users");
 
   // Clear existing options
   selectElement.innerHTML = "";
 
   // Add options for each user
   users.forEach((user) => {
-    let option = document.createElement("option");
+    const option = document.createElement("option");
     option.value = user._id;
     option.textContent = user.email;
     selectElement.appendChild(option);
   });
 }
-// Select Multiple, Activate button, and Deactivate button Ids
+
 const userSelect = document.getElementById("users");
 const activate = document.getElementById("activate");
 const deactivate = document.getElementById("deactivate");
@@ -40,7 +49,7 @@ const deactivate = document.getElementById("deactivate");
 activate.addEventListener("click", async () => {
   // Get the selected user IDs
   const selectedUserIds = Array.from(userSelect.selectedOptions).map(
-    (option) => option.id
+    (option) => option.value
   );
   // Call the updateUserStatus function with the selected user IDs
   await updateUserStatus(selectedUserIds, true);
@@ -50,7 +59,7 @@ activate.addEventListener("click", async () => {
 deactivate.addEventListener("click", async () => {
   // Get the selected user IDs
   const selectedUserIds = Array.from(userSelect.selectedOptions).map(
-    (option) => option.id
+    (option) => option.value
   );
   // Call the updateUserStatus function with the selected user IDs
   await updateUserStatus(selectedUserIds, false);
