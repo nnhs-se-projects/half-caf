@@ -82,6 +82,25 @@ route.get("/viewUser", async (req, res) => {
     users: allUsers,
   });
 });
+// gets the activated/ deactivated users for the view user filter
+route.get("/users/:status", async (req, res) => {
+  const status = req.params.status;
+  try {
+    let users;
+    if (status === "activated") {
+      users = await User.find({ isActivated: true });
+    } else if (status === "deactivated") {
+      users = await User.find({ isActivated: false });
+    } else {
+      // If status is not 'activated' or 'deactivated', fetch all users
+      users = await User.find();
+    }
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
 
 // not working yet but will update the database based on if the user is activated or deactivated
 route.post("/updateUserStatus", async (req, res) => {
