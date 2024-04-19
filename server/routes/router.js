@@ -100,8 +100,55 @@ route.delete("/deleteUser/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/viewUser", (req, res) => {
-  res.render("viewUser");
+route.get("/viewUser", async (req, res) => {
+  // access all the users in the database
+  const allUsers = await User.find();
+  res.render("viewUser", {
+    users: allUsers,
+  });
+});
+// gets the activated/ deactivated users for the view user filter
+route.get("/users/:status", async (req, res) => {
+  const status = req.params.status;
+  try {
+    let users;
+    if (status === "activated") {
+      users = await User.find({ isActivated: true });
+    } else if (status === "deactivated") {
+      users = await User.find({ isActivated: false });
+    } else {
+      // If status is not 'activated' or 'deactivated', fetch all users
+      users = await User.find();
+    }
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+// not working yet but will update the database based on if the user is activated or deactivated
+route.post("/updateUserStatus", async (req, res) => {
+  const { userIds, isActivated } = req.body;
+  try {
+    await User.updateMany(
+      { _id: { $in: userIds } },
+      { $set: { isActivated: isActivated } }
+    );
+    //   user.isActivated = req.body.isActivated;
+    res.status(200).json({ message: "User status updated successfully." });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+  // for (let use of allUsers) {
+  //   const userId = req.params.id;
+  //   let user = await use.findById(userId);
+  //   user.isActivated = req.body.isActivated;
+  //   await user.save();
+  //   console.log(user);
+  //   res.status(201).end();
+  // }
 });
 
 route.get("/addDrink", async (req, res) => {

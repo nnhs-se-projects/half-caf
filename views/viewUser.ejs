@@ -11,19 +11,25 @@
   <select class="select" id="filter-users">
     <option>All</option>
     <option>Activated</option>
-    <option>Unactivated</option>
+    <option>Deactivated</option>
   </select>
 
+  <!--Displays users in view user in a select multiple-->
   <label for="users"></label>
-  <select name="users" id="users" multiple>
-    <option value="a">Admin</option>
-    <option value="b">Teacher</option>
-    <option value="c">Barista</option>
-    <option value="d">Barista2</option>
+  <select multiple name="users" id="users" multiple>
+    <% for (let user of users) {%>
+    <option value="<%=user._id%>"><%= user.email %></option>
+    <%}%>
   </select>
 
-  <button type="button" class="user-buttons">Activate User</button>
-  <button type="button" class="user-buttons">Deactivate User</button>
+  <!--Creates the activate user button-->
+  <button id="activate" type="button" class="user-buttons">
+    Activate User
+  </button>
+  <!--Creates the deactivate user button-->
+  <button id="deactivate" type="button" class="user-buttons">
+    Deactivate User
+  </button>
 </div>
 
 <!-- /Main Site -->
