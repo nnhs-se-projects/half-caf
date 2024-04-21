@@ -1,6 +1,5 @@
-const placeToOrderButton = document.querySelector("input.submit");
-placeToOrderButton.addEventListener("click", async () => {
-  // alert("clicked");
+const addToOrderButton = document.querySelector("input.submit");
+addToOrderButton.addEventListener("click", async () => {
   const name = document.getElementById("name").textContent;
   const price = document.getElementById("price").textContent.match(/(\d+)/)[0];
   const flavors = document.querySelectorAll("input#flavors");

@@ -25,7 +25,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  drink: {
+  drinks: {
     type: [mongoose.Schema.ObjectId],
     ref: "Drink",
     required: true,
