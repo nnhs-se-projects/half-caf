@@ -169,6 +169,14 @@ h1 {
   margin: 3%;
 }
 
+h5 {
+  font-size: 35px;
+  margin: 1%;
+  border: 0;
+  color: black;
+  font-family: cursive;
+}
+
 h2 {
   margin: 2%;
 }
@@ -184,8 +192,4 @@ img {
   display: flex;
   align-items: center;
   justify-content: left;
-}
-
-.tempBox {
-  display: flex;
 }

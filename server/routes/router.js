@@ -195,6 +195,10 @@ route.get("/modifyDrink", (req, res) => {
   res.render("modifyDrink");
 });
 
+route.get("/barista", (req, res) => {
+  res.render("baristaOrder");
+});
+
 route.get("/deleteDrink", (req, res) => {
   res.render("deleteDrink");
 });
