@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
   },
   room: {
     type: Number,
-    required: true,
+    required: false,
   },
   timestamp: {
     type: Date,

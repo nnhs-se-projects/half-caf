@@ -8,7 +8,6 @@ const TempJson = require("../model/temp.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
-let orderMap = new Map();
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -144,7 +143,8 @@ route.post("/addDrink", async (req, res) => {
     caffeination: req.body.caf,
     special: req.body.special,
   });
-  res.status(201).end();
+  await drink.save();
+  res.status(200).end();
 });
 
 route.get("/modifyDrink", (req, res) => {
@@ -318,27 +318,38 @@ route.post("/customizeDrink/:name", async (req, res) => {
     favorite: req.body.favorite,
   });
   // await drink.save();
-  orderMap.set(req.session.email, drink);
-  console.log(orderMap);
-  res.status(201).end();
+  req.session.cart = [];
+  req.session.cart.push(drink);
+  req.session.save((err) => {
+    if (err) {
+      // handle error
+      console.error(err);
+      res.status(500).send("Could not save drink to session.");
+      return;
+    }
+    res.status(200).send("Drink added to session.");
+  });
+});
+
+route.get("/teacherMyOrder", async (req, res) => {
+  res.render("teacherMyOrder", { cart: req.session.cart });
 });
 
 route.post("/teacherMyOrder", async (req, res) => {
-  console.log("room number:" + req.body.rm);
-  let arr = [];
-  for (let i = 0; i < orderMap.size; i++) {
-    if (req.session.email === orderMap.key) {
-    }
+  try {
+    const order = new Order({
+      email: req.session.email,
+      room: req.body.rm,
+      timestamp: req.body.timestamp,
+      complete: false,
+      read: false,
+      drinks: req.session.cart,
+    });
+    User.currentOrder = order;
+  } catch (err) {
+    console.log(err);
   }
-
-  const order = new Order({
-    email: req.session.email,
-    // room: req.body.rm,
-    // timestamp: today's date,
-    complete: false,
-    read: false,
-    // drink:
-  });
+  res.status(200).end();
 });
 
 route.get("/teacherPopularDrinks", async (req, res) => {
@@ -347,10 +358,6 @@ route.get("/teacherPopularDrinks", async (req, res) => {
 
 route.get("/homePopularDrinks", async (req, res) => {
   res.render("homePopularDrinks");
-});
-
-route.get("/teacherMyOrder", async (req, res) => {
-  res.render("teacherMyOrder");
 });
 
 route.get("/teacherMyFavorites", async (req, res) => {
