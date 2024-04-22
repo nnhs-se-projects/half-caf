@@ -28,16 +28,15 @@ route.post("/toggle", async (req, res) => {
   await toggle.save();
 });
 
-let sendToggle;
+let sendToggle = false;
 route.use((req, res, next) => {
   const ws = new WebSocket("ws://localhost:8081");
 
   ws.on("message", (message) => {
     const jsonData = JSON.parse(message);
-    console.log("jsonData.toggle: " + jsonData.toggle);
     sendToggle = jsonData.toggle;
   });
-  console.log("sendToggle: " + sendToggle);
+
   res.locals.headerData = {
     enabled: sendToggle,
   };
@@ -79,7 +78,6 @@ async function checkForUpdates() {
   const jsonData = JSON.stringify(sendData);
 
   if (updated === true) {
-    console.log("boolean updated: " + enabled.enabled);
     // If updates detected, notify all connected clients
     clients.forEach((client) => {
       client.send(jsonData);

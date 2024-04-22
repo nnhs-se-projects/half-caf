@@ -26,6 +26,8 @@
       </a>
 
       <!-- Rounded switch -->
+      <script src="/js/refresh.js"></script>
+      <% console.log("Barista headerData: " + headerData.enabled); %>
       <label class="on-off">
         <% if(headerData.enabled === false) { %>
         <input class="toggle" type="checkbox" id="myCheckbox" />
@@ -61,7 +63,7 @@
         align-items: center;
       }
     </style>
+
     <script src="/js/toggleEnabled.js"></script>
-    <script src="/js/refresh.js"></script>
   </head>
 </html>

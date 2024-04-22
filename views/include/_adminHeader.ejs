@@ -23,6 +23,8 @@
       <a href="/logout">Logout</a>
       <!-- Rounded switch -->
       <!-- (clicked/orange/right means enabled)-->
+      <script src="/js/refresh.js"></script>
+      <% console.log("headerData: " + headerData.enabled ); %>
       <label class="on-off">
         <% if(headerData.enabled === false) { %>
         <input class="toggle" type="checkbox" id="myCheckbox" />
@@ -41,7 +43,7 @@
 
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
+
     <script src="/js/toggleEnabled.js"></script>
-    <script src="/js/refresh.js"></script>
   </head>
 </html>
