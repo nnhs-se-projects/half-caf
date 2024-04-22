@@ -119,6 +119,8 @@ route.post("/addDrink", async (req, res) => {
   res.status(201).end();
 });
 
+// everything loads on the Modify Drink page when a
+// menu item is selected, except for flavors
 route.get("/modifyDrink", async (req, res) => {
   // get id of selected drink
   const { id } = req.query;
