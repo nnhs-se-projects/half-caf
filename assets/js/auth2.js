@@ -4,7 +4,7 @@
  * @param {Object} res - the response object from the Google Sign-In popup
  */
 
-//const UserInfo = require("../server/model/User");
+// const UserInfo = require("../server/model/User");
 
 // eslint-disable-next-line no-unused-vars
 async function handleCredentialResponse(res) {
