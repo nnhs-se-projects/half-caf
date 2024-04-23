@@ -174,7 +174,7 @@ route.get("/addDrink", async (req, res) => {
     flavors: formattedFlavors,
   });
 });
-//updates database with new menu item
+// updates database with new menu item
 route.post("/addDrink", async (req, res) => {
   const drink = new MenuItem({
     name: req.body.name,
