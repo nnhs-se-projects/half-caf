@@ -37,6 +37,7 @@ route.get("/redirectUser", async (req, res) => {
     } else if (role === "barista") {
       res.redirect("/barista");
     } else if (role === "teacher") {
+      req.session.cart = [];
       res.redirect("/teacherPopularDrinks");
     } else {
       console.log("Role Not Recognized");
@@ -317,18 +318,9 @@ route.post("/customizeDrink/:name", async (req, res) => {
     instructions: req.body.instructions,
     favorite: req.body.favorite,
   });
-  // await drink.save();
-  req.session.cart = [];
+  await drink.save();
   req.session.cart.push(drink);
-  req.session.save((err) => {
-    if (err) {
-      // handle error
-      console.error(err);
-      res.status(500).send("Could not save drink to session.");
-      return;
-    }
-    res.status(200).send("Drink added to session.");
-  });
+  res.status(200).send("Drink added to session.");
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
@@ -345,7 +337,10 @@ route.post("/teacherMyOrder", async (req, res) => {
       read: false,
       drinks: req.session.cart,
     });
-    User.currentOrder = order;
+    await order.save();
+    const user = await User.findOne({ email: req.session.email });
+    user.currentOrder = order;
+    await user.save();
   } catch (err) {
     console.log(err);
   }
@@ -370,6 +365,7 @@ route.get("/teacherOrderHistory", async (req, res) => {
 
 route.get("/orderConfirmation", async (req, res) => {
   res.render("orderConfirmation");
+  req.session.cart = [];
 });
 
 // delegate all authentication to the auth.js router
