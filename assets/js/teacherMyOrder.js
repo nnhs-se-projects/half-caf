@@ -3,14 +3,13 @@ console.log(placeOrderButton);
 placeOrderButton.addEventListener("click", async () => {
   const roomNum = document.getElementById("rm").value;
   const time = new Date();
-  // time.toLocaleDateString();
 
+  // formatting time
   const year = time.getFullYear();
-  const month = (time.getMonth() + 1).toString().padStart(2, "0"); // getMonth() is zero-based
+  const month = (time.getMonth() + 1).toString().padStart(2, "0");
   const day = time.getDate().toString().padStart(2, "0");
   const hours = time.getHours().toString().padStart(2, "0");
   const minutes = time.getMinutes().toString().padStart(2, "0");
-
   const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}`;
 
   const ordering = {
