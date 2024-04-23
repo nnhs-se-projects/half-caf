@@ -364,8 +364,8 @@ route.get("/teacherOrderHistory", async (req, res) => {
 });
 
 route.get("/orderConfirmation", async (req, res) => {
-  res.render("orderConfirmation");
   req.session.cart = [];
+  res.render("orderConfirmation");
 });
 
 // delegate all authentication to the auth.js router
