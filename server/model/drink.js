@@ -19,7 +19,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  temp: {
+  temps: {
     type: String,
     required: true,
   },

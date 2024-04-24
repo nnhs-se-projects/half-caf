@@ -4,7 +4,7 @@ const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
-const TempJson = require("../model/temp.json");
+const TempJson = require("../model/temps.json");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -111,7 +111,7 @@ route.post("/addDrink", async (req, res) => {
     popular: req.body.popular,
     flavors: req.body.checkedFlavors,
     toppings: req.body.checkedToppings,
-    temp: req.body.checkedTemps,
+    temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     special: req.body.special,
   });
