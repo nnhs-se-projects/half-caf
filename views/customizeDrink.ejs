@@ -1,63 +1,79 @@
+<!-- include header -->
 <%- include('include/_teacherHeader') %>
-<main>
-  <head>
-    <h8>Customize Drink</h8>
-  </head>
+<!-- /include header -->
 
-  <body>
-    <h2 id="drinkName">drinkName</h2>
-    <h4 id="drinkPrice"> drinkPrice</h4>
+<!-- Main Site -->
+<head>
+  <h2>Customize Drink</h2>
+</head>
+
+<body>
+  <div id="mainPage">
+    <h2 id="name"><%=drink.name%></h2>
+    <h4 id="price">Price: $<%=drink.price%></h4>
     <p>Please fill out this form to customize your drink.</p>
-    <div>
-      <form action = "/teacherMyOrder">
-      <label>Choose Flavor:</label>
-      <input type="checkbox">
-        <label>vanilla</label><br>
-      <input type="checkbox">
-        <label>chocolate</label><br>
-      <input type="checkbox">
-        <label>SF vanilla</label><br>
-      </select>
-      <label>Choose Temperature</label>
-      <select class="select" name="filter" id="filter">
-        <option>Temperature</option>
-        <option>Hot</option>
-        <option>Cold</option>
-        <option>Blended</option>
-      </select><br>
-      <label>Choose Topping:</label><br>
-      <input type="checkbox">
-        <label>cream</label><br>
-      <input type="checkbox">
-        <label>sauce</label><br>
-      <input type="checkbox">
-        <label>boba</label><br><br>
-      <label>Choose Decaf or Caffeinated</label><br>
-      <input type="radio" id="decaf" name="caffeine" />
-      <label for="decaf">Decaf</label>
-      <input type="radio" id="caf" name="caffeine" />
-      <label for="caf">Caffeine</label>
-      <br /><br />
-      <label>Type Any Special Instructions Here:</label><br />
-      <textarea rows="4" cols="50">Enter text here...</textarea>
-      <input type="submit" class="submit" value="Place Order" />
-      </form>
+    <div class="dropdown-check-list">
+      <h6>Choose a Flavor:</h6>
+      <ul class="items">
+        <% for (let flavor of flavors) {%>
+        <li>
+          <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+          flavor.flavor %>
+        </li>
+        <%}%>
+      </ul>
     </div>
+    <div class="dropdown-check-list">
+      <h6>Choose a Temperature:</h6>
+      <ul class="items">
+        <% for (let temp of temps) {%>
+        <li><input id="temp" type="radio" value="<%= temp %>" /><%= temp %></li>
+        <%}%>
+      </ul>
+    </div>
+    <div class="dropdown-check-list">
+      <h6>Choose a Topping:</h6>
+      <ul class="items">
+        <% for (let topping of toppings) {%>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+          topping.topping %>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+    <div><input id="favorite" type="checkbox" />Save to Favorite</div>
+    <input
+      type="text"
+      id="instructions"
+      placeholder="Add Any Special Instructions..."
+    />
+    <input type="submit" class="submit" value="Add to Cart" />
+  </div>
+</body>
 
-    <script>
-    // Extracting parameters from the URL
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    
-    // Getting values of parameters
-    const drinkName = urlParams.get('drink');
-    const drinkPrice = urlParams.get('price');
-    const drinkDescription = urlParams.get('description');
+<!-- /Main Site -->
 
-        // Populating HTML elements with parameter values
-    document.getElementById('drinkName').innerText = drinkName;
-    document.getElementById('drinkPrice').innerText = "$" + drinkPrice;
-    </script>
-  </body>
-</main>
+<style>
+  #mainPage {
+    width: 60%;
+    align-items: center;
+    margin-left: 7%;
+  }
+  #drinkName {
+    margin: 0px;
+    margin-bottom: 5%;
+  }
+  #drinkPrice {
+    margin-bottom: 3%;
+  }
+  h6 {
+    margin-bottom: 1.5%;
+  }
+</style>
+
+<script src="/js/customizeDrink.js"></script>
+
+<!-- include footer -->
 <%- include('include/_footer') %>
+<!-- /include footer -->
