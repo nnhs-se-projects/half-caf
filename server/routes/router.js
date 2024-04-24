@@ -271,8 +271,13 @@ route.get("/modifyDrink", (req, res) => {
   res.render("modifyDrink");
 });
 
-route.get("/barista", (req, res) => {
-  res.render("baristaOrder");
+route.get("/baristaOrder", async (req, res) => {
+  const orders = await Order.find();
+  const drinks = await Drink.find();
+  res.render("baristaOrder", {
+    orders,
+    drinks,
+  });
 });
 
 route.get("/deleteDrink", (req, res) => {

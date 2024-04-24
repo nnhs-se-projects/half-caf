@@ -20,7 +20,10 @@
               <th scope="col">Finished</th>
             </tr>
             
+            <!-- < looping through the each order to display each> -->
              <% for (let order of orders){%>
+              <!-- < looping through each drink of every order> -->
+                <!-- < to display each drink on a different line> -->
                <% for (let drink of drinks){%>
             <tr id = "b">
               <th scope="?">order.room</th>
@@ -135,3 +138,8 @@
     table tr#c  {background-color: rgb(255, 202, 181);}
     button#barista {background-color:lightblue; border-color: white; color: black;}
 </style>
+
+<!-- connect to js -->
+
+  <!-- <script src="/js/baristaOrder.js"></script> -->
+  <!-- don't need to connect to js -->
