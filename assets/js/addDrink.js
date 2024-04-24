@@ -21,6 +21,8 @@ addDrinkButton.addEventListener("click", async () => {
     }
   }
 
+  console.log("checked Flavors: " + checkedFlavors);
+
   const toppings = document.querySelectorAll("input#toppings");
   const checkedToppings = [];
   for (let i = 0; i < toppings.length; i++) {

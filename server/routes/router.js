@@ -109,7 +109,7 @@ route.post("/addDrink", async (req, res) => {
     description: req.body.description,
     price: req.body.price,
     popular: req.body.popular,
-    flavor: req.body.checkedFlavors,
+    flavors: req.body.checkedFlavors,
     toppings: req.body.checkedToppings,
     temp: req.body.checkedTemps,
     caffeination: req.body.caf,
