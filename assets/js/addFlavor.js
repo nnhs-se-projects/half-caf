@@ -1,3 +1,4 @@
+// creates a flavor with a name chosen by an admin
 const addFlavorButton = document.querySelector("input.submit");
 addFlavorButton.addEventListener("click", async () => {
   const getFlavor = document.getElementById("flavor").value;

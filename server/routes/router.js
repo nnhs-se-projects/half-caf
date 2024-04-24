@@ -8,6 +8,8 @@ const TempJson = require("../model/temp.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const Enabled = require("../model/enabled");
+const WebSocket = require("ws");
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -17,10 +19,80 @@ route.get("/auth", (req, res) => {
   res.render("auth");
 });
 
+route.get("/toggle", async (req, res) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+  res.render("_adminHeader", { enabled: toggle });
+});
+
+// updating toggleEnabled
+route.post("/toggle", async (req, res) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+  toggle.enabled = req.body.enabled;
+  await toggle.save();
+});
+
+let sendToggle = false;
+route.use((req, res, next) => {
+  const ws = new WebSocket("ws://localhost:8081");
+
+  ws.on("message", (message) => {
+    const jsonData = JSON.parse(message);
+    sendToggle = jsonData.toggle;
+  });
+
+  res.locals.headerData = {
+    enabled: sendToggle,
+  };
+  next();
+});
+
+const wss = new WebSocket.Server({ port: 8081 });
+
+// Client connections storage
+let clients = [];
+
+// WebSocket connection handling
+wss.on("connection", (ws) => {
+  clients.push(ws); // Add client to storage
+
+  // Handle client disconnection
+  ws.on("close", () => {
+    clients = clients.filter((client) => client !== ws);
+  });
+});
+
+let pastValue;
+async function checkForUpdates() {
+  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
+  let updated = false;
+  if (enabled.enabled === pastValue) {
+    updated = false;
+  } else {
+    updated = true;
+  }
+
+  pastValue = enabled.enabled;
+
+  const sendData = {
+    message: "Data updated",
+    toggle: enabled.enabled,
+  };
+
+  const jsonData = JSON.stringify(sendData);
+
+  if (updated === true) {
+    // If updates detected, notify all connected clients
+    clients.forEach((client) => {
+      client.send(jsonData);
+    });
+  }
+}
+setInterval(checkForUpdates, 1000);
+
 async function getUserRoles(email) {
   try {
-    let user = await User.findOne({ email: email }, "userType");
-    let userRole = user.userType;
+    const user = await User.findOne({ email }, "userType");
+    const userRole = user.userType;
     return userRole;
   } catch (error) {
     console.error(error);
@@ -31,7 +103,7 @@ async function getUserRoles(email) {
 //    the user dependent on their role
 route.get("/redirectUser", async (req, res) => {
   try {
-    let role = await getUserRoles(req.session.email);
+    const role = await getUserRoles(req.session.email);
     if (role === "admin") {
       res.redirect("/addUser");
     } else if (role === "barista") {
@@ -104,8 +176,55 @@ route.delete("/deleteUser/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/viewUser", (req, res) => {
-  res.render("viewUser");
+route.get("/viewUser", async (req, res) => {
+  // access all the users in the database
+  const allUsers = await User.find();
+  res.render("viewUser", {
+    users: allUsers,
+  });
+});
+// gets the activated/ deactivated users for the view user filter
+route.get("/users/:status", async (req, res) => {
+  const status = req.params.status;
+  try {
+    let users;
+    if (status === "activated") {
+      users = await User.find({ isActivated: true });
+    } else if (status === "deactivated") {
+      users = await User.find({ isActivated: false });
+    } else {
+      // If status is not 'activated' or 'deactivated', fetch all users
+      users = await User.find();
+    }
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+// not working yet but will update the database based on if the user is activated or deactivated
+route.post("/updateUserStatus", async (req, res) => {
+  const { userIds, isActivated } = req.body;
+  try {
+    await User.updateMany(
+      { _id: { $in: userIds } },
+      { $set: { isActivated: isActivated } }
+    );
+    //   user.isActivated = req.body.isActivated;
+    res.status(200).json({ message: "User status updated successfully." });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+  // for (let use of allUsers) {
+  //   const userId = req.params.id;
+  //   let user = await use.findById(userId);
+  //   user.isActivated = req.body.isActivated;
+  //   await user.save();
+  //   console.log(user);
+  //   res.status(201).end();
+  // }
 });
 
 route.get("/addDrink", async (req, res) => {
@@ -131,7 +250,7 @@ route.get("/addDrink", async (req, res) => {
     flavors: formattedFlavors,
   });
 });
-
+// updates database with new menu item
 route.post("/addDrink", async (req, res) => {
   const drink = new MenuItem({
     name: req.body.name,
@@ -152,6 +271,10 @@ route.get("/modifyDrink", (req, res) => {
   res.render("modifyDrink");
 });
 
+route.get("/barista", (req, res) => {
+  res.render("baristaOrder");
+});
+
 route.get("/deleteDrink", (req, res) => {
   res.render("deleteDrink");
 });
@@ -159,7 +282,7 @@ route.get("/deleteDrink", (req, res) => {
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
-
+// updates database with new flavor options
 route.post("/addFlavor", async (req, res) => {
   const flavor = new Flavor({
     flavor: req.body.flavor,
@@ -191,6 +314,7 @@ route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
 });
 
+// updates database with new topping options
 route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
     topping: req.body.topping,
