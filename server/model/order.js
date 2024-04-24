@@ -3,13 +3,10 @@
  */
 
 const mongoose = require("mongoose");
-// const User = require("./user");
-// const Drink = require("./drink");
 
 const schema = new mongoose.Schema({
-  user: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "User",
+  email: {
+    type: String,
     required: true,
   },
   room: {
@@ -17,7 +14,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   timestamp: {
-    type: Date,
+    type: String,
     required: true,
   },
   complete: {
@@ -28,7 +25,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  drink: {
+  drinks: {
     type: [mongoose.Schema.ObjectId],
     ref: "Drink",
     required: true,
