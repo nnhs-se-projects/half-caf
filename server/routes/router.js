@@ -12,7 +12,17 @@ const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
 route.get("/", async (req, res) => {
-  res.render("homePopularDrinks");
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("homePopularDrinks", {
+    menuItems: popularMenu,
+  });
 });
 
 route.get("/auth", (req, res) => {
