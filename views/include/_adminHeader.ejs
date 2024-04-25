@@ -20,15 +20,30 @@
       <a href="/deleteFlavor">Delete Flavor</a>
       <a href="/addTopping">Add Topping</a>
       <a href="/DeleteTopping">Delete Topping</a>
-      <a href="/auth">Logout</a>
+      <a href="/logout">Logout</a>
       <!-- Rounded switch -->
+      <!-- (clicked/orange/right means enabled)-->
+      <script src="/js/refresh.js"></script>
+      <% console.log("headerData: " + headerData.enabled ); %>
       <label class="on-off">
-        <input type="checkbox" />
+        <% if(headerData.enabled === false) { %>
+        <input class="toggle" type="checkbox" id="myCheckbox" />
         <span class="dis-en"></span>
+        <% } else { %>
+        <input
+          class="toggle"
+          type="checkbox"
+          id="myCheckbox"
+          checked="checked"
+        />
+        <span class="dis-en"></span>
+        <% } %>
       </label>
     </div>
 
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
+
+    <script src="/js/toggleEnabled.js"></script>
   </head>
 </html>

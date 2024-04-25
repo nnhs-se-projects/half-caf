@@ -32,8 +32,9 @@ npm install
 3. Create a .env file in the root directory
 
 ```
-MONGO_URI=mongodb+srv://nnhssoftware:HDBi69brM3HTZdhm@cluster0.zdr75rc.mongodb.net/half-caf?retryWrites=true&w=majority
-SESSION_SECRET=<secret key>
+MONGO_URI= <find in trello>
+SESSION_SECRET= <secret key>
+
 ```
 
 ## Contains different pages for Admin, Barista, Teacher, Home Page and Google Authentication

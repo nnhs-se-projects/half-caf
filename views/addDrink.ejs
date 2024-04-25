@@ -8,7 +8,7 @@
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
-
+  <!--accesses all the flavors and displays them in a list of checkboxes-->
   <div id="flavorsList" class="dropdown-check-list">
     <span class="anchor">Select Flavors</span>
     <ul class="items">
@@ -20,7 +20,7 @@
       <%}%>
     </ul>
   </div>
-
+  <!--accesses all the toppings and displays them in a list of checkboxes-->
   <div id="pageRight">
     <div id="toppings" class="dropdown-check-list">
       <span class="anchor">Select Toppings</span>
@@ -33,7 +33,7 @@
         <%}%>
       </ul>
     </div>
-
+    <!--accesses all the temps from the json and displays them as checkboxes-->
     <span class="anchor">Select Options</span>
     <div class="tempBox">
       <% for(let temp of temps){ %>
@@ -49,6 +49,8 @@
       </label>
       <%} %>
     </div>
+
+    <!--checkboxes for if a drink is popular, special or if it can be caffeinated-->
     <div>
       <input type="checkbox" id="popular" />
       <label for="popular">Popular</label>
@@ -64,11 +66,14 @@
   </div>
 
   <input type="submit" class="submit" value="Add Drink" />
-
   <style>
     #tempLabel {
       margin-right: 5px;
     }
+  </style>
+
+  <!--
+  <style>
     #pageRight {
       float: right;
     }
@@ -76,6 +81,7 @@
       float: left;
     }
   </style>
+-->
 
   <!-- /Main Site -->
 

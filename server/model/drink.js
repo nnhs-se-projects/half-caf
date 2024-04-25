@@ -6,17 +6,22 @@ const mongoose = require("mongoose");
 // const MenuItem = require("./menuItem");
 
 const schema = new mongoose.Schema({
-  menuItem: {
-    type: mongoose.Schema.ObjectId,
-    ref: "MenuItem",
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
     required: true,
   },
   flavors: {
-    type: String,
+    type: [mongoose.Schema.ObjectId],
+    ref: "Flavor",
     required: true,
   },
   toppings: {
-    type: String,
+    type: [mongoose.Schema.ObjectId],
+    ref: "Topping",
     required: true,
   },
   temps: {
@@ -33,7 +38,7 @@ const schema = new mongoose.Schema({
   },
   favorite: {
     type: Boolean,
-    required: true,
+    required: false,
   },
 });
 
