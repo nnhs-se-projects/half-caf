@@ -4,12 +4,13 @@ const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
-const TempJson = require("../model/temp.json");
+const TempJson = require("../model/temps.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
+
 
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
@@ -257,9 +258,9 @@ route.post("/addDrink", async (req, res) => {
     description: req.body.description,
     price: req.body.price,
     popular: req.body.popular,
-    flavor: req.body.checkedFlavors,
+    flavors: req.body.checkedFlavors,
     toppings: req.body.checkedToppings,
-    temp: req.body.checkedTemps,
+    temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     special: req.body.special,
   });
@@ -267,8 +268,57 @@ route.post("/addDrink", async (req, res) => {
   res.status(200).end();
 });
 
-route.get("/modifyDrink", (req, res) => {
-  res.render("modifyDrink");
+// everything loads on the Modify Drink page when a
+// menu item is selected, except for flavors
+route.get("/modifyDrink", async (req, res) => {
+  // get id of selected drink
+  const { id } = req.query;
+
+  const menuItems = await MenuItem.find();
+  const toppings = await Topping.find();
+  const flavors = await Flavor.find();
+
+  let selectedMenuItem;
+  // check if any drink has been selected
+  if (id != null) {
+    selectedMenuItem = await MenuItem.findById(id);
+  } else {
+    selectedMenuItem = undefined;
+  }
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+
+  res.render("modifyDrink", {
+    menuItems: formattedMenuItems,
+    selectedMenuItem,
+    toppings,
+    flavors,
+    temps: TempJson,
+  });
+});
+
+route.get("/deleteDrink", async (req, res) => {
+  const menuItems = await MenuItem.find();
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+  res.render("deleteDrink", { menuItems: formattedMenuItems });
+});
+
+route.delete("/deleteDrink/:id", async (req, res) => {
+  const menuItemId = req.params.id;
+  await MenuItem.findByIdAndRemove(menuItemId);
+  res.end();
+
 });
 
 route.get("/baristaOrder", async (req, res) => {
@@ -278,10 +328,6 @@ route.get("/baristaOrder", async (req, res) => {
     orders,
     drinks,
   });
-});
-
-route.get("/deleteDrink", (req, res) => {
-  res.render("deleteDrink");
 });
 
 route.get("/addFlavor", (req, res) => {

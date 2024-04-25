@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
     ref: "Topping",
     required: true,
   },
-  temp: {
+  temps: {
     type: String,
     required: true,
   },

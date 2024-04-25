@@ -4,30 +4,115 @@
 
 <!-- Main Site -->
 <div class="adminPage">
+  <!-- Check if drink has been chosen -->
+  <% let chosenDrink = false; %> <% if(selectedMenuItem == undefined) {
+  chosenDrink = false; } else {chosenDrink = true; } %>
   <div class="userHdr">Modify Drink</div>
-  <select name="drinks">
-    <!-- similar to createEntry radio button except habits are drinks -->
+  <select class="select" id="filter">
+    <% for (let menuItem of menuItems) { %> <% if(selectedMenuItem !== undefined
+    && selectedMenuItem.id == menuItem.id) { %>
+    <option value="<%=menuItem.id %>" selected="selected">
+      <%= menuItem.name %>
+    </option>
+    <% } else {%>
+    <option value="<%=menuItem.id %>"><%= menuItem.name %></option>
+    <% } } %>
   </select>
-  <!-- for loop for flavor checkboxes goes here -->
-  <input type="checkbox" id="flavor" />
-  <label for="flavor">Flavor</label>
-  <br />
-  <!-- for loop for temp checkboxes goes here -->
-  <input type="checkbox" id="temp" />
-  <label for="temp">Iced</label>
 
   <!-- figure out to make fill this w/ og -->
-  <input type="text" id="misc" placeholder="Misc Options..." />
-  <input type="text" id="desc" placeholder="Edit Description..." />
-  <input type="text" id="price" placeholder="Price..." />
-  <!-- make ^this^ only allow ints -->
-  <button type="button">Add Drink</button>
+  <% if(chosenDrink == true) { %>
+  <textarea class="content" placeholder="Edit Name...">
+<%= selectedMenuItem.name %></textarea
+  >
+  <textarea class="content" placeholder="Edit Description...">
+<%= selectedMenuItem.description %></textarea
+  >
+  <textarea class="content" placeholder="Edit Price...">
+<%= selectedMenuItem.price %></textarea
+  >
+  <% } else { %>
+  <textarea class="content" placeholder="Edit Name..."></textarea>
+  <textarea class="content" placeholder="Edit Description..."></textarea>
+  <textarea class="content" placeholder="Edit Price..."></textarea>
+  <% } %>
+
+  <!-- for loop for all option checkboxes -->
+  <div id="flavorsList" class="dropdown-check-list">
+    <span class="anchor">Edit Flavors</span>
+    <ul class="items">
+      <%for (let flavor of flavors) { if(chosenDrink == true &&
+      selectedMenuItem.flavors.includes(flavor._id) == true) { %>
+      <li>
+        <input
+          id="flavor"
+          type="checkbox"
+          checked="checked"
+          value="<%= flavor._id %>"
+        /><%= flavor.flavor %>
+      </li>
+      <% } else { %>
+      <li>
+        <input id="flavor" type="checkbox" value="<%= flavor._id %>" /><%=
+        flavor.flavor %>
+      </li>
+      <% } }%>
+    </ul>
+  </div>
+
+  <div id="pageRight">
+    <div id="toppings" class="dropdown-check-list">
+      <span class="anchor">Edit Toppings</span>
+      <ul class="items">
+        <%for (let topping of toppings) { if(chosenDrink == true &&
+        selectedMenuItem.toppings.includes(topping._id) == true) { %>
+        <li>
+          <input
+            id="toppings"
+            type="checkbox"
+            checked="checked"
+            value="<%= topping._id %>"
+          /><%= topping.topping %>
+        </li>
+        <% } else { %>
+        <li>
+          <input id="toppings" type="checkbox" value="<%= topping._id %>" /><%=
+          topping.topping %>
+        </li>
+        <% } }%>
+      </ul>
+    </div>
+
+    <span class="anchor">Edit Options</span>
+    <div class="tempBox">
+      <% for(let temp of temps){ %>
+      <label id="tempLabel">
+        <input
+          type="checkbox"
+          id="temp"
+          class="temps"
+          name="temps"
+          value="<%=temp%>"
+        />
+        <%=temp%>
+      </label>
+      <%} %>
+    </div>
+  </div>
+  <button type="button">Save Drink</button>
+  <!-- /Main Site -->
+
+  <style>
+    #pageRight {
+      float: right;
+    }
+    #flavorsList {
+      float: left;
+    }
+  </style>
+
+  <script src="/js/modifyDrink.js"></script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
 </div>
-
-<!-- /Main Site -->
-
-<!-- <script src="/js/modifyDrink.js"></script> -->
-
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->

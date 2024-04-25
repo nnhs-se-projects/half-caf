@@ -7,6 +7,7 @@ addDrinkButton.addEventListener("click", async () => {
   const price = document.getElementById("price").value;
   const popular = document.getElementById("popular").checked;
   const temps = document.querySelectorAll("input.temps");
+
   const checkedTemps = [];
   for (let i = 0; i < temps.length; i++) {
     if (temps[i].checked) {
