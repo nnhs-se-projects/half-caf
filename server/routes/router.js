@@ -11,7 +11,6 @@ const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
-
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
 });
@@ -318,7 +317,6 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   const menuItemId = req.params.id;
   await MenuItem.findByIdAndRemove(menuItemId);
   res.end();
-
 });
 
 route.get("/barista", (req, res) => {
@@ -413,8 +411,8 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
     // available flavors array
     const flavors = [];
-    for (let i = 0; i < drink.flavor.length; i++) {
-      flavors[i] = await findFlavorById(drink.flavor[i]);
+    for (let i = 0; i < drink.flavors.length; i++) {
+      flavors[i] = await findFlavorById(drink.flavors[i]);
     }
 
     // available toppings array
@@ -427,7 +425,7 @@ route.get("/customizeDrink/:name", async (req, res) => {
       res.render("customizeDrink", {
         drink: drink,
         flavors: flavors,
-        temps: drink.temp,
+        temps: drink.temps,
         toppings: toppings,
       });
     } else {
@@ -483,7 +481,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
     price: req.body.price,
     flavors: req.body.checkedFlavors,
     toppings: req.body.checkedToppings,
-    temp: req.body.temp,
+    temps: req.body.temp,
     // caffeination: req.body.caf,
     instructions: req.body.instructions,
     favorite: req.body.favorite,
