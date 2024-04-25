@@ -34,6 +34,7 @@ npm install
 ```
 MONGO_URI= <find in trello>
 SESSION_SECRET= <secret key>
+
 ```
 
 ## Contains different pages for Admin, Barista, Teacher, Home Page and Google Authentication
