@@ -322,10 +322,10 @@ route.delete("/deleteDrink/:id", async (req, res) => {
 // Main/Home page of the Barista branch that displays all current orders
 route.get("/barista", async (req, res) => {
   const orders = await Order.find();
-  const drinks = await Drink.find();
+  // const drinks = await Drink.find();
   res.render("barista", {
     orders,
-    drinks,
+    // drinks,
   });
 });
 
