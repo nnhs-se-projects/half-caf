@@ -526,7 +526,17 @@ route.post("/teacherMyOrder", async (req, res) => {
 });
 
 route.get("/teacherPopularDrinks", async (req, res) => {
-  res.render("teacherPopularDrinks");
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("teacherPopularDrinks", {
+    menuItems: popularMenu,
+  });
 });
 
 route.get("/homePopularDrinks", async (req, res) => {
