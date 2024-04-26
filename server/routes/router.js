@@ -11,7 +11,6 @@ const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
-
 route.get("/", async (req, res) => {
   res.render("homePopularDrinks");
 });
@@ -318,13 +317,13 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   const menuItemId = req.params.id;
   await MenuItem.findByIdAndRemove(menuItemId);
   res.end();
-
 });
 
-route.get("/baristaOrder", async (req, res) => {
+// Main/Home page of the Barista branch that displays all current orders
+route.get("/barista", async (req, res) => {
   const orders = await Order.find();
   const drinks = await Drink.find();
-  res.render("baristaOrder", {
+  res.render("barista", {
     orders,
     drinks,
   });
@@ -394,9 +393,9 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/barista", (req, res) => {
-  res.render("barista");
-});
+// route.get("/barista", (req, res) => {
+//   res.render("barista");
+// });
 
 route.get("/completed", (req, res) => {
   res.render("completed");

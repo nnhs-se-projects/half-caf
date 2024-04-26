@@ -20,30 +20,30 @@
           <th scope="col">Cancel Order</th>
           <th scope="col">Finished</th>
         </tr>
+        <!-- < looping through the each order to display each> -->
+        <% for (let order of orders){%>
+        <!-- < looping through each drink of every order> -->
+        <!-- < to display each drink on a different line> -->
+        <% for (let drink of drinks){%>
+        <tr id="b">
+          <th scope="?"><%=order.room%></th>
+          <th scope="?"><%=order.user%></th>
+          <th scope="?"><%=drink.menuItem%></th>
+          <th scope="?"><%=drink.temp%></th>
+          <th scope="?"><%=drink.caffeination%></th>
+          <th scope="?"><%=drink.flavors%></th>
+          <th scope="?"><%=drink.toppings%></th>
+          <th scope="?"><%=drink.instructions%></th>
+          <th scope="?"><%=drink.timestamp%></th>
+          <th scope="?"><button id="barista">Cancel</button></th>
+          <th scope="?"><button id="barista">Finish</button></th>
+        </tr>
+        <%}%> <%}%>
       </thead>
     </table>
   </div>
 </body>
 
-<!-- < looping through the each order to display each> -->
-<!-- <% for (let order of orders){%> -->
-<!-- < looping through each drink of every order> -->
-<!-- < to display each drink on a different line> -->
-<!-- <% for (let drink of drinks){%> -->
-<!-- <tr id = "b"> 
-              <th scope="?">order.room</th>
-              <th scope="?">order.user</th>
-              <th scope="?">drink.menuItem</th>
-              <th scope="?">drink.temp</th>
-              <th scope="?">drink.caffeination</th>
-              <th scope="?">drink.flavors</th>
-              <th scope="?">drink.toppings</th>
-              <th scope="?">drink.instructions</th>
-              <th scope="?">order.timestamp</th>
-              <th scope="?"><button id = "barista">Cancel</button></th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr> 
-             <%}%> <%}%>  -->
 <!-- <tr id = "c">
               <th scope="?">105</th>
               <th scope="?">Lord Tavneet</th>
