@@ -11,9 +11,18 @@ const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
-
 route.get("/", async (req, res) => {
-  res.render("homePopularDrinks");
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("homePopularDrinks", {
+    menuItems: popularMenu,
+  });
 });
 
 route.get("/auth", (req, res) => {
@@ -318,7 +327,6 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   const menuItemId = req.params.id;
   await MenuItem.findByIdAndRemove(menuItemId);
   res.end();
-
 });
 
 route.get("/barista", (req, res) => {
@@ -518,11 +526,38 @@ route.post("/teacherMyOrder", async (req, res) => {
 });
 
 route.get("/teacherPopularDrinks", async (req, res) => {
-  res.render("teacherPopularDrinks");
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("teacherPopularDrinks", {
+    menuItems: popularMenu,
+  });
 });
 
 route.get("/homePopularDrinks", async (req, res) => {
-  res.render("homePopularDrinks");
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("homePopularDrinks", {
+    menuItems: popularMenu,
+  });
+});
+
+route.get("/homeMenu", async (req, res) => {
+  const menu = await MenuItem.find();
+  res.render("homeMenu", {
+    menuItems: menu,
+  });
 });
 
 route.get("/teacherMyFavorites", async (req, res) => {

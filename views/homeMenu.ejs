@@ -1,10 +1,11 @@
+<%- include('include/_homeHeader') %>
 
-<%- include('include/_teacherHeader') %> 
- <head>
-    <h2>Popular Drinks</h2>
+  <head>
+    <h2>Menu</h2>
   </head>
   <body>
       <% for (let drink of menuItems){%>
+        
           <div class="card">
             <div class="container">
               <h4><b><%=drink.name%></h4>
@@ -16,5 +17,6 @@
               <% } %>
             </div>
           </div>
+        
       <%}%>
   </body>
