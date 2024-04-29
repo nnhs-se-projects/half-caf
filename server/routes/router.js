@@ -496,6 +496,10 @@ route.get("/teacherMyOrder", async (req, res) => {
 });
 
 route.post("/teacherMyOrder", async (req, res) => {
+  let total = 0;
+  for (let drink of req.session.cart) {
+    total += drink.price;
+  }
   try {
     const order = new Order({
       email: req.session.email,
@@ -504,10 +508,12 @@ route.post("/teacherMyOrder", async (req, res) => {
       complete: false,
       read: false,
       drinks: req.session.cart,
+      totalPrice: total,
     });
     await order.save();
     const user = await User.findOne({ email: req.session.email });
     user.currentOrder = order;
+    user.orderHistory.push(order);
     await user.save();
   } catch (err) {
     console.log(err);
@@ -528,7 +534,16 @@ route.get("/teacherMyFavorites", async (req, res) => {
 });
 
 route.get("/teacherOrderHistory", async (req, res) => {
-  res.render("teacherOrderHistory");
+  const user = await User.findOne({ email: req.session.email });
+  let orderHistory = [];
+  for (let order of user.orderHistory) {
+    if (order != null) {
+      orderHistory.push(await Order.findOne({ _id: order }));
+    } else {
+      console.log("Order does not exist" + order);
+    }
+  }
+  res.render("teacherOrderHistory", { history: orderHistory });
 });
 
 route.get("/orderConfirmation", async (req, res) => {

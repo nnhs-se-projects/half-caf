@@ -1,11 +1,18 @@
 <%- include('include/_teacherHeader') %>
 
 <h2>Order History</h2>
-<a href="/customizeDrink">
-  <div class="column" style="background-color: #8fc1dd">
-    <h2>Earl Grey Tea</h2>
-    <p>1/1/24</p>
-  </div></a
->
+
+<% for (let order of history){%>
+  <div class="card">
+    <div class="container">
+      <h4><b><%=order.timestamp%></h4>
+      <% for (let drink of order.drinks){%>
+        <h5><%=drink.name%></h5>
+      <%}%>
+      <h5><%=order.room%></h5>
+      <h6><%=order.totalPrice%></h6>
+    </div>
+  </div>
+<%}%>
 
 <%- include('include/_footer') %>

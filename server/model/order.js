@@ -30,6 +30,10 @@ const schema = new mongoose.Schema({
     ref: "Drink",
     required: true,
   },
+  totalPrice: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Order = mongoose.model("Order", schema);
