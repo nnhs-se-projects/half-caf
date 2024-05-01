@@ -538,7 +538,7 @@ route.get("/teacherOrderHistory", async (req, res) => {
   let orderHistory = [];
   for (let order of user.orderHistory) {
     if (order != null) {
-      orderHistory.push(await Order.findOne({ _id: order }));
+      orderHistory.push(await Order.findOne({ _id: order }).populate("drinks"));
     } else {
       console.log("Order does not exist" + order);
     }
