@@ -1,7 +1,7 @@
 <%- include('include/_baristaHeader') %>
 
 <head>
-  <h5>Orders:</h5>
+  <h5>Completed orders:</h5>
 </head>
 <body>
   <div>
@@ -19,7 +19,7 @@
           <th scope="col">Cancel Order</th>
           <th scope="col">Finished</th>
         </tr>
-        <% let count = 0 %>
+        <% let count = 0 %><% let color = 0 %>
         <!-- < looping through the each order to display each> -->
         <% for (let order of orders){%>
         <!--  -->
@@ -28,7 +28,11 @@
         <% for(let i = 0; i < order.drinks.length; i++){%>
         <!--  -->
         <% let tempDrink = drinkMap.get(count)[i] %>
-        <tr id="b">
+        <% if(color%2===0){%>
+        <tr id="b"><%}%>
+          <!-- -->
+        <% if(color%2!==0){%>
+        <tr id="c"><%}%>
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
           <th scope="?"><%=tempDrink.name%></th>
@@ -43,6 +47,7 @@
         <!--  -->
         <% %>
         <!--  -->
+        <%color++;%>
         <%}%>
         <!--  -->
         <%}%>
