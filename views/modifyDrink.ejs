@@ -21,13 +21,13 @@
 
   <!-- figure out to make fill this w/ og -->
   <% if(chosenDrink == true) { %>
-  <textarea class="content" placeholder="Edit Name...">
+  <textarea id="name" class="content" placeholder="Edit Name...">
 <%= selectedMenuItem.name %></textarea
   >
-  <textarea class="content" placeholder="Edit Description...">
+  <textarea id="description" class="content" placeholder="Edit Description...">
 <%= selectedMenuItem.description %></textarea
   >
-  <textarea class="content" placeholder="Edit Price...">
+  <textarea id="price" class="content" placeholder="Edit Price...">
 <%= selectedMenuItem.price %></textarea
   >
   <% } else { %>
@@ -98,7 +98,7 @@
       <%} %>
     </div>
   </div>
-  <button type="button">Save Drink</button>
+  <input class="submit" type="submit" value="Save Drink" />
   <!-- /Main Site -->
 
   <style>

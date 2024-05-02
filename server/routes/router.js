@@ -311,6 +311,18 @@ route.get("/modifyDrink", async (req, res) => {
   });
 });
 
+route.post("/modifyDrink/:id", async (req, res) => {
+  const menuItem = await MenuItem.findById(req.params.id);
+  menuItem.name = req.body.name;
+  menuItem.description = req.body.description;
+  menuItem.price = req.body.price;
+  menuItem.flavors = req.body.checkedFlavors;
+  menuItem.toppings = req.body.checkedToppings;
+  menuItem.temps = req.body.checkedTemps;
+  await menuItem.save();
+  res.status(201).end();
+});
+
 route.get("/deleteDrink", async (req, res) => {
   const menuItems = await MenuItem.find();
 
