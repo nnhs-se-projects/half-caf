@@ -421,8 +421,8 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
     // available flavors array
     const flavors = [];
-    for (let i = 0; i < drink.flavor.length; i++) {
-      flavors[i] = await findFlavorById(drink.flavor[i]);
+    for (let i = 0; i < drink.flavors.length; i++) {
+      flavors[i] = await findFlavorById(drink.flavors[i]);
     }
 
     // available toppings array
@@ -435,7 +435,7 @@ route.get("/customizeDrink/:name", async (req, res) => {
       res.render("customizeDrink", {
         drink: drink,
         flavors: flavors,
-        temps: drink.temp,
+        temps: drink.temps,
         toppings: toppings,
       });
     } else {
@@ -491,7 +491,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
     price: req.body.price,
     flavors: req.body.checkedFlavors,
     toppings: req.body.checkedToppings,
-    temp: req.body.temp,
+    temps: req.body.temp,
     // caffeination: req.body.caf,
     instructions: req.body.instructions,
     favorite: req.body.favorite,
@@ -506,6 +506,10 @@ route.get("/teacherMyOrder", async (req, res) => {
 });
 
 route.post("/teacherMyOrder", async (req, res) => {
+  let total = 0;
+  for (let drink of req.session.cart) {
+    total += drink.price;
+  }
   try {
     const order = new Order({
       email: req.session.email,
@@ -514,10 +518,12 @@ route.post("/teacherMyOrder", async (req, res) => {
       complete: false,
       read: false,
       drinks: req.session.cart,
+      totalPrice: total,
     });
     await order.save();
     const user = await User.findOne({ email: req.session.email });
     user.currentOrder = order;
+    user.orderHistory.push(order);
     await user.save();
   } catch (err) {
     console.log(err);
@@ -565,7 +571,31 @@ route.get("/teacherMyFavorites", async (req, res) => {
 });
 
 route.get("/teacherOrderHistory", async (req, res) => {
-  res.render("teacherOrderHistory");
+  const user = await User.findOne({ email: req.session.email });
+  let orderHistory = [];
+  for (let order of user.orderHistory) {
+    if (order != null) {
+      try {
+        orderHistory.push(
+          await Order.findOne({ _id: order }).populate({
+            path: "drinks", // Populates drink objects
+            populate: [
+              // Nested populate function to access flavors, toppings, etc
+              { path: "flavors", model: "Flavor" },
+              { path: "toppings", model: "Topping" },
+            ],
+          })
+        );
+
+        console.log(order);
+      } catch (error) {
+        console.error("Error fetching order details:", error);
+      }
+    } else {
+      console.log("Order does not exist" + order);
+    }
+  }
+  res.render("teacherOrderHistory", { history: orderHistory });
 });
 
 route.get("/orderConfirmation", async (req, res) => {

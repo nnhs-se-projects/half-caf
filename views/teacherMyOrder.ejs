@@ -2,6 +2,20 @@
 <body>
   <h2>Cart</h2>
 
+  <% for (let drink of cart){%>
+    <div class="card">
+      <div class="container">
+        <h4><b><%=drink.name%></h4>
+        <h5><%=drink.price + "$"%></h5>
+        <%if(drink.instructions.length > 40) { %>
+        <p><%=drink.instructions.slice(0,40) + "..."%></p>
+        <% } else { %>
+          <p><%=drink.instructions%></p>
+        <% } %>
+      </div>
+    </div>
+  <%}%>
+
   <div id="page-content">
     <input type="text" id="rm" placeholder="Enter Room Number" />
     <input type="submit" class="placeOrder" value="Place Order" />
