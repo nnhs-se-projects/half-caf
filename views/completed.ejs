@@ -16,8 +16,8 @@
           <th scope="col">Toppings</th>
           <th scope="col">Special Instructions</th>
           <th scope="col">Timestamp</th>
-          <th scope="col">Cancel Order</th>
-          <th scope="col">Finished</th>
+          <th scope="col">Mark as incomplete</th>
+
         </tr>
         <% let count = 0 %><% let color = 0 %>
         <!-- < looping through the each order to display each> -->
@@ -41,8 +41,8 @@
           <th scope="?"><%=tempDrink.toppings%></th>
           <th scope="?"><%=tempDrink.instructions%></th>
           <th scope="?"><%=order.timestamp%></th>
-          <th scope="?"><button id="barista">Cancel</button></th>
-          <th scope="?"><button id="barista">Finish</button></th>
+          <th scope="?"><button id="barista">Incomplete</button></th>
+
         </tr>
         <!--  -->
         <% %>
