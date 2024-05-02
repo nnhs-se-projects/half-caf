@@ -12,7 +12,6 @@
           <th scope="col">Teacher</th>
           <th scope="col">Drinks</th>
           <th scope="col">Temp</th>
-          <th scope="col">Decaf/SF</th>
           <th scope="col">Flavors</th>
           <th scope="col">Toppings</th>
           <th scope="col">Special Instructions</th>
@@ -20,25 +19,26 @@
           <th scope="col">Cancel Order</th>
           <th scope="col">Finished</th>
         </tr>
+        <% let count = 0 %>
         <!-- < looping through the each order to display each> -->
         <% for (let order of orders){%>
         <!-- < looping through each drink of every order> -->
         <!-- < to display each drink on a different line> -->
-        <% for (let drink of order.drinks){%>
+        <% for (let i = 0; i < order.drinks.length; i++){%> <% let tempDrink =
+        drinkMap.get(count)[i] %>
         <tr id="b">
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
-          <th scope="?"><%=drink%></th>
-          <th scope="?"><%=drink.temp%></th>
-          <th scope="?"><%=drink.caffeination%></th>
-          <th scope="?"><%=drink.flavors%></th>
-          <th scope="?"><%=drink.toppings%></th>
-          <th scope="?"><%=drink.instructions%></th>
-          <th scope="?"><%=drink.timestamp%></th>
+          <th scope="?"><%=tempDrink.name%></th>
+          <th scope="?"><%=tempDrink.temp%></th>
+          <th scope="?"><%=tempDrink.flavors%></th>
+          <th scope="?"><%=tempDrink.toppings%></th>
+          <th scope="?"><%=tempDrink.instructions%></th>
+          <th scope="?"><%=order.timestamp%></th>
           <th scope="?"><button id="barista">Cancel</button></th>
           <th scope="?"><button id="barista">Finish</button></th>
         </tr>
-        <%}%> <%}%>
+        <%}%> <% count++ }%>
       </thead>
     </table>
   </div>
