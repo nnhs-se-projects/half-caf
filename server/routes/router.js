@@ -502,7 +502,17 @@ route.post("/customizeDrink/:name", async (req, res) => {
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
+  console.log(req.body.index);
   res.render("teacherMyOrder", { cart: req.session.cart });
+});
+
+route.get("/updateCart", async (req, res) => {});
+
+route.post("/updateCart", async (req, res) => {
+  console.log("Post Updating cart");
+  req.session.cart.splice(req.body.index,1);
+
+  res.status(200).end();
 });
 
 route.post("/teacherMyOrder", async (req, res) => {
@@ -539,7 +549,6 @@ route.get("/teacherPopularDrinks", async (req, res) => {
       popularMenu.push(menuItems[i]);
     }
   }
-
   res.render("teacherPopularDrinks", {
     menuItems: popularMenu,
   });
