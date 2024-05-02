@@ -538,7 +538,22 @@ route.get("/teacherOrderHistory", async (req, res) => {
   let orderHistory = [];
   for (let order of user.orderHistory) {
     if (order != null) {
-      orderHistory.push(await Order.findOne({ _id: order }).populate("drinks"));
+      try {
+        orderHistory.push(
+          await Order.findOne({ _id: order }).populate({
+            path: "drinks", // Populates drink objects
+            populate: [
+              // Nested populate function to access flavors, toppings, etc
+              { path: "flavors", model: "Flavor" },
+              { path: "toppings", model: "Topping" },
+            ],
+          })
+        );
+
+        console.log(order);
+      } catch (error) {
+        console.error("Error fetching order details:", error);
+      }
     } else {
       console.log("Order does not exist" + order);
     }
