@@ -1,11 +1,82 @@
-<!-- include header -->
 <%- include('include/_baristaHeader') %>
-<!-- /include header -->
 
-<!-- Main Site -->
+<head>
+  <h5>Completed orders:</h5>
+</head>
+<body>
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <tr id="a">
+          <th scope="col">Room Number</th>
+          <th scope="col">Teacher</th>
+          <th scope="col">Drink</th>
+          <th scope="col">Temp</th>
+          <th scope="col">Flavors</th>
+          <th scope="col">Toppings</th>
+          <th scope="col">Special Instructions</th>
+          <th scope="col">Timestamp</th>
+          <th scope="col">Mark as incomplete</th>
 
-<!-- /Main Site -->
+        </tr>
+        <% let count = 0 %><% let color = 0 %>
+        <!-- < looping through the each order to display each> -->
+        <% for (let order of orders){%>
+        <!--  -->
+        <% if(order.complete === true){%>
+        <!--  -->
+        <% for(let i = 0; i < order.drinks.length; i++){%>
+        <!--  -->
+        <% let tempDrink = drinkMap.get(count)[i] %>
+        <% if(color%2===0){%>
+        <tr id="b"><%}%>
+          <!-- -->
+        <% if(color%2!==0){%>
+        <tr id="c"><%}%>
+          <th scope="?"><%=order.room%></th>
+          <th scope="?"><%=order.email%></th>
+          <th scope="?"><%=tempDrink.name%></th>
+          <th scope="?"><%=tempDrink.temp%></th>
+          <th scope="?"><%=tempDrink.flavors%></th>
+          <th scope="?"><%=tempDrink.toppings%></th>
+          <th scope="?"><%=tempDrink.instructions%></th>
+          <th scope="?"><%=order.timestamp%></th>
+          <th scope="?"><button id="barista">Incomplete</button></th>
 
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->
+        </tr>
+        <!--  -->
+        <% %>
+        <!--  -->
+        <%color++;%>
+        <%}%>
+        <!--  -->
+        <%}%>
+        <!--  -->
+        <%count++;}%>
+        <!-- < looping through each drink of every order> -->
+        <!-- < to display each drink on a different line> -->
+      </thead>
+    </table>
+  </div>
+</body>
+
+<style type="text/css">
+  table tr#a {
+    background-color: lightblue;
+  }
+  table tr#b {
+    background-color: lightsalmon;
+  }
+  table tr#c {
+    background-color: rgb(255, 202, 181);
+  }
+  button#barista {
+    background-color: lightblue;
+    border-color: white;
+    color: black;
+  }
+  h5 {
+    font-family: cursive;
+    font-size: 35px;
+  }
+</style>

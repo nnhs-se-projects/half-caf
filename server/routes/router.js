@@ -329,13 +329,99 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/barista", (req, res) => {
-  res.render("baristaOrder");
+// Main/Home page of the Barista branch that displays all current orders
+route.get("/barista", async (req, res) => {
+  const orders = await Order.find();
+  const drinkMap = new Map();
+  for (let i = 0; i < orders.length; i++) {
+    const drinkArray = [];
+    for (let n = 0; n < orders[i].drinks.length; n++) {
+      const formattedDrink = {
+        name: "",
+        flavors: [],
+        toppings: [],
+        temp: "",
+        instructions: "",
+      };
+      const drink = await Drink.findById(orders[i].drinks[n]);
+      if (drink.flavors.length === 0) {
+        formattedDrink.flavors.push("None");
+      } else {
+        for (let x = 0; x < drink.flavors.length; x++) {
+          const tempFlavor = await Flavor.findById(drink.flavors[x]);
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+      if (drink.toppings.length === 0) {
+        formattedDrink.toppings.push("None");
+      } else {
+        for (let x = 0; x < drink.toppings.length; x++) {
+          const tempTopping = await Topping.findById(drink.toppings[x]);
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+      formattedDrink.name = drink.name;
+      formattedDrink.temp = drink.temps;
+      formattedDrink.instructions = drink.instructions;
+      drinkArray.push(formattedDrink);
+    }
+    drinkMap.set(i, drinkArray);
+  }
+
+  res.render("barista", {
+    orders,
+    drinkMap,
+  });
+});
+
+route.get("/completed", async (req, res) => {
+  const orders = await Order.find();
+  const drinkMap = new Map();
+  for (let i = 0; i < orders.length; i++) {
+    const drinkArray = [];
+    for (let n = 0; n < orders[i].drinks.length; n++) {
+      const formattedDrink = {
+        name: "",
+        flavors: [],
+        toppings: [],
+        temp: "",
+        instructions: "",
+      };
+      const drink = await Drink.findById(orders[i].drinks[n]);
+      if (drink.flavors.length === 0) {
+        formattedDrink.flavors.push("None");
+      } else {
+        for (let x = 0; x < drink.flavors.length; x++) {
+          const tempFlavor = await Flavor.findById(drink.flavors[x]);
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+      if (drink.toppings.length === 0) {
+        formattedDrink.toppings.push("None");
+      } else {
+        for (let x = 0; x < drink.toppings.length; x++) {
+          const tempTopping = await Topping.findById(drink.toppings[x]);
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+      formattedDrink.name = drink.name;
+      formattedDrink.temp = drink.temps;
+      formattedDrink.instructions = drink.instructions;
+      drinkArray.push(formattedDrink);
+    }
+    drinkMap.set(i, drinkArray);
+  }
+
+  res.render("completed", {
+    orders,
+    drinkMap,
+  });
 });
 
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
+
 // updates database with new flavor options
 route.post("/addFlavor", async (req, res) => {
   const flavor = new Flavor({
@@ -397,9 +483,9 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/barista", (req, res) => {
-  res.render("barista");
-});
+// route.get("/barista", (req, res) => {
+//   res.render("barista");
+// });
 
 route.get("/completed", (req, res) => {
   res.render("completed");
