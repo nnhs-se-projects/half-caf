@@ -2,6 +2,7 @@
 <body>
   <h2>Cart</h2>
 
+  <%let index = 0;%>
   <% for (let drink of cart){%>
     <div class="card">
       <div class="container">
@@ -12,9 +13,13 @@
         <% } else { %>
           <p><%=drink.instructions%></p>
         <% } %>
+          <% console.log("###..."+index)%>
+        <button type="button" class="remove" drink-index="<%=index%>">Remove</button>
+        <%index++;%>
       </div>
     </div>
   <%}%>
+
 
   <div id="page-content">
     <input type="text" id="rm" placeholder="Enter Room Number" />
