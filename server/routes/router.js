@@ -8,6 +8,7 @@ const TempJson = require("../model/temps.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
@@ -654,10 +655,18 @@ route.get("/homePopularDrinks", async (req, res) => {
   });
 });
 
+// updates database with new topping options
+route.post("/addTopping", async (req, res) => {
+  const topping = new Topping({
+    topping: req.body.topping,
+    isAvailable: true,
+    price: req.body.price,
+
 route.get("/homeMenu", async (req, res) => {
   const menu = await MenuItem.find();
   res.render("homeMenu", {
     menuItems: menu,
+
   });
 });
 
