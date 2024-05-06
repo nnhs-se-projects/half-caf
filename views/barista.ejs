@@ -1,11 +1,179 @@
-<!-- include header -->
 <%- include('include/_baristaHeader') %>
-<!-- /include header -->
 
-<!-- Main Site -->
+<head>
+  <h5>Orders:</h5>
+</head>
+<body>
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <tr id="a">
+          <th scope="col">Room Number</th>
+          <th scope="col">Teacher</th>
+          <th scope="col">Drink</th>
+          <th scope="col">Temp</th>
+          <th scope="col">Flavors</th>
+          <th scope="col">Toppings</th>
+          <th scope="col">Special Instructions</th>
+          <th scope="col">Timestamp</th>
+          <th scope="col">Cancel Order</th>
+          <th scope="col">Finish Order</th>
+        </tr>
+        <% let count = 0 %> <% let color = 0 %>
+        <!-- < looping through the each order to display each> -->
+        <% for (let order of orders){%>
+        <!--  -->
+        <% if(order.complete === false){%>
+        <!--  -->
+        <% for(let i = 0; i < order.drinks.length; i++){%>
+        <!--  -->
+        <% let tempDrink = drinkMap.get(count)[i] %>
+        <!--  -->
+        <% if(color%2===0){%>
+        <tr id="b"><%}%>
+          <!-- -->
+        <% if(color%2!==0){%>
+        <tr id="c"><%}%>
+          <th scope="?"><%=order.room%></th>
+          <th scope="?"><%=order.email%></th>
+          <th scope="?"><%=tempDrink.name%></th>
+          <th scope="?"><%=tempDrink.temp%></th>
+          <th scope="?"><%=tempDrink.flavors%></th>
+          <th scope="?"><%=tempDrink.toppings%></th>
+          <th scope="?"><%=tempDrink.instructions%></th>
+          <th scope="?"><%=order.timestamp%></th>
+          <th scope="?"><button id="barista">Cancel</button></th>
+          <th scope="?"><button id="barista">Finish</button></th>
+        </tr>
+        <!--  -->
+        <% %>
+        <!--  -->
+        <%color++;%>
+        <%}%>
+        <!--  -->
+        <%}%>
+        <!--  -->
+        <%count++;}%>
+        
+      </thead>
+    </table>
+  </div>
+</body>
 
-<!-- /Main Site -->
+<!-- <tr id = "c">
+              <th scope="?">105</th>
+              <th scope="?">Lord Tavneet</th>
+              <th scope="?">Yummy</th>
+              <th scope="?">Yummy temp</th>
+              <th scope="?">Caf</th>
+              <th scope="?">Strawberry, Cinnamon Bun</th>
+                            <th scope="?"> </th>
+              <th scope="?"> </th>
+              <th scope="?">2024-04-18 at 10:41</th>
+              <th scope="?"><button id = "barista">Cancel</button></th>
+              <th scope="?"><button id = "barista">Finish</button></th>
+            </tr> -->
 
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->
+<!-- HARD CODE -->
+<!-- <tr id = "b">
+              <th scope="?">128</th>
+              <th scope="?">Delaney the Prep</th>
+              <th scope="?">Lemonade</th>
+              <th scope="?">Hot</th>
+              <th scope="?">Caf</th>
+              <th scope="?">Black Coffee</th>
+                            <th scope="?"> </th>
+              <th scope="?"></th>
+              <th scope="?">2024-04-18 at 10:43</th>
+              <th scope="?"><button id = "barista">Cancel</button></th>
+              <th scope="?"><button id = "barista">Finish</button></th>
+            </tr>
+            <tr id = "c">
+              <th scope="?">M5</th>
+              <th scope="?">Baron Eric</th>
+              <th scope="?">Soup</th>
+              <th scope="?">Boiling</th>
+              <th scope="?">Caf, SF</th>
+              <th scope="?">Chicken</th>
+                            <th scope="?"> </th>
+              <th scope="?"> </th>
+              <th scope="?">2024-04-18 at 10:47</th>
+              <th scope="?">
+                <button id = "barista">Cancel</button>
+              </th>
+              <th scope="?"><button id = "barista">Finish</button></th>
+            </tr>
+             <tr id = "b">
+              <th scope="?">102</th>
+              <th scope="?">abigalk balding</th>
+              <th scope="?">Icky</th>
+              <th scope="?">Icky temp</th>
+              <th scope="?">Decaf</th>
+              <th scope="?"> </th>
+                            <th scope="?"> </th>
+              <th scope="?"> </th>
+              <th scope="?">2024-04-18 at 11:07</th>
+              <th scope="?">
+                <button id = "barista">Cancel</button>
+              </th>
+              <th scope="?"><button id = "barista">Finish</button></th>
+            </tr>
+            <tr id = "c">
+              <th scope="?">Outside in the cold</th>
+              <th scope="?">Savy Tavy (the meanie dino chicken nugget head)</th>
+              <th scope="?">Ice cold snow</th>
+              <th scope="?">Freezing</th>
+              <th scope="?">Caf/SF</th>
+              <th scope="?">Light Salmon</th>
+                            <th scope="?">Cream</th>
+              <th scope="?"> </th>
+              <th scope="?">2024-04-19 at 10:13</th>
+              <th scope="?">
+                <button id = "barista">Cancel</button>
+              </th>
+              <th scope="?"><button id = "barista">Finish</button></th>
+            </tr>
+             <tr id = "b">
+              <th scope="?">106</th>
+              <th scope="?">Unknown</th>
+              <th scope="?">Smoothie</th>
+              <th scope="?">Blended</th>
+              <th scope="?">SF</th>
+              <th scope="?">Strawberry</th>
+                            <th scope="?">Boba</th>
+              <th scope="?"> </th>
+              <th scope="?">2024-04-19 at 10:27</th>
+              <th scope="?">
+                <button id = "barista">Cancel</button>
+              </th>
+              <th scope="?"><button id = "barista">Finish</button></th>
+            </tr> -->
+<!-- </thead> -->
+<!-- </div></body> -->
+<!-- </body> -->
+
+<style type="text/css">
+  table tr#a {
+    background-color: lightblue;
+  }
+  table tr#b {
+    background-color: lightsalmon;
+  }
+  table tr#c {
+    background-color: rgb(255, 202, 181);
+  }
+  button#barista {
+    background-color: lightblue;
+    border-color: white;
+    color: black;
+  }
+  h5 {
+    font-family: cursive;
+    font-size: 35px;
+  }
+</style>
+
+<!-- connect to js -->
+
+<!-- <script src="/js/baristaOrder.js"></script> -->
+<!-- don't need to connect to js -->

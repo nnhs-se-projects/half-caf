@@ -11,17 +11,17 @@ const schema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   price: {
-    type: Number,
+    type: String,
     required: true,
   },
   popular: {
     type: Boolean,
     required: false,
   },
-  flavor: {
+  flavors: {
     type: [mongoose.Schema.ObjectId],
     ref: "Flavor",
     required: true,
@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
     ref: "Topping",
     required: true,
   },
-  temp: {
+  temps: {
     type: [String],
     required: true,
   },

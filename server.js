@@ -6,7 +6,7 @@
 // import the express module, which exports the express function
 const express = require("express");
 
-// invoke the express function to create an Express application
+// invoke the express function to create an Express
 const app = express();
 
 // load environment variables from the .env file into process.env
@@ -41,7 +41,7 @@ app.use("/js", express.static("assets/js"));
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
-  if (req.path === "/" || req.path === "/menu") {
+  if (req.path === "/homePopularDrinks" || req.path === "/homeMenu") {
     return next(); // allow access to index without authentication
   }
   // if the student is already logged in, fetch the student object from the database

@@ -4,12 +4,26 @@ const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
-const TempJson = require("../model/temp.json");
+const TempJson = require("../model/temps.json");
+const Toppings = require("../model/topping");
+const Drink = require("../model/drink");
+const Order = require("../model/order");
+
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
 route.get("/", async (req, res) => {
-  res.render("homePopularDrinks");
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("homePopularDrinks", {
+    menuItems: popularMenu,
+  });
 });
 
 route.get("/auth", (req, res) => {
@@ -106,6 +120,7 @@ route.get("/redirectUser", async (req, res) => {
     } else if (role === "barista") {
       res.redirect("/barista");
     } else if (role === "teacher") {
+      req.session.cart = [];
       res.redirect("/teacherPopularDrinks");
     } else {
       console.log("Role Not Recognized");
@@ -172,8 +187,55 @@ route.delete("/deleteUser/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/viewUser", (req, res) => {
-  res.render("viewUser");
+route.get("/viewUser", async (req, res) => {
+  // access all the users in the database
+  const allUsers = await User.find();
+  res.render("viewUser", {
+    users: allUsers,
+  });
+});
+// gets the activated/ deactivated users for the view user filter
+route.get("/users/:status", async (req, res) => {
+  const status = req.params.status;
+  try {
+    let users;
+    if (status === "activated") {
+      users = await User.find({ isActivated: true });
+    } else if (status === "deactivated") {
+      users = await User.find({ isActivated: false });
+    } else {
+      // If status is not 'activated' or 'deactivated', fetch all users
+      users = await User.find();
+    }
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+// not working yet but will update the database based on if the user is activated or deactivated
+route.post("/updateUserStatus", async (req, res) => {
+  const { userIds, isActivated } = req.body;
+  try {
+    await User.updateMany(
+      { _id: { $in: userIds } },
+      { $set: { isActivated: isActivated } }
+    );
+    //   user.isActivated = req.body.isActivated;
+    res.status(200).json({ message: "User status updated successfully." });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+  // for (let use of allUsers) {
+  //   const userId = req.params.id;
+  //   let user = await use.findById(userId);
+  //   user.isActivated = req.body.isActivated;
+  //   await user.save();
+  //   console.log(user);
+  //   res.status(201).end();
+  // }
 });
 
 route.get("/addDrink", async (req, res) => {
@@ -206,27 +268,161 @@ route.post("/addDrink", async (req, res) => {
     description: req.body.description,
     price: req.body.price,
     popular: req.body.popular,
-    flavor: req.body.checkedFlavors,
+    flavors: req.body.checkedFlavors,
     toppings: req.body.checkedToppings,
-    temp: req.body.checkedTemps,
+    temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     special: req.body.special,
   });
   await drink.save();
-  res.status(201).end();
+  res.status(200).end();
 });
 
-route.get("/modifyDrink", (req, res) => {
-  res.render("modifyDrink");
+// everything loads on the Modify Drink page when a
+// menu item is selected, except for flavors
+route.get("/modifyDrink", async (req, res) => {
+  // get id of selected drink
+  const { id } = req.query;
+
+  const menuItems = await MenuItem.find();
+  const toppings = await Topping.find();
+  const flavors = await Flavor.find();
+
+  let selectedMenuItem;
+  // check if any drink has been selected
+  if (id != null) {
+    selectedMenuItem = await MenuItem.findById(id);
+  } else {
+    selectedMenuItem = undefined;
+  }
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+
+  res.render("modifyDrink", {
+    menuItems: formattedMenuItems,
+    selectedMenuItem,
+    toppings,
+    flavors,
+    temps: TempJson,
+  });
 });
 
-route.get("/deleteDrink", (req, res) => {
-  res.render("deleteDrink");
+route.get("/deleteDrink", async (req, res) => {
+  const menuItems = await MenuItem.find();
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+  res.render("deleteDrink", { menuItems: formattedMenuItems });
+});
+
+route.delete("/deleteDrink/:id", async (req, res) => {
+  const menuItemId = req.params.id;
+  await MenuItem.findByIdAndRemove(menuItemId);
+  res.end();
+});
+
+// Main/Home page of the Barista branch that displays all current orders
+route.get("/barista", async (req, res) => {
+  const orders = await Order.find();
+  const drinkMap = new Map();
+  for (let i = 0; i < orders.length; i++) {
+    const drinkArray = [];
+    for (let n = 0; n < orders[i].drinks.length; n++) {
+      const formattedDrink = {
+        name: "",
+        flavors: [],
+        toppings: [],
+        temp: "",
+        instructions: "",
+      };
+      const drink = await Drink.findById(orders[i].drinks[n]);
+      if (drink.flavors.length === 0) {
+        formattedDrink.flavors.push("None");
+      } else {
+        for (let x = 0; x < drink.flavors.length; x++) {
+          const tempFlavor = await Flavor.findById(drink.flavors[x]);
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+      if (drink.toppings.length === 0) {
+        formattedDrink.toppings.push("None");
+      } else {
+        for (let x = 0; x < drink.toppings.length; x++) {
+          const tempTopping = await Topping.findById(drink.toppings[x]);
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+      formattedDrink.name = drink.name;
+      formattedDrink.temp = drink.temps;
+      formattedDrink.instructions = drink.instructions;
+      drinkArray.push(formattedDrink);
+    }
+    drinkMap.set(i, drinkArray);
+  }
+
+  res.render("barista", {
+    orders,
+    drinkMap,
+  });
+});
+
+route.get("/completed", async (req, res) => {
+  const orders = await Order.find();
+  const drinkMap = new Map();
+  for (let i = 0; i < orders.length; i++) {
+    const drinkArray = [];
+    for (let n = 0; n < orders[i].drinks.length; n++) {
+      const formattedDrink = {
+        name: "",
+        flavors: [],
+        toppings: [],
+        temp: "",
+        instructions: "",
+      };
+      const drink = await Drink.findById(orders[i].drinks[n]);
+      if (drink.flavors.length === 0) {
+        formattedDrink.flavors.push("None");
+      } else {
+        for (let x = 0; x < drink.flavors.length; x++) {
+          const tempFlavor = await Flavor.findById(drink.flavors[x]);
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+      if (drink.toppings.length === 0) {
+        formattedDrink.toppings.push("None");
+      } else {
+        for (let x = 0; x < drink.toppings.length; x++) {
+          const tempTopping = await Topping.findById(drink.toppings[x]);
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+      formattedDrink.name = drink.name;
+      formattedDrink.temp = drink.temps;
+      formattedDrink.instructions = drink.instructions;
+      drinkArray.push(formattedDrink);
+    }
+    drinkMap.set(i, drinkArray);
+  }
+
+  res.render("completed", {
+    orders,
+    drinkMap,
+  });
 });
 
 route.get("/addFlavor", (req, res) => {
   res.render("addFlavor");
 });
+
 // updates database with new flavor options
 route.post("/addFlavor", async (req, res) => {
   const flavor = new Flavor({
@@ -254,47 +450,6 @@ route.delete("/deleteFlavor/:id", async (req, res) => {
   await Flavor.findByIdAndRemove(flavorId);
   res.end();
 });
-
-route.get("/barista", (req, res) => {
-  res.render("barista");
-});
-
-route.get("/completed", (req, res) => {
-  res.render("completed");
-});
-
-// Route Teacher Menu
-route.get("/teacherMenu/", async (req, res) => {
-  res.render("teacherMenu");
-});
-route.get("/teacherPopularDrinks", async (req, res) => {
-  res.render("teacherPopularDrinks");
-});
-
-route.get("/homePopularDrinks", async (req, res) => {
-  res.render("homePopularDrinks");
-});
-
-route.get("/teacherMyOrder", async (req, res) => {
-  res.render("teacherMyOrder");
-});
-
-route.get("/teacherMyFavorites", async (req, res) => {
-  res.render("teacherMyFavorites");
-});
-
-route.get("/teacherOrderHistory", async (req, res) => {
-  res.render("teacherOrderHistory");
-});
-
-route.get("/orderConfirmation", async (req, res) => {
-  res.render("orderConfirmation");
-});
-
-route.get("/customizeDrink", async (req, res) => {
-  const { drink, price, description } = req.query; // Extract query parameters
-  res.render("customizeDrink", { drink, price, description });
-}); // Pass parameters to view renderer
 
 route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
@@ -327,6 +482,229 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   const toppingId = req.params.id;
   await Topping.findByIdAndRemove(toppingId);
   res.end();
+});
+
+// route.get("/barista", (req, res) => {
+//   res.render("barista");
+// });
+
+route.get("/completed", (req, res) => {
+  res.render("completed");
+});
+
+// Route Teacher Menu
+route.get("/teacherMenu/", async (req, res) => {
+  const menu = await MenuItem.find();
+  res.render("teacherMenu", {
+    menuItems: menu,
+  });
+});
+
+route.get("/customizeDrink/:name", async (req, res) => {
+  const selectedDrink = req.params.name; // params holds parameters from the URL path
+  const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
+  try {
+    const drink = await findDrinkByName(drinkName); // finds drink by name
+
+    // available flavors array
+    const flavors = [];
+    for (let i = 0; i < drink.flavors.length; i++) {
+      flavors[i] = await findFlavorById(drink.flavors[i]);
+    }
+
+    // available toppings array
+    const toppings = [];
+    for (let i = 0; i < drink.toppings.length; i++) {
+      toppings[i] = await findToppingsById(drink.toppings[i]);
+    }
+
+    if (drink) {
+      res.render("customizeDrink", {
+        drink: drink,
+        flavors: flavors,
+        temps: drink.temps,
+        toppings: toppings,
+      });
+    } else {
+      res.status(404).send("Drink not found");
+    }
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink:", error);
+    res.status(500);
+  }
+});
+
+// gets drink object by its name
+async function findDrinkByName(drinkName) {
+  try {
+    const drink = await MenuItem.findOne({ name: drinkName });
+    return drink;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink by name:", error);
+    res.status(500);
+  }
+}
+
+// finds flavor object by id given by drink.flavor
+async function findFlavorById(id) {
+  try {
+    const flavor = await Flavor.findOne({ _id: id });
+    return flavor;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the flavor:", error);
+    res.status(500);
+  }
+}
+
+// finds topping objects by id given by drink.toppings
+async function findToppingsById(id) {
+  try {
+    const toppings = await Toppings.findOne({ _id: id });
+    return toppings;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink by name:", error);
+    res.status(500);
+  }
+}
+
+route.post("/customizeDrink/:name", async (req, res) => {
+  // drink user is adding to order
+  const drink = new Drink({
+    name: req.body.name,
+    price: req.body.price,
+    flavors: req.body.checkedFlavors,
+    toppings: req.body.checkedToppings,
+    temps: req.body.temp,
+    // caffeination: req.body.caf,
+    instructions: req.body.instructions,
+    favorite: req.body.favorite,
+  });
+  await drink.save();
+  req.session.cart.push(drink);
+  res.status(200).send("Drink added to session.");
+});
+
+route.get("/teacherMyOrder", async (req, res) => {
+  console.log(req.body.index);
+  res.render("teacherMyOrder", { cart: req.session.cart });
+});
+
+route.get("/updateCart", async (req, res) => {});
+
+route.post("/updateCart", async (req, res) => {
+  console.log("Post Updating cart");
+  req.session.cart.splice(req.body.index,1);
+
+  res.status(200).end();
+});
+
+route.post("/teacherMyOrder", async (req, res) => {
+  let total = 0;
+  for (let drink of req.session.cart) {
+    total += drink.price;
+  }
+  try {
+    const order = new Order({
+      email: req.session.email,
+      room: req.body.rm,
+      timestamp: req.body.timestamp,
+      complete: false,
+      read: false,
+      drinks: req.session.cart,
+      totalPrice: total,
+    });
+    await order.save();
+    const user = await User.findOne({ email: req.session.email });
+    user.currentOrder = order;
+    user.orderHistory.push(order);
+    await user.save();
+  } catch (err) {
+    console.log(err);
+  }
+  res.status(200).end();
+});
+
+route.get("/teacherPopularDrinks", async (req, res) => {
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+  res.render("teacherPopularDrinks", {
+    menuItems: popularMenu,
+  });
+});
+
+route.get("/homePopularDrinks", async (req, res) => {
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
+    }
+  }
+
+  res.render("homePopularDrinks", {
+    menuItems: popularMenu,
+  });
+});
+
+// updates database with new topping options
+route.post("/addTopping", async (req, res) => {
+  const topping = new Topping({
+    topping: req.body.topping,
+    isAvailable: true,
+    price: req.body.price,
+
+route.get("/homeMenu", async (req, res) => {
+  const menu = await MenuItem.find();
+  res.render("homeMenu", {
+    menuItems: menu,
+
+  });
+});
+
+route.get("/teacherMyFavorites", async (req, res) => {
+  res.render("teacherMyFavorites");
+});
+
+route.get("/teacherOrderHistory", async (req, res) => {
+  const user = await User.findOne({ email: req.session.email });
+  let orderHistory = [];
+  for (let order of user.orderHistory) {
+    if (order != null) {
+      try {
+        orderHistory.push(
+          await Order.findOne({ _id: order }).populate({
+            path: "drinks", // Populates drink objects
+            populate: [
+              // Nested populate function to access flavors, toppings, etc
+              { path: "flavors", model: "Flavor" },
+              { path: "toppings", model: "Topping" },
+            ],
+          })
+        );
+
+        console.log(order);
+      } catch (error) {
+        console.error("Error fetching order details:", error);
+      }
+    } else {
+      console.log("Order does not exist" + order);
+    }
+  }
+  res.render("teacherOrderHistory", { history: orderHistory });
+});
+
+route.get("/orderConfirmation", async (req, res) => {
+  req.session.cart = [];
+  res.render("orderConfirmation");
 });
 
 // delegate all authentication to the auth.js router

@@ -1,23 +1,37 @@
 <%- include('include/_teacherHeader') %>
+<body>
+  <h2>Cart</h2>
 
-<h2>Cart</h2>
+  <%let index = 0;%>
+  <% for (let drink of cart){%>
+    <div class="card">
+      <div class="container">
+        <h4><b><%=drink.name%></h4>
+        <h5><%=drink.price + "$"%></h5>
+        <%if(drink.instructions.length > 40) { %>
+        <p><%=drink.instructions.slice(0,40) + "..."%></p>
+        <% } else { %>
+          <p><%=drink.instructions%></p>
+        <% } %>
+          <% console.log("###..."+index)%>
+        <button type="button" class="remove" drink-index="<%=index%>">Remove</button>
+        <%index++;%>
+      </div>
+    </div>
+  <%}%>
 
-<div class="card">
-  <div class="container">
-    <h4><b>Mr. Schmidt's Earl Grey Tea</b></h4>
-    <h5>Special Instructions:</h5>
-    <p>Room 108</p>
-    <a class="active" href="#earlGreyTea"></a>
+
+  <div id="page-content">
+    <input type="text" id="rm" placeholder="Enter Room Number" />
+    <input type="submit" class="placeOrder" value="Place Order" />
   </div>
-</div>
-
-<div>
-  <a href="/orderConfirmation" role="button" id="placeOrder">Place Order</a>
-</div>
+</body>
 
 <style>
-  #placeOrder {
-    margin: 2%;
+  #page-content {
+    width: 16%;
+    margin: 1%;
   }
 </style>
+<script src="/js/teacherMyOrder.js"></script>
 <%- include('include/_footer') %>
