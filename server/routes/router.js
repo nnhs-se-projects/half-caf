@@ -601,8 +601,10 @@ route.post("/customizeDrink/:name", async (req, res) => {
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
-  console.log(req.body.index);
-  res.render("teacherMyOrder", { cart: req.session.cart });
+  res.render("teacherMyOrder", {
+    cart: req.session.cart,
+    enabled: res.locals.headerData.enabled,
+  });
 });
 
 route.get("/updateCart", async (req, res) => {});

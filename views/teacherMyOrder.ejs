@@ -23,14 +23,23 @@
 
   <div id="page-content">
     <input type="text" id="rm" placeholder="Enter Room Number" />
+    <% if(enabled === true) {%>
     <input type="submit" class="placeOrder" value="Place Order" />
+    <% } else { %>
+    <div id="noOrder">
+    <h3>Ordering is not currently available</h3>
+    </div>
+    <% } %>
   </div>
 </body>
 
 <style>
   #page-content {
-    width: 16%;
+    width: 25%;
     margin: 1%;
+  }
+  #noOrder {
+    width: 200%;
   }
 </style>
 <script src="/js/teacherMyOrder.js"></script>
