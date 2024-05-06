@@ -597,7 +597,7 @@ route.get("/updateCart", async (req, res) => {});
 
 route.post("/updateCart", async (req, res) => {
   console.log("Post Updating cart");
-  req.session.cart.splice(req.body.index,1);
+  req.session.cart.splice(req.body.index, 1);
 
   res.status(200).end();
 });
@@ -655,18 +655,10 @@ route.get("/homePopularDrinks", async (req, res) => {
   });
 });
 
-// updates database with new topping options
-route.post("/addTopping", async (req, res) => {
-  const topping = new Topping({
-    topping: req.body.topping,
-    isAvailable: true,
-    price: req.body.price,
-
 route.get("/homeMenu", async (req, res) => {
   const menu = await MenuItem.find();
   res.render("homeMenu", {
     menuItems: menu,
-
   });
 });
 
