@@ -34,8 +34,21 @@ npm install
 ```
 MONGO_URI= <find in trello>
 SESSION_SECRET= <secret key>
-
 ```
+
+4. Run the server from the VS Code debugger
+5. Go to a web browser and type in localhost:8080
+6. Once signed in with google, go to localhost:8080/addUser and add yourself as a user.
+
+## Data Schema
+
+![alt text](dataStructure.png)
+
+The image above shows the dependencies of the different classes in the dat structure. All of the models are written in js except temps.json (you can find the data model under assets/server/model). Download MongoDB Compass to easily access the database with the same URI written in your ejs file. You can look through Compass to see what the dependencies look like in the actual app.
+
+To explain the image more, each arrow shows a different dependency. The beginning of the arrow starts at the property that needs information from a different class, which is where the head of the arrow points to. The dotted line and arrow that goes from menuItem to drink is because every time the user clicks on a drink from the menu page, a new instance of drink is created. Drink is supposed to be a customized version of menuItem. The dotted arrow shows that drink is not directly dependent on menuItem in the database, but pulls from its properties when a new drink is created. That's because menuItems don't reference all of the toppings or flavors so no one can order a blue raspberry coffee, so only certain flavors, toppings, and temperatures are available for each menuItem and drink.
+
+Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
 
 ## Contains different pages for Admin, Barista, Teacher, Home Page and Google Authentication
 
