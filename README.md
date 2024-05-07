@@ -39,21 +39,42 @@ SESSION_SECRET= <secret key>
 
 ## Contains different pages for Admin, Barista, Teacher, Home Page and Google Authentication
 
-## LAYOUT for each page is completed
+## OVERVIEW for each page is completed
 
-## ADMIN contains properties to be able to:
+## ADMIN:
 
-add, delete and view users
-add and remove drinks
-add and remove toppings
-turn on/off the ordering process
+Currently working:\
+Toggle turns on/off the ordering process\
+Add user allows an admin to add a user for a chosen role by their email\
+View user allows an admin to see all users, filter them by their status, and activate/deactivate users\
+Delete user allows an admin to remove a user from the database\
+Add drink allows an admin to add a new menu item to the database. They are able to choose the name of the drink, the description of the drink, the price of the drink, what flavors can be added to the drink, what toppings can be added to the drink, if the drink is popular, if the drink can be caffeinated, what temperatures the drink can be, and if the drink is special\
+Delete drink allows an admin to remove a menu item from the database\
+Add flavor allows an admin to add a flavor to the database\
+Delete flavor allows an admin to remove a flavor from the database\
+Add topping allows an admin to add a topping to the database and add a price for that topping if applicable\
+Delete topping allows an admin to remove a topping from the database\
+Logout button routes the user back to the homepage and signs them out\
 
-## BARISTA contains properties to be able to:
+Not done:\
+Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
+Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
 
-view current and completed orders
-also turn on/off the ordering process
+## BARISTA:
 
-## TEACHER contains properties to be able to:
+Currently working:\
+Orders page loads all current orders\
+Completed orders page loads all completed orders\
+Toggle turns on/off the ordering process\
+Logout button routes the user back to the homepage and signs them out\
+
+Not done:\
+Cancel button needs to remove an order and notify the teacher that it was cancelled\
+Finish button has been started but is not fully functional, it needs to change the complete property of an order to true which will make it display on the completed orders page\
+Incomplete button needs to change the complete property of an order to false which will make it display on the orders page\
+Notification drop down needs to display new orders and have the notifications go away once read\
+
+## TEACHER:
 
 view menu
 customize drink
