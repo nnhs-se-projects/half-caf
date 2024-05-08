@@ -53,7 +53,7 @@ Enabled is on it's own because it's a separate class. That is the boolean value 
 
 ## OVERVIEW
 
-# ADMIN:
+### ADMIN:
 
 Currently working:\
 Toggle turns on/off the ordering process\
@@ -72,7 +72,7 @@ Not done:\
 Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
 Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
 
-# TEACHER:
+### TEACHER:
 
 Currently Working:\
 Popular Drinks displays drinks that have been marked popular by an admin\
@@ -89,7 +89,7 @@ Favorites does not work at all, an Arnold Palmer is currently hardcoded on the p
 Drink specifications do not show in the cart.\
 The 'place order' button should not display if the user has nothing in their cart.\
 
-# HOME PAGE
+### HOME PAGE
 
 Currently Working:\
 Popular Drinks displays drinks that have been marked popular by an admin\
