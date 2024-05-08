@@ -89,7 +89,7 @@ Favorites does not work at all, an Arnold Palmer is currently hardcoded on the p
 Drink specifications do not show in the cart.\
 The 'place order' button should not display if the user has nothing in their cart.\
 
-### HOME PAGE
+### HOME PAGE:
 
 Currently Working:\
 Popular Drinks displays drinks that have been marked popular by an admin\
@@ -100,10 +100,4 @@ Not Done:\
 Registering with a Google account
 
 
-## GOOGLE AUTH
-
-## HEADER of website includes:
-
-title of half caf
-haf caf logo
-logout button
+### GOOGLE AUTH:
