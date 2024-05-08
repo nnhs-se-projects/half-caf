@@ -56,7 +56,7 @@ app.use(async (req, res, next) => {
 //  the exported router object is an example of middleware
 app.use("/", require("./server/routes/router"));
 
-// start the server on port 8080
-app.listen(8080, () => {
-  console.log("server is listening on http://localhost:8080");
+// start the server on port PORT_NUM from .env file
+app.listen(process.env.PORT_NUM, () => {
+  console.log("server is listening on http://localhost:" + process.env.PORT_NUM);
 });

@@ -20,6 +20,11 @@ Create a schedule and stick to it (google calendar is a great tool for this). Wh
 
 Use pair programming to your advantage. Just because it may seem faster to divide and conquer in terms of being able to get tasks done doesn't mean it necessarily is. Having a second set of eyes to catch errors and talk things through with can be extremely beneficial and save you tons of time in the long run.
 
+## Platform Requirements
+Latest version of VSCode\
+Make sure your operating system is fully updated
+
+
 ## Initial Setup
 
 1. Clone this repository
@@ -34,11 +39,24 @@ npm install
 ```
 MONGO_URI= <find in trello>
 SESSION_SECRET= <secret key>
+PORT_NUM = 8080 (can change)
 ```
 
-4. Run the server from the VS Code debugger
-5. Go to a web browser and type in localhost:8080
-6. Once signed in with google, go to localhost:8080/addUser and add yourself as a user.
+4. Download MongoDB Compass for your computer 
+5. Use the URI from the trello to connect to the database
+5. Edit one of the ADMIN users and change their email to your email
+6. Run the server from the VS Code debugger
+5. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
+6. Go to Login and sign in with Google 
+7. Now you are on the add user page so add everyone else in your group as a user
+
+## Architecture
+MongoDB - Database
+Node.js - Server
+Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment
+Javascript - Used both on client and server side
+EJS - Embedded JS, similar to HTML, only client side
+CSS - Styling, only client side
 
 ## Data Schema
 
