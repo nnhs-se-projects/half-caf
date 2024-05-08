@@ -51,12 +51,12 @@ PORT_NUM = 8080 (can change)
 7. Now you are on the add user page so add everyone else in your group as a user
 
 ## Architecture
-MongoDB - Database
-Node.js - Server
-Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment
-Javascript - Used both on client and server side
-EJS - Embedded JS, similar to HTML, only client side
-CSS - Styling, only client side
+MongoDB - Database\
+Node.js - Server\
+Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment\
+Javascript - Used both on client and server side\
+EJS - Embedded JS, similar to HTML, only client side\
+CSS - Styling, only client side\
 
 ## Data Schema
 
