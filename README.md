@@ -56,7 +56,7 @@ Node.js - Server\
 Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment\
 Javascript - Used both on client and server side\
 EJS - Embedded JS, similar to HTML, only client side\
-CSS - Styling, only client side\
+CSS - Styling, only client side
 
 ## Data Schema
 
