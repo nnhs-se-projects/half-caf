@@ -50,11 +50,10 @@ To explain the image more, each arrow shows a different dependency. The beginnin
 
 Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
 
-## Contains different pages for Admin, Barista, Teacher, Home Page and Google Authentication
 
-## OVERVIEW for each page is completed
+## OVERVIEW
 
-## ADMIN:
+# ADMIN:
 
 Currently working:\
 Toggle turns on/off the ordering process\
@@ -73,32 +72,33 @@ Not done:\
 Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
 Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
 
-## BARISTA:
+# TEACHER:
 
-Currently working:\
-Orders page loads all current orders\
-Completed orders page loads all completed orders\
-Toggle turns on/off the ordering process\
-Logout button routes the user back to the homepage and signs them out\
+Currently Working:\
+Popular Drinks displays drinks that have been marked popular by an admin\
+Menu displays all drinks on the menu and teachers are able to click on them and get taken to the customize drink page\
+Customize drink allows for users to choose flavors and toppings that have been chosen by the admin. They are required to choose a temperature, teachers are not able to to press the 'add to cart' button without choosing a temperature however flavors and toppings are optional. Teachers can also add special instructions.\
+Once they have pressed 'add to cart', they are redirected to My Order aka their cart where their drink card is displayed with a remove button. They can then enter their room number and place their order, as long as order is available.\
+Order History displays past orders with the time they ordered, the drink name and specifications, room number ordered to, and total price of the order.\
+The logout button takes the user back to the auth page.\
 
-Not done:\
-Cancel button needs to remove an order and notify the teacher that it was cancelled\
-Finish button has been started but is not fully functional, it needs to change the complete property of an order to true which will make it display on the completed orders page\
-Incomplete button needs to change the complete property of an order to false which will make it display on the orders page\
-Notification drop down needs to display new orders and have the notifications go away once read\
+Not Done:\
+Teachers cannot order from popular drinks\
+Favorites does not work at all, an Arnold Palmer is currently hardcoded on the page\
+'save to favorite' option does not currently work\
+Drink specifications do not show in the cart.\
+The 'place order' button should not display if the user has nothing in their cart.\
 
-## TEACHER:
+# HOME PAGE
 
-view menu
-customize drink
-place order
-view past orders
-view popular orders
-view favorite orders
+Currently Working:\
+Popular Drinks displays drinks that have been marked popular by an admin\
+Menu displays all drinks on the menu\
+Login allows for a user to login using their Google account\
 
-## HOME PAGE
+Not Done:\
+Registering with a Google account
 
-allows login for teacher, admin or barista
 
 ## GOOGLE AUTH
 
