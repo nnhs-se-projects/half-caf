@@ -90,6 +90,20 @@ Not done:\
 Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
 Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
 
+### BARISTA:
+
+Currently working:\
+Orders page loads all current orders\
+Completed orders page loads all completed orders\
+Toggle turns on/off the ordering process\
+Logout button routes the user back to the homepage and signs them out\
+
+Not done:\
+Cancel button needs to remove an order and notify the teacher that it was cancelled\
+Finish button has been started but is not fully functional, it needs to change the complete property of an order to true which will make it display on the completed orders page\
+Incomplete button needs to change the complete property of an order to false which will make it display on the orders page\
+Notification drop down needs to display new orders and have the notifications go away once read\
+
 ### TEACHER:
 
 Currently Working:\
