@@ -44,11 +44,11 @@ PORT_NUM = 8080 (can change)
 
 4. Download MongoDB Compass for your computer 
 5. Use the URI from the trello to connect to the database
-5. Edit one of the ADMIN users and change their email to your email
-6. Run the server from the VS Code debugger
-5. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
-6. Go to Login and sign in with Google 
-7. Now you are on the add user page so add everyone else in your group as a user
+6. In compass, edit one of the ADMIN users and change their email to your email
+7. Run the server from the VS Code debugger
+8. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
+9. Go to Login and sign in with Google 
+10. Now you are on the add user page so add everyone else in your group as a user
 
 ## Architecture
 MongoDB - Database\
