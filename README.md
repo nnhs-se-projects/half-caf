@@ -24,7 +24,6 @@ Use pair programming to your advantage. Just because it may seem faster to divid
 Latest version of VSCode\
 Make sure your operating system is fully updated
 
-
 ## Initial Setup
 
 1. Clone this repository
@@ -131,7 +130,6 @@ Login allows for a user to login using their Google account\
 Not Done:\
 Registering with a Google account
 
-
 ## Google Authentication Implementation
 
 ### Overview
@@ -177,4 +175,3 @@ This file is crucial for initiating the authentication flow from the client's br
 
 Next Steps:\
 Allow for users to register with Google
-
