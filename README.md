@@ -84,11 +84,11 @@ Add flavor allows an admin to add a flavor to the database\
 Delete flavor allows an admin to remove a flavor from the database\
 Add topping allows an admin to add a topping to the database and add a price for that topping if applicable\
 Delete topping allows an admin to remove a topping from the database\
-Logout button routes the user back to the homepage and signs them out\
+Logout button routes the user back to the homepage and signs them out
 
 Not done:\
 Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
-Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
+Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients
 
 ### BARISTA:
 
@@ -96,13 +96,13 @@ Currently working:\
 Orders page loads all current orders\
 Completed orders page loads all completed orders\
 Toggle turns on/off the ordering process\
-Logout button routes the user back to the homepage and signs them out\
+Logout button routes the user back to the homepage and signs them out
 
 Not done:\
 Cancel button needs to remove an order and notify the teacher that it was cancelled\
 Finish button has been started but is not fully functional, it needs to change the complete property of an order to true which will make it display on the completed orders page\
 Incomplete button needs to change the complete property of an order to false which will make it display on the orders page\
-Notification drop down needs to display new orders and have the notifications go away once read\
+Notification drop down needs to display new orders and have the notifications go away once read
 
 ### TEACHER:
 
@@ -112,21 +112,21 @@ Menu displays all drinks on the menu and teachers are able to click on them and 
 Customize drink allows for users to choose flavors and toppings that have been chosen by the admin. They are required to choose a temperature, teachers are not able to to press the 'add to cart' button without choosing a temperature however flavors and toppings are optional. Teachers can also add special instructions.\
 Once they have pressed 'add to cart', they are redirected to My Order aka their cart where their drink card is displayed with a remove button. They can then enter their room number and place their order, as long as order is available.\
 Order History displays past orders with the time they ordered, the drink name and specifications, room number ordered to, and total price of the order.\
-The logout button takes the user back to the auth page.\
+The logout button takes the user back to the auth page.
 
 Not Done:\
 Teachers cannot order from popular drinks\
 Favorites does not work at all, an Arnold Palmer is currently hardcoded on the page\
 'save to favorite' option does not currently work\
 Drink specifications do not show in the cart.\
-The 'place order' button should not display if the user has nothing in their cart.\
+The 'place order' button should not display if the user has nothing in their cart.
 
 ### HOME PAGE:
 
 Currently Working:\
 Popular Drinks displays drinks that have been marked popular by an admin\
 Menu displays all drinks on the menu\
-Login allows for a user to login using their Google account\
+Login allows for a user to login using their Google account
 
 Not Done:\
 Registering with a Google account
@@ -134,8 +134,8 @@ Registering with a Google account
 ### GOOGLE AUTH:
 
 Currently Working:\
-Users can all register with their google account
-Captures their email and assigns them a role (teacher, barista, admin)
+Users can all register with their google account\
+Captures their email and assigns them a role (teacher, barista, admin)\
 Redirects page upon sign in based on the users role.
 
 Not Done:
