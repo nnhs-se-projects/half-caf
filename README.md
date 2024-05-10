@@ -175,6 +175,6 @@ This file is crucial for initiating the authentication flow from the client's br
 7. Session Update: Upon successful token verification, the user’s email is stored in the session.
 8. Role-Based Redirection: The user is then redirected to /redirectUser, where router.js checks the user's role and redirects them accordingly.
 
-Next Steps:/
+Next Steps:\
 Allow for users to register with Google
 
