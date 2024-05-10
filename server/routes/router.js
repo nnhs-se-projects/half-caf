@@ -26,10 +26,6 @@ route.get("/", async (req, res) => {
   });
 });
 
-route.get("/auth", (req, res) => {
-  res.render("auth");
-});
-
 route.get("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   res.render("_adminHeader", { enabled: toggle });
@@ -100,6 +96,10 @@ async function checkForUpdates() {
 }
 setInterval(checkForUpdates, 1000);
 
+route.get("/auth", (req, res) => {
+  res.render("auth");
+});
+
 async function getUserRoles(email) {
   try {
     const user = await User.findOne({ email }, "userType");
@@ -145,7 +145,7 @@ route.get("/logout", async (req, res) => {
     });
   }
 
-  // Destroy session or remove user data from session
+  // Destroy session/remove user data from session
   req.session.destroy((err) => {
     if (err) {
       return console.error("Logout error:", err);

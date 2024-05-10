@@ -21,7 +21,6 @@ Create a schedule and stick to it (google calendar is a great tool for this). Wh
 Use pair programming to your advantage. Just because it may seem faster to divide and conquer in terms of being able to get tasks done doesn't mean it necessarily is. Having a second set of eyes to catch errors and talk things through with can be extremely beneficial and save you tons of time in the long run.
 
 ## Platform Requirements
-
 Latest version of VSCode\
 Make sure your operating system is fully updated
 
@@ -42,16 +41,15 @@ SESSION_SECRET= <secret key>
 PORT_NUM = 8080 (can change)
 ```
 
-4. Download MongoDB Compass for your computer
+4. Download MongoDB Compass for your computer 
 5. Use the URI from the trello to connect to the database
 6. In compass, edit one of the ADMIN users and change their email to your email
 7. Run the server from the VS Code debugger
 8. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
-9. Go to Login and sign in with Google
+9. Go to Login and sign in with Google 
 10. Now you are on the add user page so add everyone else in your group as a user
 
 ## Architecture
-
 MongoDB - Database\
 Node.js - Server\
 Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment\
@@ -69,6 +67,7 @@ To explain the image more, each arrow shows a different dependency. The beginnin
 
 Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
 
+
 ## OVERVIEW
 
 ### ADMIN:
@@ -84,11 +83,11 @@ Add flavor allows an admin to add a flavor to the database\
 Delete flavor allows an admin to remove a flavor from the database\
 Add topping allows an admin to add a topping to the database and add a price for that topping if applicable\
 Delete topping allows an admin to remove a topping from the database\
-Logout button routes the user back to the homepage and signs them out
+Logout button routes the user back to the homepage and signs them out\
 
 Not done:\
 Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
-Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients
+Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
 
 ### BARISTA:
 
@@ -96,13 +95,13 @@ Currently working:\
 Orders page loads all current orders\
 Completed orders page loads all completed orders\
 Toggle turns on/off the ordering process\
-Logout button routes the user back to the homepage and signs them out
+Logout button routes the user back to the homepage and signs them out\
 
 Not done:\
 Cancel button needs to remove an order and notify the teacher that it was cancelled\
 Finish button has been started but is not fully functional, it needs to change the complete property of an order to true which will make it display on the completed orders page\
 Incomplete button needs to change the complete property of an order to false which will make it display on the orders page\
-Notification drop down needs to display new orders and have the notifications go away once read
+Notification drop down needs to display new orders and have the notifications go away once read\
 
 ### TEACHER:
 
@@ -112,31 +111,67 @@ Menu displays all drinks on the menu and teachers are able to click on them and 
 Customize drink allows for users to choose flavors and toppings that have been chosen by the admin. They are required to choose a temperature, teachers are not able to to press the 'add to cart' button without choosing a temperature however flavors and toppings are optional. Teachers can also add special instructions.\
 Once they have pressed 'add to cart', they are redirected to My Order aka their cart where their drink card is displayed with a remove button. They can then enter their room number and place their order, as long as order is available.\
 Order History displays past orders with the time they ordered, the drink name and specifications, room number ordered to, and total price of the order.\
-The logout button takes the user back to the auth page.
+The logout button takes the user back to the auth page.\
 
 Not Done:\
 Teachers cannot order from popular drinks\
 Favorites does not work at all, an Arnold Palmer is currently hardcoded on the page\
 'save to favorite' option does not currently work\
 Drink specifications do not show in the cart.\
-The 'place order' button should not display if the user has nothing in their cart.
+The 'place order' button should not display if the user has nothing in their cart.\
 
 ### HOME PAGE:
 
 Currently Working:\
 Popular Drinks displays drinks that have been marked popular by an admin\
 Menu displays all drinks on the menu\
-Login allows for a user to login using their Google account
+Login allows for a user to login using their Google account\
 
 Not Done:\
 Registering with a Google account
 
-### GOOGLE AUTH:
+## Google Authentication Implementation
 
-Currently Working:\
-Users can all register with their google account\
-Captures their email and assigns them a role (teacher, barista, admin)\
-Redirects page upon sign in based on the users role.
+### Overview
+This Node.js application integrates Google Authentication using the Google Sign-In API. It ensures that only authenticated users can access specific routes based on their roles. The application comprises several components: server-side middleware for session handling, server-side and client-side handlers for Google Sign-In, and view templates for rendering the authentication UI.
 
-Not Done:
-Registering new users can only be done manually from the admin page
+### `server.js` (Middleware Setup)
+This is the core of the application's backend. It includes middleware that checks if a user is logged in before allowing access to certain routes. If a user's session does not have an email stored (`req.session.email` is undefined), they are redirected to the `/auth` page for authentication. This prevents unauthorized access to sensitive routes. The middleware specifically allows unrestricted access to public endpoints like "/homePopularDrinks" and "/homeMenu".
+
+### `auth.js` (Google Authentication Routes)
+The auth.js file handles the actual authentication process:\
+- It defines routes that the frontend can communicate with to perform authentication tasks.
+- When the frontend sends the ID token (received from Google after a user logs in), auth.js verifies this token using Google's libraries.
+- If the verification is successful, it stores the user's email in the session, effectively logging them in.
+
+### `auth2.js` (Client-Side Authentication Logic)
+The auth2.js script runs in the user's browser and handles:\
+- The receipt of the authentication response from Google (which includes the ID token).
+- It  sends this token to the server (/auth route) via a POST request.
+- Upon confirmation of successful authentication, it redirects the user to the /redirectUser route.
+
+### `router.js` (Role-Based Redirection)
+After authentication, router.js takes over:\
+- It defines a route /redirectUser which checks the user's role based on the email stored in the session.
+- Depending on the role fetched from the database (admin, barista, teacher), it redirects the user to the appropriate route.
+
+### Authentication View (`auth.ejs`)
+The `auth.ejs` file is the front-end component where users interact with Google's Sign-In service. It includes:
+- An image placeholder.
+- Google's JavaScript library for authentication.
+- A div configured with `data-client_id` and `data-callback` which triggers `handleCredentialResponse` after successful authentication.
+
+This file is crucial for initiating the authentication flow from the client's browser.
+
+### Flow of Control:
+1. User Visits the Site: They attempt to access a protected route.
+2. Middleware Check: server.js checks if the user is authenticated.
+3. Redirection: If not authenticated, the user is redirected to the /auth route, loading auth.ejs.
+4. User Action: The user clicks the Google Sign-In button on auth.ejs.
+5. Token Acquisition: Google returns an ID token upon successful login, which auth2.js captures.
+6. Token Verification: auth2.js sends this token to the server via the route defined in auth.js.
+7. Session Update: Upon successful token verification, the user’s email is stored in the session.
+8. Role-Based Redirection: The user is then redirected to /redirectUser, where router.js checks the user's role and redirects them accordingly.
+
+Next Steps:\
+Allow for users to register with Google
