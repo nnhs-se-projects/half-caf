@@ -21,9 +21,9 @@ Create a schedule and stick to it (google calendar is a great tool for this). Wh
 Use pair programming to your advantage. Just because it may seem faster to divide and conquer in terms of being able to get tasks done doesn't mean it necessarily is. Having a second set of eyes to catch errors and talk things through with can be extremely beneficial and save you tons of time in the long run.
 
 ## Platform Requirements
+
 Latest version of VSCode\
 Make sure your operating system is fully updated
-
 
 ## Initial Setup
 
@@ -42,15 +42,16 @@ SESSION_SECRET= <secret key>
 PORT_NUM = 8080 (can change)
 ```
 
-4. Download MongoDB Compass for your computer 
+4. Download MongoDB Compass for your computer
 5. Use the URI from the trello to connect to the database
 6. In compass, edit one of the ADMIN users and change their email to your email
 7. Run the server from the VS Code debugger
 8. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
-9. Go to Login and sign in with Google 
+9. Go to Login and sign in with Google
 10. Now you are on the add user page so add everyone else in your group as a user
 
 ## Architecture
+
 MongoDB - Database\
 Node.js - Server\
 Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment\
@@ -67,7 +68,6 @@ The image above shows the dependencies of the different classes in the dat struc
 To explain the image more, each arrow shows a different dependency. The beginning of the arrow starts at the property that needs information from a different class, which is where the head of the arrow points to. The dotted line and arrow that goes from menuItem to drink is because every time the user clicks on a drink from the menu page, a new instance of drink is created. Drink is supposed to be a customized version of menuItem. The dotted arrow shows that drink is not directly dependent on menuItem in the database, but pulls from its properties when a new drink is created. That's because menuItems don't reference all of the toppings or flavors so no one can order a blue raspberry coffee, so only certain flavors, toppings, and temperatures are available for each menuItem and drink.
 
 Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
-
 
 ## OVERVIEW
 
@@ -131,5 +131,12 @@ Login allows for a user to login using their Google account\
 Not Done:\
 Registering with a Google account
 
-
 ### GOOGLE AUTH:
+
+Currently Working:\
+Users can all register with their google account
+Captures their email and assigns them a role (teacher, barista, admin)
+Redirects page upon sign in based on the users role.
+
+Not Done:
+Registering new users can only be done manually from the admin page
