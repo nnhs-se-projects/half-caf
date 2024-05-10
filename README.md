@@ -132,4 +132,49 @@ Not Done:\
 Registering with a Google account
 
 
-### GOOGLE AUTH:
+## Google Authentication Implementation
+
+### Overview
+This Node.js application integrates Google Authentication using the Google Sign-In API. It ensures that only authenticated users can access specific routes based on their roles. The application comprises several components: server-side middleware for session handling, server-side and client-side handlers for Google Sign-In, and view templates for rendering the authentication UI.
+
+### `server.js` (Middleware Setup)
+This is the core of the application's backend. It includes middleware that checks if a user is logged in before allowing access to certain routes. If a user's session does not have an email stored (`req.session.email` is undefined), they are redirected to the `/auth` page for authentication. This prevents unauthorized access to sensitive routes. The middleware specifically allows unrestricted access to public endpoints like "/homePopularDrinks" and "/homeMenu".
+
+### `auth.js` (Google Authentication Routes)
+The auth.js file handles the actual authentication process:\
+- It defines routes that the frontend can communicate with to perform authentication tasks.
+- When the frontend sends the ID token (received from Google after a user logs in), auth.js verifies this token using Google's libraries.
+- If the verification is successful, it stores the user's email in the session, effectively logging them in.
+
+### `auth2.js` (Client-Side Authentication Logic)
+The auth2.js script runs in the user's browser and handles:\
+- The receipt of the authentication response from Google (which includes the ID token).
+- It  sends this token to the server (/auth route) via a POST request.
+- Upon confirmation of successful authentication, it redirects the user to the /redirectUser route.
+
+### `router.js` (Role-Based Redirection)
+After authentication, router.js takes over:\
+- It defines a route /redirectUser which checks the user's role based on the email stored in the session.
+- Depending on the role fetched from the database (admin, barista, teacher), it redirects the user to the appropriate route.
+
+### Authentication View (`auth.ejs`)
+The `auth.ejs` file is the front-end component where users interact with Google's Sign-In service. It includes:
+- An image placeholder.
+- Google's JavaScript library for authentication.
+- A div configured with `data-client_id` and `data-callback` which triggers `handleCredentialResponse` after successful authentication.
+
+This file is crucial for initiating the authentication flow from the client's browser.
+
+### Flow of Control:
+1. User Visits the Site: They attempt to access a protected route.
+2. Middleware Check: server.js checks if the user is authenticated.
+3. Redirection: If not authenticated, the user is redirected to the /auth route, loading auth.ejs.
+4. User Action: The user clicks the Google Sign-In button on auth.ejs.
+5. Token Acquisition: Google returns an ID token upon successful login, which auth2.js captures.
+6. Token Verification: auth2.js sends this token to the server via the route defined in auth.js.
+7. Session Update: Upon successful token verification, the user’s email is stored in the session.
+8. Role-Based Redirection: The user is then redirected to /redirectUser, where router.js checks the user's role and redirects them accordingly.
+
+Next Steps:/
+Allow for users to register with Google
+
