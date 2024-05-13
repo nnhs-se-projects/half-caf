@@ -1,3 +1,6 @@
+<!--header for barista pages-->
+<!--note this page is very similar to the completed orders page,
+the only difference is the complete and finish buttons vs the incomplete button-->
 <%- include('include/_baristaHeader') %>
 
 <head>
@@ -7,6 +10,7 @@
   <div>
     <table class="table table-striped">
       <thead>
+        <!--Labels for order page table which displays the current orders-->
         <tr id="a">
           <th scope="col">Room Number</th>
           <th scope="col">Teacher</th>
@@ -19,21 +23,33 @@
           <th scope="col">Cancel Order</th>
           <th scope="col">Finish Order</th>
         </tr>
+        <!--count is used for tempDrink-->
+        <!--color is used to make the table striped-->
         <% let count = 0 %> <% let color = 0 %>
         <!-- < looping through the each order to display each> -->
         <% for (let order of orders){%>
-        <!--  -->
+        <!--displays only orders that HAVE NOT been completed-->
         <% if(order.complete === false){%>
-        <!--  -->
+        <!--loops through the drinks in an order-->
         <% for(let i = 0; i < order.drinks.length; i++){%>
-        <!--  -->
+        <!--gets the temperature of the drink-->
         <% let tempDrink = drinkMap.get(count)[i] %>
-        <!--  -->
+        <!--makes the color change-->
         <% if(color%2===0){%>
-        <tr id="b"><%}%>
+        <tr id="b">
+          <%}%>
           <!-- -->
-        <% if(color%2!==0){%>
-        <tr id="c"><%}%>
+          <% if(color%2!==0){%>
+        </tr>
+
+        <tr id="c">
+          <%}%>
+          <!--Displays the orders in the table-->
+          <!--Each drink in an order is displayed as separate items on the table-->
+          <!--Helps to make sure baristas do not forget to make anything-->
+          <!--Right now orders has a complete property but this will need to be switched to drink-->
+          <!--Complete button needs to mark an individual drink as complete and move it to the
+          completed orders page rather than an entire order-->
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
           <th scope="?"><%=tempDrink.name%></th>
@@ -42,116 +58,26 @@
           <th scope="?"><%=tempDrink.toppings%></th>
           <th scope="?"><%=tempDrink.instructions%></th>
           <th scope="?"><%=order.timestamp%></th>
+          <!--Complete button and cancel button,
+            Complete button has some code, cancel button has not yet been worked on,
+            There is more info in the Trello on what each button needs to do-->
           <th scope="?"><button id="barista">Cancel</button></th>
           <th scope="?"><button id="barista">Finish</button></th>
         </tr>
         <!--  -->
         <% %>
         <!--  -->
-        <%color++;%>
-        <%}%>
+        <%color++;%> <%}%>
         <!--  -->
         <%}%>
         <!--  -->
         <%count++;}%>
-        
       </thead>
     </table>
   </div>
 </body>
 
-<!-- <tr id = "c">
-              <th scope="?">105</th>
-              <th scope="?">Lord Tavneet</th>
-              <th scope="?">Yummy</th>
-              <th scope="?">Yummy temp</th>
-              <th scope="?">Caf</th>
-              <th scope="?">Strawberry, Cinnamon Bun</th>
-                            <th scope="?"> </th>
-              <th scope="?"> </th>
-              <th scope="?">2024-04-18 at 10:41</th>
-              <th scope="?"><button id = "barista">Cancel</button></th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr> -->
-
-<!-- HARD CODE -->
-<!-- <tr id = "b">
-              <th scope="?">128</th>
-              <th scope="?">Delaney the Prep</th>
-              <th scope="?">Lemonade</th>
-              <th scope="?">Hot</th>
-              <th scope="?">Caf</th>
-              <th scope="?">Black Coffee</th>
-                            <th scope="?"> </th>
-              <th scope="?"></th>
-              <th scope="?">2024-04-18 at 10:43</th>
-              <th scope="?"><button id = "barista">Cancel</button></th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr>
-            <tr id = "c">
-              <th scope="?">M5</th>
-              <th scope="?">Baron Eric</th>
-              <th scope="?">Soup</th>
-              <th scope="?">Boiling</th>
-              <th scope="?">Caf, SF</th>
-              <th scope="?">Chicken</th>
-                            <th scope="?"> </th>
-              <th scope="?"> </th>
-              <th scope="?">2024-04-18 at 10:47</th>
-              <th scope="?">
-                <button id = "barista">Cancel</button>
-              </th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr>
-             <tr id = "b">
-              <th scope="?">102</th>
-              <th scope="?">abigalk balding</th>
-              <th scope="?">Icky</th>
-              <th scope="?">Icky temp</th>
-              <th scope="?">Decaf</th>
-              <th scope="?"> </th>
-                            <th scope="?"> </th>
-              <th scope="?"> </th>
-              <th scope="?">2024-04-18 at 11:07</th>
-              <th scope="?">
-                <button id = "barista">Cancel</button>
-              </th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr>
-            <tr id = "c">
-              <th scope="?">Outside in the cold</th>
-              <th scope="?">Savy Tavy (the meanie dino chicken nugget head)</th>
-              <th scope="?">Ice cold snow</th>
-              <th scope="?">Freezing</th>
-              <th scope="?">Caf/SF</th>
-              <th scope="?">Light Salmon</th>
-                            <th scope="?">Cream</th>
-              <th scope="?"> </th>
-              <th scope="?">2024-04-19 at 10:13</th>
-              <th scope="?">
-                <button id = "barista">Cancel</button>
-              </th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr>
-             <tr id = "b">
-              <th scope="?">106</th>
-              <th scope="?">Unknown</th>
-              <th scope="?">Smoothie</th>
-              <th scope="?">Blended</th>
-              <th scope="?">SF</th>
-              <th scope="?">Strawberry</th>
-                            <th scope="?">Boba</th>
-              <th scope="?"> </th>
-              <th scope="?">2024-04-19 at 10:27</th>
-              <th scope="?">
-                <button id = "barista">Cancel</button>
-              </th>
-              <th scope="?"><button id = "barista">Finish</button></th>
-            </tr> -->
-<!-- </thead> -->
-<!-- </div></body> -->
-<!-- </body> -->
-
+<!--css for formatting on the orders page, the colors are for the different rows-->
 <style type="text/css">
   table tr#a {
     background-color: lightblue;
@@ -176,4 +102,3 @@
 <!-- connect to js -->
 
 <!-- <script src="/js/baristaOrder.js"></script> -->
-<!-- don't need to connect to js -->
