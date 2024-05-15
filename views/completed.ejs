@@ -17,7 +17,6 @@
           <th scope="col">Special Instructions</th>
           <th scope="col">Timestamp</th>
           <th scope="col">Mark as incomplete</th>
-
         </tr>
         <% let count = 0 %><% let color = 0 %>
         <!-- < looping through the each order to display each> -->
@@ -27,12 +26,15 @@
         <!--  -->
         <% for(let i = 0; i < order.drinks.length; i++){%>
         <!--  -->
-        <% let tempDrink = drinkMap.get(count)[i] %>
-        <% if(color%2===0){%>
-        <tr id="b"><%}%>
+        <% let tempDrink = drinkMap.get(count)[i] %> <% if(color%2===0){%>
+        <tr id="b">
+          <%}%>
           <!-- -->
-        <% if(color%2!==0){%>
-        <tr id="c"><%}%>
+          <% if(color%2!==0){%>
+        </tr>
+
+        <tr id="c">
+          <%}%>
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
           <th scope="?"><%=tempDrink.name%></th>
@@ -42,13 +44,11 @@
           <th scope="?"><%=tempDrink.instructions%></th>
           <th scope="?"><%=order.timestamp%></th>
           <th scope="?"><button id="barista">Incomplete</button></th>
-
         </tr>
         <!--  -->
         <% %>
         <!--  -->
-        <%color++;%>
-        <%}%>
+        <%color++;%> <%}%>
         <!--  -->
         <%}%>
         <!--  -->
@@ -80,3 +80,6 @@
     font-size: 35px;
   }
 </style>
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

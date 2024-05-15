@@ -30,10 +30,14 @@
         <% let tempDrink = drinkMap.get(count)[i] %>
         <!--  -->
         <% if(color%2===0){%>
-        <tr id="b"><%}%>
+        <tr id="b">
+          <%}%>
           <!-- -->
-        <% if(color%2!==0){%>
-        <tr id="c"><%}%>
+          <% if(color%2!==0){%>
+        </tr>
+
+        <tr id="c">
+          <%}%>
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
           <th scope="?"><%=tempDrink.name%></th>
@@ -48,13 +52,11 @@
         <!--  -->
         <% %>
         <!--  -->
-        <%color++;%>
-        <%}%>
+        <%color++;%> <%}%>
         <!--  -->
         <%}%>
         <!--  -->
         <%count++;}%>
-        
       </thead>
     </table>
   </div>
@@ -177,3 +179,6 @@
 
 <!-- <script src="/js/baristaOrder.js"></script> -->
 <!-- don't need to connect to js -->
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
