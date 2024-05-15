@@ -342,7 +342,7 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
-// Main/Home page of the Barista branch that displays all current orders
+// Main/Home page of barista that displays all current orders
 route.get("/barista", async (req, res) => {
   const orders = await Order.find();
   const drinkMap = new Map();
@@ -387,6 +387,7 @@ route.get("/barista", async (req, res) => {
   });
 });
 
+// completed orders page of barista that displays all completed orders
 route.get("/completed", async (req, res) => {
   const orders = await Order.find();
   const drinkMap = new Map();
