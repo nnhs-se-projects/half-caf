@@ -155,8 +155,13 @@ route.get("/logout", async (req, res) => {
   });
 });
 
-route.get("/addUser", (req, res) => {
-  res.render("addUser");
+route.get("/addUser", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("addUser");
+  }
 });
 
 route.post("/addUser", async (req, res) => {
@@ -170,15 +175,20 @@ route.post("/addUser", async (req, res) => {
 });
 
 route.get("/deleteUser", async (req, res) => {
-  const users = await User.find();
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const users = await User.find();
 
-  const formattedUsers = users.map((user) => {
-    return {
-      email: user.email,
-      id: user._id,
-    };
-  });
-  res.render("deleteUser", { usersJs: formattedUsers });
+    const formattedUsers = users.map((user) => {
+      return {
+        email: user.email,
+        id: user._id,
+      };
+    });
+    res.render("deleteUser", { usersJs: formattedUsers });
+  }
 });
 
 route.delete("/deleteUser/:id", async (req, res) => {
@@ -188,29 +198,39 @@ route.delete("/deleteUser/:id", async (req, res) => {
 });
 
 route.get("/viewUser", async (req, res) => {
-  // access all the users in the database
-  const allUsers = await User.find();
-  res.render("viewUser", {
-    users: allUsers,
-  });
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    // access all the users in the database
+    const allUsers = await User.find();
+    res.render("viewUser", {
+      users: allUsers,
+    });
+  }
 });
 // gets the activated/ deactivated users for the view user filter
 route.get("/users/:status", async (req, res) => {
-  const status = req.params.status;
-  try {
-    let users;
-    if (status === "activated") {
-      users = await User.find({ isActivated: true });
-    } else if (status === "deactivated") {
-      users = await User.find({ isActivated: false });
-    } else {
-      // If status is not 'activated' or 'deactivated', fetch all users
-      users = await User.find();
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const status = req.params.status;
+    try {
+      let users;
+      if (status === "activated") {
+        users = await User.find({ isActivated: true });
+      } else if (status === "deactivated") {
+        users = await User.find({ isActivated: false });
+      } else {
+        // If status is not 'activated' or 'deactivated', fetch all users
+        users = await User.find();
+      }
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Error fetching users" });
     }
-    res.json(users);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).json({ error: "Error fetching users" });
   }
 });
 
@@ -239,27 +259,32 @@ route.post("/updateUserStatus", async (req, res) => {
 });
 
 route.get("/addDrink", async (req, res) => {
-  const flavors = await Flavor.find();
-  const toppings = await Topping.find();
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const flavors = await Flavor.find();
+    const toppings = await Topping.find();
 
-  const formattedFlavors = flavors.map((flavor) => {
-    return {
-      flavor: flavor.flavor,
-      id: flavor._id,
-    };
-  });
+    const formattedFlavors = flavors.map((flavor) => {
+      return {
+        flavor: flavor.flavor,
+        id: flavor._id,
+      };
+    });
 
-  const formattedToppings = toppings.map((topping) => {
-    return {
-      topping: topping.topping,
-      id: topping._id,
-    };
-  });
-  res.render("addDrink", {
-    temps: TempJson,
-    toppings: formattedToppings,
-    flavors: formattedFlavors,
-  });
+    const formattedToppings = toppings.map((topping) => {
+      return {
+        topping: topping.topping,
+        id: topping._id,
+      };
+    });
+    res.render("addDrink", {
+      temps: TempJson,
+      toppings: formattedToppings,
+      flavors: formattedFlavors,
+    });
+  }
 });
 // updates database with new menu item
 route.post("/addDrink", async (req, res) => {
@@ -281,35 +306,40 @@ route.post("/addDrink", async (req, res) => {
 // everything loads on the Modify Drink page when a
 // menu item is selected, except for flavors
 route.get("/modifyDrink", async (req, res) => {
-  // get id of selected drink
-  const { id } = req.query;
-
-  const menuItems = await MenuItem.find();
-  const toppings = await Topping.find();
-  const flavors = await Flavor.find();
-
-  let selectedMenuItem;
-  // check if any drink has been selected
-  if (id != null) {
-    selectedMenuItem = await MenuItem.findById(id);
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
   } else {
-    selectedMenuItem = undefined;
+    // get id of selected drink
+    const { id } = req.query;
+
+    const menuItems = await MenuItem.find();
+    const toppings = await Topping.find();
+    const flavors = await Flavor.find();
+
+    let selectedMenuItem;
+    // check if any drink has been selected
+    if (id != null) {
+      selectedMenuItem = await MenuItem.findById(id);
+    } else {
+      selectedMenuItem = undefined;
+    }
+
+    const formattedMenuItems = menuItems.map((menuItem) => {
+      return {
+        name: menuItem.name,
+        id: menuItem._id,
+      };
+    });
+
+    res.render("modifyDrink", {
+      menuItems: formattedMenuItems,
+      selectedMenuItem,
+      toppings,
+      flavors,
+      temps: TempJson,
+    });
   }
-
-  const formattedMenuItems = menuItems.map((menuItem) => {
-    return {
-      name: menuItem.name,
-      id: menuItem._id,
-    };
-  });
-
-  res.render("modifyDrink", {
-    menuItems: formattedMenuItems,
-    selectedMenuItem,
-    toppings,
-    flavors,
-    temps: TempJson,
-  });
 });
 
 route.post("/modifyDrink/:id", async (req, res) => {
@@ -325,15 +355,20 @@ route.post("/modifyDrink/:id", async (req, res) => {
 });
 
 route.get("/deleteDrink", async (req, res) => {
-  const menuItems = await MenuItem.find();
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const menuItems = await MenuItem.find();
 
-  const formattedMenuItems = menuItems.map((menuItem) => {
-    return {
-      name: menuItem.name,
-      id: menuItem._id,
-    };
-  });
-  res.render("deleteDrink", { menuItems: formattedMenuItems });
+    const formattedMenuItems = menuItems.map((menuItem) => {
+      return {
+        name: menuItem.name,
+        id: menuItem._id,
+      };
+    });
+    res.render("deleteDrink", { menuItems: formattedMenuItems });
+  }
 });
 
 route.delete("/deleteDrink/:id", async (req, res) => {
@@ -344,96 +379,111 @@ route.delete("/deleteDrink/:id", async (req, res) => {
 
 // Main/Home page of barista that displays all current orders
 route.get("/barista", async (req, res) => {
-  const orders = await Order.find();
-  const drinkMap = new Map();
-  for (let i = 0; i < orders.length; i++) {
-    const drinkArray = [];
-    for (let n = 0; n < orders[i].drinks.length; n++) {
-      const formattedDrink = {
-        name: "",
-        flavors: [],
-        toppings: [],
-        temp: "",
-        instructions: "",
-      };
-      const drink = await Drink.findById(orders[i].drinks[n]);
-      if (drink.flavors.length === 0) {
-        formattedDrink.flavors.push("None");
-      } else {
-        for (let x = 0; x < drink.flavors.length; x++) {
-          const tempFlavor = await Flavor.findById(drink.flavors[x]);
-          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+  const role = await getUserRoles(req.session.email);
+  if (role === "teacher") {
+    res.redirect("/redirectUser");
+  } else {
+    const orders = await Order.find();
+    const drinkMap = new Map();
+    for (let i = 0; i < orders.length; i++) {
+      const drinkArray = [];
+      for (let n = 0; n < orders[i].drinks.length; n++) {
+        const formattedDrink = {
+          name: "",
+          flavors: [],
+          toppings: [],
+          temp: "",
+          instructions: "",
+        };
+        const drink = await Drink.findById(orders[i].drinks[n]);
+        if (drink.flavors.length === 0) {
+          formattedDrink.flavors.push("None");
+        } else {
+          for (let x = 0; x < drink.flavors.length; x++) {
+            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          }
         }
-      }
-      if (drink.toppings.length === 0) {
-        formattedDrink.toppings.push("None");
-      } else {
-        for (let x = 0; x < drink.toppings.length; x++) {
-          const tempTopping = await Topping.findById(drink.toppings[x]);
-          formattedDrink.toppings.push(" " + tempTopping.topping);
+        if (drink.toppings.length === 0) {
+          formattedDrink.toppings.push("None");
+        } else {
+          for (let x = 0; x < drink.toppings.length; x++) {
+            const tempTopping = await Topping.findById(drink.toppings[x]);
+            formattedDrink.toppings.push(" " + tempTopping.topping);
+          }
         }
+        formattedDrink.name = drink.name;
+        formattedDrink.temp = drink.temps;
+        formattedDrink.instructions = drink.instructions;
+        drinkArray.push(formattedDrink);
       }
-      formattedDrink.name = drink.name;
-      formattedDrink.temp = drink.temps;
-      formattedDrink.instructions = drink.instructions;
-      drinkArray.push(formattedDrink);
+      drinkMap.set(i, drinkArray);
     }
-    drinkMap.set(i, drinkArray);
-  }
 
-  res.render("barista", {
-    orders,
-    drinkMap,
-  });
+    res.render("barista", {
+      orders,
+      drinkMap,
+    });
+  }
 });
 
 // completed orders page of barista that displays all completed orders
 route.get("/completed", async (req, res) => {
-  const orders = await Order.find();
-  const drinkMap = new Map();
-  for (let i = 0; i < orders.length; i++) {
-    const drinkArray = [];
-    for (let n = 0; n < orders[i].drinks.length; n++) {
-      const formattedDrink = {
-        name: "",
-        flavors: [],
-        toppings: [],
-        temp: "",
-        instructions: "",
-      };
-      const drink = await Drink.findById(orders[i].drinks[n]);
-      if (drink.flavors.length === 0) {
-        formattedDrink.flavors.push("None");
-      } else {
-        for (let x = 0; x < drink.flavors.length; x++) {
-          const tempFlavor = await Flavor.findById(drink.flavors[x]);
-          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+  const role = await getUserRoles(req.session.email);
+  if (role === "teacher") {
+    res.redirect("/redirectUser");
+  } else {
+    const orders = await Order.find();
+    const drinkMap = new Map();
+    for (let i = 0; i < orders.length; i++) {
+      const drinkArray = [];
+      for (let n = 0; n < orders[i].drinks.length; n++) {
+        const formattedDrink = {
+          name: "",
+          flavors: [],
+          toppings: [],
+          temp: "",
+          instructions: "",
+        };
+        const drink = await Drink.findById(orders[i].drinks[n]);
+        if (drink.flavors.length === 0) {
+          formattedDrink.flavors.push("None");
+        } else {
+          for (let x = 0; x < drink.flavors.length; x++) {
+            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          }
         }
-      }
-      if (drink.toppings.length === 0) {
-        formattedDrink.toppings.push("None");
-      } else {
-        for (let x = 0; x < drink.toppings.length; x++) {
-          const tempTopping = await Topping.findById(drink.toppings[x]);
-          formattedDrink.toppings.push(" " + tempTopping.topping);
+        if (drink.toppings.length === 0) {
+          formattedDrink.toppings.push("None");
+        } else {
+          for (let x = 0; x < drink.toppings.length; x++) {
+            const tempTopping = await Topping.findById(drink.toppings[x]);
+            formattedDrink.toppings.push(" " + tempTopping.topping);
+          }
         }
+        formattedDrink.name = drink.name;
+        formattedDrink.temp = drink.temps;
+        formattedDrink.instructions = drink.instructions;
+        drinkArray.push(formattedDrink);
       }
-      formattedDrink.name = drink.name;
-      formattedDrink.temp = drink.temps;
-      formattedDrink.instructions = drink.instructions;
-      drinkArray.push(formattedDrink);
+      drinkMap.set(i, drinkArray);
     }
-    drinkMap.set(i, drinkArray);
-  }
 
-  res.render("completed", {
-    orders,
-    drinkMap,
-  });
+    res.render("completed", {
+      orders,
+      drinkMap,
+    });
+  }
 });
 
-route.get("/addFlavor", (req, res) => {
-  res.render("addFlavor");
+route.get("/addFlavor", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("addFlavor");
+  }
 });
 
 // updates database with new flavor options
@@ -447,15 +497,20 @@ route.post("/addFlavor", async (req, res) => {
 });
 
 route.get("/deleteFlavor", async (req, res) => {
-  const flavors = await Flavor.find();
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const flavors = await Flavor.find();
 
-  const formattedFlavors = flavors.map((flavor) => {
-    return {
-      flavor: flavor.flavor,
-      id: flavor._id,
-    };
-  });
-  res.render("deleteFlavor", { flavors: formattedFlavors });
+    const formattedFlavors = flavors.map((flavor) => {
+      return {
+        flavor: flavor.flavor,
+        id: flavor._id,
+      };
+    });
+    res.render("deleteFlavor", { flavors: formattedFlavors });
+  }
 });
 
 route.delete("/deleteFlavor/:id", async (req, res) => {
@@ -465,8 +520,15 @@ route.delete("/deleteFlavor/:id", async (req, res) => {
 });
 
 route.get("/addTopping", async (req, res) => {
-  res.render("addTopping");
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("addTopping");
+  }
 });
+
+// FIXME: continue checking role
 
 // updates database with new topping options
 route.post("/addTopping", async (req, res) => {
