@@ -13,17 +13,22 @@ const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
 route.get("/", async (req, res) => {
-  const menuItems = await MenuItem.find();
-  const popularMenu = [];
-  for (let i = 0; i < menuItems.length; i++) {
-    if (menuItems[i].popular === true) {
-      popularMenu.push(menuItems[i]);
+  const role = await getUserRoles(req.session.email);
+  if (role === null) {
+    res.redirect("/auth");
+  } else {
+    const menuItems = await MenuItem.find();
+    const popularMenu = [];
+    for (let i = 0; i < menuItems.length; i++) {
+      if (menuItems[i].popular === true) {
+        popularMenu.push(menuItems[i]);
+      }
     }
-  }
 
-  res.render("homePopularDrinks", {
-    menuItems: popularMenu,
-  });
+    res.render("homePopularDrinks", {
+      menuItems: popularMenu,
+    });
+  }
 });
 
 route.get("/toggle", async (req, res) => {
@@ -103,6 +108,9 @@ route.get("/auth", (req, res) => {
 async function getUserRoles(email) {
   try {
     const user = await User.findOne({ email }, "userType");
+    if (user === null) {
+      return null;
+    }
     const userRole = user.userType;
     return userRole;
   } catch (error) {
@@ -528,8 +536,6 @@ route.get("/addTopping", async (req, res) => {
   }
 });
 
-// FIXME: continue checking role
-
 // updates database with new topping options
 route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
@@ -542,15 +548,20 @@ route.post("/addTopping", async (req, res) => {
 });
 
 route.get("/deleteTopping", async (req, res) => {
-  const toppings = await Topping.find();
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const toppings = await Topping.find();
 
-  const formattedToppings = toppings.map((topping) => {
-    return {
-      topping: topping.topping,
-      id: topping._id,
-    };
-  });
-  res.render("deleteTopping", { toppings: formattedToppings });
+    const formattedToppings = toppings.map((topping) => {
+      return {
+        topping: topping.topping,
+        id: topping._id,
+      };
+    });
+    res.render("deleteTopping", { toppings: formattedToppings });
+  }
 });
 
 route.delete("/deleteTopping/:id", async (req, res) => {
@@ -568,45 +579,55 @@ route.get("/completed", (req, res) => {
 });
 
 // Route Teacher Menu
-route.get("/teacherMenu/", async (req, res) => {
-  const menu = await MenuItem.find();
-  res.render("teacherMenu", {
-    menuItems: menu,
-  });
+route.get("/teacherMenu", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const menu = await MenuItem.find();
+    res.render("teacherMenu", {
+      menuItems: menu,
+    });
+  }
 });
 
 route.get("/customizeDrink/:name", async (req, res) => {
-  const selectedDrink = req.params.name; // params holds parameters from the URL path
-  const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
-  try {
-    const drink = await findDrinkByName(drinkName); // finds drink by name
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const selectedDrink = req.params.name; // params holds parameters from the URL path
+    const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
+    try {
+      const drink = await findDrinkByName(drinkName); // finds drink by name
 
-    // available flavors array
-    const flavors = [];
-    for (let i = 0; i < drink.flavors.length; i++) {
-      flavors[i] = await findFlavorById(drink.flavors[i]);
-    }
+      // available flavors array
+      const flavors = [];
+      for (let i = 0; i < drink.flavors.length; i++) {
+        flavors[i] = await findFlavorById(drink.flavors[i]);
+      }
 
-    // available toppings array
-    const toppings = [];
-    for (let i = 0; i < drink.toppings.length; i++) {
-      toppings[i] = await findToppingsById(drink.toppings[i]);
-    }
+      // available toppings array
+      const toppings = [];
+      for (let i = 0; i < drink.toppings.length; i++) {
+        toppings[i] = await findToppingsById(drink.toppings[i]);
+      }
 
-    if (drink) {
-      res.render("customizeDrink", {
-        drink: drink,
-        flavors: flavors,
-        temps: drink.temps,
-        toppings: toppings,
-      });
-    } else {
-      res.status(404).send("Drink not found");
+      if (drink) {
+        res.render("customizeDrink", {
+          drink: drink,
+          flavors: flavors,
+          temps: drink.temps,
+          toppings: toppings,
+        });
+      } else {
+        res.status(404).send("Drink not found");
+      }
+    } catch (error) {
+      // handle error appropriately
+      console.error("Error finding the drink:", error);
+      res.status(500);
     }
-  } catch (error) {
-    // handle error appropriately
-    console.error("Error finding the drink:", error);
-    res.status(500);
   }
 });
 
@@ -664,10 +685,15 @@ route.post("/customizeDrink/:name", async (req, res) => {
 });
 
 route.get("/teacherMyOrder", async (req, res) => {
-  res.render("teacherMyOrder", {
-    cart: req.session.cart,
-    enabled: res.locals.headerData.enabled,
-  });
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("teacherMyOrder", {
+      cart: req.session.cart,
+      enabled: res.locals.headerData.enabled,
+    });
+  }
 });
 
 route.get("/updateCart", async (req, res) => {});
@@ -706,74 +732,104 @@ route.post("/teacherMyOrder", async (req, res) => {
 });
 
 route.get("/teacherPopularDrinks", async (req, res) => {
-  const menuItems = await MenuItem.find();
-  const popularMenu = [];
-  for (let i = 0; i < menuItems.length; i++) {
-    if (menuItems[i].popular === true) {
-      popularMenu.push(menuItems[i]);
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const menuItems = await MenuItem.find();
+    const popularMenu = [];
+    for (let i = 0; i < menuItems.length; i++) {
+      if (menuItems[i].popular === true) {
+        popularMenu.push(menuItems[i]);
+      }
     }
+    res.render("teacherPopularDrinks", {
+      menuItems: popularMenu,
+    });
   }
-  res.render("teacherPopularDrinks", {
-    menuItems: popularMenu,
-  });
 });
 
 route.get("/homePopularDrinks", async (req, res) => {
-  const menuItems = await MenuItem.find();
-  const popularMenu = [];
-  for (let i = 0; i < menuItems.length; i++) {
-    if (menuItems[i].popular === true) {
-      popularMenu.push(menuItems[i]);
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const menuItems = await MenuItem.find();
+    const popularMenu = [];
+    for (let i = 0; i < menuItems.length; i++) {
+      if (menuItems[i].popular === true) {
+        popularMenu.push(menuItems[i]);
+      }
     }
-  }
 
-  res.render("homePopularDrinks", {
-    menuItems: popularMenu,
-  });
+    res.render("homePopularDrinks", {
+      menuItems: popularMenu,
+    });
+  }
 });
 
 route.get("/homeMenu", async (req, res) => {
-  const menu = await MenuItem.find();
-  res.render("homeMenu", {
-    menuItems: menu,
-  });
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const menu = await MenuItem.find();
+    res.render("homeMenu", {
+      menuItems: menu,
+    });
+  }
 });
 
 route.get("/teacherMyFavorites", async (req, res) => {
-  res.render("teacherMyFavorites");
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("teacherMyFavorites");
+  }
 });
 
 route.get("/teacherOrderHistory", async (req, res) => {
-  const user = await User.findOne({ email: req.session.email });
-  let orderHistory = [];
-  for (let order of user.orderHistory) {
-    if (order != null) {
-      try {
-        orderHistory.push(
-          await Order.findOne({ _id: order }).populate({
-            path: "drinks", // Populates drink objects
-            populate: [
-              // Nested populate function to access flavors, toppings, etc
-              { path: "flavors", model: "Flavor" },
-              { path: "toppings", model: "Topping" },
-            ],
-          })
-        );
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const user = await User.findOne({ email: req.session.email });
+    let orderHistory = [];
+    for (let order of user.orderHistory) {
+      if (order != null) {
+        try {
+          orderHistory.push(
+            await Order.findOne({ _id: order }).populate({
+              path: "drinks", // Populates drink objects
+              populate: [
+                // Nested populate function to access flavors, toppings, etc
+                { path: "flavors", model: "Flavor" },
+                { path: "toppings", model: "Topping" },
+              ],
+            })
+          );
 
-        console.log(order);
-      } catch (error) {
-        console.error("Error fetching order details:", error);
+          console.log(order);
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+        }
+      } else {
+        console.log("Order does not exist" + order);
       }
-    } else {
-      console.log("Order does not exist" + order);
     }
+    res.render("teacherOrderHistory", { history: orderHistory });
   }
-  res.render("teacherOrderHistory", { history: orderHistory });
 });
 
 route.get("/orderConfirmation", async (req, res) => {
-  req.session.cart = [];
-  res.render("orderConfirmation");
+  const role = await getUserRoles(req.session.email);
+  if (role !== "teacher" && role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    req.session.cart = [];
+    res.render("orderConfirmation");
+  }
 });
 
 // delegate all authentication to the auth.js router
