@@ -432,6 +432,8 @@ route.get("/barista", async (req, res) => {
       orders,
       drinkMap,
     });
+
+    //  console.log("Orders: " + orders + " Drink Map: " + drinkMap);
   }
 });
 
