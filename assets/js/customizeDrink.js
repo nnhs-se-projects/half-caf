@@ -16,7 +16,7 @@ addToOrderButton.addEventListener("click", async () => {
       checkedToppings.push(toppings[i].value);
     }
   }
-  const temp = document.querySelector("input#temp:checked").value;
+  const temp = document.querySelector("input.temps:checked").value;
   const instructions = document.getElementById("instructions").value;
   const favorite = document.getElementById("favorite").checked;
 
