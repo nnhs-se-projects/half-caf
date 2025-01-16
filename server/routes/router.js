@@ -77,9 +77,7 @@ let pastValue;
 async function checkForUpdates() {
   const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
   let updated = false;
-  if (enabled.enabled === pastValue) {
-    updated = false;
-  } else {
+  if (enabled.enabled !== pastValue) {
     updated = true;
   }
 
@@ -728,6 +726,10 @@ route.post("/teacherMyOrder", async (req, res) => {
     user.currentOrder = order;
     user.orderHistory.push(order);
     await user.save();
+
+    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+    toggle.enabled = !pastValue;
+    await toggle.save();
   } catch (err) {
     console.log(err);
   }
