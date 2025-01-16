@@ -76,10 +76,10 @@ wss.on("connection", (ws) => {
 let pastValue;
 async function checkForUpdates() {
   const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
-  let updated = false;
-  if (enabled.enabled !== pastValue) {
-    updated = true;
-  }
+
+  const refreshOrders = await Enabled.findById("660f6230ff092e4bb15122db");
+
+  const update = enabled.enabled !== pastValue || refreshOrders.enabled;
 
   pastValue = enabled.enabled;
 
@@ -90,7 +90,9 @@ async function checkForUpdates() {
 
   const jsonData = JSON.stringify(sendData);
 
-  if (updated === true) {
+  if (update === true) {
+    refreshOrders.enabled = false;
+    await refreshOrders.save();
     // If updates detected, notify all connected clients
     clients.forEach((client) => {
       client.send(jsonData);
@@ -727,9 +729,9 @@ route.post("/teacherMyOrder", async (req, res) => {
     user.orderHistory.push(order);
     await user.save();
 
-    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-    toggle.enabled = !pastValue;
-    await toggle.save();
+    const refreshOrders = await Enabled.findById("660f6230ff092e4bb15122db");
+    refreshOrders.enabled = true;
+    await refreshOrders.save();
   } catch (err) {
     console.log(err);
   }
