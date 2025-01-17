@@ -1,6 +1,5 @@
 function handleSelectChange() {
   const selectedValue = document.getElementById("filter").value;
-
   const urlParams = new URLSearchParams(window.location.search);
   urlParams.set("id", selectedValue);
 
