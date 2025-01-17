@@ -123,13 +123,12 @@ async function getUserRoles(email) {
 route.get("/redirectUser", async (req, res) => {
   try {
     const role = await getUserRoles(req.session.email);
+    req.session.cart = [];
     if (role === "admin") {
-      req.session.cart = [];
       res.redirect("/addUser");
     } else if (role === "barista") {
       res.redirect("/barista");
     } else if (role === "teacher") {
-      req.session.cart = [];
       res.redirect("/teacherPopularDrinks");
     } else {
       console.log("Role Not Recognized");
@@ -642,7 +641,6 @@ async function findDrinkByName(drinkName) {
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the drink by name:", error);
-    res.status(500);
   }
 }
 
@@ -654,7 +652,6 @@ async function findFlavorById(id) {
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the flavor:", error);
-    res.status(500);
   }
 }
 
@@ -666,7 +663,6 @@ async function findToppingsById(id) {
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the drink by name:", error);
-    res.status(500);
   }
 }
 
@@ -692,9 +688,10 @@ route.get("/teacherMyOrder", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
+    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
     res.render("teacherMyOrder", {
       cart: req.session.cart,
-      enabled: res.locals.headerData.enabled,
+      enabled: toggle.enabled,
     });
   }
 });
@@ -710,7 +707,7 @@ route.post("/updateCart", async (req, res) => {
 
 route.post("/teacherMyOrder", async (req, res) => {
   let total = 0;
-  for (let drink of req.session.cart) {
+  for (const drink of req.session.cart) {
     total += drink.price;
   }
   try {
@@ -802,22 +799,21 @@ route.get("/teacherOrderHistory", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     const user = await User.findOne({ email: req.session.email });
-    let orderHistory = [];
-    for (let order of user.orderHistory) {
+    const orderHistory = [];
+    for (const order of user.orderHistory) {
       if (order != null) {
         try {
-          orderHistory.push(
-            await Order.findOne({ _id: order }).populate({
-              path: "drinks", // Populates drink objects
-              populate: [
-                // Nested populate function to access flavors, toppings, etc
-                { path: "flavors", model: "Flavor" },
-                { path: "toppings", model: "Topping" },
-              ],
-            })
-          );
-
-          console.log(order);
+          const currentOrder = await Order.findOne({ _id: order }).populate({
+            path: "drinks", // Populates drink objects
+            populate: [
+              // Nested populate function to access flavors, toppings, etc
+              { path: "flavors", model: "Flavor" },
+              { path: "toppings", model: "Topping" },
+            ],
+          });
+          if (currentOrder != null) {
+            orderHistory.push(currentOrder);
+          }
         } catch (error) {
           console.error("Error fetching order details:", error);
         }
@@ -825,6 +821,8 @@ route.get("/teacherOrderHistory", async (req, res) => {
         console.log("Order does not exist" + order);
       }
     }
+    user.orderHistory = orderHistory; // incase some orders no longer exist, the user's orderHistory array will be updated to only contain non-null orders
+    user.save();
     res.render("teacherOrderHistory", { history: orderHistory });
   }
 });

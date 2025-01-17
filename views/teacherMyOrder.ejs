@@ -21,6 +21,7 @@
   <%}%>
 
 
+  <%if(index > 0) { %>
   <div id="page-content">
     <input type="text" id="rm" placeholder="Enter Room Number" />
     <% if(enabled === true) {%>
@@ -31,6 +32,9 @@
     </div>
     <% } %>
   </div>
+  <%} else { %>
+    <h2>Your cart is empty.</h2>
+  <% } %>
 </body>
 
 <style>
