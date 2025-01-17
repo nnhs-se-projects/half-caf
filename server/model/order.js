@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   room: {
-    type: Number,
+    type: String,
     required: true,
   },
   timestamp: {
