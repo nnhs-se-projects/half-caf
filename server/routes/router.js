@@ -41,20 +41,19 @@ route.post("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
   await toggle.save();
+
+  const refresh = await Enabled.findById("660f6230ff092e4bb15122db");
+  refresh.enabled = true;
+  await refresh.save();
 });
 
-let sendToggle = false;
-route.use((req, res, next) => {
-  const ws = new WebSocket("ws://localhost:8081");
-
-  ws.on("message", (message) => {
-    const jsonData = JSON.parse(message);
-    sendToggle = jsonData.toggle;
-  });
+route.use(async (req, res, next) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
 
   res.locals.headerData = {
-    enabled: sendToggle,
+    enabled: toggle.enabled,
   };
+
   next();
 });
 
@@ -64,7 +63,7 @@ const wss = new WebSocket.Server({ port: 8081 });
 let clients = [];
 
 // WebSocket connection handling
-wss.on("connection", (ws) => {
+wss.on("connection", async (ws) => {
   clients.push(ws); // Add client to storage
 
   // Handle client disconnection
@@ -73,30 +72,26 @@ wss.on("connection", (ws) => {
   });
 });
 
-let pastValue;
 async function checkForUpdates() {
-  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
-
-  const refreshOrders = await Enabled.findById("660f6230ff092e4bb15122db");
-
-  const update = enabled.enabled !== pastValue || refreshOrders.enabled;
-
-  pastValue = enabled.enabled;
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
 
   const sendData = {
     message: "Data updated",
-    toggle: enabled.enabled,
+    toggle: toggle.enabled,
   };
 
   const jsonData = JSON.stringify(sendData);
 
-  if (update === true) {
-    refreshOrders.enabled = false;
-    await refreshOrders.save();
+  const refresh = await Enabled.findById("660f6230ff092e4bb15122db");
+
+  if (refresh.enabled === true) {
     // If updates detected, notify all connected clients
     clients.forEach((client) => {
       client.send(jsonData);
     });
+
+    refresh.enabled = false;
+    await refresh.save();
   }
 }
 setInterval(checkForUpdates, 1000);
@@ -726,9 +721,9 @@ route.post("/teacherMyOrder", async (req, res) => {
     user.orderHistory.push(order);
     await user.save();
 
-    const refreshOrders = await Enabled.findById("660f6230ff092e4bb15122db");
-    refreshOrders.enabled = true;
-    await refreshOrders.save();
+    const refresh = await Enabled.findById("660f6230ff092e4bb15122db");
+    refresh.enabled = true;
+    await refresh.save();
   } catch (err) {
     console.log(err);
   }
