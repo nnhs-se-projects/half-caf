@@ -24,18 +24,17 @@ the only difference is the complete and finish buttons vs the incomplete button-
         </tr>
         <!--count is used for tempDrink-->
         <!--color is used to make the table striped-->
-        <% let count = 0 %><% let color = 0 %>
+        <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
         <!-- < looping through the each order to display each> -->
-        <% for (let order of orders){%>
+        <% for (let order of orders){%> <% showButtons = true; %>
         <!--displays only orders that HAVE been completed-->
         <% if(order.complete === true){%>
         <!--loops through the drinks in an order-->
         <% for(let i = 0; i < order.drinks.length; i++){%>
         <!--gets the temperature of the drink-->
-        <% let tempDrink = drinkMap.get(count)[i] %>
+        <% let tempDrink = drinkMap.get(count)[i]; %>
         <!--makes the color change-->
         <% if(color%2===0){%>
-
         <tr id="b">
           <%}%>
           <!-- -->
@@ -44,7 +43,6 @@ the only difference is the complete and finish buttons vs the incomplete button-
 
         <tr id="c">
           <%}%>
-
           <!--Displays the complete orders in the table-->
           <!--Each drink in an order is displayed as separate items on the table-->
           <!--Right now orders has a complete property but this will need to be switched to drink-->
@@ -63,18 +61,20 @@ the only difference is the complete and finish buttons vs the incomplete button-
             There is more info in the Trello on what it needs to do,
             Basically it will change complete to false which will make the
             drink display on the orders page instead of the completed orders page-->
+          <% if(showButtons === true) { %>
           <th scope="?">
             <button value="<%=order.id%>" class="incompleteButton">
               Incomplete
             </button>
           </th>
+          <% showButtons = false; %> <%} else { %>
+          <th scope="?">part of the above order</th>
+          <%}%>
         </tr>
         <!--  -->
-        <% %>
-        <!--  -->
-        <%color++;%> <%}%>
-        <!--  -->
         <%}%>
+        <!--  -->
+        <%color++;}%>
         <!--  -->
         <%count++;}%>
         <!-- < looping through each drink of every order> -->
