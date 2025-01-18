@@ -63,7 +63,11 @@ the only difference is the complete and finish buttons vs the incomplete button-
             There is more info in the Trello on what it needs to do,
             Basically it will change complete to false which will make the
             drink display on the orders page instead of the completed orders page-->
-          <th scope="?"><button id="barista">Incomplete</button></th>
+          <th scope="?">
+            <button value="<%=order.id%>" class="incompleteButton">
+              Incomplete
+            </button>
+          </th>
         </tr>
         <!--  -->
         <% %>
@@ -101,6 +105,9 @@ the only difference is the complete and finish buttons vs the incomplete button-
     font-size: 35px;
   }
 </style>
+
+<script src="/js/completed.js"></script>
+
 <!-- include footer -->
 <%- include('include/_footer') %>
 <!-- /include footer -->

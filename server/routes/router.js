@@ -413,9 +413,15 @@ route.get("/barista", async (req, res) => {
 });
 
 route.delete("/barista/:id", async (req, res) => {
-  const orderId = req.params.id;
-  await Order.findByIdAndRemove(orderId);
+  await Order.findByIdAndRemove(req.params.id);
   res.end();
+});
+
+route.post("/barista/:id", async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  order.complete = true;
+  await order.save();
+  res.status(201).end();
 });
 
 // completed orders page of barista that displays all completed orders
@@ -466,6 +472,13 @@ route.get("/completed", async (req, res) => {
       drinkMap,
     });
   }
+});
+
+route.post("/completed/:id", async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  order.complete = false;
+  await order.save();
+  res.status(201).end();
 });
 
 route.get("/addFlavor", async (req, res) => {

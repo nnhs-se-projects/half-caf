@@ -17,3 +17,23 @@ for (const cancelButton of cancelButtons) {
     }
   });
 }
+
+const finishButtons = document.querySelectorAll("button.finishButton");
+
+for (const finishButton of finishButtons) {
+  finishButton.addEventListener("click", async () => {
+    const orderId = finishButton.value;
+    const response = await fetch(`/barista/${orderId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      window.location = "/barista";
+    } else {
+      console.log("error finishing order");
+    }
+  });
+}
