@@ -2,6 +2,10 @@ const cancelButtons = document.querySelectorAll("button.cancelButton");
 
 for (const cancelButton of cancelButtons) {
   cancelButton.addEventListener("click", async () => {
+    if (!confirm("Are you sure you want to cancel this order?")) {
+      return;
+    }
+
     const orderId = cancelButton.value;
     const response = await fetch(`/barista/${orderId}`, {
       method: "DELETE",
