@@ -72,6 +72,7 @@ route.use(async (req, res, next) => {
   res.locals.headerData = {
     enabled: toggle.enabled,
   };
+
   next();
 });
 

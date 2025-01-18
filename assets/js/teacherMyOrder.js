@@ -24,7 +24,7 @@ placeOrderButton.addEventListener("click", async () => {
   const time = new Date();
 
   if (roomNum === "") {
-    alert("Enter your room");
+    alert("Please enter a room number.");
     return;
   }
 
