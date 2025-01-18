@@ -1,22 +1,20 @@
 const removeButton = document.querySelectorAll("button.remove");
-for(let button of removeButton){
-  button.addEventListener("click", async() => {
-
+for (const button of removeButton) {
+  button.addEventListener("click", async () => {
     const itemIndex = button.getAttribute("drink-index");
 
     const response = await fetch("/updateCart", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({index: itemIndex}),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ index: itemIndex }),
     });
     if (response.ok) {
       window.location = "/teacherMyOrder";
     } else {
       console.log("error removing drink from cart");
     }
-
   });
 }
 
@@ -24,6 +22,11 @@ const placeOrderButton = document.querySelector("input.placeOrder");
 placeOrderButton.addEventListener("click", async () => {
   const roomNum = document.getElementById("rm").value;
   const time = new Date();
+
+  if (roomNum === "") {
+    alert("Enter your room");
+    return;
+  }
 
   // formatting time
   const year = time.getFullYear();
@@ -38,7 +41,7 @@ placeOrderButton.addEventListener("click", async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({rm: roomNum, timestamp: formattedTime}),
+    body: JSON.stringify({ rm: roomNum, timestamp: formattedTime }),
   });
   if (response.ok) {
     window.location = "/orderConfirmation";

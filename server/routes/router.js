@@ -12,6 +12,21 @@ const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
+const wss = new WebSocket.Server({ port: 8081 });
+
+// Client connections storage
+let clients = [];
+
+// WebSocket connection handling
+wss.on("connection", (ws) => {
+  clients.push(ws); // Add client to storage
+
+  // Handle client disconnection
+  ws.on("close", () => {
+    clients = clients.filter((client) => client !== ws);
+  });
+});
+
 route.get("/", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role === null) {
@@ -41,65 +56,24 @@ route.post("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
   await toggle.save();
-});
 
-let sendToggle = false;
-route.use((req, res, next) => {
-  const ws = new WebSocket("ws://localhost:8081");
-
-  ws.on("message", (message) => {
-    const jsonData = JSON.parse(message);
-    sendToggle = jsonData.toggle;
+  const jsonData = JSON.stringify({
+    message: "Ordering toggle changed",
   });
 
+  clients.forEach((client) => {
+    client.send(jsonData);
+  });
+});
+
+route.use(async (req, res, next) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+
   res.locals.headerData = {
-    enabled: sendToggle,
+    enabled: toggle.enabled,
   };
   next();
 });
-
-const wss = new WebSocket.Server({ port: 8081 });
-
-// Client connections storage
-let clients = [];
-
-// WebSocket connection handling
-wss.on("connection", (ws) => {
-  clients.push(ws); // Add client to storage
-
-  // Handle client disconnection
-  ws.on("close", () => {
-    clients = clients.filter((client) => client !== ws);
-  });
-});
-
-let pastValue;
-async function checkForUpdates() {
-  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
-
-  const refreshOrders = await Enabled.findById("660f6230ff092e4bb15122db");
-
-  const update = enabled.enabled !== pastValue || refreshOrders.enabled;
-
-  pastValue = enabled.enabled;
-
-  const sendData = {
-    message: "Data updated",
-    toggle: enabled.enabled,
-  };
-
-  const jsonData = JSON.stringify(sendData);
-
-  if (update === true) {
-    refreshOrders.enabled = false;
-    await refreshOrders.save();
-    // If updates detected, notify all connected clients
-    clients.forEach((client) => {
-      client.send(jsonData);
-    });
-  }
-}
-setInterval(checkForUpdates, 1000);
 
 route.get("/auth", (req, res) => {
   res.render("auth");
@@ -688,10 +662,8 @@ route.get("/teacherMyOrder", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
-    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
     res.render("teacherMyOrder", {
       cart: req.session.cart,
-      enabled: toggle.enabled,
     });
   }
 });
@@ -726,9 +698,13 @@ route.post("/teacherMyOrder", async (req, res) => {
     user.orderHistory.push(order);
     await user.save();
 
-    const refreshOrders = await Enabled.findById("660f6230ff092e4bb15122db");
-    refreshOrders.enabled = true;
-    await refreshOrders.save();
+    const jsonData = JSON.stringify({
+      message: "New order placed",
+    });
+
+    clients.forEach((client) => {
+      client.send(jsonData);
+    });
   } catch (err) {
     console.log(err);
   }

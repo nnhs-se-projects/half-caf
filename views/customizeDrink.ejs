@@ -28,7 +28,13 @@
       <fieldset>
         <% for(let temp of temps) { %>
         <label>
-          <input class="temps" name="temps" type="radio" value="<%= temp %>" />
+          <input
+            class="temps"
+            name="temps"
+            type="radio"
+            value="<%= temp %>"
+            checked
+          />
           <%= temp %>
         </label>
         <% } %>

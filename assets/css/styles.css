@@ -120,6 +120,15 @@ toggle switch citation:
 https://www.w3schools.com/howto/howto_css_switch.asp
 */
 
+h4 {
+  color: #f2f2f2;
+  text-align: center;
+  text-decoration: none;
+  font-size: 17px;
+  display: inline-block;
+  margin: 0;
+}
+
 .topnav {
   background-color: #a8a8a8;
   overflow: hidden;
@@ -209,5 +218,5 @@ h9 {
 }
 
 br {
-  margin: 0, 0, 0, 0; 
+  margin: 0, 0, 0, 0;
 }
