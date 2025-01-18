@@ -412,6 +412,12 @@ route.get("/barista", async (req, res) => {
   }
 });
 
+route.delete("/barista/:id", async (req, res) => {
+  const orderId = req.params.id;
+  await Order.findByIdAndRemove(orderId);
+  res.end();
+});
+
 // completed orders page of barista that displays all completed orders
 route.get("/completed", async (req, res) => {
   const role = await getUserRoles(req.session.email);

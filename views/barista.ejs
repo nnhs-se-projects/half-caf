@@ -61,8 +61,12 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <!--Complete button and cancel button,
             Complete button has some code, cancel button has not yet been worked on,
             There is more info in the Trello on what each button needs to do-->
-          <th scope="?"><button id="barista">Cancel</button></th>
-          <th scope="?"><button id="barista">Finish</button></th>
+          <th scope="?">
+            <button value="<%=order.id%>" class="cancelButton">Cancel</button>
+          </th>
+          <th scope="?">
+            <button value="<%=order.id%>" class="finishButton">Finish</button>
+          </th>
         </tr>
         <!--  -->
         <% %>
@@ -101,7 +105,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
 
 <!-- connect to js -->
 
-<!-- <script src="/js/baristaOrder.js"></script> -->
+<script src="/js/barista.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
