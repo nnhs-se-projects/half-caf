@@ -21,6 +21,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  cancelled: {
+    type: Boolean,
+    required: true,
+  },
   read: {
     type: Boolean,
     required: false,

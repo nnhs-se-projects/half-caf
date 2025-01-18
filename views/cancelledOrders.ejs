@@ -4,13 +4,13 @@ the only difference is the complete and finish buttons vs the incomplete button-
 <%- include('include/_baristaHeader') %>
 
 <head>
-  <h5>Orders:</h5>
+  <h5>Cancelled orders:</h5>
 </head>
 <body>
   <div>
     <table class="table table-striped">
+      <!--Labels for completed orders page table which displays the previously completed orders-->
       <thead>
-        <!--Labels for order page table which displays the current orders-->
         <tr id="a">
           <th scope="col">Room Number</th>
           <th scope="col">Teacher</th>
@@ -20,15 +20,15 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="col">Toppings</th>
           <th scope="col">Special Instructions</th>
           <th scope="col">Timestamp</th>
-          <th scope="col">Cancel Order</th>
-          <th scope="col">Finish Order</th>
+          <th scope="col">Mark as not cancelled</th>
         </tr>
         <!--count is used for tempDrink-->
+        <!--color is used to make the table striped-->
         <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
         <!-- < looping through the each order to display each> -->
         <% for (let order of orders){%> <% showButtons = true; %>
-        <!--displays only orders that HAVE NOT been completed-->
-        <% if(order.complete === false && order.cancelled === false){%>
+        <!--displays only orders that HAVE been completed-->
+        <% if(order.cancelled === true){%>
         <!--loops through the drinks in an order-->
         <% for(let i = 0; i < order.drinks.length; i++){%>
         <!--gets the temperature of the drink-->
@@ -43,12 +43,11 @@ the only difference is the complete and finish buttons vs the incomplete button-
 
         <tr id="c">
           <%}%>
-          <!--Displays the orders in the table-->
+          <!--Displays the complete orders in the table-->
           <!--Each drink in an order is displayed as separate items on the table-->
-          <!--Helps to make sure baristas do not forget to make anything-->
           <!--Right now orders has a complete property but this will need to be switched to drink-->
-          <!--Complete button needs to mark an individual drink as complete and move it to the
-          completed orders page rather than an entire order-->
+          <!--Incomplete button needs to mark an individual drink as incomplete and move it to the
+           orders page rather than an entire order-->
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
           <th scope="?"><%=tempDrink.name%></th>
@@ -57,19 +56,14 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="?"><%=tempDrink.toppings%></th>
           <th scope="?"><%=tempDrink.instructions%></th>
           <th scope="?"><%=order.timestamp%></th>
-          <!--Complete button and cancel button,
-            Complete button has some code, cancel button has not yet been worked on,
-            There is more info in the Trello on what each button needs to do-->
           <% if(showButtons === true) { %>
           <th scope="?">
-            <button value="<%=order.id%>" class="cancelButton">Cancel</button>
-          </th>
-          <th scope="?">
-            <button value="<%=order.id%>" class="finishButton">Finish</button>
+            <button value="<%=order.id%>" class="uncancelButton">
+              Uncancel
+            </button>
           </th>
           <% showButtons = false; %> <%} else { %>
           <th scope="?">part of the above order</th>
-          <th scope="?"></th>
           <%}%>
         </tr>
         <!--  -->
@@ -78,12 +72,14 @@ the only difference is the complete and finish buttons vs the incomplete button-
         <%color++;}%>
         <!--  -->
         <%count++;}%>
+        <!-- < looping through each drink of every order> -->
+        <!-- < to display each drink on a different line> -->
       </thead>
     </table>
   </div>
 </body>
 
-<!--css for formatting on the orders page, the colors are for the different rows-->
+<!--css for formatting on the completed orders page, the colors are for the different rows-->
 <style type="text/css">
   table tr#a {
     background-color: lightblue;
@@ -105,9 +101,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
   }
 </style>
 
-<!-- connect to js -->
-
-<script src="/js/barista.js"></script>
+<script src="/js/cancelledOrders.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
