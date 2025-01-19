@@ -105,16 +105,16 @@
       <span class="anchor">Edit Options</span>
       <ul class="items">
         <li>
-          <input id="popular" type="checkbox" value="<%=popular%>" />
-          Popular?
+          <input id="popular" type="checkbox" <%= (chosenDrink &&
+          selectedMenuItem.popular) ? "checked" : "" %> /> Popular?
         </li>
         <li>
-          <input id="caffeination" type="checkbox" value="<%=caffeination%>" />
-          Caffeination
+          <input id="caffeination" type="checkbox" <%= (chosenDrink &&
+          selectedMenuItem.caffeination) ? "checked" : "" %> /> Caffeination
         </li>
         <li>
-          <input id="special" type="checkbox" value="<%=special%>" />
-          Special?
+          <input id="special" type="checkbox" <%= (chosenDrink &&
+          selectedMenuItem.special) ? "checked" : "" %> /> Special?
         </li>
       </ul>
     </div>

@@ -50,6 +50,9 @@ saveDrinkButton.addEventListener("click", async () => {
       checkedToppings.push(toppings[i].value);
     }
   }
+  const popular = document.getElementById("popular").checked;
+  const caffeination = document.getElementById("caffeination").checked;
+  const special = document.getElementById("special").checked;
 
   const drink = {
     name,
@@ -58,6 +61,9 @@ saveDrinkButton.addEventListener("click", async () => {
     checkedFlavors,
     checkedToppings,
     checkedTemps,
+    popular,
+    caf: caffeination,
+    special,
   };
 
   const response = await fetch(`/modifyDrink/${id}`, {

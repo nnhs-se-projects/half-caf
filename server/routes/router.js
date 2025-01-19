@@ -330,14 +330,8 @@ route.get("/modifyDrink", async (req, res) => {
     // check if any drink has been selected
     if (id != null) {
       selectedMenuItem = await MenuItem.findById(id);
-      let caffeination = selectedMenuItem.caffeination;
-      let popular = selectedMenuItem.popular;
-      let special = selectedMenuItem.special;
     } else {
       selectedMenuItem = undefined;
-      special = undefined;
-      popular = undefined;
-      caffeination = undefined;
     }
 
     const formattedMenuItems = menuItems.map((menuItem) => {
@@ -353,9 +347,6 @@ route.get("/modifyDrink", async (req, res) => {
       toppings,
       flavors,
       temps: TempJson,
-      caffeination,
-      popular,
-      special,
     });
   }
 });
@@ -368,6 +359,9 @@ route.post("/modifyDrink/:id", async (req, res) => {
   menuItem.flavors = req.body.checkedFlavors;
   menuItem.toppings = req.body.checkedToppings;
   menuItem.temps = req.body.checkedTemps;
+  menuItem.caffeination = req.body.caf;
+  menuItem.special = req.body.special;
+  menuItem.popular = req.body.popular;
   await menuItem.save();
   res.status(201).end();
 });
