@@ -29,11 +29,11 @@ saveDrinkButton.addEventListener("click", async () => {
 
   const temps = document.querySelectorAll("input#temp");
   const checkedTemps = [];
-  for (let i = 0; i < temps.length; i++) {
-    if (temps[i].checked) {
-      checkedTemps.push(temps[i].value);
+  temps.forEach((temp) => {
+    if (temp.checked) {
+      checkedTemps.push(temp.value);
     }
-  }
+  });
 
   const flavors = document.querySelectorAll("input#flavor");
   const checkedFlavors = [];
@@ -66,17 +66,19 @@ saveDrinkButton.addEventListener("click", async () => {
     special,
   };
 
-  const response = await fetch(`/modifyDrink/${id}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(drink),
-  });
+  try {
+    const response = await fetch(`/modifyDrink/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(drink),
+    });
 
-  if (response.ok) {
-    window.location = "/modifyDrink";
-  } else {
-    console.log("error updating drink");
+    if (response.ok) {
+      window.location = `/modifyDrink?id=${id}`;
+    }
+  } catch (error) {
+    console.error("Error updating drink: ", error);
   }
 });

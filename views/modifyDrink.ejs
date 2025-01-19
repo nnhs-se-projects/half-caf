@@ -87,14 +87,9 @@
       <ul class="items">
         <% for(let temp of temps){ %>
         <li>
-          <input
-            type="checkbox"
-            id="temp"
-            class="temps"
-            name="temps"
-            value="<%=temp%>"
-          />
-
+          <input type="checkbox" id="temp" class="temps" name="temps"
+          value="<%=temp%>" <%= (chosenDrink &&
+          selectedMenuItem.temps.includes(temp)) ? "checked" : "" %> />
           <%=temp%>
         </li>
         <%} %>
@@ -133,6 +128,9 @@
   </style>
 
   <script src="/js/modifyDrink.js"></script>
+  <script>
+    window.selectedMenuItem = selectedMenuItem || "null";
+  </script>
 
   <!-- include footer -->
   <%- include('include/_footer') %>

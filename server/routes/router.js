@@ -311,6 +311,15 @@ route.post("/addDrink", async (req, res) => {
   res.status(200).end();
 });
 
+route.get("/api/menuItem/:id", async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findById(req.params.id);
+    res.json(menuItem);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // everything loads on the Modify Drink page when a
 // menu item is selected, except for flavors
 route.get("/modifyDrink", async (req, res) => {
