@@ -15,6 +15,10 @@ const emailInput = document.querySelector("input.emailInput");
 
 const ws = new WebSocket("ws://localhost:8081");
 
+const sound = new Audio("/audio/notification.mp3");
+sound.preload = "auto";
+
+// sound.load();
 ws.onmessage = function (event) {
   const jsonData = JSON.parse(event.data);
   if (jsonData.message === "Ordering toggle changed") {
@@ -25,7 +29,17 @@ ws.onmessage = function (event) {
     jsonData.message === "New order placed" &&
     window.location.href.indexOf("/barista") > -1
   ) {
-    window.location = window.location;
+    sound
+      .play()
+      .then(() => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error("Failed to play audio:", error);
+        window.location.reload();
+      });
   } else if (
     jsonData.message === "Order finished" &&
     Notification?.permission === "granted" &&

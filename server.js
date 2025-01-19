@@ -34,9 +34,11 @@ app.use(express.json());
 app.set("view engine", "ejs");
 
 // load assets
+
 app.use("/css", express.static("assets/css"));
 app.use("/img", express.static("assets/img"));
 app.use("/js", express.static("assets/js"));
+app.use("/audio", express.static("assets/audio"));
 
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.
@@ -58,5 +60,7 @@ app.use("/", require("./server/routes/router"));
 
 // start the server on port PORT_NUM from .env file
 app.listen(process.env.PORT_NUM, () => {
-  console.log("server is listening on http://localhost:" + process.env.PORT_NUM);
+  console.log(
+    "server is listening on http://localhost:" + process.env.PORT_NUM
+  );
 });
