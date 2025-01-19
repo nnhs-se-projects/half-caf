@@ -4,7 +4,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
 <%- include('include/_baristaHeader') %>
 
 <head>
-  <h5>Completed orders:</h5>
+  <h5>Cancelled orders:</h5>
 </head>
 <body>
   <div>
@@ -20,7 +20,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="col">Toppings</th>
           <th scope="col">Special Instructions</th>
           <th scope="col">Timestamp</th>
-          <th scope="col">Mark as incomplete</th>
+          <th scope="col">Mark as not cancelled</th>
         </tr>
         <!--count is used for tempDrink-->
         <!--color is used to make the table striped-->
@@ -28,7 +28,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
         <!-- < looping through the each order to display each> -->
         <% for (let order of orders){%> <% showButtons = true; %>
         <!--displays only orders that HAVE been completed-->
-        <% if(order.complete === true){%>
+        <% if(order.cancelled === true){%>
         <!--loops through the drinks in an order-->
         <% for(let i = 0; i < order.drinks.length; i++){%>
         <!--gets the temperature of the drink-->
@@ -56,15 +56,10 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="?"><%=tempDrink.toppings%></th>
           <th scope="?"><%=tempDrink.instructions%></th>
           <th scope="?"><%=order.timestamp%></th>
-          <!--Incomplete button,
-            Button has not yet been worked on,
-            There is more info in the Trello on what it needs to do,
-            Basically it will change complete to false which will make the
-            drink display on the orders page instead of the completed orders page-->
           <% if(showButtons === true) { %>
           <th scope="?">
-            <button value="<%=order.id%>" class="incompleteButton">
-              Incomplete
+            <button value="<%=order.id%>" class="uncancelButton">
+              Uncancel
             </button>
           </th>
           <% showButtons = false; %> <%} else { %>
@@ -106,7 +101,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
   }
 </style>
 
-<script src="/js/completed.js"></script>
+<script src="/js/cancelledOrders.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>

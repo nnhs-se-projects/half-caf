@@ -23,14 +23,25 @@
         <%}%>
       </ul>
     </div>
+    <% if(temps.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose a Temperature:</h6>
-      <ul class="items">
-        <% for (let temp of temps) {%>
-        <li><input id="temp" type="radio" value="<%= temp %>" /><%= temp %></li>
-        <%}%>
-      </ul>
+      <fieldset>
+        <% for(let temp of temps) { %>
+        <label>
+          <input
+            class="temps"
+            name="temps"
+            type="radio"
+            value="<%= temp %>"
+            checked
+          />
+          <%= temp %>
+        </label>
+        <% } %>
+      </fieldset>
     </div>
+    <% } %>
     <div class="dropdown-check-list">
       <h6>Choose a Topping:</h6>
       <ul class="items">

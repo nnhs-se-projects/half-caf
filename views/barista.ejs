@@ -24,16 +24,15 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="col">Finish Order</th>
         </tr>
         <!--count is used for tempDrink-->
-        <!--color is used to make the table striped-->
-        <% let count = 0 %> <% let color = 0 %>
+        <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
         <!-- < looping through the each order to display each> -->
-        <% for (let order of orders){%>
+        <% for (let order of orders){%> <% showButtons = true; %>
         <!--displays only orders that HAVE NOT been completed-->
-        <% if(order.complete === false){%>
+        <% if(order.complete === false && order.cancelled === false){%>
         <!--loops through the drinks in an order-->
         <% for(let i = 0; i < order.drinks.length; i++){%>
         <!--gets the temperature of the drink-->
-        <% let tempDrink = drinkMap.get(count)[i] %>
+        <% let tempDrink = drinkMap.get(count)[i]; %>
         <!--makes the color change-->
         <% if(color%2===0){%>
         <tr id="b">
@@ -61,15 +60,22 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <!--Complete button and cancel button,
             Complete button has some code, cancel button has not yet been worked on,
             There is more info in the Trello on what each button needs to do-->
-          <th scope="?"><button id="barista">Cancel</button></th>
-          <th scope="?"><button id="barista">Finish</button></th>
+          <% if(showButtons === true) { %>
+          <th scope="?">
+            <button value="<%=order.id%>" class="cancelButton">Cancel</button>
+          </th>
+          <th scope="?">
+            <button value="<%=order.id%>" class="finishButton">Finish</button>
+          </th>
+          <% showButtons = false; %> <%} else { %>
+          <th scope="?">part of the above order</th>
+          <th scope="?"></th>
+          <%}%>
         </tr>
         <!--  -->
-        <% %>
-        <!--  -->
-        <%color++;%> <%}%>
-        <!--  -->
         <%}%>
+        <!--  -->
+        <%color++;}%>
         <!--  -->
         <%count++;}%>
       </thead>
@@ -101,9 +107,8 @@ the only difference is the complete and finish buttons vs the incomplete button-
 
 <!-- connect to js -->
 
-<!-- <script src="/js/baristaOrder.js"></script> -->
+<script src="/js/barista.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
 <!-- /include footer -->
-

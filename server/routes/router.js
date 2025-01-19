@@ -12,6 +12,21 @@ const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
+const wss = new WebSocket.Server({ port: 8081 });
+
+// Client connections storage
+let clients = [];
+
+// WebSocket connection handling
+wss.on("connection", (ws) => {
+  clients.push(ws); // Add client to storage
+
+  // Handle client disconnection
+  ws.on("close", () => {
+    clients = clients.filter((client) => client !== ws);
+  });
+});
+
 route.get("/", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role === null) {
@@ -41,65 +56,25 @@ route.post("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
   await toggle.save();
+
+  const jsonData = JSON.stringify({
+    message: "Ordering toggle changed",
+  });
+
+  clients.forEach((client) => {
+    client.send(jsonData);
+  });
 });
 
-let sendToggle = false;
-route.use((req, res, next) => {
-  const ws = new WebSocket("ws://localhost:8081");
-
-  ws.on("message", (message) => {
-    const jsonData = JSON.parse(message);
-    sendToggle = jsonData.toggle;
-  });
+route.use(async (req, res, next) => {
+  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
 
   res.locals.headerData = {
-    enabled: sendToggle,
+    enabled: toggle.enabled,
   };
+
   next();
 });
-
-const wss = new WebSocket.Server({ port: 8081 });
-
-// Client connections storage
-let clients = [];
-
-// WebSocket connection handling
-wss.on("connection", (ws) => {
-  clients.push(ws); // Add client to storage
-
-  // Handle client disconnection
-  ws.on("close", () => {
-    clients = clients.filter((client) => client !== ws);
-  });
-});
-
-let pastValue;
-async function checkForUpdates() {
-  const enabled = await Enabled.findById("660f6230ff092e4bb15122da");
-  let updated = false;
-  if (enabled.enabled === pastValue) {
-    updated = false;
-  } else {
-    updated = true;
-  }
-
-  pastValue = enabled.enabled;
-
-  const sendData = {
-    message: "Data updated",
-    toggle: enabled.enabled,
-  };
-
-  const jsonData = JSON.stringify(sendData);
-
-  if (updated === true) {
-    // If updates detected, notify all connected clients
-    clients.forEach((client) => {
-      client.send(jsonData);
-    });
-  }
-}
-setInterval(checkForUpdates, 1000);
 
 route.get("/auth", (req, res) => {
   res.render("auth");
@@ -123,12 +98,12 @@ async function getUserRoles(email) {
 route.get("/redirectUser", async (req, res) => {
   try {
     const role = await getUserRoles(req.session.email);
+    req.session.cart = [];
     if (role === "admin") {
       res.redirect("/addUser");
     } else if (role === "barista") {
       res.redirect("/barista");
     } else if (role === "teacher") {
-      req.session.cart = [];
       res.redirect("/teacherPopularDrinks");
     } else {
       console.log("Role Not Recognized");
@@ -432,7 +407,26 @@ route.get("/barista", async (req, res) => {
       orders,
       drinkMap,
     });
+
+    //  console.log("Orders: " + orders + " Drink Map: " + drinkMap);
   }
+});
+
+route.delete("/barista/:id", async (req, res) => {
+  // await Order.findByIdAndRemove(req.params.id);
+  // res.end();
+
+  const order = await Order.findById(req.params.id);
+  order.cancelled = true;
+  await order.save();
+  res.status(201).end();
+});
+
+route.post("/barista/:id", async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  order.complete = true;
+  await order.save();
+  res.status(201).end();
 });
 
 // completed orders page of barista that displays all completed orders
@@ -483,6 +477,69 @@ route.get("/completed", async (req, res) => {
       drinkMap,
     });
   }
+});
+
+route.post("/completed/:id", async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  order.complete = false;
+  await order.save();
+  res.status(201).end();
+});
+
+route.get("/cancelledOrders", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role === "teacher") {
+    res.redirect("/redirectUser");
+  } else {
+    const orders = await Order.find();
+    const drinkMap = new Map();
+    for (let i = 0; i < orders.length; i++) {
+      const drinkArray = [];
+      for (let n = 0; n < orders[i].drinks.length; n++) {
+        const formattedDrink = {
+          name: "",
+          flavors: [],
+          toppings: [],
+          temp: "",
+          instructions: "",
+        };
+        const drink = await Drink.findById(orders[i].drinks[n]);
+        if (drink.flavors.length === 0) {
+          formattedDrink.flavors.push("None");
+        } else {
+          for (let x = 0; x < drink.flavors.length; x++) {
+            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          }
+        }
+        if (drink.toppings.length === 0) {
+          formattedDrink.toppings.push("None");
+        } else {
+          for (let x = 0; x < drink.toppings.length; x++) {
+            const tempTopping = await Topping.findById(drink.toppings[x]);
+            formattedDrink.toppings.push(" " + tempTopping.topping);
+          }
+        }
+        formattedDrink.name = drink.name;
+        formattedDrink.temp = drink.temps;
+        formattedDrink.instructions = drink.instructions;
+        drinkArray.push(formattedDrink);
+      }
+      drinkMap.set(i, drinkArray);
+    }
+
+    res.render("cancelledOrders", {
+      orders,
+      drinkMap,
+    });
+  }
+});
+
+route.post("/cancelledOrders/:id", async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  order.cancelled = false;
+  await order.save();
+  res.status(201).end();
 });
 
 route.get("/addFlavor", async (req, res) => {
@@ -639,7 +696,6 @@ async function findDrinkByName(drinkName) {
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the drink by name:", error);
-    res.status(500);
   }
 }
 
@@ -651,7 +707,6 @@ async function findFlavorById(id) {
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the flavor:", error);
-    res.status(500);
   }
 }
 
@@ -663,7 +718,6 @@ async function findToppingsById(id) {
   } catch (error) {
     // handle error appropriately
     console.error("Error finding the drink by name:", error);
-    res.status(500);
   }
 }
 
@@ -691,7 +745,6 @@ route.get("/teacherMyOrder", async (req, res) => {
   } else {
     res.render("teacherMyOrder", {
       cart: req.session.cart,
-      enabled: res.locals.headerData.enabled,
     });
   }
 });
@@ -707,7 +760,7 @@ route.post("/updateCart", async (req, res) => {
 
 route.post("/teacherMyOrder", async (req, res) => {
   let total = 0;
-  for (let drink of req.session.cart) {
+  for (const drink of req.session.cart) {
     total += drink.price;
   }
   try {
@@ -716,6 +769,7 @@ route.post("/teacherMyOrder", async (req, res) => {
       room: req.body.rm,
       timestamp: req.body.timestamp,
       complete: false,
+      cancelled: false,
       read: false,
       drinks: req.session.cart,
       totalPrice: total,
@@ -725,6 +779,14 @@ route.post("/teacherMyOrder", async (req, res) => {
     user.currentOrder = order;
     user.orderHistory.push(order);
     await user.save();
+
+    const jsonData = JSON.stringify({
+      message: "New order placed",
+    });
+
+    clients.forEach((client) => {
+      client.send(jsonData);
+    });
   } catch (err) {
     console.log(err);
   }
@@ -795,22 +857,21 @@ route.get("/teacherOrderHistory", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     const user = await User.findOne({ email: req.session.email });
-    let orderHistory = [];
-    for (let order of user.orderHistory) {
+    const orderHistory = [];
+    for (const order of user.orderHistory) {
       if (order != null) {
         try {
-          orderHistory.push(
-            await Order.findOne({ _id: order }).populate({
-              path: "drinks", // Populates drink objects
-              populate: [
-                // Nested populate function to access flavors, toppings, etc
-                { path: "flavors", model: "Flavor" },
-                { path: "toppings", model: "Topping" },
-              ],
-            })
-          );
-
-          console.log(order);
+          const currentOrder = await Order.findOne({ _id: order }).populate({
+            path: "drinks", // Populates drink objects
+            populate: [
+              // Nested populate function to access flavors, toppings, etc
+              { path: "flavors", model: "Flavor" },
+              { path: "toppings", model: "Topping" },
+            ],
+          });
+          if (currentOrder != null) {
+            orderHistory.push(currentOrder);
+          }
         } catch (error) {
           console.error("Error fetching order details:", error);
         }
@@ -818,6 +879,8 @@ route.get("/teacherOrderHistory", async (req, res) => {
         console.log("Order does not exist" + order);
       }
     }
+    user.orderHistory = orderHistory; // incase some orders no longer exist, the user's orderHistory array will be updated to only contain non-null orders
+    user.save();
     res.render("teacherOrderHistory", { history: orderHistory });
   }
 });

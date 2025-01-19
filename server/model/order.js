@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   room: {
-    type: Number,
+    type: String,
     required: true,
   },
   timestamp: {
@@ -18,6 +18,10 @@ const schema = new mongoose.Schema({
     required: true,
   },
   complete: {
+    type: Boolean,
+    required: true,
+  },
+  cancelled: {
     type: Boolean,
     required: true,
   },

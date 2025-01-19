@@ -21,9 +21,10 @@
   <%}%>
 
 
+  <%if(index > 0) { %>
   <div id="page-content">
     <input type="text" id="rm" placeholder="Enter Room Number" />
-    <% if(enabled === true) {%>
+    <% if(headerData.enabled === true) {%>
     <input type="submit" class="placeOrder" value="Place Order" />
     <% } else { %>
     <div id="noOrder">
@@ -31,6 +32,9 @@
     </div>
     <% } %>
   </div>
+  <%} else { %>
+    <h2>Your cart is empty.</h2>
+  <% } %>
 </body>
 
 <style>

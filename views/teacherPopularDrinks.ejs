@@ -5,7 +5,9 @@
   </head>
   <body>
       <% for (let drink of menuItems){%>
-          <div class="card">
+        <% let link = "/customizeDrink/" + drink.name; %>
+        <a href = "<%=link%>">
+        <div class="card">
             <div class="container">
               <h4><b><%=drink.name%></h4>
               <h5><%=drink.price + "$"%></h5>
@@ -16,6 +18,7 @@
               <% } %>
             </div>
           </div>
+        </a>
       <%}%>
   </body>
   <!-- include footer -->
