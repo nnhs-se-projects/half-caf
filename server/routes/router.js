@@ -335,10 +335,11 @@ route.get("/modifyDrink", async (req, res) => {
     const flavors = await Flavor.find();
 
     let selectedMenuItem;
-
     // check if any drink has been selected
     if (id != null) {
       selectedMenuItem = await MenuItem.findById(id);
+    } else if (menuItems[0] !== null && menuItems[0] !== undefined) {
+      selectedMenuItem = menuItems[0];
     } else {
       selectedMenuItem = undefined;
     }
