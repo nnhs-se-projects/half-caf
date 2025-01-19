@@ -1,6 +1,5 @@
 function handleSelectChange() {
   const selectedValue = document.getElementById("filter").value;
-
   const urlParams = new URLSearchParams(window.location.search);
   urlParams.set("id", selectedValue);
 
@@ -30,11 +29,11 @@ saveDrinkButton.addEventListener("click", async () => {
 
   const temps = document.querySelectorAll("input#temp");
   const checkedTemps = [];
-  for (let i = 0; i < temps.length; i++) {
-    if (temps[i].checked) {
-      checkedTemps.push(temps[i].value);
+  temps.forEach((temp) => {
+    if (temp.checked) {
+      checkedTemps.push(temp.value);
     }
-  }
+  });
 
   const flavors = document.querySelectorAll("input#flavor");
   const checkedFlavors = [];
@@ -51,6 +50,9 @@ saveDrinkButton.addEventListener("click", async () => {
       checkedToppings.push(toppings[i].value);
     }
   }
+  const popular = document.getElementById("popular").checked;
+  const caffeination = document.getElementById("caffeination").checked;
+  const special = document.getElementById("special").checked;
 
   const drink = {
     name,
@@ -59,19 +61,24 @@ saveDrinkButton.addEventListener("click", async () => {
     checkedFlavors,
     checkedToppings,
     checkedTemps,
+    popular,
+    caf: caffeination,
+    special,
   };
 
-  const response = await fetch(`/modifyDrink/${id}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(drink),
-  });
+  try {
+    const response = await fetch(`/modifyDrink/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(drink),
+    });
 
-  if (response.ok) {
-    window.location = "/modifyDrink";
-  } else {
-    console.log("error updating drink");
+    if (response.ok) {
+      window.location = `/modifyDrink?id=${id}`;
+    }
+  } catch (error) {
+    console.error("Error updating drink: ", error);
   }
 });

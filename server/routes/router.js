@@ -286,6 +286,15 @@ route.post("/addDrink", async (req, res) => {
   res.status(200).end();
 });
 
+route.get("/api/menuItem/:id", async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findById(req.params.id);
+    res.json(menuItem);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // everything loads on the Modify Drink page when a
 // menu item is selected, except for flavors
 route.get("/modifyDrink", async (req, res) => {
@@ -304,6 +313,8 @@ route.get("/modifyDrink", async (req, res) => {
     // check if any drink has been selected
     if (id != null) {
       selectedMenuItem = await MenuItem.findById(id);
+    } else if (menuItems[0] !== null && menuItems[0] !== undefined) {
+      selectedMenuItem = menuItems[0];
     } else {
       selectedMenuItem = undefined;
     }
@@ -333,6 +344,9 @@ route.post("/modifyDrink/:id", async (req, res) => {
   menuItem.flavors = req.body.checkedFlavors;
   menuItem.toppings = req.body.checkedToppings;
   menuItem.temps = req.body.checkedTemps;
+  menuItem.caffeination = req.body.caf;
+  menuItem.special = req.body.special;
+  menuItem.popular = req.body.popular;
   await menuItem.save();
   res.status(201).end();
 });
