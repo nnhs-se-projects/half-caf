@@ -419,6 +419,16 @@ route.delete("/barista/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.cancelled = true;
   await order.save();
+
+  const jsonData = JSON.stringify({
+    message: "Order cancelled",
+    email: order.email,
+  });
+
+  clients.forEach((client) => {
+    client.send(jsonData);
+  });
+
   res.status(201).end();
 });
 
@@ -426,6 +436,16 @@ route.post("/barista/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = true;
   await order.save();
+
+  const jsonData = JSON.stringify({
+    message: "Order finished",
+    email: order.email,
+  });
+
+  clients.forEach((client) => {
+    client.send(jsonData);
+  });
+
   res.status(201).end();
 });
 
@@ -644,6 +664,7 @@ route.get("/teacherMenu", async (req, res) => {
     const menu = await MenuItem.find();
     res.render("teacherMenu", {
       menuItems: menu,
+      email: req.session.email,
     });
   }
 });
@@ -676,6 +697,7 @@ route.get("/customizeDrink/:name", async (req, res) => {
           flavors: flavors,
           temps: drink.temps,
           toppings: toppings,
+          email: req.session.email,
         });
       } else {
         res.status(404).send("Drink not found");
@@ -745,6 +767,7 @@ route.get("/teacherMyOrder", async (req, res) => {
   } else {
     res.render("teacherMyOrder", {
       cart: req.session.cart,
+      email: req.session.email,
     });
   }
 });
@@ -807,6 +830,7 @@ route.get("/teacherPopularDrinks", async (req, res) => {
     }
     res.render("teacherPopularDrinks", {
       menuItems: popularMenu,
+      email: req.session.email,
     });
   }
 });
@@ -847,7 +871,9 @@ route.get("/teacherMyFavorites", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
-    res.render("teacherMyFavorites");
+    res.render("teacherMyFavorites", {
+      email: req.session.email,
+    });
   }
 });
 
@@ -881,7 +907,10 @@ route.get("/teacherOrderHistory", async (req, res) => {
     }
     user.orderHistory = orderHistory; // incase some orders no longer exist, the user's orderHistory array will be updated to only contain non-null orders
     user.save();
-    res.render("teacherOrderHistory", { history: orderHistory });
+    res.render("teacherOrderHistory", {
+      history: orderHistory,
+      email: req.session.email,
+    });
   }
 });
 
@@ -891,7 +920,7 @@ route.get("/orderConfirmation", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     req.session.cart = [];
-    res.render("orderConfirmation");
+    res.render("orderConfirmation", { email: req.session.email });
   }
 });
 
