@@ -24,7 +24,7 @@
                   <h5><%=topping.topping%></h5>
               <%}}%>
               
-              <h5><%=drink.price + "$"%></h5>
+              <h5>$<%=drink.price%></h5>
               <%if(drink.instructions.length > 40) { %>
                 <p>Instructions: <%=drink.instructions.slice(0,40) + "..."%></p>
               <% } else if(drink.instructions.length > 0) { %>
