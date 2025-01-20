@@ -1,16 +1,44 @@
 <%- include('include/_teacherHeader') %>
 
-<main>
-  <h2>My Favorites</h2>
-  <a href="/customizeDrink">
-    <div class="card">
-      <div class="container">
-        <h4><b>Arnold Palmer</b></h4>
-        <h5>$ 3</h5>
-        <p>Only for people named Arnold</p>
-        <a class="active" href="#arnoldPalmer"></a>
-      </div></div
-  ></a>
-</main>
+<head>
+    <h2>My Favorites</h2>
+  </head>
+  <body>
+    <% if(favoriteDrinks.length > 0) {%>
+      <% let drinkIndex = 0; %>
+      <% for (let drink of favoriteDrinks){%>
+        <% let link = "/addFavoriteDrinkToCart/" + drink.id; %>
+        <a href = "<%=link%>">
+          <div class="card">
+            <div class="container">
+              <h4><b><%=drink.name%>: <%=drink.temps%></h4>
+              <% if(favoriteDrinksFlavors[drinkIndex].length > 0) { %>
+                <h5><b>Flavors:</h5>
+                <% for (let flavor of favoriteDrinksFlavors[drinkIndex]){%>
+                  <h5><%=flavor.flavor%></h5>
+              <%}}%>
+
+              <% if(favoriteDrinksToppings[drinkIndex].length > 0) { %>
+                <h5><b>Toppings:</h5>
+                <% for (let topping of favoriteDrinksToppings[drinkIndex]){%>
+                  <h5><%=topping.topping%></h5>
+              <%}}%>
+              
+              <h5><%=drink.price + "$"%></h5>
+              <%if(drink.instructions.length > 40) { %>
+                <p>Instructions: <%=drink.instructions.slice(0,40) + "..."%></p>
+              <% } else if(drink.instructions.length > 0) { %>
+                <p>Instructions: <%=drink.instructions%></p>
+              <% } %>
+            </div>
+          </div>
+        </a>
+        <% link = "/unfavoriteDrink/" + drink.id; %>
+        <a href = "<%=link%>"><div class="card">Unfavorite</div></a>
+      <%drinkIndex++;}%>
+      <%} else {%>
+        <h2>You have not favorited any drinks.</h2>
+      <%}%>
+  </body>
 
 <%- include('include/_footer') %>
