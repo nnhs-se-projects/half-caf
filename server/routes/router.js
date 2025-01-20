@@ -683,6 +683,39 @@ route.get("/teacherMenu", async (req, res) => {
   }
 });
 
+// gets drink object by its name
+async function findDrinkByName(drinkName) {
+  try {
+    const drink = await MenuItem.findOne({ name: drinkName });
+    return drink;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink by name:", error);
+  }
+}
+
+// finds flavor object by id given by drink.flavor
+async function findFlavorById(id) {
+  try {
+    const flavor = await Flavor.findOne({ _id: id });
+    return flavor;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the flavor:", error);
+  }
+}
+
+// finds topping objects by id given by drink.toppings
+async function findToppingsById(id) {
+  try {
+    const toppings = await Toppings.findOne({ _id: id });
+    return toppings;
+  } catch (error) {
+    // handle error appropriately
+    console.error("Error finding the drink by name:", error);
+  }
+}
+
 route.get("/customizeDrink/:name", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "teacher" && role !== "admin") {
@@ -724,39 +757,6 @@ route.get("/customizeDrink/:name", async (req, res) => {
   }
 });
 
-// gets drink object by its name
-async function findDrinkByName(drinkName) {
-  try {
-    const drink = await MenuItem.findOne({ name: drinkName });
-    return drink;
-  } catch (error) {
-    // handle error appropriately
-    console.error("Error finding the drink by name:", error);
-  }
-}
-
-// finds flavor object by id given by drink.flavor
-async function findFlavorById(id) {
-  try {
-    const flavor = await Flavor.findOne({ _id: id });
-    return flavor;
-  } catch (error) {
-    // handle error appropriately
-    console.error("Error finding the flavor:", error);
-  }
-}
-
-// finds topping objects by id given by drink.toppings
-async function findToppingsById(id) {
-  try {
-    const toppings = await Toppings.findOne({ _id: id });
-    return toppings;
-  } catch (error) {
-    // handle error appropriately
-    console.error("Error finding the drink by name:", error);
-  }
-}
-
 route.post("/customizeDrink/:name", async (req, res) => {
   // drink user is adding to order
   const drink = new Drink({
@@ -771,6 +771,13 @@ route.post("/customizeDrink/:name", async (req, res) => {
   });
   await drink.save();
   req.session.cart.push(drink);
+
+  if (req.body.favorite === true) {
+    const user = await User.findOne({ email: req.session.email });
+    user.favoriteDrinks.push(drink);
+    await user.save();
+  }
+
   res.status(200).send("Drink added to session.");
 });
 
@@ -885,10 +892,63 @@ route.get("/teacherMyFavorites", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
+    const user = await User.findOne({ email: req.session.email });
+
+    const favoriteDrinks = [];
+    const favoriteDrinksFlavors = [];
+    const favoriteDrinksToppings = [];
+    for (const drink of user.favoriteDrinks) {
+      if (drink !== null) {
+        const currentDrink = await Drink.findOne({ _id: drink });
+        if (currentDrink != null) {
+          // available flavors array
+          const flavors = [];
+          for (let i = 0; i < currentDrink.flavors.length; i++) {
+            flavors[i] = await findFlavorById(currentDrink.flavors[i]);
+          }
+
+          favoriteDrinksFlavors.push(flavors);
+
+          // available toppings array
+          const toppings = [];
+          for (let i = 0; i < currentDrink.toppings.length; i++) {
+            toppings[i] = await findToppingsById(currentDrink.toppings[i]);
+          }
+
+          favoriteDrinksToppings.push(toppings);
+
+          favoriteDrinks.push(currentDrink);
+        }
+      }
+    }
+
     res.render("teacherMyFavorites", {
+      favoriteDrinks,
+      favoriteDrinksFlavors,
+      favoriteDrinksToppings,
       email: req.session.email,
     });
   }
+});
+
+route.get("/addFavoriteDrinkToCart/:id", async (req, res) => {
+  // drink user is adding to order
+  const drink = await Drink.findById(req.params.id);
+  req.session.cart.push(drink);
+
+  res.redirect("/teacherMyOrder");
+});
+
+route.get("/unfavoriteDrink/:id", async (req, res) => {
+  const user = await User.findOne({ email: req.session.email });
+  const index = user.favoriteDrinks.indexOf(req.params.id);
+  console.log(index);
+  if (index > -1) {
+    user.favoriteDrinks.splice(index, 1);
+  }
+  await user.save();
+
+  res.redirect("/teacherMyFavorites");
 });
 
 route.get("/teacherOrderHistory", async (req, res) => {

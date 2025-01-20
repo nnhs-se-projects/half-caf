@@ -12,7 +12,7 @@
           <div class="card">
             <div class="container">
               <h4><b><%=drink.name%></h4>
-              <h5><%=drink.price + "$"%></h5>
+              <h5>$<%=drink.price%></h5>
               <%if(drink.description.length > 40) { %>
               <p><%=drink.description.slice(0,40) + "..."%></p>
               <% } else { %>
