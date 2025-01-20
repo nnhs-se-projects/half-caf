@@ -55,11 +55,13 @@
         <%}%>
 
         <h5>$<%=drink.price%></h5>
+
+        <% link = "/unfavoriteDrink/" + drink.id; %>
+        <a href="<%=link%>"><div class="container">Unfavorite</div></a>
       </div>
     </div>
   </a>
-  <% link = "/unfavoriteDrink/" + drink.id; %>
-  <a href="<%=link%>"><div class="card">Unfavorite</div></a>
+
   <%drinkIndex++;}%> <%} else {%>
   <h2>You have not favorited any drinks.</h2>
   <%}%>

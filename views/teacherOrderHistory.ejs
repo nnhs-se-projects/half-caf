@@ -41,6 +41,12 @@
 
     <h6>Room Number: <%=order.room%></h6>
     <h6>Price: $<%=drink.price%></h6>
+
+    <% let link = "/favoriteDrinkFromHistory/" + drink.id; %>
+    <a href="<%=link%>">
+      <div class="container">Favorite</div>
+    </a>
   </div>
 </div>
+
 <%}}%> <%- include('include/_footer') %>
