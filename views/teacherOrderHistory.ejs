@@ -2,43 +2,55 @@
 
 <h2>Order History</h2>
 
-<%for (let order of history){%>
+<%for (let order of history){%> <%for (let drink of order.drinks){%>
 <div class="card">
   <div class="container">
     <h4><b><%=order.timestamp%></b></h4>
-    <%for (let drink of order.drinks){%>
-      <h5><%=drink.name%>:</h5>
+    <h5><%=drink.name%>:</h5>
 
-      <!-- Flavors -->
-      <%let allFlavors=""%>
-      <%for (let i=0; i < drink.flavors.length; i++){%>
-        <%if(i < drink.flavors.length-1){%>
-          <%allFlavors += drink.flavors[i].flavor+", "%>
-        <%} else {%>
-          <%allFlavors += drink.flavors[i].flavor%>
-        <%}%>
-      <%}%> 
-      <h9><span style="font-weight:bold;color:#3f93d8;">Flavors:</span> <%=allFlavors%></h9>
+    <!-- Flavors -->
+    <%let allFlavors=""%> <%for (let i=0; i < drink.flavors.length; i++){%>
+    <%if(i < drink.flavors.length-1){%> <%allFlavors +=
+    drink.flavors[i].flavor+", "%> <%} else {%> <%allFlavors +=
+    drink.flavors[i].flavor%> <%}%> <%}%>
+    <h9
+      ><span style="font-weight: bold; color: #3f93d8">Flavors:</span>
+      <%=allFlavors%></h9
+    >
 
-      <!-- Toppings -->
-      <%let allToppings=""%>
-      <%for (let i=0; i < drink.toppings.length; i++){%>
-        <%if(i < drink.toppings.length-1){%>
-          <%allToppings += drink.toppings[i].topping+", "%>
-        <%} else {%>
-          <%allToppings += drink.toppings[i].topping%>
-        <%}%>
-      <%}%> 
-    <br>
-    <h9><span style="font-weight:bold;color:#3f93d8;">Topping:</span> <%=allToppings%></h9>
-    <br>
-    <h9><span style="font-weight:bold;color:#3f93d8;">Temp:</span> <%=drink.temps%></h9>
-    <br>
-    <h9><span style="font-weight:bold;color:#3f93d8;">Instructions:</span> <%=drink.instructions%></h9>
-    <%}%>
+    <!-- Toppings -->
+    <%let allToppings=""%> <%for (let i=0; i < drink.toppings.length; i++){%>
+    <%if(i < drink.toppings.length-1){%> <%allToppings +=
+    drink.toppings[i].topping+", "%> <%} else {%> <%allToppings +=
+    drink.toppings[i].topping%> <%}%> <%}%>
+    <br />
+    <h9
+      ><span style="font-weight: bold; color: #3f93d8">Topping:</span>
+      <%=allToppings%></h9
+    >
+    <br />
+    <h9
+      ><span style="font-weight: bold; color: #3f93d8">Temp:</span>
+      <%=drink.temps%></h9
+    >
+    <br />
+    <h9
+      ><span style="font-weight: bold; color: #3f93d8">Instructions:</span>
+      <%=drink.instructions%></h9
+    >
 
     <h6>Room Number: <%=order.room%></h6>
-    <h6>Total Price: $<%=order.totalPrice%></h6>
+    <h6>Price: $<%=drink.price%></h6>
+
+    <% if(drink.favorite === false) { %> <% let link =
+    "/favoriteDrinkFromHistory/" + drink.id; %>
+    <a href="<%=link%>">
+      <div class="container">Favorite</div>
+    </a>
+    <% } else { %>
+    <div class="container">Favorited</div>
+    <%}%>
   </div>
 </div>
-<%}%> <%- include('include/_footer') %>
+
+<%}}%> <%- include('include/_footer') %>

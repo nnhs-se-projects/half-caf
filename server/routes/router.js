@@ -774,8 +774,13 @@ route.post("/customizeDrink/:name", async (req, res) => {
 
   if (req.body.favorite === true) {
     const user = await User.findOne({ email: req.session.email });
-    user.favoriteDrinks.push(drink);
-    await user.save();
+    const index = user.favoriteDrinks.indexOf(drink.id);
+    if (index === -1) {
+      drink.favorite = true;
+      await drink.save();
+      user.favoriteDrinks.push(drink);
+      await user.save();
+    }
   }
 
   res.status(200).send("Drink added to session.");
@@ -942,13 +947,29 @@ route.get("/addFavoriteDrinkToCart/:id", async (req, res) => {
 route.get("/unfavoriteDrink/:id", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const index = user.favoriteDrinks.indexOf(req.params.id);
-  console.log(index);
   if (index > -1) {
+    const drink = await Drink.findById(req.params.id);
+    drink.favorite = false;
+    await drink.save();
     user.favoriteDrinks.splice(index, 1);
   }
   await user.save();
 
   res.redirect("/teacherMyFavorites");
+});
+
+route.get("/favoriteDrinkFromHistory/:id", async (req, res) => {
+  const user = await User.findOne({ email: req.session.email });
+  const index = user.favoriteDrinks.indexOf(req.params.id);
+  if (index === -1) {
+    const drink = await Drink.findById(req.params.id);
+    drink.favorite = true;
+    await drink.save();
+    user.favoriteDrinks.push(drink);
+    await user.save();
+  }
+
+  res.redirect("/teacherOrderHistory");
 });
 
 route.get("/teacherOrderHistory", async (req, res) => {
