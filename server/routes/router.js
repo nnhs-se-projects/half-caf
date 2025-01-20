@@ -776,6 +776,8 @@ route.post("/customizeDrink/:name", async (req, res) => {
     const user = await User.findOne({ email: req.session.email });
     const index = user.favoriteDrinks.indexOf(drink.id);
     if (index === -1) {
+      drink.favorite = true;
+      await drink.save();
       user.favoriteDrinks.push(drink);
       await user.save();
     }
@@ -946,6 +948,9 @@ route.get("/unfavoriteDrink/:id", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const index = user.favoriteDrinks.indexOf(req.params.id);
   if (index > -1) {
+    const drink = await Drink.findById(req.params.id);
+    drink.favorite = false;
+    await drink.save();
     user.favoriteDrinks.splice(index, 1);
   }
   await user.save();
@@ -958,11 +963,13 @@ route.get("/favoriteDrinkFromHistory/:id", async (req, res) => {
   const index = user.favoriteDrinks.indexOf(req.params.id);
   if (index === -1) {
     const drink = await Drink.findById(req.params.id);
+    drink.favorite = true;
+    await drink.save();
     user.favoriteDrinks.push(drink);
     await user.save();
   }
 
-  res.redirect("/teacherMyFavorites");
+  res.redirect("/teacherOrderHistory");
 });
 
 route.get("/teacherOrderHistory", async (req, res) => {
