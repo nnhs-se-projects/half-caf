@@ -57,7 +57,8 @@ ws.onmessage = function (event) {
     jsonData.email === emailInput.value
   ) {
     const notification = new Notification("Order cancelled", {
-      body: "A barista has cancelled your order.",
+      body:
+        "A barista has cancelled your order because: " + jsonData.cancelMessage,
       icon: "../img/Half_Caf_Logo_(1).png",
     });
   }

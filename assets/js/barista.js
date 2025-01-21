@@ -6,12 +6,14 @@ for (const cancelButton of cancelButtons) {
       return;
     }
 
+    const message = prompt("Please enter a message for the cancellation:");
     const orderId = cancelButton.value;
     const response = await fetch(`/barista/${orderId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ message }),
     });
 
     if (response.ok) {
