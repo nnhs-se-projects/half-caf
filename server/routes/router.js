@@ -786,8 +786,24 @@ route.get("/teacherMyOrder", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
+    let customizationDict = {};
+    for (const drink of req.session.cart) {
+      const drinkFlavorsArray = [];
+      const drinkToppingsArray = [];
+      for (const flavor of drink.flavors) {
+        drinkFlavorsArray.push(await findFlavorById(flavor));
+      }
+      for (const topping of drink.toppings) {
+        drinkToppingsArray.push(await findToppingsById(topping));
+      }
+      customizationDict[drink._id] = {
+        flavors: drinkFlavorsArray,
+        toppings: drinkToppingsArray,
+      };
+    }
     res.render("teacherMyOrder", {
       cart: req.session.cart,
+      customizationDict: customizationDict,
       email: req.session.email,
     });
   }
