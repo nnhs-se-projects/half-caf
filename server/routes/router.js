@@ -436,6 +436,7 @@ route.delete("/barista/:id", async (req, res) => {
 
   const jsonData = JSON.stringify({
     message: "Order cancelled",
+    cancelMessage: req.body.message,
     email: order.email,
   });
 
