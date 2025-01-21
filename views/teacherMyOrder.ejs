@@ -8,6 +8,20 @@
       <div class="container">
         <h4><b><%=drink.name%></h4>
         <h5>$<%=drink.price%></h5>
+        <ul>
+          <%for (let flavor of customizationDict[drink._id].flavors) {%>
+            <li><%=flavor.flavor%></li>
+          <%}%>
+          <%for (let topping of customizationDict[drink._id].toppings) {%>
+            <li><%=topping.topping%></li>
+          <%}%>
+          <li><%=drink.temps%></li>
+          <% if (drink.caffeination === true) { %>
+            <li>Caffeinated</li>
+          <% } else { %>
+            <li>Uncaffeinated</li>
+          <% } %>
+        </ul>
         <%if(drink.instructions.length > 40) { %>
         <p><%=drink.instructions.slice(0,40) + "..."%></p>
         <% } else { %>
