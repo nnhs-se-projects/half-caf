@@ -477,7 +477,12 @@ route.get("/completed", async (req, res) => {
   if (role === "teacher") {
     res.redirect("/redirectUser");
   } else {
-    const orders = await Order.find();
+    const orders = await Order.find({ complete: true });
+    const drinkIds = orders.flatMap((order) => order.drinks);
+    const drinks = await Drink.find({ _id: { $in: drinkIds } });
+    const flavors = await Flavor.find({});
+    const toppings = await Topping.find({});
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
@@ -489,12 +494,14 @@ route.get("/completed", async (req, res) => {
           temp: "",
           instructions: "",
         };
-        const drink = await Drink.findById(orders[i].drinks[n]);
+        const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
           for (let x = 0; x < drink.flavors.length; x++) {
-            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            const tempFlavor = flavors.find((f) =>
+              f._id.equals(drink.flavors[x])
+            );
             formattedDrink.flavors.push(" " + tempFlavor.flavor);
           }
         }
@@ -502,7 +509,9 @@ route.get("/completed", async (req, res) => {
           formattedDrink.toppings.push("None");
         } else {
           for (let x = 0; x < drink.toppings.length; x++) {
-            const tempTopping = await Topping.findById(drink.toppings[x]);
+            const tempTopping = toppings.find((t) =>
+              t._id.equals(drink.toppings[x])
+            );
             formattedDrink.toppings.push(" " + tempTopping.topping);
           }
         }
@@ -533,7 +542,12 @@ route.get("/cancelledOrders", async (req, res) => {
   if (role === "teacher") {
     res.redirect("/redirectUser");
   } else {
-    const orders = await Order.find();
+    const orders = await Order.find({ cancelled: true });
+    const drinkIds = orders.flatMap((order) => order.drinks);
+    const drinks = await Drink.find({ _id: { $in: drinkIds } });
+    const flavors = await Flavor.find({});
+    const toppings = await Topping.find({});
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
@@ -545,12 +559,14 @@ route.get("/cancelledOrders", async (req, res) => {
           temp: "",
           instructions: "",
         };
-        const drink = await Drink.findById(orders[i].drinks[n]);
+        const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
           for (let x = 0; x < drink.flavors.length; x++) {
-            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            const tempFlavor = flavors.find((f) =>
+              f._id.equals(drink.flavors[x])
+            );
             formattedDrink.flavors.push(" " + tempFlavor.flavor);
           }
         }
@@ -558,7 +574,9 @@ route.get("/cancelledOrders", async (req, res) => {
           formattedDrink.toppings.push("None");
         } else {
           for (let x = 0; x < drink.toppings.length; x++) {
-            const tempTopping = await Topping.findById(drink.toppings[x]);
+            const tempTopping = toppings.find((t) =>
+              t._id.equals(drink.toppings[x])
+            );
             formattedDrink.toppings.push(" " + tempTopping.topping);
           }
         }
