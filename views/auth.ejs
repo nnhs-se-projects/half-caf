@@ -1,9 +1,3 @@
-<!-- cSpell:ignoreRegExp /[^\s]{40,}/ -->
-<!--Login/register page for the half caf app
-    Register does not really exist yet so as of now its just the exact same page
-    Login with google auth works once a user has been added to the database
-    by an admin and it takes a user to the correct page based on their user type-->
-<!-- include header -->
 <%- include('include/_homeHeader') %>
 <!-- /include header -->
 
@@ -11,7 +5,6 @@
 
 <!-- Main Site -->
 <main>
-  <div id="modelContainer"></div>
   <div class="authForm">
     <img src="/img/huskie.jpg" style="width: auto; height: 150px" />
 
@@ -33,109 +26,3 @@
 <!-- include footer -->
 <%- include('include/_footer') %>
 <!-- /include footer -->
-
-<style>
-  body,
-  html {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-  }
-  #modelContainer {
-    width: 100%; /* Full width */
-    height: 700px; /* Increase height */
-    position: relative;
-    background-color: #11191f; /* Match the background color */
-  }
-  .authForm {
-    position: absolute;
-    top: 200px; /* Move down */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-    text-align: center;
-  }
-  canvas {
-    display: block;
-  }
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
-<script>
-  console.log("Script loaded");
-
-  let scene, camera, renderer, model;
-
-  function init() {
-    console.log("Initializing scene");
-
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / 700,
-      0.1,
-      1000
-    ); // Adjust aspect ratio
-    camera.position.set(0, 1, 3); // Move the camera back to fit the entire cup
-
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, 700); // Match the size of the container
-    renderer.setClearColor(0x11191f); // Set the background color to match the specified color
-    document.getElementById("modelContainer").appendChild(renderer.domElement);
-
-    // Add ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    // Add directional light
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 10, 10);
-    scene.add(directionalLight);
-
-    // Add another directional light for better visibility
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight2.position.set(0, -10, -10);
-    scene.add(directionalLight2);
-
-    const loader = new THREE.GLTFLoader();
-    console.log("Loading model");
-    loader.load(
-      "/models/FirstCalfCoffeeCup.glb",
-      function (gltf) {
-        console.log("Model loaded callback");
-        model = gltf.scene;
-        model.position.y = -0.5; // Move the model down
-        model.rotation.y = Math.PI / 2; // Rotate the model 90 degrees to the left
-        scene.add(model);
-        console.log("Model added to scene");
-        animate();
-      },
-      undefined,
-      function (error) {
-        console.error("Error loading model:", error);
-      }
-    );
-
-    window.addEventListener("resize", onWindowResize, false);
-  }
-
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / 700; // Adjust aspect ratio
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, 700); // Match the size of the container
-  }
-
-  function animate() {
-    requestAnimationFrame(animate);
-    if (model) {
-      model.rotation.y += 0.005; // Slowly rotate the model around the Y axis (slower speed)
-      model.rotation.x = Math.sin(model.rotation.y) * 0.1; // Add a slight tilt to the rotation
-    }
-    renderer.render(scene, camera);
-  }
-
-  init();
-</script>
