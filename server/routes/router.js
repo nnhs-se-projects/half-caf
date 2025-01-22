@@ -971,7 +971,7 @@ route.get("/teacherMyFavorites", async (req, res) => {
   }
 });
 
-route.get("/addFavoriteDrinkToCart/:id", async (req, res) => {
+route.get("/addDrinkToCart/:id", async (req, res) => {
   // drink user is adding to order
   const drink = await Drink.findById(req.params.id);
   req.session.cart.push(drink);

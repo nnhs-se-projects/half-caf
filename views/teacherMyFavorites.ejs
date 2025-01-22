@@ -5,8 +5,7 @@
 </head>
 <body>
   <% if(favoriteDrinks.length > 0) {%> <% let drinkIndex = 0; %> <% for (let
-  drink of favoriteDrinks){%> <% let link = "/addFavoriteDrinkToCart/" +
-  drink.id; %>
+  drink of favoriteDrinks){%> <% let link = "/addDrinkToCart/" + drink.id; %>
   <a href="<%=link%>">
     <div class="card">
       <div class="container">
