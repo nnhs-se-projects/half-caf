@@ -131,7 +131,7 @@
   function animate() {
     requestAnimationFrame(animate);
     if (model) {
-      model.rotation.y += 0.01; // Slowly rotate the model around the Y axis
+      model.rotation.y += 0.005; // Slowly rotate the model around the Y axis (slower speed)
       model.rotation.x = Math.sin(model.rotation.y) * 0.1; // Add a slight tilt to the rotation
     }
     renderer.render(scene, camera);
