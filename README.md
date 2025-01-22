@@ -8,6 +8,8 @@ Group Members v3 (Best group): Divya, Hansheng, Krish, Sophia
 
 Group Members v4 (Betterer group): Tavneet, Abby, Delilah, Eric
 
+Group Members v5: Bennett, Emran, Jack, Ryan
+
 ## Insights (Previous Groups)
 
 Do not turn to any of those "easy web app maker" sites and source their code. We tried this for the first sprint and a half, and ultimately we discovered that the coding conventions are so diverse that none of the tutorial code or prior knowledge you have gained applies. It takes longer to understand and modify this code to your needs than it does to make your own web app with your obtained knowledge.
@@ -21,6 +23,7 @@ Create a schedule and stick to it (google calendar is a great tool for this). Wh
 Use pair programming to your advantage. Just because it may seem faster to divide and conquer in terms of being able to get tasks done doesn't mean it necessarily is. Having a second set of eyes to catch errors and talk things through with can be extremely beneficial and save you tons of time in the long run.
 
 ## Platform Requirements
+
 Latest version of VSCode\
 Make sure your operating system is fully updated
 
@@ -41,15 +44,16 @@ SESSION_SECRET= <secret key>
 PORT_NUM = 8080 (can change)
 ```
 
-4. Download MongoDB Compass for your computer 
+4. Download MongoDB Compass for your computer
 5. Use the URI from the trello to connect to the database
 6. In compass, edit one of the ADMIN users and change their email to your email
 7. Run the server from the VS Code debugger
 8. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
-9. Go to Login and sign in with Google 
+9. Go to Login and sign in with Google
 10. Now you are on the add user page so add everyone else in your group as a user
 
 ## Architecture
+
 MongoDB - Database\
 Node.js - Server\
 Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment\
@@ -66,7 +70,6 @@ The image above shows the dependencies of the different classes in the dat struc
 To explain the image more, each arrow shows a different dependency. The beginning of the arrow starts at the property that needs information from a different class, which is where the head of the arrow points to. The dotted line and arrow that goes from menuItem to drink is because every time the user clicks on a drink from the menu page, a new instance of drink is created. Drink is supposed to be a customized version of menuItem. The dotted arrow shows that drink is not directly dependent on menuItem in the database, but pulls from its properties when a new drink is created. That's because menuItems don't reference all of the toppings or flavors so no one can order a blue raspberry coffee, so only certain flavors, toppings, and temperatures are available for each menuItem and drink.
 
 Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
-
 
 ## OVERVIEW
 
@@ -133,30 +136,40 @@ Registering with a Google account
 ## Google Authentication Implementation
 
 ### Overview
+
 This Node.js application integrates Google Authentication using the Google Sign-In API. It ensures that only authenticated users can access specific routes based on their roles. The application comprises several components: server-side middleware for session handling, server-side and client-side handlers for Google Sign-In, and view templates for rendering the authentication UI.
 
 ### `server.js` (Middleware Setup)
+
 This is the core of the application's backend. It includes middleware that checks if a user is logged in before allowing access to certain routes. If a user's session does not have an email stored (`req.session.email` is undefined), they are redirected to the `/auth` page for authentication. This prevents unauthorized access to sensitive routes. The middleware specifically allows unrestricted access to public endpoints like "/homePopularDrinks" and "/homeMenu".
 
 ### `auth.js` (Google Authentication Routes)
+
 The auth.js file handles the actual authentication process:\
+
 - It defines routes that the frontend can communicate with to perform authentication tasks.
 - When the frontend sends the ID token (received from Google after a user logs in), auth.js verifies this token using Google's libraries.
 - If the verification is successful, it stores the user's email in the session, effectively logging them in.
 
 ### `auth2.js` (Client-Side Authentication Logic)
+
 The auth2.js script runs in the user's browser and handles:\
+
 - The receipt of the authentication response from Google (which includes the ID token).
-- It  sends this token to the server (/auth route) via a POST request.
+- It sends this token to the server (/auth route) via a POST request.
 - Upon confirmation of successful authentication, it redirects the user to the /redirectUser route.
 
 ### `router.js` (Role-Based Redirection)
+
 After authentication, router.js takes over:\
+
 - It defines a route /redirectUser which checks the user's role based on the email stored in the session.
 - Depending on the role fetched from the database (admin, barista, teacher), it redirects the user to the appropriate route.
 
 ### Authentication View (`auth.ejs`)
+
 The `auth.ejs` file is the front-end component where users interact with Google's Sign-In service. It includes:
+
 - An image placeholder.
 - Google's JavaScript library for authentication.
 - A div configured with `data-client_id` and `data-callback` which triggers `handleCredentialResponse` after successful authentication.
@@ -164,6 +177,7 @@ The `auth.ejs` file is the front-end component where users interact with Google'
 This file is crucial for initiating the authentication flow from the client's browser.
 
 ### Flow of Control:
+
 1. User Visits the Site: They attempt to access a protected route.
 2. Middleware Check: server.js checks if the user is authenticated.
 3. Redirection: If not authenticated, the user is redirected to the /auth route, loading auth.ejs.
