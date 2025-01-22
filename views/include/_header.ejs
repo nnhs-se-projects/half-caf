@@ -1,125 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Half Caf</title>
-    <link rel="stylesheet" href="/css/pico.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
-    <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-      }
-      header {
-        position: relative;
-        width: 100%;
-        height: 150px; /* Adjust height as needed */
-        background-color: #11191f; /* Match the background color */
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        box-sizing: border-box;
-      }
-      #modelContainer {
-        width: 150px; /* Adjust width as needed */
-        height: 150px; /* Adjust height as needed */
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-      }
-      .header-content {
-        margin-left: 170px; /* Adjust to provide space for the 3D model */
-        z-index: 2;
-        color: white;
-      }
-      canvas {
-        display: block;
-      }
-    </style>
+
+    <link rel="stylesheet" href="/css/pico.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
+
+  <img src="/img/Half_Caf_Logo_(1).png" style="width:auto;height:75px;">
   <body>
-    <header>
-      <div id="modelContainer"></div>
-      <div class="header-content">
-        <h1>Half Caf</h1>
-        <!-- Add your buttons or other header content here -->
-      </div>
-    </header>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
-    <script>
-      console.log("Script loaded");
-
-      let scene, camera, renderer, model;
-
-      function init() {
-        console.log("Initializing scene");
-
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for square canvas
-        camera.position.set(0, 1, 2);
-
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(150, 150); // Match the size of the container
-        renderer.setClearColor(0x11191f); // Set the background color to match the specified color
-        document.getElementById('modelContainer').appendChild(renderer.domElement);
-
-        // Add ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-
-        // Add directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(0, 10, 10);
-        scene.add(directionalLight);
-
-        // Add another directional light for better visibility
-        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight2.position.set(0, -10, -10);
-        scene.add(directionalLight2);
-
-        const loader = new THREE.GLTFLoader();
-        console.log("Loading model");
-        loader.load('/models/FirstCalfCoffeeCup.glb', function(gltf) {
-          console.log("Model loaded callback");
-          model = gltf.scene;
-          scene.add(model);
-          console.log("Model added to scene");
-          animate();
-        }, undefined, function(error) {
-          console.error("Error loading model:", error);
-        });
-
-        window.addEventListener('resize', onWindowResize, false);
-        document.addEventListener('mousemove', onMouseMove, false);
-      }
-
-      function onWindowResize() {
-        camera.aspect = 1; // Aspect ratio set to 1 for square canvas
-        camera.updateProjectionMatrix();
-        renderer.setSize(150, 150); // Match the size of the container
-      }
-
-      function onMouseMove(event) {
-        const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-        const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-        if (model) {
-          model.rotation.y = mouseX * Math.PI;
-          model.rotation.x = mouseY * Math.PI / 4;
-        }
-      }
-
-      function animate() {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-      }
-
-      init();
-    </script>
-  </body>
-</html>
