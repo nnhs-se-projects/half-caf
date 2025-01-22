@@ -164,13 +164,7 @@ route.get("/deleteUser", async (req, res) => {
   } else {
     const users = await User.find();
 
-    const formattedUsers = users.map((user) => {
-      return {
-        email: user.email,
-        id: user._id,
-      };
-    });
-    res.render("deleteUser", { usersJs: formattedUsers });
+    res.render("deleteUser", { users });
   }
 });
 
@@ -192,6 +186,38 @@ route.get("/viewUser", async (req, res) => {
     });
   }
 });
+
+route.get("/modifyUser", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const allUsers = await User.find();
+
+    const { id } = req.query;
+
+    let selectedUser = undefined;
+    if (id != null) {
+      selectedUser = await User.findById(id);
+    } else if (allUsers[0] !== null && allUsers[0] !== undefined) {
+      selectedUser = allUsers[0];
+    }
+
+    res.render("modifyUser", {
+      users: allUsers,
+      selectedUser,
+    });
+  }
+});
+
+route.post("/modifyUser/:id", async (req, res) => {
+  const user = await User.findById(req.params.id);
+  user.email = req.body.email;
+  user.userType = req.body.role;
+  await user.save();
+  res.status(201).end();
+});
+
 // gets the activated/ deactivated users for the view user filter
 route.get("/users/:status", async (req, res) => {
   const role = await getUserRoles(req.session.email);
