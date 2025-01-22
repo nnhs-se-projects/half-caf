@@ -381,6 +381,11 @@ route.get("/barista", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     const orders = await Order.find();
+    const drinkIds = orders.flatMap((order) => order.drinks);
+    const drinks = await Drink.find({ _id: { $in: drinkIds } });
+    const flavors = await Flavor.find({});
+    const toppings = await Topping.find({});
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
@@ -392,12 +397,14 @@ route.get("/barista", async (req, res) => {
           temp: "",
           instructions: "",
         };
-        const drink = await Drink.findById(orders[i].drinks[n]);
+        const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
           for (let x = 0; x < drink.flavors.length; x++) {
-            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            const tempFlavor = flavors.find((f) =>
+              f._id.equals(drink.flavors[x])
+            );
             formattedDrink.flavors.push(" " + tempFlavor.flavor);
           }
         }
@@ -405,7 +412,9 @@ route.get("/barista", async (req, res) => {
           formattedDrink.toppings.push("None");
         } else {
           for (let x = 0; x < drink.toppings.length; x++) {
-            const tempTopping = await Topping.findById(drink.toppings[x]);
+            const tempTopping = toppings.find((t) =>
+              t._id.equals(drink.toppings[x])
+            );
             formattedDrink.toppings.push(" " + tempTopping.topping);
           }
         }
@@ -421,8 +430,6 @@ route.get("/barista", async (req, res) => {
       orders,
       drinkMap,
     });
-
-    //  console.log("Orders: " + orders + " Drink Map: " + drinkMap);
   }
 });
 
@@ -470,7 +477,12 @@ route.get("/completed", async (req, res) => {
   if (role === "teacher") {
     res.redirect("/redirectUser");
   } else {
-    const orders = await Order.find();
+    const orders = await Order.find({ complete: true });
+    const drinkIds = orders.flatMap((order) => order.drinks);
+    const drinks = await Drink.find({ _id: { $in: drinkIds } });
+    const flavors = await Flavor.find({});
+    const toppings = await Topping.find({});
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
@@ -482,12 +494,14 @@ route.get("/completed", async (req, res) => {
           temp: "",
           instructions: "",
         };
-        const drink = await Drink.findById(orders[i].drinks[n]);
+        const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
           for (let x = 0; x < drink.flavors.length; x++) {
-            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            const tempFlavor = flavors.find((f) =>
+              f._id.equals(drink.flavors[x])
+            );
             formattedDrink.flavors.push(" " + tempFlavor.flavor);
           }
         }
@@ -495,7 +509,9 @@ route.get("/completed", async (req, res) => {
           formattedDrink.toppings.push("None");
         } else {
           for (let x = 0; x < drink.toppings.length; x++) {
-            const tempTopping = await Topping.findById(drink.toppings[x]);
+            const tempTopping = toppings.find((t) =>
+              t._id.equals(drink.toppings[x])
+            );
             formattedDrink.toppings.push(" " + tempTopping.topping);
           }
         }
@@ -526,7 +542,12 @@ route.get("/cancelledOrders", async (req, res) => {
   if (role === "teacher") {
     res.redirect("/redirectUser");
   } else {
-    const orders = await Order.find();
+    const orders = await Order.find({ cancelled: true });
+    const drinkIds = orders.flatMap((order) => order.drinks);
+    const drinks = await Drink.find({ _id: { $in: drinkIds } });
+    const flavors = await Flavor.find({});
+    const toppings = await Topping.find({});
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
@@ -538,12 +559,14 @@ route.get("/cancelledOrders", async (req, res) => {
           temp: "",
           instructions: "",
         };
-        const drink = await Drink.findById(orders[i].drinks[n]);
+        const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
           for (let x = 0; x < drink.flavors.length; x++) {
-            const tempFlavor = await Flavor.findById(drink.flavors[x]);
+            const tempFlavor = flavors.find((f) =>
+              f._id.equals(drink.flavors[x])
+            );
             formattedDrink.flavors.push(" " + tempFlavor.flavor);
           }
         }
@@ -551,7 +574,9 @@ route.get("/cancelledOrders", async (req, res) => {
           formattedDrink.toppings.push("None");
         } else {
           for (let x = 0; x < drink.toppings.length; x++) {
-            const tempTopping = await Topping.findById(drink.toppings[x]);
+            const tempTopping = toppings.find((t) =>
+              t._id.equals(drink.toppings[x])
+            );
             formattedDrink.toppings.push(" " + tempTopping.topping);
           }
         }
@@ -916,33 +941,26 @@ route.get("/teacherMyFavorites", async (req, res) => {
   } else {
     const user = await User.findOne({ email: req.session.email });
 
-    const favoriteDrinks = [];
-    const favoriteDrinksFlavors = [];
-    const favoriteDrinksToppings = [];
-    for (const drink of user.favoriteDrinks) {
-      if (drink !== null) {
-        const currentDrink = await Drink.findOne({ _id: drink });
-        if (currentDrink != null) {
-          // available flavors array
-          const flavors = [];
-          for (let i = 0; i < currentDrink.flavors.length; i++) {
-            flavors[i] = await findFlavorById(currentDrink.flavors[i]);
-          }
+    const favoriteDrinkIds = user.favoriteDrinks.filter(
+      (drink) => drink != null
+    );
+    const favoriteDrinks = await Drink.find({ _id: { $in: favoriteDrinkIds } });
+    const flavorIds = favoriteDrinks.flatMap((drink) => drink.flavors);
+    const toppingIds = favoriteDrinks.flatMap((drink) => drink.toppings);
+    const flavors = await Flavor.find({ _id: { $in: flavorIds } });
+    const toppings = await Topping.find({ _id: { $in: toppingIds } });
 
-          favoriteDrinksFlavors.push(flavors);
+    const favoriteDrinksFlavors = favoriteDrinks.map((drink) =>
+      drink.flavors.map((flavorId) =>
+        flavors.find((flavor) => flavor._id.equals(flavorId))
+      )
+    );
 
-          // available toppings array
-          const toppings = [];
-          for (let i = 0; i < currentDrink.toppings.length; i++) {
-            toppings[i] = await findToppingsById(currentDrink.toppings[i]);
-          }
-
-          favoriteDrinksToppings.push(toppings);
-
-          favoriteDrinks.push(currentDrink);
-        }
-      }
-    }
+    const favoriteDrinksToppings = favoriteDrinks.map((drink) =>
+      drink.toppings.map((toppingId) =>
+        toppings.find((topping) => topping._id.equals(toppingId))
+      )
+    );
 
     res.render("teacherMyFavorites", {
       favoriteDrinks,
@@ -995,30 +1013,20 @@ route.get("/teacherOrderHistory", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     const user = await User.findOne({ email: req.session.email });
-    const orderHistory = [];
-    for (const order of user.orderHistory) {
-      if (order != null) {
-        try {
-          const currentOrder = await Order.findOne({ _id: order }).populate({
-            path: "drinks", // Populates drink objects
-            populate: [
-              // Nested populate function to access flavors, toppings, etc
-              { path: "flavors", model: "Flavor" },
-              { path: "toppings", model: "Topping" },
-            ],
-          });
-          if (currentOrder != null) {
-            orderHistory.push(currentOrder);
-          }
-        } catch (error) {
-          console.error("Error fetching order details:", error);
-        }
-      } else {
-        console.log("Order does not exist" + order);
-      }
-    }
-    user.orderHistory = orderHistory; // incase some orders no longer exist, the user's orderHistory array will be updated to only contain non-null orders
-    user.save();
+    const orderIds = user.orderHistory.filter((order) => order != null);
+    const orders = await Order.find({ _id: { $in: orderIds } }).populate({
+      path: "drinks",
+      populate: [
+        { path: "flavors", model: "Flavor" },
+        { path: "toppings", model: "Topping" },
+      ],
+    });
+
+    const orderHistory = orders.filter((order) => order != null);
+
+    user.orderHistory = orderHistory.map((order) => order._id); // Update user's orderHistory with non-null orders
+    await user.save();
+
     res.render("teacherOrderHistory", {
       history: orderHistory,
       email: req.session.email,
