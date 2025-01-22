@@ -12,23 +12,26 @@
     <%let allFlavors=""%> <%for (let i=0; i < drink.flavors.length; i++){%>
     <%if(i < drink.flavors.length-1){%> <%allFlavors +=
     drink.flavors[i].flavor+", "%> <%} else {%> <%allFlavors +=
-    drink.flavors[i].flavor%> <%}%> <%}%>
+    drink.flavors[i].flavor%> <%}%> <%}%> <% if(drink.flavors.length > 0) { %>
     <h9
       ><span style="font-weight: bold; color: #3f93d8">Flavors:</span>
       <%=allFlavors%></h9
     >
+    <%}%>
 
     <!-- Toppings -->
     <%let allToppings=""%> <%for (let i=0; i < drink.toppings.length; i++){%>
     <%if(i < drink.toppings.length-1){%> <%allToppings +=
     drink.toppings[i].topping+", "%> <%} else {%> <%allToppings +=
-    drink.toppings[i].topping%> <%}%> <%}%>
+    drink.toppings[i].topping%> <%}%> <%}%> <% if(drink.toppings.length > 0) {
+    %>
     <br />
     <h9
       ><span style="font-weight: bold; color: #3f93d8">Topping:</span>
       <%=allToppings%></h9
     >
     <br />
+    <%}%>
     <h9
       ><span style="font-weight: bold; color: #3f93d8">Temp:</span>
       <%=drink.temps%></h9
@@ -45,11 +48,14 @@
     <% if(drink.favorite === false) { %> <% let link =
     "/favoriteDrinkFromHistory/" + drink.id; %>
     <a href="<%=link%>">
-      <div class="container">Favorite</div>
+      <button>Favorite</button>
     </a>
     <% } else { %>
     <div class="container">Favorited</div>
-    <%}%>
+    <%}%> <% let link = "/addDrinkToCart/" + drink.id; %>
+    <a href="<%=link%>">
+      <button>Add to cart</button>
+    </a>
   </div>
 </div>
 
