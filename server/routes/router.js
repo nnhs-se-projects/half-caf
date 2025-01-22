@@ -199,11 +199,29 @@ route.get("/modifyUser", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     const allUsers = await User.find();
+
+    const { id } = req.query;
+
+    let selectedUser = undefined;
+    if (id != null) {
+      selectedUser = await User.findById(id);
+    } else if (allUsers[0] !== null && allUsers[0] !== undefined) {
+      selectedUser = allUsers[0];
+    }
+
     res.render("modifyUser", {
       users: allUsers,
-      chosenUser: allUsers[0],
+      selectedUser,
     });
   }
+});
+
+route.post("/modifyUser/:id", async (req, res) => {
+  const user = await User.findById(req.params.id);
+  user.email = req.body.email;
+  user.userType = req.body.role;
+  await user.save();
+  res.status(201).end();
 });
 
 // gets the activated/ deactivated users for the view user filter
