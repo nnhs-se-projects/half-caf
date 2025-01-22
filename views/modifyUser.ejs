@@ -1,0 +1,31 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<div class="adminPage">
+  <div class="userHdr">Modify User</div>
+
+  <label>User:</label>
+  <select class="select" id="filter-users">
+    <% for (let user of users) {%>
+    <option value="<%=user._id%>">
+      <%= user.email + " (" + user.userType + ")" %>
+    </option>
+    <%}%>
+  </select>
+
+  <label>Role:</label>
+  <select class="select">
+    <option value="admin">admin</option>
+    <option value="barista">barista</option>
+    <option value="teacher">teacher</option>
+  </select>
+</div>
+
+<!-- /Main Site -->
+<script src="/js/modifyUser.js"></script>
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

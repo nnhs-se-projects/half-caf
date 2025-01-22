@@ -192,6 +192,20 @@ route.get("/viewUser", async (req, res) => {
     });
   }
 });
+
+route.get("/modifyUser", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const allUsers = await User.find();
+    res.render("modifyUser", {
+      users: allUsers,
+      chosenUser: allUsers[0],
+    });
+  }
+});
+
 // gets the activated/ deactivated users for the view user filter
 route.get("/users/:status", async (req, res) => {
   const role = await getUserRoles(req.session.email);
