@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <style>
       #modelContainer {
-        width: 150px; /* Match the width of the current image */
-        height: 150px; /* Match the height of the current image */
+        width: 100px; /* Match the width of the current image */
+        height: 100px; /* Match the height of the current image */
         position: relative;
         float: left;
         background-color: #11191f; /* Match the background color */
@@ -42,7 +42,7 @@
         camera.position.set(0, 1, 3); // Move the camera back to fit the entire cup
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(150, 150); // Match the size of the container
+        renderer.setSize(100, 100); // Match the size of the container
         renderer.setClearColor(0x11191f); // Set the background color to match the specified color
         document.getElementById("modelContainer").appendChild(renderer.domElement);
 
@@ -67,7 +67,7 @@
           function (gltf) {
             console.log("Model loaded callback");
             model = gltf.scene;
-            model.position.y = -0.5; // Move the model down
+            model.position.y = 0; // Move the model down
             model.rotation.y = Math.PI / 2; // Rotate the model 90 degrees to the left
             scene.add(model);
             console.log("Model added to scene");
