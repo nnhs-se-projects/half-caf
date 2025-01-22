@@ -164,13 +164,7 @@ route.get("/deleteUser", async (req, res) => {
   } else {
     const users = await User.find();
 
-    const formattedUsers = users.map((user) => {
-      return {
-        email: user.email,
-        id: user._id,
-      };
-    });
-    res.render("deleteUser", { usersJs: formattedUsers });
+    res.render("deleteUser", { users });
   }
 });
 
