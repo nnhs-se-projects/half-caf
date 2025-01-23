@@ -40,9 +40,19 @@ wss.on("connection", (ws) => {
 });
 
 route.get("/", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role === null) {
-    res.redirect("/auth");
+  const user = await User.findOne({ email: req.session.email });
+  if (user === null) {
+    if (req.session.email.indexOf("@naperville203.org") > -1) {
+      const newUser = new User({
+        isActivated: true,
+        email: req.session.email,
+        userType: "teacher",
+      });
+      await newUser.save();
+    } else {
+      // they are not in the database and do not have a staff email
+      res.redirect("/notAllowed");
+    }
   } else {
     const menuItems = await MenuItem.find();
     const popularMenu = [];
