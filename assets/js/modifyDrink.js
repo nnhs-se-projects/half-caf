@@ -28,7 +28,7 @@ saveDrinkButton.addEventListener("click", async () => {
     .value.replace("/", "")
     .replace("\\", "");
   const description = document.getElementById("description").value;
-  const price = document.getElementById("price").value;
+  const price = document.getElementById("price").value.replace(/[^.\d]/g, "");
 
   const temps = document.querySelectorAll("input#temp");
   const checkedTemps = [];
