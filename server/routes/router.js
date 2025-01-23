@@ -51,7 +51,7 @@ route.get("/", async (req, res) => {
       await newUser.save();
     } else {
       // they are not in the database and do not have a staff email
-      res.redirect("/notAllowed");
+      res.redirect("/auth");
     }
   } else {
     const menuItems = await MenuItem.find();
@@ -984,34 +984,24 @@ route.get("/teacherPopularDrinks", async (req, res) => {
 });
 
 route.get("/homePopularDrinks", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "teacher" && role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const menuItems = await MenuItem.find();
-    const popularMenu = [];
-    for (let i = 0; i < menuItems.length; i++) {
-      if (menuItems[i].popular === true) {
-        popularMenu.push(menuItems[i]);
-      }
+  const menuItems = await MenuItem.find();
+  const popularMenu = [];
+  for (let i = 0; i < menuItems.length; i++) {
+    if (menuItems[i].popular === true) {
+      popularMenu.push(menuItems[i]);
     }
-
-    res.render("homePopularDrinks", {
-      menuItems: popularMenu,
-    });
   }
+
+  res.render("homePopularDrinks", {
+    menuItems: popularMenu,
+  });
 });
 
 route.get("/homeMenu", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "teacher" && role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const menu = await MenuItem.find();
-    res.render("homeMenu", {
-      menuItems: menu,
-    });
-  }
+  const menu = await MenuItem.find();
+  res.render("homeMenu", {
+    menuItems: menu,
+  });
 });
 
 route.get("/teacherMyFavorites", async (req, res) => {
