@@ -43,6 +43,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  imagePath: {
+    type: String,
+    required: false,
+  },
 });
 
 const MenuItem = mongoose.model("MenuItem", schema);

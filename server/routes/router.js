@@ -13,6 +13,18 @@ const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 8081 });
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./assets/img");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "--" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // Client connections storage
 let clients = [];
@@ -295,22 +307,6 @@ route.get("/addDrink", async (req, res) => {
     });
   }
 });
-// updates database with new menu item
-route.post("/addDrink", async (req, res) => {
-  const drink = new MenuItem({
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    popular: req.body.popular,
-    flavors: req.body.checkedFlavors,
-    toppings: req.body.checkedToppings,
-    temps: req.body.checkedTemps,
-    caffeination: req.body.caf,
-    special: req.body.special,
-  });
-  await drink.save();
-  res.status(200).end();
-});
 
 route.get("/api/menuItem/:id", async (req, res) => {
   try {
@@ -361,20 +357,50 @@ route.get("/modifyDrink", async (req, res) => {
     });
   }
 });
+// updates database with new menu item
+route.post("/addDrink", upload.single("image"), async (req, res) => {
+  try {
+    const drink = new MenuItem({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      popular: req.body.popular,
+      flavors: req.body.checkedFlavors,
+      toppings: req.body.checkedToppings,
+      temps: req.body.checkedTemps,
+      caffeination: req.body.caf,
+      special: req.body.special,
+      imagePath: req.file ? req.file.path : null,
+    });
+    await drink.save();
+    res.status(200).json({ message: "Drink added successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-route.post("/modifyDrink/:id", async (req, res) => {
-  const menuItem = await MenuItem.findById(req.params.id);
-  menuItem.name = req.body.name;
-  menuItem.description = req.body.description;
-  menuItem.price = req.body.price;
-  menuItem.flavors = req.body.checkedFlavors;
-  menuItem.toppings = req.body.checkedToppings;
-  menuItem.temps = req.body.checkedTemps;
-  menuItem.caffeination = req.body.caf;
-  menuItem.special = req.body.special;
-  menuItem.popular = req.body.popular;
-  await menuItem.save();
-  res.status(201).end();
+route.post("/modifyDrink/:id", upload.single("image"), async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findById(req.params.id);
+    menuItem.name = req.body.name;
+    menuItem.description = req.body.description;
+    menuItem.price = req.body.price;
+    menuItem.flavors = req.body.checkedFlavors ? req.body.checkedFlavors : [];
+    menuItem.toppings = req.body.checkedToppings
+      ? req.body.checkedToppings
+      : [];
+    menuItem.temps = req.body.checkedTemps;
+    menuItem.caffeination = req.body.caf;
+    menuItem.special = req.body.special;
+    menuItem.popular = req.body.popular;
+    if (req.file) {
+      menuItem.imagePath = req.file.path;
+    }
+    await menuItem.save();
+    res.status(200).json({ message: "Drink added successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 route.get("/deleteDrink", async (req, res) => {
@@ -394,8 +420,26 @@ route.get("/deleteDrink", async (req, res) => {
   }
 });
 
+const fs = require("fs");
+
 route.delete("/deleteDrink/:id", async (req, res) => {
   const menuItemId = req.params.id;
+  const menuItem = await MenuItem.findById(menuItemId);
+
+  // Asynchronously delete a file
+  fs.unlink(menuItem.imagePath, (err) => {
+    if (err) {
+      // Handle specific error if any
+      if (err.code === "ENOENT") {
+        console.error("Image file does not exist.");
+      } else {
+        throw err;
+      }
+    } else {
+      console.log("Image File deleted.");
+    }
+  });
+
   await MenuItem.findByIdAndRemove(menuItemId);
   res.end();
 });

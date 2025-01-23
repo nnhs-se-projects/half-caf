@@ -2,9 +2,12 @@
 // if its a special, the selected flavors and the selected toppings and if it can be caffinated
 const addDrinkButton = document.querySelector("input.submit");
 addDrinkButton.addEventListener("click", async () => {
-  const name = document.getElementById("name").value;
+  const name = document
+    .getElementById("name")
+    .value.replace("/", "")
+    .replace("\\", "");
   const description = document.getElementById("description").value;
-  const price = document.getElementById("price").value;
+  const price = document.getElementById("price").value.replace(/[^.\d]/g, "");
   const popular = document.getElementById("popular").checked;
   const temps = document.querySelectorAll("input.temps");
   const checkedTemps = [];
@@ -13,6 +16,12 @@ addDrinkButton.addEventListener("click", async () => {
       checkedTemps.push(temps[i].value);
     }
   }
+
+  if (checkedTemps.length === 0) {
+    alert("Please select a temperature");
+    return;
+  }
+
   const special = document.getElementById("special").checked;
   const flavors = document.querySelectorAll("input#flavors");
   const checkedFlavors = [];
@@ -44,17 +53,42 @@ addDrinkButton.addEventListener("click", async () => {
     special,
   };
 
-  const response = await fetch("/addDrink", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(menuItem),
-  });
+  const formData = new FormData();
+  const imageFile = document.getElementById("image").files[0];
 
-  if (response.ok) {
-    window.location = "/addDrink";
-  } else {
-    console.log("error adding drink");
+  if (!imageFile) {
+    console.error("Please select an image file");
+    return;
+  }
+
+  formData.append("image", imageFile);
+
+  // Handle arrays and other form data separately
+  for (const [key, value] of Object.entries(menuItem)) {
+    if (Array.isArray(value)) {
+      // Append each array element individually
+      value.forEach((item) => {
+        formData.append(key, item);
+      });
+    } else {
+      formData.append(key, value);
+    }
+  }
+
+  try {
+    const response = await fetch("/addDrink", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      window.location = "/addDrink";
+    } else {
+      console.error("Server error:", data.error);
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
   }
 });

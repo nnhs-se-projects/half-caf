@@ -23,9 +23,12 @@ const saveDrinkButton = document.querySelector("input.submit");
 
 saveDrinkButton.addEventListener("click", async () => {
   const id = document.getElementById("filter").value;
-  const name = document.getElementById("name").value;
+  const name = document
+    .getElementById("name")
+    .value.replace("/", "")
+    .replace("\\", "");
   const description = document.getElementById("description").value;
-  const price = document.getElementById("price").value;
+  const price = document.getElementById("price").value.replace(/[^.\d]/g, "");
 
   const temps = document.querySelectorAll("input#temp");
   const checkedTemps = [];
@@ -34,6 +37,11 @@ saveDrinkButton.addEventListener("click", async () => {
       checkedTemps.push(temp.value);
     }
   });
+
+  if (checkedTemps.length === 0) {
+    alert("Please select a temperature");
+    return;
+  }
 
   const flavors = document.querySelectorAll("input#flavor");
   const checkedFlavors = [];
@@ -66,17 +74,39 @@ saveDrinkButton.addEventListener("click", async () => {
     special,
   };
 
+  const formData = new FormData();
+  const imageFile = document.getElementById("image").files[0];
+
+  if (!imageFile && !document.getElementById("currentImg")) {
+    alert("Please select an image file");
+    return;
+  }
+
+  formData.append("image", imageFile);
+  // Handle arrays and other form data separately
+  for (const [key, value] of Object.entries(drink)) {
+    if (Array.isArray(value)) {
+      // Append each array element individually
+      value.forEach((item) => {
+        formData.append(key, item);
+      });
+    } else {
+      formData.append(key, value);
+    }
+  }
+
   try {
     const response = await fetch(`/modifyDrink/${id}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(drink),
+      body: formData,
     });
+
+    const data = await response.json();
 
     if (response.ok) {
       window.location = `/modifyDrink?id=${id}`;
+    } else {
+      console.error("Server error:", data.error);
     }
   } catch (error) {
     console.error("Error updating drink: ", error);
