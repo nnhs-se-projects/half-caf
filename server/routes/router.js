@@ -394,8 +394,26 @@ route.get("/deleteDrink", async (req, res) => {
   }
 });
 
+const fs = require("fs");
+
 route.delete("/deleteDrink/:id", async (req, res) => {
   const menuItemId = req.params.id;
+  const menuItem = await MenuItem.findById(menuItemId);
+
+  // Asynchronously delete a file
+  fs.unlink(menuItem.imagePath, (err) => {
+    if (err) {
+      // Handle specific error if any
+      if (err.code === "ENOENT") {
+        console.error("Image file does not exist.");
+      } else {
+        throw err;
+      }
+    } else {
+      console.log("Image File deleted.");
+    }
+  });
+
   await MenuItem.findByIdAndRemove(menuItemId);
   res.end();
 });
