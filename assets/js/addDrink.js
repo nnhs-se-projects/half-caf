@@ -2,7 +2,10 @@
 // if its a special, the selected flavors and the selected toppings and if it can be caffinated
 const addDrinkButton = document.querySelector("input.submit");
 addDrinkButton.addEventListener("click", async () => {
-  const name = document.getElementById("name").value;
+  const name = document
+    .getElementById("name")
+    .value.replace("/", "")
+    .replace("\\", "");
   const description = document.getElementById("description").value;
   const price = document.getElementById("price").value;
   const popular = document.getElementById("popular").checked;
