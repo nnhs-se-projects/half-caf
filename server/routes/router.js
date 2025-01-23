@@ -49,6 +49,7 @@ route.get("/", async (req, res) => {
         userType: "teacher",
       });
       await newUser.save();
+      res.redirect("/teacherPopularDrinks");
     } else {
       // they are not in the database and do not have a staff email
       res.redirect("/auth");
