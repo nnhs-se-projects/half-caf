@@ -13,6 +13,18 @@ const Enabled = require("../model/enabled");
 const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 8081 });
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./assets/img");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "--" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // Client connections storage
 let clients = [];
@@ -270,20 +282,25 @@ route.get("/addDrink", async (req, res) => {
   }
 });
 // updates database with new menu item
-route.post("/addDrink", async (req, res) => {
-  const drink = new MenuItem({
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    popular: req.body.popular,
-    flavors: req.body.checkedFlavors,
-    toppings: req.body.checkedToppings,
-    temps: req.body.checkedTemps,
-    caffeination: req.body.caf,
-    special: req.body.special,
-  });
-  await drink.save();
-  res.status(200).end();
+route.post("/addDrink", upload.single("image"), async (req, res) => {
+  try {
+    const drink = new MenuItem({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      popular: req.body.popular,
+      flavors: req.body.checkedFlavors,
+      toppings: req.body.checkedToppings,
+      temps: req.body.checkedTemps,
+      caffeination: req.body.caf,
+      special: req.body.special,
+      imagePath: req.file ? req.file.path : null,
+    });
+    await drink.save();
+    res.status(200).json({ message: "Drink added successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 route.get("/api/menuItem/:id", async (req, res) => {
