@@ -20,7 +20,26 @@
   </select>
 
   <!-- figure out to make fill this w/ og -->
-  <% if(chosenDrink == true) { %>
+  <% if(chosenDrink == true) { %> <% if (selectedMenuItem.imagePath) { %>
+  <%const pathName = selectedMenuItem.imagePath.replace("assets\\img\\",
+  "img/"); %>
+
+  <img
+    src="<%=pathName%>"
+    alt="<%=selectedMenuItem.name%>"
+    style="width: 100%"
+    id="currentImg"
+  />
+  <% } %>
+  <div>
+    Add Image *REQUIRED*
+    <input
+      type="file"
+      name="image"
+      id="image"
+      value="<%=selectedMenuItem.imagePath%>"
+    />
+  </div>
   <textarea id="name" class="content" placeholder="Edit Name...">
 <%= selectedMenuItem.name %></textarea
   >

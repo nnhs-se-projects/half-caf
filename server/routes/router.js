@@ -281,27 +281,6 @@ route.get("/addDrink", async (req, res) => {
     });
   }
 });
-// updates database with new menu item
-route.post("/addDrink", upload.single("image"), async (req, res) => {
-  try {
-    const drink = new MenuItem({
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      popular: req.body.popular,
-      flavors: req.body.checkedFlavors,
-      toppings: req.body.checkedToppings,
-      temps: req.body.checkedTemps,
-      caffeination: req.body.caf,
-      special: req.body.special,
-      imagePath: req.file ? req.file.path : null,
-    });
-    await drink.save();
-    res.status(200).json({ message: "Drink added successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 route.get("/api/menuItem/:id", async (req, res) => {
   try {
@@ -352,20 +331,50 @@ route.get("/modifyDrink", async (req, res) => {
     });
   }
 });
+// updates database with new menu item
+route.post("/addDrink", upload.single("image"), async (req, res) => {
+  try {
+    const drink = new MenuItem({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      popular: req.body.popular,
+      flavors: req.body.checkedFlavors,
+      toppings: req.body.checkedToppings,
+      temps: req.body.checkedTemps,
+      caffeination: req.body.caf,
+      special: req.body.special,
+      imagePath: req.file ? req.file.path : null,
+    });
+    await drink.save();
+    res.status(200).json({ message: "Drink added successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-route.post("/modifyDrink/:id", async (req, res) => {
-  const menuItem = await MenuItem.findById(req.params.id);
-  menuItem.name = req.body.name;
-  menuItem.description = req.body.description;
-  menuItem.price = req.body.price;
-  menuItem.flavors = req.body.checkedFlavors;
-  menuItem.toppings = req.body.checkedToppings;
-  menuItem.temps = req.body.checkedTemps;
-  menuItem.caffeination = req.body.caf;
-  menuItem.special = req.body.special;
-  menuItem.popular = req.body.popular;
-  await menuItem.save();
-  res.status(201).end();
+route.post("/modifyDrink/:id", upload.single("image"), async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findById(req.params.id);
+    menuItem.name = req.body.name;
+    menuItem.description = req.body.description;
+    menuItem.price = req.body.price;
+    menuItem.flavors = req.body.checkedFlavors ? req.body.checkedFlavors : [];
+    menuItem.toppings = req.body.checkedToppings
+      ? req.body.checkedToppings
+      : [];
+    menuItem.temps = req.body.checkedTemps;
+    menuItem.caffeination = req.body.caf;
+    menuItem.special = req.body.special;
+    menuItem.popular = req.body.popular;
+    if (req.file) {
+      menuItem.imagePath = req.file.path;
+    }
+    await menuItem.save();
+    res.status(200).json({ message: "Drink added successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 route.get("/deleteDrink", async (req, res) => {
