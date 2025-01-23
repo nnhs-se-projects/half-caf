@@ -16,6 +16,12 @@ addDrinkButton.addEventListener("click", async () => {
       checkedTemps.push(temps[i].value);
     }
   }
+
+  if (checkedTemps.length === 0) {
+    alert("Please select a temperature");
+    return;
+  }
+
   const special = document.getElementById("special").checked;
   const flavors = document.querySelectorAll("input#flavors");
   const checkedFlavors = [];

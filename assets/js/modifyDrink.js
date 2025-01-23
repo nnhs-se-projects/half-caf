@@ -38,6 +38,11 @@ saveDrinkButton.addEventListener("click", async () => {
     }
   });
 
+  if (checkedTemps.length === 0) {
+    alert("Please select a temperature");
+    return;
+  }
+
   const flavors = document.querySelectorAll("input#flavor");
   const checkedFlavors = [];
   for (let i = 0; i < flavors.length; i++) {
