@@ -54,10 +54,10 @@ ws.onmessage = function (event) {
           <th scope="?">${drink.instructions}</th>
           <th scope="?">${jsonData.order.timestamp}</th>
           <th scope="?">
-            <button value="${jsonData.order.id}" class="cancelButton">Cancel</button>
+            <button value="${jsonData.order._id}" class="cancelButton">Cancel</button>
           </th>
           <th scope="?">
-            <button value="${jsonData.order.id}" class="finishButton">Finish</button>
+            <button value="${jsonData.order._id}" class="finishButton">Finish</button>
           </th>`;
       } else {
         drinkElement.innerHTML = `
@@ -75,6 +75,65 @@ ws.onmessage = function (event) {
 
       if (orderTable !== null) {
         orderTable.appendChild(drinkElement);
+        const cancelButtons = document.querySelectorAll("button.cancelButton");
+
+        let numOfOrders = 0;
+        for (const cancelButton of cancelButtons) {
+          cancelButton.addEventListener("click", async () => {
+            if (!confirm("Are you sure you want to cancel this order?")) {
+              return;
+            }
+
+            const message = prompt(
+              "Please enter a message for the cancellation:"
+            );
+            const orderId = cancelButton.value;
+            const response = await fetch(`/barista/${orderId}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ message }),
+            });
+
+            if (response.ok) {
+              window.location = "/barista";
+            } else {
+              console.log("error deleting order");
+            }
+          });
+
+          numOfOrders++;
+        }
+
+        const finishButtons = document.querySelectorAll("button.finishButton");
+
+        for (const finishButton of finishButtons) {
+          finishButton.addEventListener("click", async () => {
+            const orderId = finishButton.value;
+            const response = await fetch(`/barista/${orderId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            if (response.ok) {
+              window.location = "/barista";
+            } else {
+              console.log("error finishing order");
+            }
+          });
+        }
+
+        // update notification dropdown
+        const ordersBadge = document.querySelector(".badge");
+        ordersBadge.innerHTML = numOfOrders;
+
+        const orderNotification = document.createElement("option");
+        orderNotification.innerHTML = `order from room ${jsonData.order.room}`;
+
+        document.querySelector(".notification").appendChild(orderNotification);
       }
 
       isFirstDrink = false;
