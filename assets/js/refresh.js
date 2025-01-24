@@ -18,9 +18,14 @@ const ws = new WebSocket("ws://localhost:8081");
 const sound = new Audio("/audio/notification.mp3");
 sound.preload = "auto";
 
-const orderTable = document.getElementById("orderTable");
-console.log(orderTable);
-let lastDrinkColor = orderTable.lastChild.id;
+let lastDrinkColor;
+let orderTable = null;
+if (window.location.href.indexOf("/barista") > -1) {
+  document.addEventListener("DOMContentLoaded", (event) => {
+    orderTable = document.getElementById("orderTable");
+    lastDrinkColor = orderTable.rows[orderTable.rows.length - 1].id;
+  });
+}
 
 // sound.load();
 ws.onmessage = function (event) {
@@ -35,42 +40,42 @@ ws.onmessage = function (event) {
   ) {
     sound.play();
     let isFirstDrink = true;
-    for (const drink of jsonData.order.drinks) {
+    for (const drink of jsonData.drinks) {
       const drinkElement = document.createElement("tr");
       drinkElement.id = lastDrinkColor === "c" ? "b" : "c";
       if (isFirstDrink) {
         drinkElement.innerHTML = `
-          <th scope="?"><${jsonData.order.room}></th>
-          <th scope="?"><${jsonData.order.email}></th>
-          <th scope="?"><${drink.name}></th>
-          <th scope="?"><${drink.temp}></th>
-          <th scope="?">${drink.flavors}></th>
-          <th scope="?"><${drink.toppings}></th>
-          <th scope="?"><${drink.instructions}></th>
-          <th scope="?"><${jsonData.order.timestamp}></th>
+          <th scope="?">${jsonData.order.room}</th>
+          <th scope="?">${jsonData.order.email}</th>
+          <th scope="?">${drink.name}</th>
+          <th scope="?">${drink.temp}</th>
+          <th scope="?">${drink.flavors}</th>
+          <th scope="?">${drink.toppings}</th>
+          <th scope="?">${drink.instructions}</th>
+          <th scope="?">${jsonData.order.timestamp}</th>
           <th scope="?">
-            <button value="<%=order.id%>" class="cancelButton">Cancel</button>
+            <button value="${jsonData.order.id}" class="cancelButton">Cancel</button>
           </th>
           <th scope="?">
-            <button value="<%=order.id%>" class="finishButton">Finish</button>
-          </th>
-          <%}%>`;
+            <button value="${jsonData.order.id}" class="finishButton">Finish</button>
+          </th>`;
       } else {
         drinkElement.innerHTML = `
-          <th scope="?"><${jsonData.order.room}></th>
-          <th scope="?"><${jsonData.order.email}></th>
-          <th scope="?"><${drink.name}></th>
-          <th scope="?"><${drink.temp}></th>
-          <th scope="?">${drink.flavors}></th>
-          <th scope="?"><${drink.toppings}></th>
-          <th scope="?"><${drink.instructions}></th>
-          <th scope="?"><${jsonData.order.timestamp}></th>
+          <th scope="?">${jsonData.order.room}</th>
+          <th scope="?">${jsonData.order.email}</th>
+          <th scope="?">${drink.name}</th>
+          <th scope="?">${drink.temp}</th>
+          <th scope="?">${drink.flavors}</th>
+          <th scope="?">${drink.toppings}</th>
+          <th scope="?">${drink.instructions}</th>
+          <th scope="?">${jsonData.order.timestamp}</th>
           <th scope="?">part of the above order</th>
-          <th scope="?"></th>
-          <%}%>`;
+          <th scope="?"></th>`;
       }
 
-      orderTable.appendChild(drinkElement);
+      if (orderTable !== null) {
+        orderTable.appendChild(drinkElement);
+      }
 
       isFirstDrink = false;
     }

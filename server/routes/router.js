@@ -954,9 +954,50 @@ route.post("/teacherMyOrder", async (req, res) => {
     user.orderHistory.push(order);
     await user.save();
 
+    const drinks = await Drink.find({ _id: { $in: req.session.cart } });
+    const flavors = await Flavor.find({});
+    const toppings = await Topping.find({});
+
+    const drinkArray = [];
+    for (let n = 0; n < order.drinks.length; n++) {
+      const formattedDrink = {
+        name: "",
+        flavors: [],
+        toppings: [],
+        temp: "",
+        instructions: "",
+      };
+      const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
+      if (drink.flavors.length === 0) {
+        formattedDrink.flavors.push("None");
+      } else {
+        for (let x = 0; x < drink.flavors.length; x++) {
+          const tempFlavor = flavors.find((f) =>
+            f._id.equals(drink.flavors[x])
+          );
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+      if (drink.toppings.length === 0) {
+        formattedDrink.toppings.push("None");
+      } else {
+        for (let x = 0; x < drink.toppings.length; x++) {
+          const tempTopping = toppings.find((t) =>
+            t._id.equals(drink.toppings[x])
+          );
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+      formattedDrink.name = drink.name;
+      formattedDrink.temp = drink.temps;
+      formattedDrink.instructions = drink.instructions;
+      drinkArray.push(formattedDrink);
+    }
+
     const jsonData = JSON.stringify({
       message: "New order placed",
       order,
+      drinks: drinkArray,
     });
 
     clients.forEach((client) => {
