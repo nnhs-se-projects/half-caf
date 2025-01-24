@@ -956,6 +956,7 @@ route.post("/teacherMyOrder", async (req, res) => {
 
     const jsonData = JSON.stringify({
       message: "New order placed",
+      order,
     });
 
     clients.forEach((client) => {
