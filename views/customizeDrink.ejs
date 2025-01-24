@@ -59,6 +59,15 @@
       id="instructions"
       placeholder="Add Any Special Instructions..."
     />
+    <h6>Quantity:</h6>
+    <input
+      type="number"
+      id="quantity"
+      min="1"
+      max="10"
+      placeholder="1"
+      onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57))"
+    />
     <input type="submit" class="submit" value="Add to Cart" />
   </div>
 </body>

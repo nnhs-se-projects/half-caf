@@ -21,8 +21,10 @@ addToOrderButton.addEventListener("click", async () => {
 
   const instructions = document.getElementById("instructions").value;
   const favorite = document.getElementById("favorite").checked;
-
-  // const caf = document.getElementById("caffeinated").checked;
+  let quantity = document.getElementById("quantity").value;
+  if (quantity === "") {
+    quantity = 1;
+  }
 
   const drink = {
     name,
@@ -32,8 +34,9 @@ addToOrderButton.addEventListener("click", async () => {
     temp,
     instructions,
     favorite,
+    quantity,
   };
-  // caf,
+
   const response = await fetch(`/customizeDrink/${encodeURIComponent(name)}`, {
     method: "POST",
     headers: {
