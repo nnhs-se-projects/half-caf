@@ -39,6 +39,7 @@ app.use("/css", express.static("assets/css"));
 app.use("/img", express.static("assets/img"));
 app.use("/js", express.static("assets/js"));
 app.use("/audio", express.static("assets/audio"));
+app.use("/models", express.static("assets/models")); // Ensure this line is added to serve the GLB model
 
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.

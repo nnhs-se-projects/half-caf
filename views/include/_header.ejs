@@ -7,7 +7,138 @@
 
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      #logo {
+        display: flex;
+        align-items: center;
+      }
+      #modelContainer {
+        width: 100px; /* Match the width of the current image */
+        height: 100px; /* Match the height of the current image */
+        background-color: #11191f; /* Match the background color */
+      }
+      #pageTitle {
+        margin-left: 20px; /* Space between the cup and the text */
+        font-size: 24px; /* Adjust font size as needed */
+      }
+    </style>
   </head>
 
-  <img src="/img/Half_Caf_Logo_(1).png" style="width:auto;height:75px;">
   <body>
+    <div id="logo">
+      <div id="modelContainer"></div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+      console.log("Script loaded");
+
+      let scene, camera, renderer, model;
+
+      function init() {
+        console.log("Initializing scene");
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for square canvas
+        camera.position.set(0, 1, 3); // Move the camera back to fit the entire cup
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(100, 100); // Match the size of the container
+        renderer.setClearColor(0x11191f); // Set the background color to match the specified color
+        document.getElementById("modelContainer").appendChild(renderer.domElement);
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // Add directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(0, 10, 10);
+        scene.add(directionalLight);
+
+        // Add another directional light for better visibility
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight2.position.set(0, -10, -10);
+        scene.add(directionalLight2);
+
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(
+          '/models/HuskieCupLogo.png',
+          function (texture) {
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+              '/models/FirstCalfCoffeeCup.glb',
+              function (gltf) {
+                model = gltf.scene;
+                model.traverse(function (child) {
+                  if (child.isMesh) {
+                    // Check if this is the center area mesh
+                    if (child.name === 'Cylinder001_2') { // this is the actual name of the center area mesh
+                      child.material.map = texture;
+                    }
+                  }
+                });
+
+                model.position.y = 0; // Move the model down
+                model.rotation.y = Math.PI / 2; // Rotate the model 90 degrees to the left
+
+                const rotationState = JSON.parse(localStorage.getItem("modelRotation"));
+                if (rotationState) {
+                  model.rotation.x = rotationState.x;
+                  model.rotation.y = rotationState.y;
+                  model.rotation.z = rotationState.z;
+                } else {
+                  model.rotation.y = 0; // Ensure the model starts facing forward
+                }
+
+                scene.add(model);
+                console.log("Model added to scene");
+                animate();
+              },
+              undefined,
+              function (error) {
+                console.error("Error loading model:", error);
+              }
+            );
+          },
+          undefined,
+          function (error) {
+            console.error("Error loading texture:", error);
+          }
+        );
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function onWindowResize() {
+        const container = document.getElementById("modelContainer");
+        const size = Math.min(container.clientWidth, container.clientHeight);
+        renderer.setSize(size, size);
+        camera.aspect = 1; // Maintain 1:1 aspect ratio
+        camera.updateProjectionMatrix();
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (model) {
+          model.rotation.y += 0.01; // Example animation
+          saveRotationState();
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      function saveRotationState() {
+        const rotationState = {
+          x: model.rotation.x,
+          y: model.rotation.y,
+          z: model.rotation.z,
+        };
+        localStorage.setItem("modelRotation", JSON.stringify(rotationState));
+      }
+
+      init();
+    </script>
+  </body>
+</html>
