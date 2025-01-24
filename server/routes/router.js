@@ -866,27 +866,29 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
 route.post("/customizeDrink/:name", async (req, res) => {
   // drink user is adding to order
-  const drink = new Drink({
-    name: req.body.name,
-    price: req.body.price,
-    flavors: req.body.checkedFlavors,
-    toppings: req.body.checkedToppings,
-    temps: req.body.temp,
-    // caffeination: req.body.caf,
-    instructions: req.body.instructions,
-    favorite: req.body.favorite,
-  });
-  await drink.save();
-  req.session.cart.push(drink);
+  for (let i = 0; i < req.body.quantity; i++) {
+    const drink = new Drink({
+      name: req.body.name,
+      price: req.body.price,
+      flavors: req.body.checkedFlavors,
+      toppings: req.body.checkedToppings,
+      temps: req.body.temp,
+      instructions: req.body.instructions,
+      favorite: req.body.favorite,
+    });
 
-  if (req.body.favorite === true) {
-    const user = await User.findOne({ email: req.session.email });
-    const index = user.favoriteDrinks.indexOf(drink.id);
-    if (index === -1) {
-      drink.favorite = true;
-      await drink.save();
-      user.favoriteDrinks.push(drink);
-      await user.save();
+    await drink.save();
+    req.session.cart.push(drink);
+
+    if (req.body.favorite === true && i === 0) {
+      const user = await User.findOne({ email: req.session.email });
+      const index = user.favoriteDrinks.indexOf(drink.id);
+      if (index === -1) {
+        drink.favorite = true;
+        await drink.save();
+        user.favoriteDrinks.push(drink);
+        await user.save();
+      }
     }
   }
 
