@@ -73,7 +73,10 @@
                 model = gltf.scene;
                 model.traverse(function (child) {
                   if (child.isMesh) {
-                    child.material.map = texture;
+                    // Check if this is the center area mesh
+                    if (child.name === 'Cylinder001_2') { // this is the actual name of the center area mesh
+                      child.material.map = texture;
+                    }
                   }
                 });
 
