@@ -62,32 +62,46 @@
         directionalLight2.position.set(0, -10, -10);
         scene.add(directionalLight2);
 
-        const loader = new THREE.GLTFLoader();
-        console.log("Loading model");
-        loader.load(
-          "/models/FirstCalfCoffeeCup.glb",
-          function (gltf) {
-            console.log("Model loaded callback");
-            model = gltf.scene;
-            model.position.y = 0; // Move the model down
-            model.rotation.y = Math.PI / 2; // Rotate the model 90 degrees to the left
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(
+          '/models/HuskieCupLogo.png',
+          function (texture) {
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+              '/models/FirstCalfCoffeeCup.glb',
+              function (gltf) {
+                model = gltf.scene;
+                model.traverse(function (child) {
+                  if (child.isMesh) {
+                    child.material.map = texture;
+                  }
+                });
 
-            const rotationState = JSON.parse(localStorage.getItem("modelRotation"));
-            if (rotationState) {
-              model.rotation.x = rotationState.x;
-              model.rotation.y = rotationState.y;
-              model.rotation.z = rotationState.z;
-            } else {
-              model.rotation.y = 0; // Ensure the model starts facing forward
-            }
+                model.position.y = 0; // Move the model down
+                model.rotation.y = Math.PI / 2; // Rotate the model 90 degrees to the left
 
-            scene.add(model);
-            console.log("Model added to scene");
-            animate();
+                const rotationState = JSON.parse(localStorage.getItem("modelRotation"));
+                if (rotationState) {
+                  model.rotation.x = rotationState.x;
+                  model.rotation.y = rotationState.y;
+                  model.rotation.z = rotationState.z;
+                } else {
+                  model.rotation.y = 0; // Ensure the model starts facing forward
+                }
+
+                scene.add(model);
+                console.log("Model added to scene");
+                animate();
+              },
+              undefined,
+              function (error) {
+                console.error("Error loading model:", error);
+              }
+            );
           },
           undefined,
           function (error) {
-            console.error("Error loading model:", error);
+            console.error("Error loading texture:", error);
           }
         );
 
@@ -105,16 +119,20 @@
       function animate() {
         requestAnimationFrame(animate);
         if (model) {
-          model.rotation.y += 0.005; // Slowly rotate the model around the Y axis (slower speed)
-          model.rotation.x = Math.sin(model.rotation.y) * 0.2; // Add a more diagonal tilt to the rotation
+          model.rotation.y += 0.01; // Example animation
+          saveRotationState();
         }
 
-        localStorage.setItem("modelRotation", JSON.stringify({
+        renderer.render(scene, camera);
+      }
+
+      function saveRotationState() {
+        const rotationState = {
           x: model.rotation.x,
           y: model.rotation.y,
-          z: model.rotation.z
-        }));
-        renderer.render(scene, camera);
+          z: model.rotation.z,
+        };
+        localStorage.setItem("modelRotation", JSON.stringify(rotationState));
       }
 
       init();
