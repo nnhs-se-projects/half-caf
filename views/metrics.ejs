@@ -14,9 +14,9 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
   <table>
     <thead>
       <tr>
-        <th class="userTable"><b>User</b></th>
-        <th class="userTable"><b>Orders</b></th>
-        <th class="userTable"><b>Revenue</b></th>
+        <th id="sortNeither" class="userTable"><b>User</b></th>
+        <th id="sortNeither" class="userTable"><b>Orders</b></th>
+        <th id="sortNeither" class="userTable"><b>Revenue</b></th>
       </tr>
     </thead>
 
@@ -45,9 +45,9 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
   <table>
     <thead>
       <tr>
-        <th class="menuItemTable"><b>Menu Item</b></th>
-        <th class="menuItemTable"><b>Orders</b></th>
-        <th class="menuItemTable"><b>Revenue</b></th>
+        <th id="sortNeither" class="menuItemTable"><b>Menu Item</b></th>
+        <th id="sortNeither" class="menuItemTable"><b>Orders</b></th>
+        <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
       </tr>
     </thead>
 
@@ -84,19 +84,32 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
     ((v1, v2) =>
       v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2)
         ? v1 - v2
-        : v1.toString().localeCompare(v2))(
+        : v1[0] === "$"
+        ? v1.toString().localeCompare(v2)
+        : v2.toString().localeCompare(v1))(
       getCellValue(asc ? a : b, idx),
       getCellValue(asc ? b : a, idx)
     );
 
   document.querySelectorAll("th.userTable").forEach((th) =>
     th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.userTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
       const table = document.getElementById("userTable");
       Array.from(table.querySelectorAll("tr"))
         .sort(
           comparer(
             Array.from(th.parentNode.children).indexOf(th),
-            (this.asc = !this.asc)
+            (this.asc = th.id === "sortUp")
           )
         )
         .forEach((tr) => table.appendChild(tr));
@@ -104,12 +117,23 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
   );
   document.querySelectorAll("th.menuItemTable").forEach((th) =>
     th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.menuItemTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
       const table = document.getElementById("menuItemTable");
       Array.from(table.querySelectorAll("tr"))
         .sort(
           comparer(
             Array.from(th.parentNode.children).indexOf(th),
-            (this.asc = !this.asc)
+            (this.asc = th.id === "sortUp")
           )
         )
         .forEach((tr) => table.appendChild(tr));
@@ -142,8 +166,34 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
 </script>
 
 <style>
-  th {
-    cursor: pointer;
+  table td,
+  table th {
+    border: 1px solid silver;
+  }
+
+  #sortNeither:after,
+  #sortDown:after,
+  #sortUp:after {
+    content: " ";
+    position: relative;
+    left: 2px;
+    border: 8px solid transparent;
+  }
+
+  #sortNeither:after,
+  #sortDown:after {
+    border-top-color: silver;
+  }
+
+  #sortNeither:after,
+  #sortUp:after {
+    border-bottom-color: silver;
+  }
+
+  #sortNeither,
+  #sortDown,
+  #sortUp {
+    padding-right: 10px;
   }
 </style>
 
