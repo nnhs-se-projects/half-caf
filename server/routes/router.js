@@ -504,6 +504,34 @@ route.get("/metrics", async (req, res) => {
     revenuePerMenuItem.push(revenueOfMenuItem);
   }
 
+  const toppingNames = [];
+  const ordersPerTopping = [];
+  for (const topping of toppings) {
+    let ordersOfTopping = 0;
+    for (const drink of drinks) {
+      if (drink.toppings.includes(topping.id)) {
+        ordersOfTopping++;
+      }
+    }
+
+    toppingNames.push(topping.topping);
+    ordersPerTopping.push(ordersOfTopping);
+  }
+
+  const flavorNames = [];
+  const ordersPerFlavor = [];
+  for (const flavor of flavors) {
+    let ordersOfFlavor = 0;
+    for (const drink of drinks) {
+      if (drink.flavors.includes(flavor.id)) {
+        ordersOfFlavor++;
+      }
+    }
+
+    flavorNames.push(flavor.flavor);
+    ordersPerFlavor.push(ordersOfFlavor);
+  }
+
   res.render("metrics", {
     userEmails,
     ordersPerUser,
@@ -511,6 +539,10 @@ route.get("/metrics", async (req, res) => {
     menuItemNames,
     ordersPerMenuItem,
     revenuePerMenuItem,
+    toppingNames,
+    ordersPerTopping,
+    flavorNames,
+    ordersPerFlavor,
     totalOrdersNum,
     totalDrinkOrdersNum,
     totalRevenue,

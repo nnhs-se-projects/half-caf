@@ -7,7 +7,16 @@ JSON.stringify(userEmails).replace("[", "").replace("]", "").replaceAll('"',"")
 %>" /> <input type="hidden" id="ordersPerUser" value="<%=
 JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>" /> <input
 type="hidden" id="revenuePerUser" value="<%=
-JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
+JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="toppingNames"
+value="<%=JSON.stringify(toppingNames).replace("[", "").replace("]",
+"").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerTopping"
+value="<%= JSON.stringify(ordersPerTopping).replace("[", "").replace("]", "")
+%>" /> <input type="hidden" id="flavorNames"
+value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
+"").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
+value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
+/>
 
 <h1>Metrics Per User:</h1>
 <div>
@@ -71,8 +80,9 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
   </table>
 </div>
 
-<div>
-  <canvas id="ordersPerUserChart" width="900" height="900"> </canvas>
+<div class="charts">
+  <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
+  <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -140,21 +150,27 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
     })
   );
 
-  const userEmails = document.getElementById("userEmails").value.split(",");
-  const ordersPerUser = document
-    .getElementById("ordersPerUser")
+  const toppingNames = document.getElementById("toppingNames").value.split(",");
+  const ordersPerTopping = document
+    .getElementById("ordersPerTopping")
+    .value.split(",");
+
+  const flavorNames = document.getElementById("flavorNames").value.split(",");
+  const ordersPerFlavor = document
+    .getElementById("ordersPerFlavor")
     .value.split(",");
 
   document.addEventListener("DOMContentLoaded", () => {
-    let userOrdersCanvas = document.getElementById("ordersPerUserChart");
-    let userOrdersChart = new Chart(userOrdersCanvas, {
+    const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
+
+    let toppingsChart = new Chart(toppingsChartCanvas, {
       type: "bar",
       data: {
-        labels: userEmails,
+        labels: toppingNames,
         datasets: [
           {
-            label: "Orders",
-            data: ordersPerUser,
+            label: "Orders Per Topping",
+            data: ordersPerTopping,
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
@@ -162,6 +178,30 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
         ],
       },
     });
+
+    toppingsChartCanvas.style.width = "100%";
+    toppingsChartCanvas.style.height = "800px";
+
+    const flavorsChartCanvas = document.getElementById("flavorsChartCanvas");
+
+    let flavorsChart = new Chart(flavorsChartCanvas, {
+      type: "bar",
+      data: {
+        labels: flavorNames,
+        datasets: [
+          {
+            label: "Orders Per Flavor",
+            data: ordersPerFlavor,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+
+    flavorsChartCanvas.style.width = "100%";
+    flavorsChartCanvas.style.height = "800px";
   });
 </script>
 
@@ -194,6 +234,10 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
   #sortDown,
   #sortUp {
     padding-right: 10px;
+  }
+
+  .charts {
+    display: inline-block;
   }
 </style>
 
