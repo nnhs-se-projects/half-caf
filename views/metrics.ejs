@@ -3,21 +3,12 @@
 <!-- /include header -->
 
 <h1>Metrics:</h1>
-<input
-  type="hidden"
-  id="userEmails"
-  value="<%= JSON.stringify(userEmails) %>"
-/>
-<input
-  type="hidden"
-  id="ordersPerUser"
-  value="<%= JSON.stringify(ordersPerUser) %>"
-/>
-<input
-  type="hidden"
-  id="revenuePerUser"
-  value="<%= JSON.stringify(revenuePerUser) %>"
-/>
+<input type="hidden" id="userEmails" value="<%=
+JSON.stringify(userEmails).replace("[", "").replace("]", "").replaceAll('"',"")
+%>" /> <input type="hidden" id="ordersPerUser" value="<%=
+JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="revenuePerUser" value="<%=
+JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
 
 <div>
   <canvas id="ordersPerUserChart" width="900" height="900"> </canvas>

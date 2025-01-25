@@ -2,7 +2,6 @@ import Chart from "../chart.js/auto";
 
 const userEmails = document.getElementById("userEmails").value.split(",");
 const ordersPerUser = document.getElementById("ordersPerUser").value.split(",");
-
 const revenueFromUser = document
   .getElementById("revenueFromUser")
   .value.split(",");
@@ -10,7 +9,7 @@ const revenueFromUser = document
 console.log(userEmails);
 console.log(ordersPerUser);
 
-let userOrdersElement = document.getElementById("ordersPerUser");
+let userOrdersElement = document.getElementById("ordersPerUserChart");
 let userOrdersChart = new Chart(userOrdersElement, {
   type: "bar",
   data: {
