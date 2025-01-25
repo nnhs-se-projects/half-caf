@@ -464,25 +464,31 @@ route.get("/metrics", async (req, res) => {
 
   const userEmails = [];
   const ordersPerUser = [];
-  const revenuePerUsers = [];
+  const revenuePerUser = [];
+  let totalOrdersNum = 0;
+  let totalRevenue = 0;
   for (const user of users) {
-    let OrdersFromUser = 0;
+    let ordersFromUser = 0;
     let revenueFromUser = 0;
     for (const order of orders) {
       if (order.email === user.email) {
-        OrdersFromUser++;
+        ordersFromUser++;
         revenueFromUser += order.totalPrice;
       }
     }
+    totalOrdersNum += ordersFromUser;
+    totalRevenue += revenueFromUser;
     userEmails.push(user.email);
-    ordersPerUser.push(OrdersFromUser);
-    revenuePerUsers.push(revenueFromUser);
+    ordersPerUser.push(ordersFromUser);
+    revenuePerUser.push(revenueFromUser);
   }
 
   res.render("metrics", {
-    userEmails: userEmails,
-    ordersPerUser: ordersPerUser,
-    revenuePerUser: revenuePerUsers,
+    userEmails,
+    ordersPerUser,
+    revenuePerUser,
+    totalOrdersNum,
+    totalRevenue,
   });
 });
 

@@ -25,10 +25,18 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
       <tr>
         <td><%=userEmails[i]%></td>
         <td><%=ordersPerUser[i]%></td>
-        <td><%=revenuePerUser[i]%></td>
+        <td>$<%=revenuePerUser[i]%></td>
       </tr>
       <%}%>
     </tbody>
+
+    <thead>
+      <tr>
+        <th><b>Total</b></th>
+        <th><b><%=totalOrdersNum%></b></th>
+        <th><b>$<%=totalRevenue%></b></th>
+      </tr>
+    </thead>
   </table>
 </div>
 
