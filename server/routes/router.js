@@ -463,6 +463,87 @@ route.get("/metrics", async (req, res) => {
   const toppings = await Topping.find();
   const menuItems = await MenuItem.find();
 
+  const ordersPerHour = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  for (const order of orders) {
+    const time = order.timestamp.substring(14, 20);
+    switch (true) {
+      case time.substring(0, 2) === "12" && time.indexOf("a") > -1:
+        ordersPerHour[0]++;
+        break;
+      case time.substring(0, 2) === "1:" && time.indexOf("a") > -1:
+        ordersPerHour[1]++;
+        break;
+      case time.substring(0, 2) === "2:" && time.indexOf("a") > -1:
+        ordersPerHour[2]++;
+        break;
+      case time.substring(0, 2) === "3:" && time.indexOf("a") > -1:
+        ordersPerHour[3]++;
+        break;
+      case time.substring(0, 2) === "4:" && time.indexOf("a") > -1:
+        ordersPerHour[4]++;
+        break;
+      case time.substring(0, 2) === "5:" && time.indexOf("a") > -1:
+        ordersPerHour[5]++;
+        break;
+      case time.substring(0, 2) === "6:" && time.indexOf("a") > -1:
+        ordersPerHour[6]++;
+        break;
+      case time.substring(0, 2) === "7:" && time.indexOf("a") > -1:
+        ordersPerHour[7]++;
+        break;
+      case time.substring(0, 2) === "8:" && time.indexOf("a") > -1:
+        ordersPerHour[8]++;
+        break;
+      case time.substring(0, 2) === "9:" && time.indexOf("a") > -1:
+        ordersPerHour[9]++;
+        break;
+      case time.substring(0, 2) === "10" && time.indexOf("a") > -1:
+        ordersPerHour[10]++;
+        break;
+      case time.substring(0, 2) === "11" && time.indexOf("a") > -1:
+        ordersPerHour[11]++;
+        break;
+      case time.substring(0, 2) === "12" && time.indexOf("p") > -1:
+        ordersPerHour[12]++;
+        break;
+      case time.substring(0, 2) === "1:" && time.indexOf("p") > -1:
+        ordersPerHour[13]++;
+        break;
+      case time.substring(0, 2) === "2:" && time.indexOf("p") > -1:
+        ordersPerHour[14]++;
+        break;
+      case time.substring(0, 2) === "3:" && time.indexOf("p") > -1:
+        ordersPerHour[15]++;
+        break;
+      case time.substring(0, 2) === "4:" && time.indexOf("p") > -1:
+        ordersPerHour[16]++;
+        break;
+      case time.substring(0, 2) === "5:" && time.indexOf("p") > -1:
+        ordersPerHour[17]++;
+        break;
+      case time.substring(0, 2) === "6:" && time.indexOf("p") > -1:
+        ordersPerHour[18]++;
+        break;
+      case time.substring(0, 2) === "7:" && time.indexOf("p") > -1:
+        ordersPerHour[19]++;
+        break;
+      case time.substring(0, 2) === "8:" && time.indexOf("p") > -1:
+        ordersPerHour[20]++;
+        break;
+      case time.substring(0, 2) === "9:" && time.indexOf("p") > -1:
+        ordersPerHour[21]++;
+        break;
+      case time.substring(0, 2) === "10" && time.indexOf("p") > -1:
+        ordersPerHour[22]++;
+        break;
+      case time.substring(0, 2) === "11" && time.indexOf("p") > -1:
+        ordersPerHour[23]++;
+        break;
+    }
+  }
+
   const userEmails = [];
   const ordersPerUser = [];
   const revenuePerUser = [];
@@ -546,6 +627,7 @@ route.get("/metrics", async (req, res) => {
     totalOrdersNum,
     totalDrinkOrdersNum,
     totalRevenue,
+    ordersPerHour,
   });
 });
 

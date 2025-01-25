@@ -16,7 +16,8 @@ value="<%= JSON.stringify(ordersPerTopping).replace("[", "").replace("]", "")
 value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
 "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
 value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
-/>
+/> <input type="hidden" id="ordersPerHour" value="<%=
+JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
 
 <h1>Metrics Per User:</h1>
 <div>
@@ -83,6 +84,7 @@ value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
 <div class="charts">
   <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
   <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
+  <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -160,6 +162,36 @@ value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
     .getElementById("ordersPerFlavor")
     .value.split(",");
 
+  const hours = [
+    "12am",
+    "1am",
+    "2am",
+    "3am",
+    "4am",
+    "5am",
+    "6am",
+    "7am",
+    "8am",
+    "9am",
+    "10am",
+    "11am",
+    "12pm",
+    "1pm",
+    "2pm",
+    "3pm",
+    "4pm",
+    "5pm",
+    "6pm",
+    "7pm",
+    "8pm",
+    "9pm",
+    "10pm",
+    "11pm",
+  ];
+  const ordersPerHour = document
+    .getElementById("ordersPerHour")
+    .value.split(",");
+
   document.addEventListener("DOMContentLoaded", () => {
     const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
 
@@ -202,6 +234,23 @@ value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
 
     flavorsChartCanvas.style.width = "100%";
     flavorsChartCanvas.style.height = "800px";
+    console.log(ordersPerHour);
+    const ordersPerHourCanvas = document.getElementById("ordersPerHourCanvas");
+    let ordersPerHourChart = new Chart(ordersPerHourCanvas, {
+      type: "line",
+      data: {
+        labels: hours,
+        datasets: [
+          {
+            label: "Orders Per Hour",
+            data: ordersPerHour,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
   });
 </script>
 
