@@ -64,7 +64,7 @@
 
         const textureLoader = new THREE.TextureLoader();
         textureLoader.load(
-          '/models/BlueBGHuskie.png',
+          '/models/WHITEBGHUSKIE.png',
           function (texture) {
             const loader = new THREE.GLTFLoader();
             loader.load(
@@ -79,7 +79,7 @@
                       child.material.map = texture;
                     }
                     else{
-                      child.material.color = new THREE.Color(0x00315C); // Set the color to match the background
+                      child.material.color = new THREE.Color(0xFFFFFF); // Set the color to match the background
                     }
                   }
                 });
