@@ -34,10 +34,11 @@ placeOrderButton.addEventListener("click", async () => {
   const day = time.getDate().toString().padStart(2, "0");
   let hours = time.getHours();
   const minutes = time.getMinutes().toString().padStart(2, "0");
+  const seconds = time.getSeconds().toString().padStart(2, "0");
   const ampm = hours >= 12 ? "pm" : "am";
   hours = hours % 12;
   hours = hours || 12;
-  const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}${ampm}`;
+  const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}${ampm}/${seconds}`;
 
   const response = await fetch("/teacherMyOrder", {
     method: "POST",
