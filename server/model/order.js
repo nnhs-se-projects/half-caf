@@ -38,6 +38,10 @@ const schema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  timer: {
+    type: String,
+    required: false,
+  },
 });
 
 const Order = mongoose.model("Order", schema);

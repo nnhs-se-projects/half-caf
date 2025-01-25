@@ -29,11 +29,22 @@ const finishButtons = document.querySelectorAll("button.finishButton");
 for (const finishButton of finishButtons) {
   finishButton.addEventListener("click", async () => {
     const orderId = finishButton.value;
+    const counter = document.querySelector(
+      `.time-counter[data-order-id="${orderId}"]`
+    );
+    // if (counter) {
+    //   console.log(`Order ID: ${orderId}, Time: ${counter.textContent}`);
+    // } else {
+    //   console.log(`No counter found for Order ID: ${orderId}`);
+    // }
+    let timerVal = counter.textContent;
+    timerVal = convertToSeconds(timerVal);
     const response = await fetch(`/barista/${orderId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ t: timerVal }),
     });
 
     if (response.ok) {
@@ -42,6 +53,23 @@ for (const finishButton of finishButtons) {
       console.log("error finishing order");
     }
   });
+}
+
+function convertToSeconds(timeString) {
+  const timeParts = timeString.split(" ");
+  let totalSeconds = 0;
+
+  for (const part of timeParts) {
+    if (part.endsWith("h")) {
+      totalSeconds += parseInt(part) * 3600;
+    } else if (part.endsWith("m")) {
+      totalSeconds += parseInt(part) * 60;
+    } else if (part.endsWith("s")) {
+      totalSeconds += parseInt(part);
+    }
+  }
+
+  return totalSeconds;
 }
 
 function parseCustomTimestamp(timestamp) {
