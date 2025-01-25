@@ -52,12 +52,22 @@ ws.onmessage = function (event) {
           <th scope="?">${drink.flavors}</th>
           <th scope="?">${drink.toppings}</th>
           <th scope="?">${drink.instructions}</th>
-          <th scope="?">${jsonData.order.timestamp}</th>
+          <th scope="?">${jsonData.order.timestamp.split("/")[0]}</th>
           <th scope="?">
-            <button value="${jsonData.order._id}" class="cancelButton">Cancel</button>
+            <span
+              class="time-counter"
+              data-timestamp="${jsonData.order.timestamp}"
+            ></span>
           </th>
           <th scope="?">
-            <button value="${jsonData.order._id}" class="finishButton">Finish</button>
+            <button value="${
+              jsonData.order._id
+            }" class="cancelButton">Cancel</button>
+          </th>
+          <th scope="?">
+            <button value="${
+              jsonData.order._id
+            }" class="finishButton">Finish</button>
           </th>`;
       } else {
         drinkElement.innerHTML = `
@@ -68,7 +78,13 @@ ws.onmessage = function (event) {
           <th scope="?">${drink.flavors}</th>
           <th scope="?">${drink.toppings}</th>
           <th scope="?">${drink.instructions}</th>
-          <th scope="?">${jsonData.order.timestamp}</th>
+          <th scope="?">${jsonData.order.timestamp.split("/")[0]}</th>
+          <th scope="?">
+            <span
+              class="time-counter"
+              data-timestamp="${jsonData.order.timestamp}"
+            ></span>
+          </th>
           <th scope="?">part of the above order</th>
           <th scope="?"></th>`;
       }
