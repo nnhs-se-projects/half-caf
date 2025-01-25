@@ -2,7 +2,6 @@
 <%- include('include/_adminHeader') %>
 <!-- /include header -->
 
-<h1>Metrics:</h1>
 <input type="hidden" id="userEmails" value="<%=
 JSON.stringify(userEmails).replace("[", "").replace("]", "").replaceAll('"',"")
 %>" /> <input type="hidden" id="ordersPerUser" value="<%=
@@ -10,17 +9,18 @@ JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>" /> <input
 type="hidden" id="revenuePerUser" value="<%=
 JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
 
+<h1>Metrics Per User:</h1>
 <div>
   <table>
     <thead>
       <tr>
-        <th><b>User</b></th>
-        <th><b>Orders</b></th>
-        <th><b>Revenue</b></th>
+        <th class="userTable"><b>User</b></th>
+        <th class="userTable"><b>Orders</b></th>
+        <th class="userTable"><b>Revenue</b></th>
       </tr>
     </thead>
 
-    <tbody class="userTable">
+    <tbody id="userTable">
       <% for(let i = 0; i < userEmails.length; i++) { %>
       <tr>
         <td><%=userEmails[i]%></td>
@@ -34,6 +34,37 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
       <tr>
         <th><b>Total</b></th>
         <th><b><%=totalOrdersNum%></b></th>
+        <th><b>$<%=totalRevenue%></b></th>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<h1>Metrics Per Menu Item:</h1>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th class="menuItemTable"><b>Menu Item</b></th>
+        <th class="menuItemTable"><b>Orders</b></th>
+        <th class="menuItemTable"><b>Revenue</b></th>
+      </tr>
+    </thead>
+
+    <tbody id="menuItemTable">
+      <% for(let i = 0; i < menuItemNames.length; i++) { %>
+      <tr>
+        <td><%=menuItemNames[i]%></td>
+        <td><%=ordersPerMenuItem[i]%></td>
+        <td>$<%=revenuePerMenuItem[i]%></td>
+      </tr>
+      <%}%>
+    </tbody>
+
+    <thead>
+      <tr>
+        <th><b>Total</b></th>
+        <th><b><%=totalDrinkOrdersNum%></b></th>
         <th><b>$<%=totalRevenue%></b></th>
       </tr>
     </thead>
@@ -58,9 +89,22 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
       getCellValue(asc ? b : a, idx)
     );
 
-  document.querySelectorAll("th").forEach((th) =>
+  document.querySelectorAll("th.userTable").forEach((th) =>
     th.addEventListener("click", () => {
-      const table = document.querySelector(".userTable");
+      const table = document.getElementById("userTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = !this.asc)
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+  document.querySelectorAll("th.menuItemTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      const table = document.getElementById("menuItemTable");
       Array.from(table.querySelectorAll("tr"))
         .sort(
           comparer(

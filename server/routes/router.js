@@ -461,6 +461,7 @@ route.get("/metrics", async (req, res) => {
   const users = await User.find();
   const flavors = await Flavor.find();
   const toppings = await Topping.find();
+  const menuItems = await MenuItem.find();
 
   const userEmails = [];
   const ordersPerUser = [];
@@ -483,11 +484,35 @@ route.get("/metrics", async (req, res) => {
     revenuePerUser.push(revenueFromUser);
   }
 
+  const menuItemNames = [];
+  const ordersPerMenuItem = [];
+  const revenuePerMenuItem = [];
+  let totalDrinkOrdersNum = 0;
+  for (const menuItem of menuItems) {
+    let ordersOfMenuItem = 0;
+    let revenueOfMenuItem = 0;
+    for (const drink of drinks) {
+      if (drink.name === menuItem.name) {
+        ordersOfMenuItem++;
+        revenueOfMenuItem += drink.price;
+      }
+    }
+
+    totalDrinkOrdersNum += ordersOfMenuItem;
+    menuItemNames.push(menuItem.name);
+    ordersPerMenuItem.push(ordersOfMenuItem);
+    revenuePerMenuItem.push(revenueOfMenuItem);
+  }
+
   res.render("metrics", {
     userEmails,
     ordersPerUser,
     revenuePerUser,
+    menuItemNames,
+    ordersPerMenuItem,
+    revenuePerMenuItem,
     totalOrdersNum,
+    totalDrinkOrdersNum,
     totalRevenue,
   });
 });
