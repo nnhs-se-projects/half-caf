@@ -34,7 +34,7 @@
     <script>
       console.log("Script loaded");
 
-      let scene, camera, renderer, model;
+      let scene, camera, renderer, model, steamParticles;
 
       function init() {
         console.log("Initializing scene");
@@ -64,18 +64,22 @@
 
         const textureLoader = new THREE.TextureLoader();
         textureLoader.load(
-          '/models/HuskieCupLogo.png',
+          '/models/BlueBGHuskie.png',
           function (texture) {
             const loader = new THREE.GLTFLoader();
             loader.load(
-              '/models/FirstCalfCoffeeCup.glb',
+              '/models/LogoCupNNHSNOTEXT.glb',
               function (gltf) {
                 model = gltf.scene;
                 model.traverse(function (child) {
                   if (child.isMesh) {
+                    console.log(child.name);
                     // Check if this is the center area mesh
                     if (child.name === 'Cylinder001_2') { // this is the actual name of the center area mesh
                       child.material.map = texture;
+                    }
+                    else{
+                      child.material.color = new THREE.Color(0x00315C); // Set the color to match the background
                     }
                   }
                 });
@@ -108,6 +112,64 @@
           }
         );
 
+        // Create a canvas texture for the steam
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+
+        // Draw a radial gradient
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2,
+          canvas.height / 2,
+          0,
+          canvas.width / 2,
+          canvas.height / 2,
+          canvas.width / 2
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+        gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.5)');
+        gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.3)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const steamTexture = new THREE.CanvasTexture(canvas);
+
+        // Create steam particles
+        const steamGeometry = new THREE.BufferGeometry();
+        const steamMaterial = new THREE.PointsMaterial({
+          map: steamTexture,
+          size: 0.5,
+          transparent: true,
+          opacity: 0.5,
+          depthWrite: false
+        });
+
+        const steamCount = 10; // Reduced number of particles
+        const steamPositions = new Float32Array(steamCount * 3);
+        const steamVelocities = new Float32Array(steamCount * 3);
+        const steamLifetimes = new Float32Array(steamCount);
+        for (let i = 0; i < steamCount; i++) {
+          steamPositions[i * 3] = (Math.random() - 0.5) * 0.5;
+          steamPositions[i * 3 + 1] = Math.random() * 1.5;
+          steamPositions[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
+
+          steamVelocities[i * 3] = (Math.random() - 0.5) * 0.01;
+          steamVelocities[i * 3 + 1] = Math.random() * 0.02 + 0.01;
+          steamVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.01;
+
+          steamLifetimes[i] = Math.random() * 3600 + 3600; // Random lifetime between 1 and 2 minutes (60 FPS)
+        }
+        steamGeometry.setAttribute('position', new THREE.BufferAttribute(steamPositions, 3));
+        steamGeometry.setAttribute('velocity', new THREE.BufferAttribute(steamVelocities, 3));
+        steamGeometry.setAttribute('lifetime', new THREE.BufferAttribute(steamLifetimes, 1));
+
+        steamParticles = new THREE.Points(steamGeometry, steamMaterial);
+        steamParticles.position.set(0, 1.5, 0); // Position the steam above the cup
+        scene.add(steamParticles);
+
         window.addEventListener("resize", onWindowResize, false);
       }
 
@@ -119,12 +181,37 @@
         camera.updateProjectionMatrix();
       }
 
+      let lastTimestamp = Date.now();
+
       function animate() {
         requestAnimationFrame(animate);
         if (model) {
-          model.rotation.y += 0.01; // Example animation
+          const currentTimestamp = Date.now();
+          const deltaTime = currentTimestamp - lastTimestamp;
+          lastTimestamp = currentTimestamp;
+          model.rotation.y += 0.007 * deltaTime / 16.67; // Example animation
           saveRotationState();
         }
+
+        // Animate steam particles
+        const positions = steamParticles.geometry.attributes.position.array;
+        const velocities = steamParticles.geometry.attributes.velocity.array;
+        const lifetimes = steamParticles.geometry.attributes.lifetime.array;
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i] += velocities[i];
+          positions[i + 1] += velocities[i + 1];
+          positions[i + 2] += velocities[i + 2];
+
+          lifetimes[i / 3] -= 1;
+          if (lifetimes[i / 3] <= 0) {
+            positions[i] = (Math.random() - 0.5) * 0.5;
+            positions[i + 1] = 0;
+            positions[i + 2] = (Math.random() - 0.5) * 0.5;
+
+            lifetimes[i / 3] = Math.random() * 100 + 100; // Reset lifetime
+          }
+        }
+        steamParticles.geometry.attributes.position.needsUpdate = true;
 
         renderer.render(scene, camera);
       }
