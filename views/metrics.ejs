@@ -11,21 +11,67 @@ type="hidden" id="revenuePerUser" value="<%=
 JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
 
 <div>
+  <table>
+    <thead>
+      <tr>
+        <th><b>User</b></th>
+        <th><b>Orders</b></th>
+        <th><b>Revenue</b></th>
+      </tr>
+    </thead>
+
+    <tbody class="userTable">
+      <% for(let i = 0; i < userEmails.length; i++) { %>
+      <tr>
+        <td><%=userEmails[i]%></td>
+        <td><%=ordersPerUser[i]%></td>
+        <td><%=revenuePerUser[i]%></td>
+      </tr>
+      <%}%>
+    </tbody>
+  </table>
+</div>
+
+<div>
   <canvas id="ordersPerUserChart" width="900" height="900"> </canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+  const getCellValue = (tr, idx) =>
+    tr.children[idx].innerText || tr.children[idx].textContent;
+
+  const comparer = (idx, asc) => (a, b) =>
+    ((v1, v2) =>
+      v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2)
+        ? v1 - v2
+        : v1.toString().localeCompare(v2))(
+      getCellValue(asc ? a : b, idx),
+      getCellValue(asc ? b : a, idx)
+    );
+
+  document.querySelectorAll("th").forEach((th) =>
+    th.addEventListener("click", () => {
+      const table = document.querySelector(".userTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = !this.asc)
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+
   const userEmails = document.getElementById("userEmails").value.split(",");
   const ordersPerUser = document
     .getElementById("ordersPerUser")
     .value.split(",");
-  console.log(ordersPerUser);
-  console.log(userEmails);
 
   document.addEventListener("DOMContentLoaded", () => {
-    let userOrdersElement = document.getElementById("ordersPerUserChart");
-    let userOrdersChart = new Chart(userOrdersElement, {
+    let userOrdersCanvas = document.getElementById("ordersPerUserChart");
+    let userOrdersChart = new Chart(userOrdersCanvas, {
       type: "bar",
       data: {
         labels: userEmails,
@@ -42,6 +88,12 @@ JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" />
     });
   });
 </script>
+
+<style>
+  th {
+    cursor: pointer;
+  }
+</style>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
