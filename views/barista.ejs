@@ -20,6 +20,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="col">Toppings</th>
           <th scope="col">Special Instructions</th>
           <th scope="col">Timestamp</th>
+          <th scope="col">Timer</th>
           <th scope="col">Cancel Order</th>
           <th scope="col">Finish Order</th>
         </tr>
@@ -56,7 +57,14 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="?"><%=tempDrink.flavors%></th>
           <th scope="?"><%=tempDrink.toppings%></th>
           <th scope="?"><%=tempDrink.instructions%></th>
-          <th scope="?"><%=order.timestamp%></th>
+          <th scope="?"><%= order.timestamp.split('/')[0] %></th>
+          <th scope="?">
+            <span
+              class="time-counter"
+              data-timestamp="<%= order.timestamp %>"
+            ></span>
+          </th>
+
           <!--Complete button and cancel button,
             Complete button has some code, cancel button has not yet been worked on,
             There is more info in the Trello on what each button needs to do-->
