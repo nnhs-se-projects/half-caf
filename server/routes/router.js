@@ -455,6 +455,210 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
+route.get("/metrics", async (req, res) => {
+  const orders = await Order.find();
+  const drinks = await Drink.find();
+  const users = await User.find();
+  const flavors = await Flavor.find();
+  const toppings = await Topping.find();
+  const menuItems = await MenuItem.find();
+
+  const ordersPerHour = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  const revenuePerHour = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  for (const order of orders) {
+    const time = order.timestamp.substring(14, 20);
+    switch (true) {
+      case time.substring(0, 2) === "12" && time.indexOf("a") > -1:
+        ordersPerHour[0]++;
+        revenuePerHour[0] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "1:" && time.indexOf("a") > -1:
+        ordersPerHour[1]++;
+        revenuePerHour[1] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "2:" && time.indexOf("a") > -1:
+        ordersPerHour[2]++;
+        revenuePerHour[2] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "3:" && time.indexOf("a") > -1:
+        ordersPerHour[3]++;
+        revenuePerHour[3] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "4:" && time.indexOf("a") > -1:
+        ordersPerHour[4]++;
+        revenuePerHour[4] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "5:" && time.indexOf("a") > -1:
+        ordersPerHour[5]++;
+        revenuePerHour[5] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "6:" && time.indexOf("a") > -1:
+        ordersPerHour[6]++;
+        revenuePerHour[6] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "7:" && time.indexOf("a") > -1:
+        ordersPerHour[7]++;
+        revenuePerHour[7] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "8:" && time.indexOf("a") > -1:
+        ordersPerHour[8]++;
+        revenuePerHour[8] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "9:" && time.indexOf("a") > -1:
+        ordersPerHour[9]++;
+        revenuePerHour[9] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "10" && time.indexOf("a") > -1:
+        ordersPerHour[10]++;
+        revenuePerHour[10] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "11" && time.indexOf("a") > -1:
+        ordersPerHour[11]++;
+        revenuePerHour[11] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "12" && time.indexOf("p") > -1:
+        ordersPerHour[12]++;
+        revenuePerHour[12] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "1:" && time.indexOf("p") > -1:
+        ordersPerHour[13]++;
+        revenuePerHour[13] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "2:" && time.indexOf("p") > -1:
+        ordersPerHour[14]++;
+        revenuePerHour[14] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "3:" && time.indexOf("p") > -1:
+        ordersPerHour[15]++;
+        revenuePerHour[15] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "4:" && time.indexOf("p") > -1:
+        ordersPerHour[16]++;
+        revenuePerHour[16] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "5:" && time.indexOf("p") > -1:
+        ordersPerHour[17]++;
+        revenuePerHour[17] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "6:" && time.indexOf("p") > -1:
+        ordersPerHour[18]++;
+        revenuePerHour[18] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "7:" && time.indexOf("p") > -1:
+        ordersPerHour[19]++;
+        revenuePerHour[19] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "8:" && time.indexOf("p") > -1:
+        ordersPerHour[20]++;
+        revenuePerHour[20] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "9:" && time.indexOf("p") > -1:
+        ordersPerHour[21]++;
+        revenuePerHour[21] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "10" && time.indexOf("p") > -1:
+        ordersPerHour[22]++;
+        revenuePerHour[22] += order.totalPrice;
+        break;
+      case time.substring(0, 2) === "11" && time.indexOf("p") > -1:
+        ordersPerHour[23]++;
+        revenuePerHour[23] += order.totalPrice;
+        break;
+    }
+  }
+
+  const userEmails = [];
+  const ordersPerUser = [];
+  const revenuePerUser = [];
+  let totalOrdersNum = 0;
+  let totalRevenue = 0;
+  for (const user of users) {
+    let ordersFromUser = 0;
+    let revenueFromUser = 0;
+    for (const order of orders) {
+      if (order.email === user.email) {
+        ordersFromUser++;
+        revenueFromUser += order.totalPrice;
+      }
+    }
+    totalOrdersNum += ordersFromUser;
+    totalRevenue += revenueFromUser;
+    userEmails.push(user.email);
+    ordersPerUser.push(ordersFromUser);
+    revenuePerUser.push(revenueFromUser);
+  }
+
+  const menuItemNames = [];
+  const ordersPerMenuItem = [];
+  const revenuePerMenuItem = [];
+  let totalDrinkOrdersNum = 0;
+  for (const menuItem of menuItems) {
+    let ordersOfMenuItem = 0;
+    let revenueOfMenuItem = 0;
+    for (const drink of drinks) {
+      if (drink.name === menuItem.name) {
+        ordersOfMenuItem++;
+        revenueOfMenuItem += drink.price;
+      }
+    }
+
+    totalDrinkOrdersNum += ordersOfMenuItem;
+    menuItemNames.push(menuItem.name);
+    ordersPerMenuItem.push(ordersOfMenuItem);
+    revenuePerMenuItem.push(revenueOfMenuItem);
+  }
+
+  const toppingNames = [];
+  const ordersPerTopping = [];
+  for (const topping of toppings) {
+    let ordersOfTopping = 0;
+    for (const drink of drinks) {
+      if (drink.toppings.includes(topping.id)) {
+        ordersOfTopping++;
+      }
+    }
+
+    toppingNames.push(topping.topping);
+    ordersPerTopping.push(ordersOfTopping);
+  }
+
+  const flavorNames = [];
+  const ordersPerFlavor = [];
+  for (const flavor of flavors) {
+    let ordersOfFlavor = 0;
+    for (const drink of drinks) {
+      if (drink.flavors.includes(flavor.id)) {
+        ordersOfFlavor++;
+      }
+    }
+
+    flavorNames.push(flavor.flavor);
+    ordersPerFlavor.push(ordersOfFlavor);
+  }
+
+  res.render("metrics", {
+    userEmails,
+    ordersPerUser,
+    revenuePerUser,
+    menuItemNames,
+    ordersPerMenuItem,
+    revenuePerMenuItem,
+    toppingNames,
+    ordersPerTopping,
+    flavorNames,
+    ordersPerFlavor,
+    totalOrdersNum,
+    totalDrinkOrdersNum,
+    totalRevenue,
+    ordersPerHour,
+    revenuePerHour,
+  });
+});
+
 // Main/Home page of barista that displays all current orders
 route.get("/barista", async (req, res) => {
   const role = await getUserRoles(req.session.email);

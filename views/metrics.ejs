@@ -1,0 +1,321 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<input type="hidden" id="userEmails" value="<%=
+JSON.stringify(userEmails).replace("[", "").replace("]", "").replaceAll('"',"")
+%>" /> <input type="hidden" id="ordersPerUser" value="<%=
+JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="revenuePerUser" value="<%=
+JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="toppingNames"
+value="<%=JSON.stringify(toppingNames).replace("[", "").replace("]",
+"").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerTopping"
+value="<%= JSON.stringify(ordersPerTopping).replace("[", "").replace("]", "")
+%>" /> <input type="hidden" id="flavorNames"
+value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
+"").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
+value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
+/> <input type="hidden" id="ordersPerHour" value="<%=
+JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="revenuePerHour" value="<%=
+JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" />
+
+<div class="charts">
+  <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
+  <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
+  <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
+  <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
+</div>
+<h1>Metrics Per Menu Item:</h1>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th id="sortNeither" class="menuItemTable"><b>Menu Item</b></th>
+        <th id="sortNeither" class="menuItemTable"><b>Orders</b></th>
+        <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
+      </tr>
+    </thead>
+
+    <tbody id="menuItemTable">
+      <% for(let i = 0; i < menuItemNames.length; i++) { %>
+      <tr>
+        <td><%=menuItemNames[i]%></td>
+        <td><%=ordersPerMenuItem[i]%></td>
+        <td>$<%=revenuePerMenuItem[i]%></td>
+      </tr>
+      <%}%>
+    </tbody>
+
+    <thead>
+      <tr>
+        <th><b>Total</b></th>
+        <th><b><%=totalDrinkOrdersNum%></b></th>
+        <th><b>$<%=totalRevenue%></b></th>
+      </tr>
+    </thead>
+  </table>
+</div>
+<h1>Metrics Per User:</h1>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th id="sortNeither" class="userTable"><b>User</b></th>
+        <th id="sortNeither" class="userTable"><b>Orders</b></th>
+        <th id="sortNeither" class="userTable"><b>Revenue</b></th>
+      </tr>
+    </thead>
+
+    <tbody id="userTable">
+      <% for(let i = 0; i < userEmails.length; i++) { %>
+      <tr>
+        <td><%=userEmails[i]%></td>
+        <td><%=ordersPerUser[i]%></td>
+        <td>$<%=revenuePerUser[i]%></td>
+      </tr>
+      <%}%>
+    </tbody>
+
+    <thead>
+      <tr>
+        <th><b>Total</b></th>
+        <th><b><%=totalOrdersNum%></b></th>
+        <th><b>$<%=totalRevenue%></b></th>
+      </tr>
+    </thead>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const getCellValue = (tr, idx) =>
+    tr.children[idx].innerText || tr.children[idx].textContent;
+
+  const comparer = (idx, asc) => (a, b) =>
+    ((v1, v2) =>
+      v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2)
+        ? v1 - v2
+        : v1[0] === "$"
+        ? Number(v1.substring(1)) - Number(v2.substring(1))
+        : v2.toString().localeCompare(v1))(
+      getCellValue(asc ? a : b, idx),
+      getCellValue(asc ? b : a, idx)
+    );
+
+  document.querySelectorAll("th.userTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.userTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("userTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+  document.querySelectorAll("th.menuItemTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.menuItemTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("menuItemTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+
+  const toppingNames = document.getElementById("toppingNames").value.split(",");
+  const ordersPerTopping = document
+    .getElementById("ordersPerTopping")
+    .value.split(",");
+
+  const flavorNames = document.getElementById("flavorNames").value.split(",");
+  const ordersPerFlavor = document
+    .getElementById("ordersPerFlavor")
+    .value.split(",");
+
+  const hours = [
+    "12am",
+    "1am",
+    "2am",
+    "3am",
+    "4am",
+    "5am",
+    "6am",
+    "7am",
+    "8am",
+    "9am",
+    "10am",
+    "11am",
+    "12pm",
+    "1pm",
+    "2pm",
+    "3pm",
+    "4pm",
+    "5pm",
+    "6pm",
+    "7pm",
+    "8pm",
+    "9pm",
+    "10pm",
+    "11pm",
+  ];
+  const ordersPerHour = document
+    .getElementById("ordersPerHour")
+    .value.split(",");
+  const revenuePerHour = document
+    .getElementById("revenuePerHour")
+    .value.split(",");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
+
+    let toppingsChart = new Chart(toppingsChartCanvas, {
+      type: "bar",
+      data: {
+        labels: toppingNames,
+        datasets: [
+          {
+            label: "Orders Per Topping",
+            data: ordersPerTopping,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+
+    toppingsChartCanvas.style.width = "100%";
+    toppingsChartCanvas.style.height = "800px";
+
+    const flavorsChartCanvas = document.getElementById("flavorsChartCanvas");
+
+    let flavorsChart = new Chart(flavorsChartCanvas, {
+      type: "bar",
+      data: {
+        labels: flavorNames,
+        datasets: [
+          {
+            label: "Orders Per Flavor",
+            data: ordersPerFlavor,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+
+    flavorsChartCanvas.style.width = "100%";
+    flavorsChartCanvas.style.height = "800px";
+    const ordersPerHourCanvas = document.getElementById("ordersPerHourCanvas");
+    let ordersPerHourChart = new Chart(ordersPerHourCanvas, {
+      type: "line",
+      data: {
+        labels: hours,
+        datasets: [
+          {
+            label: "Total Orders Per Hour",
+            data: ordersPerHour,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+    ordersPerHourCanvas.style.width = "100%";
+    ordersPerHourCanvas.style.height = "800px";
+
+    let revenuePerHourChart = new Chart(
+      document.getElementById("revenuePerHourCanvas"),
+      {
+        type: "line",
+        data: {
+          labels: hours,
+          datasets: [
+            {
+              label: "Total Revenue Per Hour",
+              data: revenuePerHour,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+      }
+    );
+    revenuePerHourCanvas.style.width = "100%";
+    revenuePerHourCanvas.style.height = "800px";
+  });
+</script>
+
+<style>
+  table td,
+  table th {
+    border: 1px solid silver;
+  }
+
+  #sortNeither:after,
+  #sortDown:after,
+  #sortUp:after {
+    content: " ";
+    position: relative;
+    left: 2px;
+    border: 8px solid transparent;
+  }
+
+  #sortNeither:after,
+  #sortDown:after {
+    border-top-color: silver;
+  }
+
+  #sortNeither:after,
+  #sortUp:after {
+    border-bottom-color: silver;
+  }
+
+  #sortNeither,
+  #sortDown,
+  #sortUp {
+    padding-right: 10px;
+  }
+
+  .charts {
+    display: inline-block;
+  }
+</style>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
