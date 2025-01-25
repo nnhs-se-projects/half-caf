@@ -455,6 +455,10 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
+route.get("/metrics", (req, res) => {
+  res.render("metrics");
+});
+
 // Main/Home page of barista that displays all current orders
 route.get("/barista", async (req, res) => {
   const role = await getUserRoles(req.session.email);
