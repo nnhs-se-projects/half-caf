@@ -131,9 +131,10 @@ ws.onmessage = function (event) {
         ordersBadge.innerHTML = numOfOrders;
 
         const orderNotification = document.createElement("option");
+        orderNotification.setAttribute("disabled", "disabled");
         orderNotification.innerHTML = `order from room ${jsonData.order.room}`;
 
-        document.querySelector(".notification").appendChild(orderNotification);
+        document.getElementById("orders").appendChild(orderNotification);
       }
 
       isFirstDrink = false;
