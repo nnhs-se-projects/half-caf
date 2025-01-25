@@ -538,6 +538,7 @@ route.delete("/barista/:id", async (req, res) => {
 route.post("/barista/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = true;
+  order.timer = req.body.t;
   await order.save();
 
   const jsonData = JSON.stringify({
@@ -947,6 +948,7 @@ route.post("/teacherMyOrder", async (req, res) => {
       read: false,
       drinks: req.session.cart,
       totalPrice: total,
+      timer: "uncompleted",
     });
     await order.save();
     const user = await User.findOne({ email: req.session.email });
