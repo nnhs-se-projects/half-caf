@@ -455,8 +455,35 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
-route.get("/metrics", (req, res) => {
-  res.render("metrics");
+route.get("/metrics", async (req, res) => {
+  const orders = await Order.find();
+  const drinks = await Drink.find();
+  const users = await User.find();
+  const flavors = await Flavor.find();
+  const toppings = await Topping.find();
+
+  const userEmails = [];
+  const ordersPerUser = [];
+  const revenuePerUsers = [];
+  for (const user of users) {
+    let OrdersFromUser = 0;
+    let revenueFromUser = 0;
+    for (const order of orders) {
+      if (order.email === user.email) {
+        OrdersFromUser++;
+        revenueFromUser += order.totalPrice;
+      }
+    }
+    userEmails.push(user.email);
+    ordersPerUser.push(OrdersFromUser);
+    revenuePerUsers.push(revenueFromUser);
+  }
+
+  res.render("metrics", {
+    userEmails: userEmails,
+    ordersPerUser: ordersPerUser,
+    revenuePerUser: revenuePerUsers,
+  });
 });
 
 // Main/Home page of barista that displays all current orders

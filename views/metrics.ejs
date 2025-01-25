@@ -3,6 +3,54 @@
 <!-- /include header -->
 
 <h1>Metrics:</h1>
+<input
+  type="hidden"
+  id="userEmails"
+  value="<%= JSON.stringify(userEmails) %>"
+/>
+<input
+  type="hidden"
+  id="ordersPerUser"
+  value="<%= JSON.stringify(ordersPerUser) %>"
+/>
+<input
+  type="hidden"
+  id="revenuePerUser"
+  value="<%= JSON.stringify(revenuePerUser) %>"
+/>
+
+<div>
+  <canvas id="ordersPerUserChart" width="900" height="900"> </canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const userEmails = document.getElementById("userEmails").value.split(",");
+  const ordersPerUser = document
+    .getElementById("ordersPerUser")
+    .value.split(",");
+  console.log(ordersPerUser);
+  console.log(userEmails);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    let userOrdersElement = document.getElementById("ordersPerUserChart");
+    let userOrdersChart = new Chart(userOrdersElement, {
+      type: "bar",
+      data: {
+        labels: userEmails,
+        datasets: [
+          {
+            label: "Orders",
+            data: ordersPerUser,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+  });
+</script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
