@@ -17,39 +17,16 @@ value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
 "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
 value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
 /> <input type="hidden" id="ordersPerHour" value="<%=
-JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
+JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="revenuePerHour" value="<%=
+JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" />
 
-<h1>Metrics Per User:</h1>
-<div>
-  <table>
-    <thead>
-      <tr>
-        <th id="sortNeither" class="userTable"><b>User</b></th>
-        <th id="sortNeither" class="userTable"><b>Orders</b></th>
-        <th id="sortNeither" class="userTable"><b>Revenue</b></th>
-      </tr>
-    </thead>
-
-    <tbody id="userTable">
-      <% for(let i = 0; i < userEmails.length; i++) { %>
-      <tr>
-        <td><%=userEmails[i]%></td>
-        <td><%=ordersPerUser[i]%></td>
-        <td>$<%=revenuePerUser[i]%></td>
-      </tr>
-      <%}%>
-    </tbody>
-
-    <thead>
-      <tr>
-        <th><b>Total</b></th>
-        <th><b><%=totalOrdersNum%></b></th>
-        <th><b>$<%=totalRevenue%></b></th>
-      </tr>
-    </thead>
-  </table>
+<div class="charts">
+  <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
+  <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
+  <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
+  <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
 </div>
-
 <h1>Metrics Per Menu Item:</h1>
 <div>
   <table>
@@ -80,11 +57,35 @@ JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
     </thead>
   </table>
 </div>
+<h1>Metrics Per User:</h1>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th id="sortNeither" class="userTable"><b>User</b></th>
+        <th id="sortNeither" class="userTable"><b>Orders</b></th>
+        <th id="sortNeither" class="userTable"><b>Revenue</b></th>
+      </tr>
+    </thead>
 
-<div class="charts">
-  <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
-  <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
-  <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
+    <tbody id="userTable">
+      <% for(let i = 0; i < userEmails.length; i++) { %>
+      <tr>
+        <td><%=userEmails[i]%></td>
+        <td><%=ordersPerUser[i]%></td>
+        <td>$<%=revenuePerUser[i]%></td>
+      </tr>
+      <%}%>
+    </tbody>
+
+    <thead>
+      <tr>
+        <th><b>Total</b></th>
+        <th><b><%=totalOrdersNum%></b></th>
+        <th><b>$<%=totalRevenue%></b></th>
+      </tr>
+    </thead>
+  </table>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -191,6 +192,9 @@ JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
   const ordersPerHour = document
     .getElementById("ordersPerHour")
     .value.split(",");
+  const revenuePerHour = document
+    .getElementById("revenuePerHour")
+    .value.split(",");
 
   document.addEventListener("DOMContentLoaded", () => {
     const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
@@ -234,7 +238,6 @@ JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
 
     flavorsChartCanvas.style.width = "100%";
     flavorsChartCanvas.style.height = "800px";
-    console.log(ordersPerHour);
     const ordersPerHourCanvas = document.getElementById("ordersPerHourCanvas");
     let ordersPerHourChart = new Chart(ordersPerHourCanvas, {
       type: "line",
@@ -242,7 +245,7 @@ JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
         labels: hours,
         datasets: [
           {
-            label: "Orders Per Hour",
+            label: "Total Orders Per Hour",
             data: ordersPerHour,
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
@@ -251,6 +254,29 @@ JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" />
         ],
       },
     });
+    ordersPerHourCanvas.style.width = "100%";
+    ordersPerHourCanvas.style.height = "800px";
+
+    let revenuePerHourChart = new Chart(
+      document.getElementById("revenuePerHourCanvas"),
+      {
+        type: "line",
+        data: {
+          labels: hours,
+          datasets: [
+            {
+              label: "Total Revenue Per Hour",
+              data: revenuePerHour,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+      }
+    );
+    revenuePerHourCanvas.style.width = "100%";
+    revenuePerHourCanvas.style.height = "800px";
   });
 </script>
 
