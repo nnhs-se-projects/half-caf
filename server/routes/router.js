@@ -1071,7 +1071,9 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
 route.post("/customizeDrink/:name", async (req, res) => {
   // drink user is adding to order
-  for (let i = 0; i < req.body.quantity; i++) {
+  let quantity = req.body.quantity;
+  quantity = quantity < 1 ? 1 : quantity > 9 ? 9 : quantity;
+  for (let i = 0; i < quantity; i++) {
     const drink = new Drink({
       name: req.body.name,
       price: req.body.price,
