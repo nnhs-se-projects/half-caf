@@ -19,7 +19,11 @@ value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
 /> <input type="hidden" id="ordersPerHour" value="<%=
 JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
 type="hidden" id="revenuePerHour" value="<%=
-JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" />
+JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="averageTimerPerHour" value="<%=
+JSON.stringify(averageTimerPerHour).replace("[", "").replace("]", "") %>" />
+<input type="hidden" id="averageTimer" value="<%=
+JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
 
 <div class="charts">
   <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
