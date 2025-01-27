@@ -151,6 +151,10 @@ route.get("/logout", async (req, res) => {
     });
   }
 
+  for (const drink of req.session.cart) {
+    await Drink.findByIdAndRemove(drink.id);
+  }
+
   // Destroy session/remove user data from session
   req.session.destroy((err) => {
     if (err) {
@@ -1134,6 +1138,7 @@ route.get("/updateCart", async (req, res) => {});
 
 route.post("/updateCart", async (req, res) => {
   console.log("Post Updating cart");
+  await Drink.findByIdAndRemove(req.session.cart[req.body.index]);
   req.session.cart.splice(req.body.index, 1);
 
   res.status(200).end();
