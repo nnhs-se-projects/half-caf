@@ -30,6 +30,8 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
   <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
   <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
   <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
+  <h6>Average Timer (all-time): <%=averageTimer%></h6>
+  <canvas id="averageTimerPerHourCanvas" width="1980" height="800"></canvas>
 </div>
 <h1>Metrics Per Menu Item:</h1>
 <div>
@@ -200,6 +202,11 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
     .getElementById("revenuePerHour")
     .value.split(",");
 
+  const averageTimerPerHour = document
+    .getElementById("averageTimerPerHour")
+    .value.split(",");
+  const averageTimer = document.getElementById("averageTimer").value;
+
   document.addEventListener("DOMContentLoaded", () => {
     const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
 
@@ -281,6 +288,27 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
     );
     revenuePerHourCanvas.style.width = "100%";
     revenuePerHourCanvas.style.height = "800px";
+
+    let averageTimerPerHourChart = new Chart(
+      document.getElementById("averageTimerPerHourCanvas"),
+      {
+        type: "line",
+        data: {
+          labels: hours,
+          datasets: [
+            {
+              label: "Average Timer Per Hour",
+              data: averageTimerPerHour,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+      }
+    );
+    averageTimerPerHourCanvas.style.width = "100%";
+    averageTimerPerHourCanvas.style.height = "800px";
   });
 </script>
 
