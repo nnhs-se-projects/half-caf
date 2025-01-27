@@ -584,7 +584,7 @@ route.get("/metrics", async (req, res) => {
     let ordersFromUser = 0;
     let revenueFromUser = 0;
     for (const order of orders) {
-      if (order.email === user.email) {
+      if (order.complete && order.email === user.email) {
         ordersFromUser++;
         revenueFromUser += order.totalPrice;
       }
@@ -600,18 +600,16 @@ route.get("/metrics", async (req, res) => {
   const ordersPerMenuItem = [];
   const revenuePerMenuItem = [];
   let totalDrinkOrdersNum = 0;
-  let totalRevenueDrinks = 0;
   for (const menuItem of menuItems) {
     let ordersOfMenuItem = 0;
     let revenueOfMenuItem = 0;
     for (const drink of drinks) {
-      if (drink.name === menuItem.name) {
+      if (drink.completed && drink.name === menuItem.name) {
         ordersOfMenuItem++;
         revenueOfMenuItem += drink.price;
       }
     }
 
-    totalRevenueDrinks += revenueOfMenuItem;
     totalDrinkOrdersNum += ordersOfMenuItem;
     menuItemNames.push(menuItem.name);
     ordersPerMenuItem.push(ordersOfMenuItem);
@@ -623,7 +621,7 @@ route.get("/metrics", async (req, res) => {
   for (const topping of toppings) {
     let ordersOfTopping = 0;
     for (const drink of drinks) {
-      if (drink.toppings.includes(topping.id)) {
+      if (drink.completed && drink.toppings.includes(topping.id)) {
         ordersOfTopping++;
       }
     }
@@ -637,7 +635,7 @@ route.get("/metrics", async (req, res) => {
   for (const flavor of flavors) {
     let ordersOfFlavor = 0;
     for (const drink of drinks) {
-      if (drink.flavors.includes(flavor.id)) {
+      if (drink.completed && drink.flavors.includes(flavor.id)) {
         ordersOfFlavor++;
       }
     }
@@ -660,7 +658,6 @@ route.get("/metrics", async (req, res) => {
     totalOrdersNum,
     totalDrinkOrdersNum,
     totalRevenue,
-    totalRevenueDrinks,
     ordersPerHour,
     revenuePerHour,
   });
@@ -752,6 +749,12 @@ route.post("/barista/:id", async (req, res) => {
   order.timer = req.body.t;
   await order.save();
 
+  for (const drinkId of order.drinks) {
+    const drink = await Drink.findById(drinkId);
+    drink.completed = true;
+    await drink.save();
+  }
+
   const jsonData = JSON.stringify({
     message: "Order finished",
     email: order.email,
@@ -827,6 +830,13 @@ route.post("/completed/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = false;
   await order.save();
+
+  for (const drinkId of order.drinks) {
+    const drink = await Drink.findById(drinkId);
+    drink.completed = false;
+    await drink.save();
+  }
+
   res.status(201).end();
 });
 
@@ -1089,6 +1099,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       temps: req.body.temp,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
+      completed: false,
     });
 
     await drink.save();
