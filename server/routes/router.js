@@ -600,6 +600,7 @@ route.get("/metrics", async (req, res) => {
   const ordersPerMenuItem = [];
   const revenuePerMenuItem = [];
   let totalDrinkOrdersNum = 0;
+  let totalRevenueDrinks = 0;
   for (const menuItem of menuItems) {
     let ordersOfMenuItem = 0;
     let revenueOfMenuItem = 0;
@@ -610,6 +611,7 @@ route.get("/metrics", async (req, res) => {
       }
     }
 
+    totalRevenueDrinks += revenueOfMenuItem;
     totalDrinkOrdersNum += ordersOfMenuItem;
     menuItemNames.push(menuItem.name);
     ordersPerMenuItem.push(ordersOfMenuItem);
@@ -658,6 +660,7 @@ route.get("/metrics", async (req, res) => {
     totalOrdersNum,
     totalDrinkOrdersNum,
     totalRevenue,
+    totalRevenueDrinks,
     ordersPerHour,
     revenuePerHour,
   });
