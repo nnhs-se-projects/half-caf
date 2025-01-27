@@ -152,7 +152,7 @@ route.get("/logout", async (req, res) => {
   }
 
   for (const drink of req.session.cart) {
-    await Drink.findByIdAndRemove(drink.id);
+    await Drink.findByIdAndRemove(drink);
   }
 
   // Destroy session/remove user data from session
