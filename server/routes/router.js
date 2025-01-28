@@ -1362,8 +1362,15 @@ route.get("/orderConfirmation", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
+    //console.log(req.session.cart);
+    const mOrder = req.session.cart[0];
+    console.log(mOrder);
     req.session.cart = [];
-    res.render("orderConfirmation", { email: req.session.email });
+
+    res.render("orderConfirmation", {
+      email: req.session.email,
+      order: mOrder,
+    });
   }
 });
 

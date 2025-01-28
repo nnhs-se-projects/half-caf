@@ -4,6 +4,32 @@
   <div>
     <h1>Thanks for supporting the Half Caf!</h1>
   </div>
+
+  <!-- Progress Bar Section -->
+  <div id="progress-bar-container" data-timer="<%= order ? order.timer : 0 %>">
+    <label for="progress-bar">Order Progress:</label>
+    <progress id="progress-bar" value="0" max="100"></progress>
+  </div>
 </main>
 
 <%- include('include/_footer') %>
+
+<script>
+  // Get the order.timer value from the data attribute
+  const progressBarContainer = document.getElementById(
+    "progress-bar-container"
+  );
+  const orderTimer = progressBarContainer.getAttribute("data-timer");
+
+  // Function to update the progress bar
+  function updateProgressBar(value) {
+    const progressBar = document.getElementById("progress-bar");
+    if (progressBar) {
+      progressBar.value = value;
+    }
+  }
+
+  // Example usage: Update progress bar with order.timer value
+  console.log("Order timer:", orderTimer);
+  updateProgressBar(orderTimer);
+</script>
