@@ -473,110 +473,222 @@ route.get("/metrics", async (req, res) => {
   const revenuePerHour = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ];
+  const averageTimerPerHour = [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ];
+  let totalTimer = 0;
+  let totalOrders = 0;
   for (const order of orders) {
     if (order.complete === false) {
       continue;
     }
     const time = order.timestamp.substring(14, 20);
-    switch (true) {
-      case time.substring(0, 2) === "12" && time.indexOf("a") > -1:
-        ordersPerHour[0]++;
-        revenuePerHour[0] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "1:" && time.indexOf("a") > -1:
-        ordersPerHour[1]++;
-        revenuePerHour[1] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "2:" && time.indexOf("a") > -1:
-        ordersPerHour[2]++;
-        revenuePerHour[2] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "3:" && time.indexOf("a") > -1:
-        ordersPerHour[3]++;
-        revenuePerHour[3] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "4:" && time.indexOf("a") > -1:
-        ordersPerHour[4]++;
-        revenuePerHour[4] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "5:" && time.indexOf("a") > -1:
-        ordersPerHour[5]++;
-        revenuePerHour[5] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "6:" && time.indexOf("a") > -1:
-        ordersPerHour[6]++;
-        revenuePerHour[6] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "7:" && time.indexOf("a") > -1:
-        ordersPerHour[7]++;
-        revenuePerHour[7] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "8:" && time.indexOf("a") > -1:
-        ordersPerHour[8]++;
-        revenuePerHour[8] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "9:" && time.indexOf("a") > -1:
-        ordersPerHour[9]++;
-        revenuePerHour[9] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "10" && time.indexOf("a") > -1:
-        ordersPerHour[10]++;
-        revenuePerHour[10] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "11" && time.indexOf("a") > -1:
-        ordersPerHour[11]++;
-        revenuePerHour[11] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "12" && time.indexOf("p") > -1:
-        ordersPerHour[12]++;
-        revenuePerHour[12] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "1:" && time.indexOf("p") > -1:
-        ordersPerHour[13]++;
-        revenuePerHour[13] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "2:" && time.indexOf("p") > -1:
-        ordersPerHour[14]++;
-        revenuePerHour[14] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "3:" && time.indexOf("p") > -1:
-        ordersPerHour[15]++;
-        revenuePerHour[15] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "4:" && time.indexOf("p") > -1:
-        ordersPerHour[16]++;
-        revenuePerHour[16] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "5:" && time.indexOf("p") > -1:
-        ordersPerHour[17]++;
-        revenuePerHour[17] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "6:" && time.indexOf("p") > -1:
-        ordersPerHour[18]++;
-        revenuePerHour[18] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "7:" && time.indexOf("p") > -1:
-        ordersPerHour[19]++;
-        revenuePerHour[19] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "8:" && time.indexOf("p") > -1:
-        ordersPerHour[20]++;
-        revenuePerHour[20] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "9:" && time.indexOf("p") > -1:
-        ordersPerHour[21]++;
-        revenuePerHour[21] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "10" && time.indexOf("p") > -1:
-        ordersPerHour[22]++;
-        revenuePerHour[22] += order.totalPrice;
-        break;
-      case time.substring(0, 2) === "11" && time.indexOf("p") > -1:
-        ordersPerHour[23]++;
-        revenuePerHour[23] += order.totalPrice;
-        break;
+    if (order.timer !== "uncompleted") {
+      switch (true) {
+        case time.substring(0, 2) === "12" && time.indexOf("a") > -1:
+          ordersPerHour[0]++;
+          revenuePerHour[0] += order.totalPrice;
+          averageTimerPerHour[0].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "1:" && time.indexOf("a") > -1:
+          ordersPerHour[1]++;
+          revenuePerHour[1] += order.totalPrice;
+          averageTimerPerHour[1].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "2:" && time.indexOf("a") > -1:
+          ordersPerHour[2]++;
+          revenuePerHour[2] += order.totalPrice;
+          averageTimerPerHour[2].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "3:" && time.indexOf("a") > -1:
+          ordersPerHour[3]++;
+          revenuePerHour[3] += order.totalPrice;
+          averageTimerPerHour[3].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "4:" && time.indexOf("a") > -1:
+          ordersPerHour[4]++;
+          revenuePerHour[4] += order.totalPrice;
+          averageTimerPerHour[4].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "5:" && time.indexOf("a") > -1:
+          ordersPerHour[5]++;
+          revenuePerHour[5] += order.totalPrice;
+          averageTimerPerHour[5].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+
+          break;
+        case time.substring(0, 2) === "6:" && time.indexOf("a") > -1:
+          ordersPerHour[6]++;
+          revenuePerHour[6] += order.totalPrice;
+          averageTimerPerHour[6].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "7:" && time.indexOf("a") > -1:
+          ordersPerHour[7]++;
+          revenuePerHour[7] += order.totalPrice;
+          averageTimerPerHour[7].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "8:" && time.indexOf("a") > -1:
+          ordersPerHour[8]++;
+          revenuePerHour[8] += order.totalPrice;
+          averageTimerPerHour[8].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "9:" && time.indexOf("a") > -1:
+          ordersPerHour[9]++;
+          revenuePerHour[9] += order.totalPrice;
+          averageTimerPerHour[9].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "10" && time.indexOf("a") > -1:
+          ordersPerHour[10]++;
+          revenuePerHour[10] += order.totalPrice;
+          averageTimerPerHour[10].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "11" && time.indexOf("a") > -1:
+          ordersPerHour[11]++;
+          revenuePerHour[11] += order.totalPrice;
+          averageTimerPerHour[11].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "12" && time.indexOf("p") > -1:
+          ordersPerHour[12]++;
+          revenuePerHour[12] += order.totalPrice;
+          averageTimerPerHour[12].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "1:" && time.indexOf("p") > -1:
+          ordersPerHour[13]++;
+          revenuePerHour[13] += order.totalPrice;
+          averageTimerPerHour[13].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "2:" && time.indexOf("p") > -1:
+          ordersPerHour[14]++;
+          revenuePerHour[14] += order.totalPrice;
+          averageTimerPerHour[14].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "3:" && time.indexOf("p") > -1:
+          ordersPerHour[15]++;
+          revenuePerHour[15] += order.totalPrice;
+          averageTimerPerHour[15].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "4:" && time.indexOf("p") > -1:
+          ordersPerHour[16]++;
+          revenuePerHour[16] += order.totalPrice;
+          averageTimerPerHour[16].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "5:" && time.indexOf("p") > -1:
+          ordersPerHour[17]++;
+          revenuePerHour[17] += order.totalPrice;
+          averageTimerPerHour[17].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "6:" && time.indexOf("p") > -1:
+          ordersPerHour[18]++;
+          revenuePerHour[18] += order.totalPrice;
+          averageTimerPerHour[18].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "7:" && time.indexOf("p") > -1:
+          ordersPerHour[19]++;
+          revenuePerHour[19] += order.totalPrice;
+          averageTimerPerHour[19].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "8:" && time.indexOf("p") > -1:
+          ordersPerHour[20]++;
+          revenuePerHour[20] += order.totalPrice;
+          averageTimerPerHour[20].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "9:" && time.indexOf("p") > -1:
+          ordersPerHour[21]++;
+          revenuePerHour[21] += order.totalPrice;
+          averageTimerPerHour[21].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "10" && time.indexOf("p") > -1:
+          ordersPerHour[22]++;
+          revenuePerHour[22] += order.totalPrice;
+          averageTimerPerHour[22].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+        case time.substring(0, 2) === "11" && time.indexOf("p") > -1:
+          ordersPerHour[23]++;
+          revenuePerHour[23] += order.totalPrice;
+          averageTimerPerHour[23].push(Number(order.timer));
+          totalTimer += Number(order.timer);
+          totalOrders++;
+          break;
+      }
     }
   }
+
+  for (let hour of averageTimerPerHour) {
+    let sum = 0;
+    for (let i = 0; i < hour.length; i++) {
+      sum += hour[i];
+    }
+    hour = sum / hour.length;
+  }
+  const averageTimer = totalTimer / totalOrders;
 
   const userEmails = [];
   const ordersPerUser = [];
@@ -646,7 +758,8 @@ route.get("/metrics", async (req, res) => {
     flavorNames.push(flavor.flavor);
     ordersPerFlavor.push(ordersOfFlavor);
   }
-
+  console.log(averageTimerPerHour);
+  console.log(averageTimer);
   res.render("metrics", {
     userEmails,
     ordersPerUser,
@@ -663,6 +776,8 @@ route.get("/metrics", async (req, res) => {
     totalRevenue,
     ordersPerHour,
     revenuePerHour,
+    averageTimerPerHour,
+    averageTimer,
   });
 });
 
