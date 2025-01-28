@@ -1,19 +1,7 @@
-function convertToSeconds(timeString) {
-  const timeParts = timeString.split(" ");
-  let totalSeconds = 0;
-
-  for (const part of timeParts) {
-    if (part.endsWith("h")) {
-      totalSeconds += parseInt(part) * 3600;
-    } else if (part.endsWith("m")) {
-      totalSeconds += parseInt(part) * 60;
-    } else if (part.endsWith("s")) {
-      totalSeconds += parseInt(part);
-    }
-  }
-
-  return totalSeconds;
-}
+import {
+  addListenerToCancelButtons,
+  addListenerToFinishButtons,
+} from "../js/barista.js";
 
 document.addEventListener("click", () => {
   // some browsers don't allow request on page load, so just request whenever the user clicks.
@@ -53,6 +41,7 @@ ws.onmessage = function (event) {
     jsonData.message === "New order placed" &&
     window.location.href.indexOf("/barista") > -1
   ) {
+    console.log("order recieved");
     sound.play();
     let isFirstDrink = true;
     for (const drink of jsonData.drinks) {
@@ -72,6 +61,7 @@ ws.onmessage = function (event) {
             <span
               class="time-counter"
               data-timestamp="${jsonData.order.timestamp}"
+              data-order-id="${jsonData.order._id}"
             ></span>
           </th>
           <th scope="?">
@@ -98,6 +88,7 @@ ws.onmessage = function (event) {
             <span
               class="time-counter"
               data-timestamp="${jsonData.order.timestamp}"
+              data-order-id="${jsonData.order._id}"
             ></span>
           </th>
           <th scope="?">part of the above order</th>
@@ -105,71 +96,17 @@ ws.onmessage = function (event) {
       }
 
       if (orderTable !== null) {
-        orderTable.appendChild(drinkElement);
-        const cancelButtons = document.querySelectorAll("button.cancelButton");
-
-        let numOfOrders = 0;
-        for (const cancelButton of cancelButtons) {
-          cancelButton.addEventListener("click", async () => {
-            if (!confirm("Are you sure you want to cancel this order?")) {
-              return;
-            }
-
-            const message = prompt(
-              "Please enter a message for the cancellation:"
-            );
-            const orderId = cancelButton.value;
-            const response = await fetch(`/barista/${orderId}`, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ message }),
-            });
-
-            if (response.ok) {
-              window.location = "/barista";
-            } else {
-              console.log("error deleting order");
-            }
-          });
-
-          numOfOrders++;
-        }
-
-        const finishButtons = document.querySelectorAll("button.finishButton");
-
-        for (const finishButton of finishButtons) {
-          finishButton.addEventListener("click", async () => {
-            const orderId = finishButton.value;
-            const counter = document.querySelector(
-              `.time-counter[data-order-id="${orderId}"]`
-            );
-            let timerVal = counter.textContent;
-            timerVal = convertToSeconds(timerVal);
-            const response = await fetch(`/barista/${orderId}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ t: timerVal }),
-            });
-
-            if (response.ok) {
-              window.location = "/barista";
-            } else {
-              console.log("error finishing order");
-            }
-          });
-        }
+        orderTable.getElementsByTagName("thead")[0].appendChild(drinkElement);
+        addListenerToCancelButtons();
+        addListenerToFinishButtons();
 
         // update notification dropdown
         let ordersBadge = document.querySelector(".badge");
         if (ordersBadge !== null) {
-          ordersBadge.innerHTML = numOfOrders;
+          ordersBadge.innerHTML = orderTable.rows.length;
         } else {
           ordersBadge = document.createElement("span");
-          ordersBadge.innerHTML = numOfOrders;
+          ordersBadge.innerHTML = orderTable.rows.length;
           ordersBadge.className = "badge";
           document.querySelector(".notification").appendChild(ordersBadge);
         }

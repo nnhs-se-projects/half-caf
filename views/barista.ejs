@@ -1,6 +1,3 @@
-<!--header for barista pages-->
-<!--note this page is very similar to the completed orders page,
-the only difference is the complete and finish buttons vs the incomplete button-->
 <%- include('include/_baristaHeader') %>
 
 <head>
@@ -24,32 +21,17 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="col">Cancel Order</th>
           <th scope="col">Finish Order</th>
         </tr>
-        <!--count is used for tempDrink-->
         <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
-        <!-- < looping through the each order to display each> -->
-        <% for (let order of orders){%> <% showButtons = true; %>
-        <!--displays only orders that HAVE NOT been completed-->
-        <% if(order.complete === false && order.cancelled === false){%>
-        <!--loops through the drinks in an order-->
-        <% for(let i = 0; i < order.drinks.length; i++){%>
-        <!--gets the temperature of the drink-->
-        <% let tempDrink = drinkMap.get(count)[i]; %>
-        <!--makes the color change-->
-        <% if(color%2===0){%>
+        <% for (let order of orders){%> <% showButtons = true; %> <%
+        if(order.complete === false && order.cancelled === false){%> <% for(let
+        i = 0; i < order.drinks.length; i++){%> <% let tempDrink =
+        drinkMap.get(count)[i]; %> <% if(color%2===0){%>
         <tr id="b">
-          <%}%>
-          <!-- -->
-          <% if(color%2!==0){%>
+          <%}%> <% if(color%2!==0){%>
         </tr>
 
         <tr id="c">
           <%}%>
-          <!--Displays the orders in the table-->
-          <!--Each drink in an order is displayed as separate items on the table-->
-          <!--Helps to make sure baristas do not forget to make anything-->
-          <!--Right now orders has a complete property but this will need to be switched to drink-->
-          <!--Complete button needs to mark an individual drink as complete and move it to the
-          completed orders page rather than an entire order-->
           <th scope="?"><%=order.room%></th>
           <th scope="?"><%=order.email%></th>
           <th scope="?"><%=tempDrink.name%></th>
@@ -66,9 +48,6 @@ the only difference is the complete and finish buttons vs the incomplete button-
             ></span>
           </th>
 
-          <!--Complete button and cancel button,
-            Complete button has some code, cancel button has not yet been worked on,
-            There is more info in the Trello on what each button needs to do-->
           <% if(showButtons === true) { %>
           <th scope="?">
             <button value="<%=order.id%>" class="cancelButton">Cancel</button>
@@ -81,12 +60,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
           <th scope="?"></th>
           <%}%>
         </tr>
-        <!--  -->
-        <%}%>
-        <!--  -->
-        <%color++;}%>
-        <!--  -->
-        <%count++;}%>
+        <%}%> <%color++;}%> <%count++;}%>
       </thead>
     </table>
   </div>
@@ -114,9 +88,7 @@ the only difference is the complete and finish buttons vs the incomplete button-
   }
 </style>
 
-<!-- connect to js -->
-
-<script src="/js/barista.js"></script>
+<script type="module" src="/js/barista.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
