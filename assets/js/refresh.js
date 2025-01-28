@@ -164,8 +164,15 @@ ws.onmessage = function (event) {
         }
 
         // update notification dropdown
-        const ordersBadge = document.querySelector(".badge");
-        ordersBadge.innerHTML = numOfOrders;
+        let ordersBadge = document.querySelector(".badge");
+        if (ordersBadge !== null) {
+          ordersBadge.innerHTML = numOfOrders;
+        } else {
+          ordersBadge = document.createElement("span");
+          ordersBadge.innerHTML = numOfOrders;
+          ordersBadge.className = "badge";
+          document.querySelector(".notification").appendChild(ordersBadge);
+        }
 
         const orderNotification = document.createElement("option");
         orderNotification.setAttribute("disabled", "disabled");
