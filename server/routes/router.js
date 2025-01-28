@@ -151,6 +151,10 @@ route.get("/logout", async (req, res) => {
     });
   }
 
+  for (const drink of req.session.cart) {
+    await Drink.findByIdAndRemove(drink);
+  }
+
   // Destroy session/remove user data from session
   req.session.destroy((err) => {
     if (err) {
@@ -470,6 +474,9 @@ route.get("/metrics", async (req, res) => {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ];
   for (const order of orders) {
+    if (order.complete === false) {
+      continue;
+    }
     const time = order.timestamp.substring(14, 20);
     switch (true) {
       case time.substring(0, 2) === "12" && time.indexOf("a") > -1:
@@ -580,7 +587,7 @@ route.get("/metrics", async (req, res) => {
     let ordersFromUser = 0;
     let revenueFromUser = 0;
     for (const order of orders) {
-      if (order.email === user.email) {
+      if (order.complete === true && order.email === user.email) {
         ordersFromUser++;
         revenueFromUser += order.totalPrice;
       }
@@ -600,7 +607,7 @@ route.get("/metrics", async (req, res) => {
     let ordersOfMenuItem = 0;
     let revenueOfMenuItem = 0;
     for (const drink of drinks) {
-      if (drink.name === menuItem.name) {
+      if (drink.completed === true && drink.name === menuItem.name) {
         ordersOfMenuItem++;
         revenueOfMenuItem += drink.price;
       }
@@ -617,7 +624,7 @@ route.get("/metrics", async (req, res) => {
   for (const topping of toppings) {
     let ordersOfTopping = 0;
     for (const drink of drinks) {
-      if (drink.toppings.includes(topping.id)) {
+      if (drink.completed === true && drink.toppings.includes(topping.id)) {
         ordersOfTopping++;
       }
     }
@@ -631,7 +638,7 @@ route.get("/metrics", async (req, res) => {
   for (const flavor of flavors) {
     let ordersOfFlavor = 0;
     for (const drink of drinks) {
-      if (drink.flavors.includes(flavor.id)) {
+      if (drink.completed === true && drink.flavors.includes(flavor.id)) {
         ordersOfFlavor++;
       }
     }
@@ -745,6 +752,12 @@ route.post("/barista/:id", async (req, res) => {
   order.timer = req.body.t;
   await order.save();
 
+  for (const drinkId of order.drinks) {
+    const drink = await Drink.findById(drinkId);
+    drink.completed = true;
+    await drink.save();
+  }
+
   const jsonData = JSON.stringify({
     message: "Order finished",
     email: order.email,
@@ -820,6 +833,13 @@ route.post("/completed/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = false;
   await order.save();
+
+  for (const drinkId of order.drinks) {
+    const drink = await Drink.findById(drinkId);
+    drink.completed = false;
+    await drink.save();
+  }
+
   res.status(201).end();
 });
 
@@ -1082,6 +1102,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       temps: req.body.temp,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
+      completed: false,
     });
 
     await drink.save();
@@ -1134,6 +1155,7 @@ route.get("/updateCart", async (req, res) => {});
 
 route.post("/updateCart", async (req, res) => {
   console.log("Post Updating cart");
+  await Drink.findByIdAndRemove(req.session.cart[req.body.index]);
   req.session.cart.splice(req.body.index, 1);
 
   res.status(200).end();
