@@ -15,7 +15,7 @@
       #modelContainer {
         width: 100px; /* Match the width of the current image */
         height: 100px; /* Match the height of the current image */
-        background-color: #11191f; /* Match the background color */
+        background-color: white; /* Set the background color to white */
       }
       #pageTitle {
         margin-left: 20px; /* Space between the cup and the text */
@@ -43,9 +43,9 @@
         camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for square canvas
         camera.position.set(0, 1, 3); // Move the camera back to fit the entire cup
 
-        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(100, 100); // Match the size of the container
-        renderer.setClearColor(0x11191f); // Set the background color to match the specified color
+        renderer.setClearColor(0xffffff, 0); // Set the background color to transparent
         document.getElementById("modelContainer").appendChild(renderer.domElement);
 
         // Add ambient light
@@ -64,7 +64,7 @@
 
         const textureLoader = new THREE.TextureLoader();
         textureLoader.load(
-          '/models/WHITEBGHUSKIE.png',
+          '/models/GRAYBGHUSKIE.png',
           function (texture) {
             const loader = new THREE.GLTFLoader();
             loader.load(
@@ -77,10 +77,13 @@
                     // Check if this is the center area mesh
                     if (child.name === 'Cylinder001_2') { // this is the actual name of the center area mesh
                       child.material.map = texture;
+                    } else {
+                      child.material.color = new THREE.Color(0x1d2831); // Set the color to match the background
                     }
-                    else{
-                      child.material.color = new THREE.Color(0xFFFFFF); // Set the color to match the background
-                    }
+                    // Turn off reflections
+                    child.material.envMap = null;
+                    child.material.reflectivity = 0;
+                    child.material.metalness = 0;
                   }
                 });
 
@@ -212,6 +215,9 @@
           }
         }
         steamParticles.geometry.attributes.position.needsUpdate = true;
+
+        // Set the color of the steam particles to a darker color
+        steamParticles.material.color.set(0x555555);
 
         renderer.render(scene, camera);
       }

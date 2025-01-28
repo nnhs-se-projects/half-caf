@@ -67,7 +67,6 @@
       placeholder="1"
       maxlength="1"
       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57)) && this.value.length < 1"
-      style="appearance: textfield"
     />
     <input type="submit" class="submit" value="Add to Cart" />
   </div>
@@ -90,6 +89,15 @@
   }
   h6 {
     margin-bottom: 1.5%;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 </style>
 

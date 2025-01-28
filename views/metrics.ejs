@@ -19,13 +19,19 @@ value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
 /> <input type="hidden" id="ordersPerHour" value="<%=
 JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
 type="hidden" id="revenuePerHour" value="<%=
-JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" />
+JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" /> <input
+type="hidden" id="averageTimerPerHour" value="<%=
+JSON.stringify(averageTimerPerHour).replace("[", "").replace("]", "") %>" />
+<input type="hidden" id="averageTimer" value="<%=
+JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
 
 <div class="charts">
   <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
   <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
   <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
   <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
+  <h6>Average Time to complete order (all-time): <%=averageTimer%>(s)</h6>
+  <canvas id="averageTimerPerHourCanvas" width="1980" height="800"></canvas>
 </div>
 <h1>Metrics Per Menu Item:</h1>
 <div>
@@ -196,6 +202,11 @@ JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" />
     .getElementById("revenuePerHour")
     .value.split(",");
 
+  const averageTimerPerHour = document
+    .getElementById("averageTimerPerHour")
+    .value.split(",");
+  const averageTimer = document.getElementById("averageTimer").value;
+
   document.addEventListener("DOMContentLoaded", () => {
     const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
 
@@ -277,6 +288,27 @@ JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" />
     );
     revenuePerHourCanvas.style.width = "100%";
     revenuePerHourCanvas.style.height = "800px";
+
+    let averageTimerPerHourChart = new Chart(
+      document.getElementById("averageTimerPerHourCanvas"),
+      {
+        type: "line",
+        data: {
+          labels: hours,
+          datasets: [
+            {
+              label: "Average Order Completion Time Per Hour (seconds)",
+              data: averageTimerPerHour,
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+      }
+    );
+    averageTimerPerHourCanvas.style.width = "100%";
+    averageTimerPerHourCanvas.style.height = "800px";
   });
 </script>
 

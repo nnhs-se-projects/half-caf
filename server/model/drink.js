@@ -40,6 +40,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  completed: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const Drink = mongoose.model("Drink", schema);
