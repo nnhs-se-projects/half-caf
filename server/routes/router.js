@@ -474,6 +474,9 @@ route.get("/metrics", async (req, res) => {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ];
   for (const order of orders) {
+    if (order.complete === false) {
+      continue;
+    }
     const time = order.timestamp.substring(14, 20);
     switch (true) {
       case time.substring(0, 2) === "12" && time.indexOf("a") > -1:
@@ -584,7 +587,7 @@ route.get("/metrics", async (req, res) => {
     let ordersFromUser = 0;
     let revenueFromUser = 0;
     for (const order of orders) {
-      if (order.complete && order.email === user.email) {
+      if (order.complete === true && order.email === user.email) {
         ordersFromUser++;
         revenueFromUser += order.totalPrice;
       }
@@ -604,7 +607,7 @@ route.get("/metrics", async (req, res) => {
     let ordersOfMenuItem = 0;
     let revenueOfMenuItem = 0;
     for (const drink of drinks) {
-      if (drink.completed && drink.name === menuItem.name) {
+      if (drink.completed === true && drink.name === menuItem.name) {
         ordersOfMenuItem++;
         revenueOfMenuItem += drink.price;
       }
@@ -621,7 +624,7 @@ route.get("/metrics", async (req, res) => {
   for (const topping of toppings) {
     let ordersOfTopping = 0;
     for (const drink of drinks) {
-      if (drink.completed && drink.toppings.includes(topping.id)) {
+      if (drink.completed === true && drink.toppings.includes(topping.id)) {
         ordersOfTopping++;
       }
     }
@@ -635,7 +638,7 @@ route.get("/metrics", async (req, res) => {
   for (const flavor of flavors) {
     let ordersOfFlavor = 0;
     for (const drink of drinks) {
-      if (drink.completed && drink.flavors.includes(flavor.id)) {
+      if (drink.completed === true && drink.flavors.includes(flavor.id)) {
         ordersOfFlavor++;
       }
     }
