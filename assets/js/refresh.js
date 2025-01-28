@@ -41,7 +41,6 @@ ws.onmessage = function (event) {
     jsonData.message === "New order placed" &&
     window.location.href.indexOf("/barista") > -1
   ) {
-    console.log("order recieved");
     sound.play();
     let isFirstDrink = true;
     for (const drink of jsonData.drinks) {
