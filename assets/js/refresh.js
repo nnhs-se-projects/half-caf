@@ -96,13 +96,15 @@ ws.onmessage = function (event) {
       if (orderTable !== null) {
         orderTable.getElementsByTagName("thead")[0].appendChild(drinkElement);
 
+        const numOfOrders = document.querySelectorAll(".finishButton").length;
+
         // update notification dropdown
         let ordersBadge = document.querySelector(".badge");
         if (ordersBadge !== null) {
-          ordersBadge.innerHTML = orderTable.rows.length;
+          ordersBadge.innerHTML = numOfOrders;
         } else {
           ordersBadge = document.createElement("span");
-          ordersBadge.innerHTML = orderTable.rows.length;
+          ordersBadge.innerHTML = numOfOrders;
           ordersBadge.className = "badge";
           document.querySelector(".notification").appendChild(ordersBadge);
         }
