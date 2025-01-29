@@ -1,59 +1,65 @@
-const cancelButtons = document.querySelectorAll("button.cancelButton");
+export function addListenerToCancelButtons() {
+  const cancelButtons = document.querySelectorAll("button.cancelButton");
 
-for (const cancelButton of cancelButtons) {
-  cancelButton.addEventListener("click", async () => {
-    if (!confirm("Are you sure you want to cancel this order?")) {
-      return;
-    }
+  for (const cancelButton of cancelButtons) {
+    cancelButton.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to cancel this order?")) {
+        return;
+      }
 
-    const message = prompt("Please enter a message for the cancellation:");
-    const orderId = cancelButton.value;
-    const response = await fetch(`/barista/${orderId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
+      const message = prompt("Please enter a message for the cancellation:");
+      const orderId = cancelButton.value;
+      console.log(orderId);
+      const response = await fetch(`/barista/${orderId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (response.ok) {
+        window.location = "/barista";
+      } else {
+        console.log("error deleting order");
+      }
     });
-
-    if (response.ok) {
-      window.location = "/barista";
-    } else {
-      console.log("error deleting order");
-    }
-  });
+  }
 }
 
-const finishButtons = document.querySelectorAll("button.finishButton");
+export function addListenerToFinishButtons() {
+  const finishButtons = document.querySelectorAll("button.finishButton");
 
-for (const finishButton of finishButtons) {
-  finishButton.addEventListener("click", async () => {
-    const orderId = finishButton.value;
-    const counter = document.querySelector(
-      `.time-counter[data-order-id="${orderId}"]`
-    );
-    // if (counter) {
-    //   console.log(`Order ID: ${orderId}, Time: ${counter.textContent}`);
-    // } else {
-    //   console.log(`No counter found for Order ID: ${orderId}`);
-    // }
-    let timerVal = counter.textContent;
-    timerVal = convertToSeconds(timerVal);
-    const response = await fetch(`/barista/${orderId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ t: timerVal }),
+  for (const finishButton of finishButtons) {
+    finishButton.addEventListener("click", async () => {
+      const orderId = finishButton.value;
+      console.log("LOG");
+      const counter = document.querySelector(
+        `.time-counter[data-order-id="${orderId}"]`
+      );
+      let timerVal = counter.textContent;
+      timerVal = convertToSeconds(timerVal);
+      const response = await fetch(`/barista/${orderId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ t: timerVal }),
+      });
+
+      if (response.ok) {
+        window.location = "/barista";
+      } else {
+        console.log("error finishing order");
+      }
     });
-
-    if (response.ok) {
-      window.location = "/barista";
-    } else {
-      console.log("error finishing order");
-    }
-  });
+  }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  addListenerToCancelButtons();
+  addListenerToFinishButtons();
+});
 
 function convertToSeconds(timeString) {
   const timeParts = timeString.split(" ");

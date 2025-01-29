@@ -758,8 +758,6 @@ route.get("/metrics", async (req, res) => {
     flavorNames.push(flavor.flavor);
     ordersPerFlavor.push(ordersOfFlavor);
   }
-  console.log(averageTimerPerHour);
-  console.log(averageTimer);
   res.render("metrics", {
     userEmails,
     ordersPerUser,
