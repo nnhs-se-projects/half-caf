@@ -28,9 +28,11 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
 <div class="charts">
   <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
   <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
+  <h6>Orders per hour (total): <%=averageTimer%>(s)</h6>
   <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
+  <h6>Revenue per hour (total): <%=averageTimer%>(s)</h6>
   <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
-  <h6>Average Time to complete order (all-time): <%=averageTimer%>(s)</h6>
+  <h6>Average time to complete order (all-time): <%=averageTimer%>(s)</h6>
   <canvas id="averageTimerPerHourCanvas" width="1980" height="800"></canvas>
 </div>
 <h1>Metrics Per Menu Item:</h1>
@@ -251,7 +253,7 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
     flavorsChartCanvas.style.height = "800px";
     const ordersPerHourCanvas = document.getElementById("ordersPerHourCanvas");
     let ordersPerHourChart = new Chart(ordersPerHourCanvas, {
-      type: "line",
+      type: "bar",
       data: {
         labels: hours,
         datasets: [
@@ -271,7 +273,7 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
     let revenuePerHourChart = new Chart(
       document.getElementById("revenuePerHourCanvas"),
       {
-        type: "line",
+        type: "bar",
         data: {
           labels: hours,
           datasets: [
@@ -292,7 +294,7 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
     let averageTimerPerHourChart = new Chart(
       document.getElementById("averageTimerPerHourCanvas"),
       {
-        type: "line",
+        type: "bar",
         data: {
           labels: hours,
           datasets: [
