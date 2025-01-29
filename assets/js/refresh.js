@@ -42,6 +42,20 @@ if (window.location.href.indexOf("/barista") > -1) {
   });
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const ordersDropdown = document.getElementById("orders");
+
+  if (ordersDropdown) {
+    ordersDropdown.addEventListener("click", () => {
+      const ordersBadge = document.querySelector(".badge");
+      if (ordersBadge) {
+        ordersBadge.innerHTML = "0";
+        ordersBadge.style.display = "none";
+      }
+    });
+  }
+});
+
 // sound.load();
 ws.onmessage = function (event) {
   const jsonData = JSON.parse(event.data);
