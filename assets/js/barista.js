@@ -9,6 +9,7 @@ export function addListenerToCancelButtons() {
 
       const message = prompt("Please enter a message for the cancellation:");
       const orderId = cancelButton.value;
+      console.log(orderId);
       const response = await fetch(`/barista/${orderId}`, {
         method: "DELETE",
         headers: {
@@ -32,6 +33,7 @@ export function addListenerToFinishButtons() {
   for (const finishButton of finishButtons) {
     finishButton.addEventListener("click", async () => {
       const orderId = finishButton.value;
+      console.log("LOG");
       const counter = document.querySelector(
         `.time-counter[data-order-id="${orderId}"]`
       );

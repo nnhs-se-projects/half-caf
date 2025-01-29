@@ -30,7 +30,6 @@ if (window.location.href.indexOf("/barista") > -1) {
   });
 }
 
-// sound.load();
 ws.onmessage = function (event) {
   const jsonData = JSON.parse(event.data);
   if (jsonData.message === "Ordering toggle changed") {
@@ -96,8 +95,6 @@ ws.onmessage = function (event) {
 
       if (orderTable !== null) {
         orderTable.getElementsByTagName("thead")[0].appendChild(drinkElement);
-        addListenerToCancelButtons();
-        addListenerToFinishButtons();
 
         // update notification dropdown
         let ordersBadge = document.querySelector(".badge");
@@ -119,6 +116,9 @@ ws.onmessage = function (event) {
 
       isFirstDrink = false;
     }
+
+    addListenerToCancelButtons();
+    addListenerToFinishButtons();
 
     lastDrinkColor = lastDrinkColor === "c" ? "b" : "c";
   } else if (
