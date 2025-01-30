@@ -1486,7 +1486,7 @@ route.get("/teacherOrderHistory", async (req, res) => {
     await user.save();
 
     res.render("teacherOrderHistory", {
-      history: orderHistory,
+      history: orderHistory.reverse(),
       email: req.session.email,
     });
   }

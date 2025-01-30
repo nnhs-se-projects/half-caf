@@ -5,7 +5,7 @@
 <%for (let order of history){%> <%for (let drink of order.drinks){%>
 <div class="card">
   <div class="container">
-    <h4><b><%=order.timestamp%></b></h4>
+    <h4><b><%=order.timestamp.split("/")[0]%></b></h4>
     <h5><%=drink.name%>:</h5>
 
     <!-- Flavors -->
