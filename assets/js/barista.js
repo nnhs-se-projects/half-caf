@@ -1,4 +1,4 @@
-export function addListenerToCancelButtons() {
+function addListenerToCancelButtons() {
   const cancelButtons = document.querySelectorAll("button.cancelButton");
 
   for (const cancelButton of cancelButtons) {
@@ -27,7 +27,7 @@ export function addListenerToCancelButtons() {
   }
 }
 
-export function addListenerToFinishButtons() {
+function addListenerToFinishButtons() {
   const finishButtons = document.querySelectorAll("button.finishButton");
 
   for (const finishButton of finishButtons) {
@@ -56,9 +56,106 @@ export function addListenerToFinishButtons() {
   }
 }
 
+const sound = new Audio("/audio/notification.mp3");
+sound.preload = "auto";
+
+let lastDrinkColor;
+let orderTable = null;
 document.addEventListener("DOMContentLoaded", () => {
+  orderTable = document.getElementById("orderTable");
+  lastDrinkColor = orderTable.rows[orderTable.rows.length - 1].id;
+
   addListenerToCancelButtons();
   addListenerToFinishButtons();
+});
+
+const socket = window.io();
+
+socket.on("New order placed", (data) => {
+  console.log("HELLO");
+  sound.play();
+  let isFirstDrink = true;
+  for (const drink of data.drinks) {
+    const drinkElement = document.createElement("tr");
+    drinkElement.id = lastDrinkColor === "c" ? "b" : "c";
+    if (isFirstDrink) {
+      drinkElement.innerHTML = `
+          <th scope="?">${data.order.room}</th>
+          <th scope="?">${data.order.email}</th>
+          <th scope="?">${drink.name}</th>
+          <th scope="?">${drink.temp}</th>
+          <th scope="?">${drink.flavors}</th>
+          <th scope="?">${drink.toppings}</th>
+          <th scope="?">${drink.instructions}</th>
+          <th scope="?">${data.order.timestamp.split("/")[0]}</th>
+          <th scope="?">
+            <span
+              class="time-counter"
+              data-timestamp="${data.order.timestamp}"
+              data-order-id="${data.order._id}"
+            ></span>
+          </th>
+          <th scope="?">
+            <button value="${
+              data.order._id
+            }" class="cancelButton">Cancel</button>
+          </th>
+          <th scope="?">
+            <button value="${
+              data.order._id
+            }" class="finishButton">Finish</button>
+          </th>`;
+    } else {
+      drinkElement.innerHTML = `
+          <th scope="?">${data.order.room}</th>
+          <th scope="?">${data.order.email}</th>
+          <th scope="?">${drink.name}</th>
+          <th scope="?">${drink.temp}</th>
+          <th scope="?">${drink.flavors}</th>
+          <th scope="?">${drink.toppings}</th>
+          <th scope="?">${drink.instructions}</th>
+          <th scope="?">${data.order.timestamp.split("/")[0]}</th>
+          <th scope="?">
+            <span
+              class="time-counter"
+              data-timestamp="${data.order.timestamp}"
+              data-order-id="${data.order._id}"
+            ></span>
+          </th>
+          <th scope="?">part of the above order</th>
+          <th scope="?"></th>`;
+    }
+
+    if (orderTable !== null) {
+      orderTable.getElementsByTagName("thead")[0].appendChild(drinkElement);
+
+      const numOfOrders = document.querySelectorAll(".finishButton").length;
+
+      // update notification dropdown
+      let ordersBadge = document.querySelector(".badge");
+      if (ordersBadge !== null) {
+        ordersBadge.innerHTML = numOfOrders;
+      } else {
+        ordersBadge = document.createElement("span");
+        ordersBadge.innerHTML = numOfOrders;
+        ordersBadge.className = "badge";
+        document.querySelector(".notification").appendChild(ordersBadge);
+      }
+
+      const orderNotification = document.createElement("option");
+      orderNotification.setAttribute("disabled", "disabled");
+      orderNotification.innerHTML = `order from room ${data.order.room}`;
+
+      document.getElementById("orders").appendChild(orderNotification);
+    }
+
+    isFirstDrink = false;
+  }
+
+  addListenerToCancelButtons();
+  addListenerToFinishButtons();
+
+  lastDrinkColor = lastDrinkColor === "c" ? "b" : "c";
 });
 
 function convertToSeconds(timeString) {

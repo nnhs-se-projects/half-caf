@@ -8,13 +8,9 @@ const TempJson = require("../model/temps.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
-
 const Enabled = require("../model/enabled");
-const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({ port: 8081 });
 const multer = require("multer");
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./assets/img");
@@ -23,21 +19,14 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "--" + file.originalname);
   },
 });
-
 const upload = multer({ storage: storage });
 
-// Client connections storage
-let clients = [];
-
-// WebSocket connection handling
-wss.on("connection", (ws) => {
-  clients.push(ws); // Add client to storage
-
-  // Handle client disconnection
-  ws.on("close", () => {
-    clients = clients.filter((client) => client !== ws);
-  });
-});
+const {
+  emitToggleChange,
+  emitOrderCancelled,
+  emitOrderFinished,
+  emitNewOrderPlaced,
+} = require("../socket/socket");
 
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
@@ -80,13 +69,7 @@ route.post("/toggle", async (req, res) => {
   toggle.enabled = req.body.enabled;
   await toggle.save();
 
-  const jsonData = JSON.stringify({
-    message: "Ordering toggle changed",
-  });
-
-  clients.forEach((client) => {
-    client.send(jsonData);
-  });
+  emitToggleChange();
 });
 
 route.use(async (req, res, next) => {
@@ -846,14 +829,9 @@ route.delete("/barista/:id", async (req, res) => {
   order.cancelled = true;
   await order.save();
 
-  const jsonData = JSON.stringify({
-    message: "Order cancelled",
+  emitOrderCancelled({
     cancelMessage: req.body.message,
     email: order.email,
-  });
-
-  clients.forEach((client) => {
-    client.send(jsonData);
   });
 
   res.status(201).end();
@@ -871,14 +849,7 @@ route.post("/barista/:id", async (req, res) => {
     await drink.save();
   }
 
-  const jsonData = JSON.stringify({
-    message: "Order finished",
-    email: order.email,
-  });
-
-  clients.forEach((client) => {
-    client.send(jsonData);
-  });
+  emitOrderFinished({ email: order.email });
 
   res.status(201).end();
 });
@@ -1337,14 +1308,9 @@ route.post("/teacherMyOrder", async (req, res) => {
       drinkArray.push(formattedDrink);
     }
 
-    const jsonData = JSON.stringify({
-      message: "New order placed",
+    emitNewOrderPlaced({
       order,
       drinks: drinkArray,
-    });
-
-    clients.forEach((client) => {
-      client.send(jsonData);
     });
   } catch (err) {
     console.log(err);
