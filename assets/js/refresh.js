@@ -16,8 +16,6 @@ document.addEventListener("click", () => {
 
 const emailInput = document.querySelector("input.emailInput");
 
-const ws = new WebSocket("ws://localhost:8081");
-
 const sound = new Audio("/audio/notification.mp3");
 sound.preload = "auto";
 
@@ -29,6 +27,33 @@ if (window.location.href.indexOf("/barista") > -1) {
     lastDrinkColor = orderTable.rows[orderTable.rows.length - 1].id;
   });
 }
+
+const { Server } = require("socket.io");
+
+let io;
+function createSocketServer(httpServer) {
+  io = new Server(httpServer, {
+    connectionStateRecovery: {},
+  });
+  io.on("connection", (socket) => {
+    console.log("a user connected");
+
+    socket.on("Ordering toggle changed", () => {
+      window.location = window.location;
+    });
+
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+    return io;
+  });
+}
+
+function emitNewEntry(entry) {
+  io.emit("new entry", entry);
+}
+
+module.exports = { createSocketServer, emitNewEntry };
 
 ws.onmessage = function (event) {
   const jsonData = JSON.parse(event.data);
