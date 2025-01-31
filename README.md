@@ -39,6 +39,7 @@ npm install
 3. Create a .env file in the root directory
 
 ```
+CLIENT_ID= <find in trello>
 MONGO_URI= <find in trello>
 SESSION_SECRET= <secret key>
 PORT_NUM = 8080 (can change)
