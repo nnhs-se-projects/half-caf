@@ -60,9 +60,9 @@ Node.js - Server\
 Mongoose - Creates a connection between MongoDB and the Node.js JavaScript runtime environment\
 Javascript - Used both on client and server side\
 EJS - Embedded JS, similar to HTML, only client side\
-CSS - Styling, only client side
-Multer - Handles uploading images to the server
-Three.js - Renders 3D models on the web
+CSS - Styling, only client side\
+Multer - Handles uploading images to the server\
+Three.js - Renders 3D models on the web\
 Chart.js - Renders charts in the metrics page
 
 ## Data Schema
