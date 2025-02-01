@@ -66,7 +66,7 @@ createSocketServer(server);
 app.use("/", require("./server/routes/router"));
 
 // start the server on port PORT_NUM from .env file
-app.listen(process.env.PORT_NUM, () => {
+server.listen(process.env.PORT_NUM, () => {
   console.log(
     "server is listening on http://localhost:" + process.env.PORT_NUM
   );

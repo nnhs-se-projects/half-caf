@@ -9,11 +9,9 @@ document.addEventListener("click", () => {
   }
 });
 
-const socket = window.io();
-
 const emailInput = document.querySelector("input.emailInput");
 
-socket.on("Order finished", (data) => {
+window.io().on("Order finished", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&
@@ -26,7 +24,7 @@ socket.on("Order finished", (data) => {
   }
 });
 
-socket.on("Order cancelled", (data) => {
+window.io().on("Order cancelled", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&

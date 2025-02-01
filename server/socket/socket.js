@@ -7,13 +7,13 @@ function createSocketServer(httpServer) {
   });
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
+    // console.log("a user connected");
 
     // add additional socket.on code here to handle incoming events
     //  from the client
 
     socket.on("disconnect", () => {
-      console.log("user disconnected");
+      // console.log("user disconnected");
     });
 
     return io;

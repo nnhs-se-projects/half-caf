@@ -69,9 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addListenerToFinishButtons();
 });
 
-const socket = window.io();
-
-socket.on("New order placed", (data) => {
+window.io().on("New order placed", (data) => {
   console.log("HELLO");
   sound.play();
   let isFirstDrink = true;
@@ -241,7 +239,7 @@ function updateCounters() {
   const counters = document.querySelectorAll(".time-counter");
   counters.forEach((counter) => {
     const timestamp = counter.getAttribute("data-timestamp");
-    //console.log(`Updating counter for timestamp: ${timestamp}`);
+    // console.log(`Updating counter for timestamp: ${timestamp}`);
     counter.textContent = calculateTimeDifference(timestamp);
   });
 }

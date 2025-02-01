@@ -1,5 +1,3 @@
-const socket = window.io();
-
-socket.on("Ordering toggle changed", () => {
+window.io().on("Ordering toggle changed", () => {
   window.location = window.location;
 });
