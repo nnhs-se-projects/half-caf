@@ -56,9 +56,6 @@ function addListenerToFinishButtons() {
   }
 }
 
-const sound = new Audio("/audio/notification.mp3");
-sound.preload = "auto";
-
 let lastDrinkColor;
 let orderTable = null;
 document.addEventListener("DOMContentLoaded", () => {
@@ -70,8 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.io().on("New order placed", (data) => {
-  console.log("HELLO");
-  sound.play();
+  if (Notification?.permission === "granted") {
+    const notification = new Notification("New order placed", {
+      body: "A new order has been placed from room " + data.order.room,
+      icon: "../img/Half_Caf_Logo_(1).png",
+    });
+  }
+
   let isFirstDrink = true;
   for (const drink of data.drinks) {
     const drinkElement = document.createElement("tr");
@@ -138,6 +140,8 @@ window.io().on("New order placed", (data) => {
         ordersBadge.innerHTML = numOfOrders;
         ordersBadge.className = "badge";
         document.querySelector(".notification").appendChild(ordersBadge);
+        document.getElementById("notificationDropdownLabel").innerHTML =
+          "New Orders";
       }
 
       const orderNotification = document.createElement("option");
