@@ -32,9 +32,9 @@
         <%}%>
         <select class="dropdown" id="orders">
           <%if(numOfNewOrders > 0) { %>
-          <option>New Orders</option>
+          <option id="notificationDropdownLabel">New Orders</option>
           <%} else { %>
-          <option>No New Orders</option>
+          <option id="notificationDropdownLabel">No New Orders</option>
           <%}%> <% for (let order of orders){%> <%if(order.complete === false &&
           order.cancelled === false){%>
           <option disabled>order from room <%=order.room%></option>
