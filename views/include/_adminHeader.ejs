@@ -27,9 +27,10 @@
         >Report a bug</a
       >
       <a href="/logout">Logout</a>
-      <!-- Rounded switch -->
-      <!-- (clicked/orange/right means enabled)-->
-      <script src="/js/refresh.js"></script>
+
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="/js/notifications.js"></script>
+      <script src="/js/refreshOrderingToggle.js"></script>
 
       <label class="on-off">
         <% if(headerData.enabled === false) { %>

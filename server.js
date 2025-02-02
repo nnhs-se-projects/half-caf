@@ -55,12 +55,18 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// import the http module, which provides an HTTP server
+const http = require("http");
+const server = http.createServer(app);
+const { createSocketServer } = require("./server/socket/socket");
+createSocketServer(server);
+
 // to keep this file manageable, we will move the routes to a separate file
 //  the exported router object is an example of middleware
 app.use("/", require("./server/routes/router"));
 
 // start the server on port PORT_NUM from .env file
-app.listen(process.env.PORT_NUM, () => {
+server.listen(process.env.PORT_NUM, () => {
   console.log(
     "server is listening on http://localhost:" + process.env.PORT_NUM
   );
