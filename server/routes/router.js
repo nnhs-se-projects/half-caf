@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "--" + file.originalname);
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 const {
   emitToggleChange,
@@ -206,7 +206,7 @@ route.get("/modifyUser", async (req, res) => {
 
     const { id } = req.query;
 
-    let selectedUser = undefined;
+    let selectedUser;
     if (id != null) {
       selectedUser = await User.findById(id);
     } else if (allUsers[0] !== null && allUsers[0] !== undefined) {
@@ -1156,10 +1156,10 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
       if (drink) {
         res.render("customizeDrink", {
-          drink: drink,
-          flavors: flavors,
+          drink,
+          flavors,
           temps: drink.temps,
-          toppings: toppings,
+          toppings,
           email: req.session.email,
         });
       } else {
@@ -1212,7 +1212,7 @@ route.get("/teacherMyOrder", async (req, res) => {
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
-    let customizationDict = {};
+    const customizationDict = {};
     for (const drink of req.session.cart) {
       const drinkFlavorsArray = [];
       const drinkToppingsArray = [];
@@ -1229,7 +1229,7 @@ route.get("/teacherMyOrder", async (req, res) => {
     }
     res.render("teacherMyOrder", {
       cart: req.session.cart,
-      customizationDict: customizationDict,
+      customizationDict,
       email: req.session.email,
     });
   }
