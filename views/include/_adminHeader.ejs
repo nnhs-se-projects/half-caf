@@ -9,27 +9,40 @@
       <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
     </div>
 
-    <div class="topnav">
-      <a href="/addUser">Add User</a>
-      <a href="/deleteUser">Delete User</a>
-      <a href="/viewUser">View User</a>
-      <a href="/modifyUser">Modify User</a>
-      <a href="/addDrink">Add Drink</a>
-      <a href="/modifyDrink">Modify Drink</a>
-      <a href="/deleteDrink">Delete Drink</a>
-      <a href="/addFlavor">Add Flavor</a>
-      <a href="/deleteFlavor">Delete Flavor</a>
-      <a href="/addTopping">Add Topping</a>
-      <a href="/DeleteTopping">Delete Topping</a>
-      <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
-      <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
+    <div class="sidebar">
+
+      <a><button id="sidebarToggle" onclick="toggleSidebar()">Collapse</button></a>
+
+      <button><a href="/addUser">Add User</a> </button>
+      <button><a href="/deleteUser">Delete User</a> </button>
+      <button><a href="/viewUser"> View User</a> </button>
+      <button><a href="/modifyUser">Edit User</a> </button>
+      
+      
+      
+    </br>
+      <button><a href="/addDrink">Add Drink</a> </button>
+      <button><a href="/modifyDrink">Edit Drink</a> </button>
+      <button><a href="/deleteDrink">Delete Drink</a> </button>
+    </br>
+      <button><a href="/addFlavor">Add Flavor</a> </button> 
+      <button><a href="/deleteFlavor">Delete Flavor</a> </button> 
+    </br>
+    <button><a href="/addTopping">Add Topping</a> </button> 
+    <button><a href="/DeleteTopping">Delete Topping</a> </button> 
+    </br>
+    <button><a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a> </button> 
+    <button><a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
         >Report a bug</a
-      >
-      <a href="/logout">Logout</a>
+      ></button> 
+      
+      <button><a href="/logout">Logout</a></button> 
+       </br>
       <!-- Rounded switch -->
       <!-- (clicked/orange/right means enabled)-->
       <script src="/js/refresh.js"></script>
 
+      <button>
       <label class="on-off">
         <% if(headerData.enabled === false) { %>
         <input class="toggle" type="checkbox" id="myCheckbox" />
@@ -44,12 +57,33 @@
         <span class="dis-en"></span>
         <% } %>
       </label>
-      <h4>Toggle allow ordering</h4>
+      <h4>Enable Ordering</h4>
     </div>
+  </button>
 
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
 
     <script src="/js/toggleEnabled.js"></script>
+    <script>
+            function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleButton = document.getElementById('sidebarToggle');
+        sidebar.classList.toggle("flyOff");
+        mainContent.classList.toggle("shiftLeft");
+
+        // Toggle .collapsed on the sidebar
+        sidebar.classList.toggle('collapsed');
+
+        // Adjust the button text
+        if (sidebar.classList.contains('collapsed')) {
+          toggleButton.textContent = 'Open';
+        } else {
+          toggleButton.textContent = 'Collapse';
+        }
+        console.log("toggleSidebar");
+      }
+    </script>
   </head>
 </html>

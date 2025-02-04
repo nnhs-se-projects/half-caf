@@ -1,79 +1,81 @@
-<!-- include header -->
-<%- include('include/_adminHeader') %>
-<!-- /include header -->
+<div class="mainContent">
+  <!-- include header -->
+  <%- include('include/_adminHeader') %>
+  <!-- /include header -->
 
-<!-- Main Site -->
-<div class="adminPage" id="page">
-  <div class="userHdr">Add Drink</div>
-  <div>Add Image *REQUIRED*<input type="file" name="image" id="image" /></div>
-  <input type="text" id="name" placeholder="Name..." />
-  <input type="text" id="description" placeholder="Description..." />
-  <input type="text" id="price" placeholder="Price..." />
-  <!--accesses all the flavors and displays them in a list of checkboxes-->
-  <div id="flavorsList" class="dropdown-check-list">
-    <span class="anchor">Select Flavors</span>
-    <ul class="items">
-      <% for (let flavor of flavors) {%>
-      <li>
-        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
-        flavor.flavor %>
-      </li>
-      <%}%>
-    </ul>
-  </div>
-  <!--accesses all the toppings and displays them in a list of checkboxes-->
-  <div id="pageRight">
-    <div id="toppings" class="dropdown-check-list">
-      <span class="anchor">Select Toppings</span>
+  <!-- Main Site -->
+
+  <div class="adminPage" id="page">
+    <div class="userHdr">Add Drink</div>
+    <div>Add Image *REQUIRED*<input type="file" name="image" id="image" /></div>
+    <input type="text" id="name" placeholder="Name..." />
+    <input type="text" id="description" placeholder="Description..." />
+    <input type="text" id="price" placeholder="Price..." />
+    <!--accesses all the flavors and displays them in a list of checkboxes-->
+    <div id="flavorsList" class="dropdown-check-list">
+      <span class="anchor">Select Flavors</span>
       <ul class="items">
-        <% for (let topping of toppings) {%>
+        <% for (let flavor of flavors) {%>
         <li>
-          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
-          topping.topping %>
+          <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+          flavor.flavor %>
         </li>
         <%}%>
       </ul>
     </div>
-    <!--accesses all the temps from the json and displays them as checkboxes-->
-    <span class="anchor">Select Options</span>
-    <div class="tempBox">
-      <% for(let temp of temps){ %>
-      <label id="tempLabel">
-        <input
-          type="checkbox"
-          id="temp"
-          class="temps"
-          name="temps"
-          value="<%=temp%>"
-        />
-        <%=temp%>
-      </label>
-      <%} %>
+    <!--accesses all the toppings and displays them in a list of checkboxes-->
+    <div id="pageRight">
+      <div id="toppings" class="dropdown-check-list">
+        <span class="anchor">Select Toppings</span>
+        <ul class="items">
+          <% for (let topping of toppings) {%>
+          <li>
+            <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+            topping.topping %>
+          </li>
+          <%}%>
+        </ul>
+      </div>
+      <!--accesses all the temps from the json and displays them as checkboxes-->
+      <span class="anchor">Select Options</span>
+      <div class="tempBox">
+        <% for(let temp of temps){ %>
+        <label id="tempLabel">
+          <input
+            type="checkbox"
+            id="temp"
+            class="temps"
+            name="temps"
+            value="<%=temp%>"
+          />
+          <%=temp%>
+        </label>
+        <%} %>
+      </div>
+
+      <!--checkboxes for if a drink is popular, special or if it can be caffeinated-->
+      <div>
+        <input type="checkbox" id="popular" />
+        <label for="popular">Popular</label>
+      </div>
+      <div>
+        <input type="checkbox" id="special" />
+        <label for="special">Special</label>
+      </div>
+      <div>
+        <input type="checkbox" id="caffeinated" value="Caffeinated" />
+        <label for="caffeinated">Caffeinated</label>
+      </div>
     </div>
 
-    <!--checkboxes for if a drink is popular, special or if it can be caffeinated-->
-    <div>
-      <input type="checkbox" id="popular" />
-      <label for="popular">Popular</label>
-    </div>
-    <div>
-      <input type="checkbox" id="special" />
-      <label for="special">Special</label>
-    </div>
-    <div>
-      <input type="checkbox" id="caffeinated" value="Caffeinated" />
-      <label for="caffeinated">Caffeinated</label>
-    </div>
-  </div>
+    <input type="submit" class="submit" value="Add Drink" />
+    <style>
+      #tempLabel {
+        margin-right: 5px;
+      }
+    </style>
 
-  <input type="submit" class="submit" value="Add Drink" />
-  <style>
-    #tempLabel {
-      margin-right: 5px;
-    }
-  </style>
-
-  <!--
+    <!--
   <style>
     #pageRight {
       float: right;
@@ -84,11 +86,12 @@
   </style>
 -->
 
-  <!-- /Main Site -->
+    <!-- /Main Site -->
 
-  <script src="/js/addDrink.js"></script>
+    <script src="/js/addDrink.js"></script>
 
-  <!-- include footer -->
-  <%- include('include/_footer') %>
-  <!-- /include footer -->
+    <!-- include footer -->
+    <%- include('include/_footer') %>
+    <!-- /include footer -->
+  </div>
 </div>

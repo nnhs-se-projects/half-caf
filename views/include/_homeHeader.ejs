@@ -10,11 +10,36 @@
       <%- include('_header') %>
       <h1 class="indexTopBar">NNHS Half Caf</h1>
     </div>
-    <div class="topnav">
-      <a href="/homePopularDrinks">Popular Drinks</a>
-      <a href="/homeMenu">Menu</a>
-      <a href="/auth">Login</a>
-      <a href="/auth">Register</a>
+    <div class="sidebar">
+
+      <a><button id="sidebarToggle" onclick="toggleSidebar()">Collapse</button></a>
+
+      <button href="/homePopularDrinks">Popular Drinks</button> 
+      <button href="/homeMenu">Menu</button> 
+    </br>
+      <button href="/auth">Login</button> 
+      <button href="/auth">Register</button>
     </div>
+
+    <script>
+      function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("mainContent");
+      const toggleButton = document.getElementById("sidebarToggle");
+      sidebar.classList.toggle("flyOff");
+      mainContent.classList.toggle("shiftLeft");
+
+      // Toggle .collapsed on the sidebar
+      sidebar.classList.toggle("collapsed");
+
+      // Adjust the button text
+      if (sidebar.classList.contains("collapsed")) {
+        toggleButton.textContent = "Open";
+      } else {
+        toggleButton.textContent = "Collapse";
+      }
+    }
+    </script>
+
   </head>
 </html>

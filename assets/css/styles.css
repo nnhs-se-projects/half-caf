@@ -189,28 +189,94 @@ h4 {
   margin: 0;
 }
 
-.topnav {
-  background-color: darkblue;
-  overflow: hidden;
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Adjust the width as needed */
+  height: 100%;
+  background-color: #e2e2e2; /* Background color for the sidebar */
+  color: #fff; /* Text color for the sidebar */
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto; /* Add vertical scrollbar if needed */
+  transition: margin-left 0.3s;
+}
+.sidebar.collapsed {
+  margin-left: -250px;
 }
 
-.topnav a {
+.mainContent {
+  margin-left: 200px; /* matches sidebar width */
+  transition: margin-left 0.3s;
+}
+
+.sidebar.collapsed + .mainContent #sidebarToggle {
+  left: 10px; /* Move button to far-left when sidebar is collapsed */
+}
+
+.sidebar.collapsed ~ #mainContent {
+  margin-left: 0; /* Expand main content when sidebar is collapsed */
+}
+
+.sideNav {
+  background-color: darkblue;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sideNav button {
   color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
-  display: inline-block;
+  display: block !important;
+  width: 100%;
+  box-sizing: border-box;
+  float: none;
+  display: flex;
+  flex-direction: column;
+  border: 10px solid #f2f2f2;
 }
 
-.topnav a:hover {
-  background-color: #3f93d8;
+.sideNav button:hover {
+  background-color: #ffae3c;
   color: black;
 }
 
-.topnav a.active {
+.sideNav button.active {
   background-color: #ffa530;
   color: white;
+}
+
+/* General content offset */
+.mainContent {
+  margin-left: 270px; /* Adjust this value to match the sidebar width + padding */
+  padding: 20px;
+  background-color: #f8f9fa; /* Background color for the main content */
+  color: #000; /* Text color for the main content */
+  box-sizing: border-box;
+}
+
+.sidebar {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar.flyOff {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none; /* so it's not clickable off-screen */
+}
+
+.mainContent {
+  transition: margin-left 0.3s ease;
+  margin-left: 250px; /* or whatever width you prefer when sidebar is shown */
+}
+
+.mainContent.shiftLeft {
+  margin-left: 0; /* shift main content left when sidebar is hidden */
 }
 
 .card {
@@ -287,6 +353,15 @@ li {
   color: black;
 }
 
-a {
-  background-color: darkblue;
+button {
+  background-color: #ffffff;
+  color: #f8552c;
+}
+
+h4 {
+  color: #796aff;
+}
+
+.dis-en {
+  background-color: #796aff !important;
 }

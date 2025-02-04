@@ -11,22 +11,27 @@
       <h1 class="indexTopBar">NNHS Half Caf Barista</h1>
     </div>
 
-    <div class="topnav">
-      <a href="/barista">Orders</a>
-      <a href="/completed">Completed Orders</a>
-      <a href="/cancelledOrders">Cancelled Orders</a>
-      <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
-      <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
-        >Report a bug</a
-      >
+    <div class="sidebar">
 
-      <a href="/logout">Logout</a>
+      <a><button id="sidebarToggle" onclick="toggleSidebar()">Collapse</button></a>
+
+      <button><a href="/barista">Orders</a></button>
+      <button><a href="/completed">Completed Orders</a></button>
+      <button><a href="/cancelledOrders">Cancelled Orders</a></button> 
+    </br>
+    <button><a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a> </button>
+    <button><a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
+        >Report a bug</a
+      ></button>
+      
+      <button><a href="/logout">Logout</a></button>
+      </br>
 
       <% let numOfNewOrders = 0; %> <% for (let order of orders){%> <%
       if(order.complete === false && order.cancelled === false){%><%
       numOfNewOrders++; }}%>
 
-      <a class="notification">
+      <button class="notification">
         <%if(numOfNewOrders > 0) { %>
         <span class="badge"><%=numOfNewOrders%></span>
         <%}%>
@@ -40,10 +45,29 @@
           <option disabled>order from room <%=order.room%></option>
           <%}}%>
         </select>
-      </a>
+      </button>
 
       <!-- Rounded switch -->
       <script src="/js/refresh.js"></script>
+      <script>
+            function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleButton = document.getElementById('sidebarToggle');
+        sidebar.classList.toggle("flyOff");
+    mainContent.classList.toggle("shiftLeft");
+
+        // Toggle .collapsed on the sidebar
+        sidebar.classList.toggle('collapsed');
+
+        // Adjust the button text
+        if (sidebar.classList.contains('collapsed')) {
+          toggleButton.textContent = 'Open';
+        } else {
+          toggleButton.textContent = 'Collapse';
+        }
+      }
+    </script>
 
       <label class="on-off">
         <% if(headerData.enabled === false) { %>

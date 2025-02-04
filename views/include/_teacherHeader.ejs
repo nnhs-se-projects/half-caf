@@ -16,21 +16,33 @@
     <% if(headerData.enabled === false){ %>
     <h3 id="noOrder">Ordering is not currently available</h3>
     <% } %>
-    <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank" id="logout"
-      >Feedback</a
+    <button
+      href="https://forms.gle/uqQ8SiAY4BUPCTJp8"
+      target="_blank"
+      id="logout"
     >
-    <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank" id="logout"
-      >Report a bug</a
+      Feedback
+    </button>
+    <button
+      href="https://forms.gle/MuZF7T39r9adDQRT8"
+      target="_blank"
+      id="logout"
     >
-    <a href="/logout" id="logout">Logout</a>
+      Report a bug
+    </button>
+    <button href="/logout" id="logout">Logout</button>
   </div>
 
-  <div class="topnav" id="navbar">
-    <a href="/teacherPopularDrinks">Popular Drinks</a>
-    <a href="/teacherMenu">Menu</a>
-    <a href="/teacherMyFavorites">My Favorites</a>
-    <a href="/teacherMyOrder">My Order</a>
-    <a href="/teacherOrderHistory">Order History</a>
+  <div class="sidebar" id="navbar">
+    <a
+      ><button id="sidebarToggle" onclick="toggleSidebar()">Collapse</button></a
+    >
+
+    <button><a href="/teacherPopularDrinks">Popular Drinks</a></button>
+    <button><a href="/teacherMenu">Menu</a></button>
+    <button><a href="/teacherMyFavorites">My Favorites</a></button>
+    <button><a href="/teacherMyOrder">My Order</a></button>
+    <button><a href="/teacherOrderHistory">Order History</a></button>
   </div>
 
   <style>
@@ -58,4 +70,23 @@
 
   <input class="emailInput" type="hidden" value="<%=email%>" />
   <script src="/js/refresh.js"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("mainContent");
+      const toggleButton = document.getElementById("sidebarToggle");
+      sidebar.classList.toggle("flyOff");
+      mainContent.classList.toggle("shiftLeft");
+
+      // Toggle .collapsed on the sidebar
+      sidebar.classList.toggle("collapsed");
+
+      // Adjust the button text
+      if (sidebar.classList.contains("collapsed")) {
+        toggleButton.textContent = "Open";
+      } else {
+        toggleButton.textContent = "Collapse";
+      }
+    }
+  </script>
 </html>
