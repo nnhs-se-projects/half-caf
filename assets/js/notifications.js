@@ -5,6 +5,7 @@ document.addEventListener("click", () => {
     Notification?.permission !== "granted" &&
     Notification?.permission !== "denied"
   ) {
+    navigator.serviceWorker.register("sw.js");
     Notification.requestPermission();
   }
 });
@@ -17,6 +18,11 @@ window.io().on("Order finished", (data) => {
     emailInput !== null &&
     data.email === emailInput.value
   ) {
+    navigator.serviceWorker.ready.then(function (registration) {
+      registration.showNotification(
+        "Your order is finished and is now being delivered."
+      );
+    });
     const notification = new Notification("Order finished", {
       body: "Your order is finished and is now being delivered.",
       icon: "../img/Half_Caf_Logo_(1).png",
@@ -30,6 +36,11 @@ window.io().on("Order cancelled", (data) => {
     emailInput !== null &&
     data.email === emailInput.value
   ) {
+    navigator.serviceWorker.ready.then(function (registration) {
+      registration.showNotification(
+        "Your order is cancelled because: " + data.cancelMessage
+      );
+    });
     const notification = new Notification("Order cancelled", {
       body: "A barista has cancelled your order because: " + data.cancelMessage,
       icon: "../img/Half_Caf_Logo_(1).png",
