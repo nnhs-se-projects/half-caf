@@ -1,5 +1,23 @@
 /* styling for the authentication page */
 
+.html {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.warning h1 {
+  border: 4px solid #f8552c;
+  margin: 10px 100px 10px 100px;
+}
+
+body {
+  background-color: #ffffff; /* Set a light background color */
+  color: #000000; /* Set a dark text color */
+}
+b {
+  color: black;
+}
+
 .authForm {
   display: flex;
   flex-direction: column;
@@ -7,6 +25,20 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
+  margin-left: 5px;
+  color: 000000;
+}
+
+input[type="text"],
+input[type="file"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="number"],
+select,
+textarea {
+  background-color: #ffffff; /* Set a light background color */
+  color: #000000; /* Set a dark text color */
+  border: 1px solid #000000; /* Optional: Add a border to match the theme */
 }
 
 .authForm img {
@@ -62,6 +94,18 @@
 
 .dropdown {
   font-size: 15px;
+}
+
+.dropdown-check-list {
+  background-color: #ffffff; /* Set a light background color */
+  color: #000000; /* Set a dark text color */
+  border: 1px solid #000000; /* Optional: Add a border to match the theme */
+}
+
+.dropdown-check-list ul {
+  background-color: #ffffff; /* Set a light background color */
+  color: #000000; /* Set a dark text color */
+  border: 1px solid #000000; /* Optional: Add a border to match the theme */
 }
 
 .on-off {
@@ -130,7 +174,7 @@ h4 {
 }
 
 .topnav {
-  background-color: #a8a8a8;
+  background-color: darkblue;
   overflow: hidden;
 }
 
@@ -179,6 +223,7 @@ h4 {
 h1 {
   font-size: 35px;
   margin: 1%;
+  color: #f8552c;
 }
 
 h5 {
@@ -190,6 +235,7 @@ h5 {
 
 h2 {
   margin: 1%;
+  color: black;
 }
 
 img {
@@ -219,4 +265,17 @@ h9 {
 
 br {
   margin: 0, 0, 0, 0;
+}
+
+footer {
+  background-color: #f8f9fa; /* Ensure footer background color is light */
+  color: #000000; /* Ensure footer text color is dark */
+}
+
+li {
+  color: black;
+}
+
+a {
+  background-color: darkblue;
 }
