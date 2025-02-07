@@ -1,6 +1,29 @@
 // creates a menu item with the selected name, description, price if its popular, temperatures available
 // if its a special, the selected flavors and the selected toppings and if it can be caffinated
 const addDrinkButton = document.querySelector("input.submit");
+
+let srcData;
+
+function encodeImageFileAsURL() {
+  const imageElement = document.getElementById("drinkImg");
+
+  const filesSelected = document.getElementById("image").files;
+  if (filesSelected.length > 0) {
+    const fileToLoad = filesSelected[0];
+
+    const fileReader = new FileReader();
+
+    fileReader.onload = function (fileLoadedEvent) {
+      srcData = fileLoadedEvent.target.result; // <--- data: base64
+      imageElement.src = srcData;
+    };
+    fileReader.readAsDataURL(fileToLoad);
+  } else {
+    imageElement.src = "";
+    srcData = "";
+  }
+}
+
 addDrinkButton.addEventListener("click", async () => {
   const name = document
     .getElementById("name")
@@ -16,7 +39,10 @@ addDrinkButton.addEventListener("click", async () => {
       checkedTemps.push(temps[i].value);
     }
   }
-
+  if (!price) {
+    alert("Please enter a price");
+    return;
+  }
   if (checkedTemps.length === 0) {
     alert("Please select a temperature");
     return;
@@ -40,6 +66,8 @@ addDrinkButton.addEventListener("click", async () => {
   }
 
   const caf = document.getElementById("caffeinated").checked;
+
+  const imageData = srcData;
 
   const menuItem = {
     name,

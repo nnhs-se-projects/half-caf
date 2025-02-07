@@ -44,7 +44,7 @@ const schema = new mongoose.Schema({
     required: false,
   },
   imageData: {
-    type: String,
+    type: Buffer,
     required: false,
   },
 });

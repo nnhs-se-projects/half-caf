@@ -346,6 +346,7 @@ route.get("/modifyDrink", async (req, res) => {
 });
 // updates database with new menu item
 route.post("/addDrink", async (req, res) => {
+  console.log(req.body);
   const drink = new MenuItem({
     name: req.body.name,
     description: req.body.description,
@@ -356,6 +357,7 @@ route.post("/addDrink", async (req, res) => {
     temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     special: req.body.special,
+    imageData: req.body.imageData,
   });
   await drink.save();
   res.status(200).end();
@@ -375,6 +377,9 @@ route.post("/modifyDrink/:id", async (req, res) => {
     menuItem.caffeination = req.body.caf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
+    menuItem.imageData = req.body.imageData
+      ? req.body.imageData
+      : menuItem.imageData;
     await menuItem.save();
     res.status(200).json({ message: "Drink added successfully" });
   } catch (error) {

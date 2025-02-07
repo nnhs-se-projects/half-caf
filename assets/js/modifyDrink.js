@@ -13,6 +13,28 @@ function handleSelectChange() {
   console.log(updatedURL);
 }
 
+let srcData;
+
+function encodeImageFileAsURL() {
+  const imageElement = document.getElementById("currentImg");
+
+  const filesSelected = document.getElementById("image").files;
+  if (filesSelected.length > 0) {
+    const fileToLoad = filesSelected[0];
+
+    const fileReader = new FileReader();
+
+    fileReader.onload = function (fileLoadedEvent) {
+      srcData = fileLoadedEvent.target.result; // <--- data: base64
+      imageElement.src = srcData;
+    };
+    fileReader.readAsDataURL(fileToLoad);
+  } else {
+    imageElement.src = "";
+    srcData = "";
+  }
+}
+
 // listen for change in the dropdown menu
 document
   .getElementById("filter")
@@ -28,8 +50,12 @@ saveDrinkButton.addEventListener("click", async () => {
     .value.replace("/", "")
     .replace("\\", "");
   const description = document.getElementById("description").value;
-  const price = document.getElementById("price").value.replace(/[^.\d]/g, "");
 
+  const price = document.getElementById("price").value.replace(/[^.\d]/g, "");
+  if (!price) {
+    alert("Please enter a price");
+    return;
+  }
   const temps = document.querySelectorAll("input#temp");
   const checkedTemps = [];
   temps.forEach((temp) => {
@@ -61,7 +87,7 @@ saveDrinkButton.addEventListener("click", async () => {
   const popular = document.getElementById("popular").checked;
   const caffeination = document.getElementById("caffeination").checked;
   const special = document.getElementById("special").checked;
-
+  const imageData = srcData;
   const drink = {
     name,
     description,
