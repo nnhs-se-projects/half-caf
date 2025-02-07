@@ -72,33 +72,16 @@ saveDrinkButton.addEventListener("click", async () => {
     popular,
     caf: caffeination,
     special,
+    imageData,
   };
-
-  const formData = new FormData();
-  const imageFile = document.getElementById("image").files[0];
-
-  if (!imageFile && !document.getElementById("currentImg")) {
-    alert("Please select an image file");
-    return;
-  }
-
-  formData.append("image", imageFile);
-  // Handle arrays and other form data separately
-  for (const [key, value] of Object.entries(drink)) {
-    if (Array.isArray(value)) {
-      // Append each array element individually
-      value.forEach((item) => {
-        formData.append(key, item);
-      });
-    } else {
-      formData.append(key, value);
-    }
-  }
 
   try {
     const response = await fetch(`/modifyDrink/${id}`, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(drink),
     });
 
     const data = await response.json();

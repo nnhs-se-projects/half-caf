@@ -51,44 +51,19 @@ addDrinkButton.addEventListener("click", async () => {
     checkedTemps,
     caf,
     special,
+    imageData,
   };
 
-  const formData = new FormData();
-  const imageFile = document.getElementById("image").files[0];
-
-  if (!imageFile) {
-    console.error("Please select an image file");
-    return;
-  }
-
-  formData.append("image", imageFile);
-
-  // Handle arrays and other form data separately
-  for (const [key, value] of Object.entries(menuItem)) {
-    if (Array.isArray(value)) {
-      // Append each array element individually
-      value.forEach((item) => {
-        formData.append(key, item);
-      });
-    } else {
-      formData.append(key, value);
-    }
-  }
-
-  try {
-    const response = await fetch("/addDrink", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      window.location = "/addDrink";
-    } else {
-      console.error("Server error:", data.error);
-    }
-  } catch (error) {
-    console.error("Error submitting form:", error);
+  const response = await fetch("/addDrink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(menuItem),
+  });
+  if (response.ok) {
+    window.location = "/addDrink";
+  } else {
+    console.log("error adding drink");
   }
 });
