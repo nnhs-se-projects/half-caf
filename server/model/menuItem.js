@@ -43,8 +43,8 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  imagePath: {
-    type: String,
+  imageData: {
+    type: Buffer,
     required: false,
   },
 });

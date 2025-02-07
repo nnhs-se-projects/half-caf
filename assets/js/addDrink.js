@@ -1,6 +1,48 @@
 // creates a menu item with the selected name, description, price if its popular, temperatures available
 // if its a special, the selected flavors and the selected toppings and if it can be caffinated
 const addDrinkButton = document.querySelector("input.submit");
+
+let srcData;
+
+function encodeImageFileAsURL() {
+  const imageElement = document.getElementById("drinkImg");
+
+  const filesSelected = document.getElementById("image").files;
+  if (filesSelected.length > 0) {
+    const fileToLoad = filesSelected[0];
+    let goodType = false;
+    switch (
+      fileToLoad.name
+        .substring(fileToLoad.name.lastIndexOf(".") + 1)
+        .toLowerCase()
+    ) {
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "webp":
+      case "heic":
+      case "heif":
+        goodType = true;
+        break;
+    }
+    if (!goodType) {
+      alert("Please select a valid image type");
+      window.location.reload();
+      return;
+    }
+    const fileReader = new FileReader();
+
+    fileReader.onload = function (fileLoadedEvent) {
+      srcData = fileLoadedEvent.target.result; // <--- data: base64
+      imageElement.src = srcData;
+    };
+    fileReader.readAsDataURL(fileToLoad);
+  } else {
+    imageElement.src = "";
+    srcData = "";
+  }
+}
+
 addDrinkButton.addEventListener("click", async () => {
   const name = document
     .getElementById("name")
@@ -16,7 +58,10 @@ addDrinkButton.addEventListener("click", async () => {
       checkedTemps.push(temps[i].value);
     }
   }
-
+  if (!price) {
+    alert("Please enter a price");
+    return;
+  }
   if (checkedTemps.length === 0) {
     alert("Please select a temperature");
     return;
@@ -41,6 +86,8 @@ addDrinkButton.addEventListener("click", async () => {
 
   const caf = document.getElementById("caffeinated").checked;
 
+  const imageData = srcData;
+
   const menuItem = {
     name,
     description,
@@ -51,44 +98,19 @@ addDrinkButton.addEventListener("click", async () => {
     checkedTemps,
     caf,
     special,
+    imageData,
   };
 
-  const formData = new FormData();
-  const imageFile = document.getElementById("image").files[0];
-
-  if (!imageFile) {
-    console.error("Please select an image file");
-    return;
-  }
-
-  formData.append("image", imageFile);
-
-  // Handle arrays and other form data separately
-  for (const [key, value] of Object.entries(menuItem)) {
-    if (Array.isArray(value)) {
-      // Append each array element individually
-      value.forEach((item) => {
-        formData.append(key, item);
-      });
-    } else {
-      formData.append(key, value);
-    }
-  }
-
-  try {
-    const response = await fetch("/addDrink", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      window.location = "/addDrink";
-    } else {
-      console.error("Server error:", data.error);
-    }
-  } catch (error) {
-    console.error("Error submitting form:", error);
+  const response = await fetch("/addDrink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(menuItem),
+  });
+  if (response.ok) {
+    window.location = "/addDrink";
+  } else {
+    console.log("error adding drink");
   }
 });
