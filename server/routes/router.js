@@ -774,6 +774,12 @@ route.get("/barista", async (req, res) => {
     const flavors = await Flavor.find({});
     const toppings = await Topping.find({});
 
+    for (const order of orders) {
+      if (order.drinks.length === 0) {
+        await Order.findByIdAndRemove(order._id);
+      }
+    }
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
