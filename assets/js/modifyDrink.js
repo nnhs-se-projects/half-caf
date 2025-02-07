@@ -14,14 +14,33 @@ function handleSelectChange() {
 }
 
 let srcData;
-
 function encodeImageFileAsURL() {
   const imageElement = document.getElementById("currentImg");
 
   const filesSelected = document.getElementById("image").files;
+
   if (filesSelected.length > 0) {
     const fileToLoad = filesSelected[0];
-
+    let goodType = false;
+    switch (
+      fileToLoad.name
+        .substring(fileToLoad.name.lastIndexOf(".") + 1)
+        .toLowerCase()
+    ) {
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "webp":
+      case "heic":
+      case "heif":
+        goodType = true;
+        break;
+    }
+    if (!goodType) {
+      alert("Please select a valid image type");
+      window.location.reload();
+      return;
+    }
     const fileReader = new FileReader();
 
     fileReader.onload = function (fileLoadedEvent) {
