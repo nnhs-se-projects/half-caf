@@ -28,6 +28,8 @@ placeOrderButton.addEventListener("click", async () => {
     return;
   }
 
+  placeOrderButton.disabled = true; // ensure the user can't click this button multiple times while the page is loading the confirmation page
+
   // formatting time
   const year = time.getFullYear();
   const month = (time.getMonth() + 1).toString().padStart(2, "0");
