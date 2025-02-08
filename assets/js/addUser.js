@@ -4,6 +4,8 @@ addUserButton.addEventListener("click", async () => {
   const userType = document.getElementById("userType").value;
   const user = { isActivated: true, email, userType };
 
+  addUserButton.disabled = true;
+
   const response = await fetch("/addUser", {
     method: "POST",
     headers: {
