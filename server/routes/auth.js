@@ -15,6 +15,14 @@ const oAuth2 = new OAuth2Client(CLIENT_ID);
 // route.get("/", (req, res) => {
 //   res.render("auth");
 // });
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker
+      .register("/serviceWorker.js")
+      .then((res) => console.log("service worker registered"))
+      .catch((err) => console.log("service worker not registered", err));
+  });
+}
 
 route.post("/", async (req, res) => {
   const token = req.body.token;
