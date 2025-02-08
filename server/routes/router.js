@@ -1180,7 +1180,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
   res.status(200).send("Drink added to session.");
 });
 
-route.get("/teacherMyOrder", async (req, res) => {
+route.get("/teacherMyCart", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
@@ -1200,7 +1200,7 @@ route.get("/teacherMyOrder", async (req, res) => {
         toppings: drinkToppingsArray,
       };
     }
-    res.render("teacherMyOrder", {
+    res.render("teacherMyCart", {
       cart: req.session.cart,
       customizationDict,
       email: req.session.email,
@@ -1218,7 +1218,7 @@ route.post("/updateCart", async (req, res) => {
   res.status(200).end();
 });
 
-route.post("/teacherMyOrder", async (req, res) => {
+route.post("/teacherMyCart", async (req, res) => {
   let total = 0;
   for (const drink of req.session.cart) {
     total += drink.price;
@@ -1373,7 +1373,7 @@ route.get("/addDrinkToCart/:id", async (req, res) => {
   const drink = await Drink.findById(req.params.id);
   req.session.cart.push(drink);
 
-  res.redirect("/teacherMyOrder");
+  res.redirect("/teacherMyCart");
 });
 
 route.get("/unfavoriteDrink/:id", async (req, res) => {

@@ -48,7 +48,7 @@ addToOrderButton.addEventListener("click", async () => {
   });
 
   if (response.ok) {
-    window.location = "/teacherMyOrder";
+    window.location = "/teacherMyCart";
   } else {
     console.log("error adding drink");
   }

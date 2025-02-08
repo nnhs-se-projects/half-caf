@@ -11,7 +11,7 @@ for (const button of removeButton) {
       body: JSON.stringify({ index: itemIndex }),
     });
     if (response.ok) {
-      window.location = "/teacherMyOrder";
+      window.location = "/teacherMyCart";
     } else {
       console.log("error removing drink from cart");
     }
@@ -42,7 +42,7 @@ placeOrderButton.addEventListener("click", async () => {
   hours = hours || 12;
   const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}${ampm}/${seconds}`;
 
-  const response = await fetch("/teacherMyOrder", {
+  const response = await fetch("/teacherMyCart", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
