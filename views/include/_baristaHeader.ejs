@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="/socket.io/socket.io.js"></script>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Half Caf</title>
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="shortcut icon" type="image/png" href="/img/logo.png" />
+  </head>
+  <body>
     <div class="container" id="logo">
       <%- include('_header') %>
       <h1 class="indexTopBar">NNHS Half Caf Barista</h1>
@@ -41,10 +45,6 @@
           <%}}%>
         </select>
       </a>
-
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="/js/notifications.js"></script>
-      <script src="/js/refreshOrderingToggle.js"></script>
 
       <label class="on-off">
         <% if(headerData.enabled === false) { %>
@@ -82,7 +82,8 @@
         align-items: center;
       }
     </style>
-
+    <script src="/js/notifications.js"></script>
+    <script src="/js/refreshOrderingToggle.js"></script>
     <script src="/js/toggleEnabled.js"></script>
-  </head>
+  </body>
 </html>
