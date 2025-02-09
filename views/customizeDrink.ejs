@@ -3,74 +3,76 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<head>
-  <h2>Customize Drink</h2>
-</head>
+<div id="mainContent">
+  <head>
+    <h2>Customize Drink</h2>
+  </head>
 
-<body>
-  <div id="mainPage">
-    <h2 id="name"><%=drink.name%></h2>
-    <h4 id="price">Price: $<%=drink.price%></h4>
-    <p>Please fill out this form to customize your drink.</p>
-    <div class="dropdown-check-list">
-      <h6>Choose a Flavor:</h6>
-      <ul class="items">
-        <% for (let flavor of flavors) {%>
-        <li>
-          <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
-          flavor.flavor %>
-        </li>
-        <%}%>
-      </ul>
+  <body>
+    <div id="mainPage">
+      <h2 id="name"><%=drink.name%></h2>
+      <h4 id="price">Price: $<%=drink.price%></h4>
+      <p>Please fill out this form to customize your drink.</p>
+      <div class="dropdown-check-list">
+        <h6>Choose a Flavor:</h6>
+        <ul class="items">
+          <% for (let flavor of flavors) {%>
+          <li>
+            <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
+            flavor.flavor %>
+          </li>
+          <%}%>
+        </ul>
+      </div>
+      <% if(temps.length > 0) { %>
+      <div class="dropdown-check-list">
+        <h6>Choose a Temperature:</h6>
+        <fieldset>
+          <% for(let temp of temps) { %>
+          <label>
+            <input
+              class="temps"
+              name="temps"
+              type="radio"
+              value="<%= temp %>"
+              checked
+            />
+            <%= temp %>
+          </label>
+          <% } %>
+        </fieldset>
+      </div>
+      <% } %>
+      <div class="dropdown-check-list">
+        <h6>Choose a Topping:</h6>
+        <ul class="items">
+          <% for (let topping of toppings) {%>
+          <li>
+            <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
+            topping.topping %>
+          </li>
+          <%}%>
+        </ul>
+      </div>
+      <div><input id="favorite" type="checkbox" />Save to Favorite</div>
+      <input
+        type="text"
+        id="instructions"
+        placeholder="Add Any Special Instructions..."
+      />
+      <h6>Quantity:</h6>
+      <input
+        type="number"
+        id="quantity"
+        min="1"
+        placeholder="1"
+        maxlength="1"
+        onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57)) && this.value.length < 1"
+      />
+      <input type="submit" class="submit" value="Add to Cart" />
     </div>
-    <% if(temps.length > 0) { %>
-    <div class="dropdown-check-list">
-      <h6>Choose a Temperature:</h6>
-      <fieldset>
-        <% for(let temp of temps) { %>
-        <label>
-          <input
-            class="temps"
-            name="temps"
-            type="radio"
-            value="<%= temp %>"
-            checked
-          />
-          <%= temp %>
-        </label>
-        <% } %>
-      </fieldset>
-    </div>
-    <% } %>
-    <div class="dropdown-check-list">
-      <h6>Choose a Topping:</h6>
-      <ul class="items">
-        <% for (let topping of toppings) {%>
-        <li>
-          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
-          topping.topping %>
-        </li>
-        <%}%>
-      </ul>
-    </div>
-    <div><input id="favorite" type="checkbox" />Save to Favorite</div>
-    <input
-      type="text"
-      id="instructions"
-      placeholder="Add Any Special Instructions..."
-    />
-    <h6>Quantity:</h6>
-    <input
-      type="number"
-      id="quantity"
-      min="1"
-      placeholder="1"
-      maxlength="1"
-      onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57)) && this.value.length < 1"
-    />
-    <input type="submit" class="submit" value="Add to Cart" />
-  </div>
-</body>
+  </body>
+</div>
 
 <!-- /Main Site -->
 

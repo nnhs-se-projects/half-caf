@@ -53,10 +53,15 @@ textarea {
   justify-content: space-between;
   align-items: center;
   margin-left: 5px;
+  width: 100%;
+  background-color: whitesmoke;
+  margin-right: auto;
+  top: 0;
+  position: fixed;
 }
 
-.indexTopBar h1 {
-  margin-right: auto;
+h1.indexTopBar {
+  margin-left: 100px;
 }
 
 .adminPage {
@@ -173,12 +178,25 @@ h4 {
   margin: 0;
 }
 
-.topnav {
-  background-color: darkblue;
-  overflow: hidden;
+#mainContent {
+  margin-left: 200px;
+  transition: margin-left 0.3s ease;
+  padding: 16px;
+  margin-top: 80px;
 }
 
-.topnav a {
+#sidebar {
+  background-color: darkblue;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  margin-top: 100px;
+}
+
+#sidebar a {
   color: #f2f2f2;
   text-align: center;
   padding: 14px 16px;
@@ -187,12 +205,12 @@ h4 {
   display: inline-block;
 }
 
-.topnav a:hover {
+#sidebar a:hover {
   background-color: #3f93d8;
   color: black;
 }
 
-.topnav a.active {
+#sidebar a.active {
   background-color: #ffa530;
   color: white;
 }

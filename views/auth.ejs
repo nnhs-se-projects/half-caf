@@ -1,33 +1,42 @@
-<%- include('include/_homeHeader') %>
-<!-- /include header -->
+<div class="mainContent">
+  <%- include('include/_homeHeader') %>
+  <!-- /include header -->
 
-<script src="js/auth2.js"></script>
+  <script src="js/auth2.js"></script>
 
-<!-- Main Site -->
-<main>
-  <div class="authForm">
-    <img src="/img/huskie.jpg" style="width: auto; height: 150px" />
-    <div class="warning">
-      <h1>
-        Ordering through the Half Caf App is currently only available for NNHS
-        staff members.
-      </h1>
+  <!-- Main Site -->
+
+  <main>
+    <div id="mainContent" class="authForm">
+      <img
+        src="/img/huskie.jpg"
+        style="width: auto; height: 150px; margin: 0px"
+      />
+      <div class="warning">
+        <h1>
+          Ordering through the Half Caf App is currently only available for NNHS
+          staff members.
+        </h1>
+      </div>
+      <div></div>
+      <!-- from https://developers.google.com/identity/gsi/web/guides/migration#popup-mode_1 -->
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+      <div>
+        <div
+          id="g_id_onload"
+          data-client_id="1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com"
+          data-callback="handleCredentialResponse"
+        ></div>
+        <div class="g_id_signin" data-type="standard"></div>
+      </div>
     </div>
-    <!-- from https://developers.google.com/identity/gsi/web/guides/migration#popup-mode_1 -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <div>
-      <div
-        id="g_id_onload"
-        data-client_id="<%= process.env.CLIENT_ID %>"
-        data-callback="handleCredentialResponse"
-      ></div>
-      <div class="g_id_signin" data-type="standard"></div>
-    </div>
-  </div>
-</main>
+  </main>
 
-<!-- /Main Site -->
+  <!-- /Main Site -->
 
-<!-- include footer -->
-<%- include('include/_footer') %>
-<!-- /include footer -->
+  <script></script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
+</div>

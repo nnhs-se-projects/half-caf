@@ -1,71 +1,75 @@
 <%- include('include/_teacherHeader') %>
 
-<head>
-  <h2>My Favorites</h2>
-</head>
-<body>
-  <% if(favoriteDrinks.length > 0) {%> <% let drinkIndex = 0; %> <% for (let
-  drink of favoriteDrinks){%> <% let link = "/addDrinkToCart/" + drink.id; %>
-  <a href="<%=link%>">
-    <div class="card">
-      <div class="container">
-        <h5><%=drink.name%>:</h5>
+<div id="mainContent">
+  <head>
+    <h2>My Favorites</h2>
+  </head>
+  <body>
+    <% if(favoriteDrinks.length > 0) {%> <% let drinkIndex = 0; %> <% for (let
+    drink of favoriteDrinks){%> <% let link = "/addDrinkToCart/" + drink.id; %>
+    <a href="<%=link%>">
+      <div class="card">
+        <div class="container">
+          <h5><%=drink.name%>:</h5>
 
-        <!-- Flavors -->
-        <% if(favoriteDrinksFlavors[drinkIndex].length > 0) { %> <%let
-        allFlavors=""%> <%for (let i=0; i <
-        favoriteDrinksFlavors[drinkIndex].length; i++){%> <%if(i <
-        drink.flavors.length-1){%> <%allFlavors +=
-        favoriteDrinksFlavors[drinkIndex][i].flavor+", "%> <%} else {%>
-        <%allFlavors += favoriteDrinksFlavors[drinkIndex][i].flavor%> <%}%>
-        <%}%>
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Flavors:</span>
-          <%=allFlavors%></h9
-        >
-        <br />
-        <%}%>
+          <!-- Flavors -->
+          <% if(favoriteDrinksFlavors[drinkIndex].length > 0) { %> <%let
+          allFlavors=""%> <%for (let i=0; i <
+          favoriteDrinksFlavors[drinkIndex].length; i++){%> <%if(i <
+          drink.flavors.length-1){%> <%allFlavors +=
+          favoriteDrinksFlavors[drinkIndex][i].flavor+", "%> <%} else {%>
+          <%allFlavors += favoriteDrinksFlavors[drinkIndex][i].flavor%> <%}%>
+          <%}%>
+          <h9
+            ><span style="font-weight: bold; color: #3f93d8">Flavors:</span>
+            <%=allFlavors%></h9
+          >
+          <br />
+          <%}%>
 
-        <!-- Toppings -->
-        <% if(favoriteDrinksToppings[drinkIndex].length > 0) { %> <%let
-        allToppings=""%> <%for (let i=0; i <
-        favoriteDrinksToppings[drinkIndex].length; i++){%> <%if(i <
-        drink.flavors.length-1){%> <%allToppings +=
-        favoriteDrinksToppings[drinkIndex][i].topping+", "%> <%} else {%>
-        <%allToppings += favoriteDrinksToppings[drinkIndex][i].topping%> <%}%>
-        <%}%>
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Toppings:</span>
-          <%=allToppings%></h9
-        >
-        <br />
-        <%}%>
+          <!-- Toppings -->
+          <% if(favoriteDrinksToppings[drinkIndex].length > 0) { %> <%let
+          allToppings=""%> <%for (let i=0; i <
+          favoriteDrinksToppings[drinkIndex].length; i++){%> <%if(i <
+          drink.flavors.length-1){%> <%allToppings +=
+          favoriteDrinksToppings[drinkIndex][i].topping+", "%> <%} else {%>
+          <%allToppings += favoriteDrinksToppings[drinkIndex][i].topping%> <%}%>
+          <%}%>
+          <h9
+            ><span style="font-weight: bold; color: #3f93d8">Toppings:</span>
+            <%=allToppings%></h9
+          >
+          <br />
+          <%}%>
 
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Temp:</span>
-          <%=drink.temps%></h9
-        >
-        <br />
-        <% if(drink.instructions !== "") {%>
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Instructions:</span>
-          <%=drink.instructions%></h9
-        >
-        <%}%>
+          <h9
+            ><span style="font-weight: bold; color: #3f93d8">Temp:</span>
+            <%=drink.temps%></h9
+          >
+          <br />
+          <% if(drink.instructions !== "") {%>
+          <h9
+            ><span style="font-weight: bold; color: #3f93d8"
+              >Instructions:</span
+            >
+            <%=drink.instructions%></h9
+          >
+          <%}%>
 
-        <h5>$<%=drink.price%></h5>
+          <h5>$<%=drink.price%></h5>
 
-        <% link = "/unfavoriteDrink/" + drink.id; %>
-        <a href="<%=link%>">
-          <button>Unfavorite</button>
-        </a>
+          <% link = "/unfavoriteDrink/" + drink.id; %>
+          <a href="<%=link%>">
+            <button>Unfavorite</button>
+          </a>
+        </div>
       </div>
-    </div>
-  </a>
+    </a>
 
-  <%drinkIndex++;}%> <%} else {%>
-  <h2>You have not favorited any drinks.</h2>
-  <%}%>
-</body>
+    <%drinkIndex++;}%> <%} else {%>
+    <h2>You have not favorited any drinks.</h2>
+    <%}%>
+  </body>
+</div>
 
 <%- include('include/_footer') %>
