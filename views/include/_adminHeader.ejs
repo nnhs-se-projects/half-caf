@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Half Caf</title>
+    <link rel="stylesheet" href="/css/pico.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="shortcut icon" type="image/png" href="/img/logo.png" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/refreshOrderingToggle.js"></script>
+    <script src="/js/toggleEnabled.js"></script>
+  </head>
+  <body>
     <div class="container" id="logo">
       <%- include('_header') %>
       <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
@@ -28,12 +37,8 @@
       >
       <a href="/logout">Logout</a>
 
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="/js/notifications.js"></script>
-      <script src="/js/refreshOrderingToggle.js"></script>
-
       <label class="on-off">
-        <% if(headerData.enabled === false) { %>
+        <% if (headerData.enabled === false) { %>
         <input class="toggle" type="checkbox" id="myCheckbox" />
         <span class="dis-en"></span>
         <% } else { %>
@@ -48,10 +53,5 @@
       </label>
       <h4>Toggle allow ordering</h4>
     </div>
-
-    <link rel="stylesheet" href="/css/pico.min.css" />
-    <link rel="stylesheet" href="/css/styles.css" />
-
-    <script src="/js/toggleEnabled.js"></script>
-  </head>
+  </body>
 </html>
