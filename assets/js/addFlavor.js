@@ -4,6 +4,8 @@ addFlavorButton.addEventListener("click", async () => {
   const getFlavor = document.getElementById("flavor").value;
   const flavor = { flavor: getFlavor };
 
+  addFlavorButton.disabled = true;
+
   const response = await fetch("/addFlavor", {
     method: "POST",
     headers: {

@@ -10,6 +10,8 @@ addToppingButton.addEventListener("click", async () => {
 
   const topping = { topping: getTopping, price: getToppingPrice };
 
+  addToppingButton.disabled = true;
+
   const response = await fetch("/addTopping", {
     method: "POST",
     headers: {

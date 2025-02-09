@@ -101,6 +101,8 @@ addDrinkButton.addEventListener("click", async () => {
     imageData,
   };
 
+  addDrinkButton.disabled = true;
+
   const response = await fetch("/addDrink", {
     method: "POST",
     headers: {
