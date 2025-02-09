@@ -24,4 +24,211 @@
         font-size: 24px; /* Adjust font size as needed */
       }
     </style>
+
+  <body>
+    <div id="logo">
+      <div id="modelContainer"></div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+
+      let scene, camera, renderer, model, steamParticles;
+
+      function init() {
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for square canvas
+        camera.position.set(0, 1, 3); // Move the camera back to fit the entire cup
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(100, 100); // Match the size of the container
+        renderer.setClearColor(0xffffff, 0); // Set the background color to transparent
+        document.getElementById("modelContainer").appendChild(renderer.domElement);
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // Add directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(0, 10, 10);
+        scene.add(directionalLight);
+
+        // Add another directional light for better visibility
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight2.position.set(0, -10, -10);
+        scene.add(directionalLight2);
+
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(
+          '/models/GRAYBGHUSKIE.png',
+          function (texture) {
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+              '/models/LogoCupNNHSNOTEXT.glb',
+              function (gltf) {
+                model = gltf.scene;
+                model.traverse(function (child) {
+                  if (child.isMesh) {
+                    // Check if this is the center area mesh
+                    if (child.name === 'Cylinder001_2') { // this is the actual name of the center area mesh
+                      child.material.map = texture;
+                    } else {
+                      child.material.color = new THREE.Color(0x1d2831); // Set the color to match the background
+                    }
+                    // Turn off reflections
+                    child.material.envMap = null;
+                    child.material.reflectivity = 0;
+                    child.material.metalness = 0;
+                  }
+                });
+
+                model.position.y = 0; // Move the model down
+                model.rotation.y = Math.PI / 2; // Rotate the model 90 degrees to the left
+
+                const rotationState = JSON.parse(localStorage.getItem("modelRotation"));
+                if (rotationState) {
+                  model.rotation.x = rotationState.x;
+                  model.rotation.y = rotationState.y;
+                  model.rotation.z = rotationState.z;
+                } else {
+                  model.rotation.y = 0; // Ensure the model starts facing forward
+                }
+
+                scene.add(model);
+                animate();
+              },
+              undefined,
+              function (error) {
+                console.error("Error loading model:", error);
+              }
+            );
+          },
+          undefined,
+          function (error) {
+            console.error("Error loading texture:", error);
+          }
+        );
+
+        // Create a canvas texture for the steam
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+
+        // Draw a radial gradient
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2,
+          canvas.height / 2,
+          0,
+          canvas.width / 2,
+          canvas.height / 2,
+          canvas.width / 2
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+        gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.5)');
+        gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.3)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const steamTexture = new THREE.CanvasTexture(canvas);
+
+        // Create steam particles
+        const steamGeometry = new THREE.BufferGeometry();
+        const steamMaterial = new THREE.PointsMaterial({
+          map: steamTexture,
+          size: 0.5,
+          transparent: true,
+          opacity: 0.5,
+          depthWrite: false
+        });
+
+        const steamCount = 10; // Reduced number of particles
+        const steamPositions = new Float32Array(steamCount * 3);
+        const steamVelocities = new Float32Array(steamCount * 3);
+        const steamLifetimes = new Float32Array(steamCount);
+        for (let i = 0; i < steamCount; i++) {
+          steamPositions[i * 3] = (Math.random() - 0.5) * 0.5;
+          steamPositions[i * 3 + 1] = Math.random() * 1.5;
+          steamPositions[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
+
+          steamVelocities[i * 3] = (Math.random() - 0.5) * 0.01;
+          steamVelocities[i * 3 + 1] = Math.random() * 0.02 + 0.01;
+          steamVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.01;
+
+          steamLifetimes[i] = Math.random() * 3600 + 3600; // Random lifetime between 1 and 2 minutes (60 FPS)
+        }
+        steamGeometry.setAttribute('position', new THREE.BufferAttribute(steamPositions, 3));
+        steamGeometry.setAttribute('velocity', new THREE.BufferAttribute(steamVelocities, 3));
+        steamGeometry.setAttribute('lifetime', new THREE.BufferAttribute(steamLifetimes, 1));
+
+        steamParticles = new THREE.Points(steamGeometry, steamMaterial);
+        steamParticles.position.set(0, 1.5, 0); // Position the steam above the cup
+        scene.add(steamParticles);
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function onWindowResize() {
+        const container = document.getElementById("modelContainer");
+        const size = Math.min(container.clientWidth, container.clientHeight);
+        renderer.setSize(size, size);
+        camera.aspect = 1; // Maintain 1:1 aspect ratio
+        camera.updateProjectionMatrix();
+      }
+
+      let lastTimestamp = Date.now();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (model) {
+          const currentTimestamp = Date.now();
+          const deltaTime = currentTimestamp - lastTimestamp;
+          lastTimestamp = currentTimestamp;
+          model.rotation.y += 0.007 * deltaTime / 16.67; // Example animation
+          saveRotationState();
+        }
+
+        // Animate steam particles
+        const positions = steamParticles.geometry.attributes.position.array;
+        const velocities = steamParticles.geometry.attributes.velocity.array;
+        const lifetimes = steamParticles.geometry.attributes.lifetime.array;
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i] += velocities[i];
+          positions[i + 1] += velocities[i + 1];
+          positions[i + 2] += velocities[i + 2];
+
+          lifetimes[i / 3] -= 1;
+          if (lifetimes[i / 3] <= 0) {
+            positions[i] = (Math.random() - 0.5) * 0.5;
+            positions[i + 1] = 0;
+            positions[i + 2] = (Math.random() - 0.5) * 0.5;
+
+            lifetimes[i / 3] = Math.random() * 100 + 100; // Reset lifetime
+          }
+        }
+        steamParticles.geometry.attributes.position.needsUpdate = true;
+
+        // Set the color of the steam particles to a darker color
+        steamParticles.material.color.set(0x555555);
+
+        renderer.render(scene, camera);
+      }
+
+      function saveRotationState() {
+        const rotationState = {
+          x: model.rotation.x,
+          y: model.rotation.y,
+          z: model.rotation.z,
+        };
+        localStorage.setItem("modelRotation", JSON.stringify(rotationState));
+      }
+      
+      init();
+    </script>
+  </body>
 </html>
