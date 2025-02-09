@@ -3,7 +3,12 @@ const { Server } = require("socket.io");
 let io;
 function createSocketServer(httpServer) {
   io = new Server(httpServer, {
-    connectionStateRecovery: {},
+    connectionStateRecovery: {
+      // the backup duration of the sessions and the packets
+      maxDisconnectionDuration: 1000,
+      // whether to skip middlewares upon successful recovery
+      skipMiddlewares: true,
+    },
     connectTimeout: 1000,
   });
 
