@@ -19,15 +19,14 @@ updateUserButton.addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const role = document.getElementById("roles").value;
 
-  console.log(email);
-  console.log(role);
-
   const user = {
     email,
     role,
   };
 
   try {
+    updateUserButton.disabled = true;
+
     const response = await fetch(`/modifyUser/${id}`, {
       method: "POST",
       headers: {

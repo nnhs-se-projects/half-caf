@@ -121,6 +121,8 @@ saveDrinkButton.addEventListener("click", async () => {
   };
 
   try {
+    saveDrinkButton.disabled = true;
+
     const response = await fetch(`/modifyDrink/${id}`, {
       method: "POST",
       headers: {
