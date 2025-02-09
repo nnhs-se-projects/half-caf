@@ -4,6 +4,7 @@ let io;
 function createSocketServer(httpServer) {
   io = new Server(httpServer, {
     connectionStateRecovery: {},
+    connectTimeout: 1000,
   });
 
   io.on("connection", (socket) => {
