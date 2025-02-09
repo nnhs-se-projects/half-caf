@@ -52,16 +52,24 @@ textarea {
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  margin-left: 5px;
   width: 100%;
   background-color: whitesmoke;
   margin-right: auto;
   top: 0;
+  left: 0;
   position: fixed;
+  box-shadow: 0px 5px 10px #888888;
 }
 
 h1.indexTopBar {
   margin-left: 100px;
+  box-shadow: none;
+  z-index: 1000;
+}
+
+canvas {
+  box-shadow: none;
+  left: 0;
 }
 
 .adminPage {
@@ -182,18 +190,17 @@ h4 {
   margin-left: 200px;
   transition: margin-left 0.3s ease;
   padding: 16px;
-  margin-top: 80px;
+  margin-top: 100px;
 }
 
 #sidebar {
   background-color: darkblue;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
   width: 200px;
-  height: 100%;
   position: fixed;
-  margin-top: 100px;
+  top: 100px;
+  bottom: 0;
+  overflow-y: auto; /* Enable scroll if needed */
+  box-shadow: 5px 0px 10px #888888;
 }
 
 #sidebar a {
@@ -203,6 +210,7 @@ h4 {
   text-decoration: none;
   font-size: 17px;
   display: inline-block;
+  width: 100%;
 }
 
 #sidebar a:hover {
