@@ -11,7 +11,14 @@ document.addEventListener("click", () => {
 
 const emailInput = document.querySelector("input.emailInput");
 
-window.io({ transports: ["websocket"] }).on("Order finished", (data) => {
+if (typeof window.socket === "undefined") {
+  // Configure the Socket.IO client to prefer WebSocket over polling
+  window.socket = window.io({
+    transports: ["websocket"], // Prefer WebSocket over polling
+  });
+}
+
+window.socket.on("Order finished", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&
@@ -24,7 +31,7 @@ window.io({ transports: ["websocket"] }).on("Order finished", (data) => {
   }
 });
 
-window.io({ transports: ["websocket"] }).on("Order cancelled", (data) => {
+window.socket.on("Order cancelled", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&
