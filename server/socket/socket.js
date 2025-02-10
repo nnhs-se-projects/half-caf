@@ -4,8 +4,11 @@ let io;
 function createSocketServer(httpServer) {
   if (!io) {
     io = new Server(httpServer, {
-      pollingDuration: 1000,
-      connectionStateRecovery: {},
+      transports: ["websocket"], // Prefer WebSocket over polling
+      connectionStateRecovery: {
+        maxDisconnectionDuration: 1000,
+        skipMiddlewares: true,
+      },
       connectTimeout: 1000,
     });
 

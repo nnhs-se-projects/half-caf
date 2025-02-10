@@ -11,7 +11,7 @@ document.addEventListener("click", () => {
 
 const emailInput = document.querySelector("input.emailInput");
 
-window.io().on("Order finished", (data) => {
+window.io({ transports: ["websocket"] }).on("Order finished", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&
@@ -24,7 +24,7 @@ window.io().on("Order finished", (data) => {
   }
 });
 
-window.io().on("Order cancelled", (data) => {
+window.io({ transports: ["websocket"] }).on("Order cancelled", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&

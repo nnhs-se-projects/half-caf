@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addListenerToFinishButtons();
 });
 
-window.io().on("New order placed", (data) => {
+window.io({ transports: ["websocket"] }).on("New order placed", (data) => {
   if (Notification?.permission === "granted") {
     const notification = new Notification("New order placed", {
       body: "A new order has been placed from room " + data.order.room,
