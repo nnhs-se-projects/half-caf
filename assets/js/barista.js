@@ -72,14 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addListenerToFinishButtons();
 });
 
-if (typeof window.socket === "undefined") {
-  // Configure the Socket.IO client to prefer WebSocket over polling
-  window.socket = window.io({
-    transports: ["websocket"], // Prefer WebSocket over polling
-  });
-}
-
-window.socket.on("New order placed", (data) => {
+window.io().on("New order placed", (data) => {
   if (Notification?.permission === "granted") {
     const notification = new Notification("New order placed", {
       body: "A new order has been placed from room " + data.order.room,
