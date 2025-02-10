@@ -4,6 +4,7 @@ let io;
 function createSocketServer(httpServer) {
   if (!io) {
     io = new Server(httpServer, {
+      pollingDuration: 1000,
       connectionStateRecovery: {},
       connectTimeout: 1000,
     });
@@ -24,19 +25,27 @@ function createSocketServer(httpServer) {
 }
 
 function emitToggleChange() {
-  io.emit("Ordering toggle changed", {});
+  if (io) {
+    io.emit("Ordering toggle changed", {});
+  }
 }
 
 function emitOrderCancelled(data) {
-  io.emit("Order cancelled", data);
+  if (io) {
+    io.emit("Order cancelled", data);
+  }
 }
 
 function emitOrderFinished(data) {
-  io.emit("Order finished", data);
+  if (io) {
+    io.emit("Order finished", data);
+  }
 }
 
 function emitNewOrderPlaced(data) {
-  io.emit("New order placed", data);
+  if (io) {
+    io.emit("New order placed", data);
+  }
 }
 
 module.exports = {
