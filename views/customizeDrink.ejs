@@ -15,7 +15,7 @@
     <h2>Contains caffeine: Yes</h2>
     <% } else { %>
     <h2>Contains caffeine: No</h2>
-    <% } %>
+    <% } %> <% if(flavors.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose Flavors:</h6>
       <ul class="items">
@@ -27,7 +27,7 @@
         <%}%>
       </ul>
     </div>
-    <% if(temps.length > 0) { %>
+    <%}%> <% if(temps.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose a Temperature:</h6>
       <fieldset>
