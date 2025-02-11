@@ -11,7 +11,7 @@ const Order = require("../model/order");
 const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Enabled = require("../model/enabled");
-
+const CurrentScheduleDb = require("../model/currentSchedule");
 const {
   emitToggleChange,
   emitOrderCancelled,
@@ -161,10 +161,22 @@ route.post("/addSchedule", async (req, res) => {
   const schedule = new Schedule({
     name: req.body.name,
     periods: periodIds,
-    enabled: false,
   });
   await schedule.save();
   res.status(201).end();
+});
+
+route.post("/setActiveSchedule", async (req, res) => {
+  const currentSchedule = await CurrentScheduleDb.findById(
+    "67aaa5de983e13286e554053"
+  );
+  currentSchedule.schedule = req.body.id;
+  await currentSchedule.save();
+  res.status(201).end();
+});
+route.delete("/deleteSchedule", async (req, res) => {
+  await Schedule.findByIdAndRemove(req.body.id);
+  res.end();
 });
 route.get("/scheduler", async (req, res) => {
   const role = await getUserRoles(req.session.email);
@@ -176,19 +188,28 @@ route.get("/scheduler", async (req, res) => {
 
     const { id } = req.query;
     let selectedSchedule;
+    const activeScheduleObj = await CurrentScheduleDb.findById(
+      "67aaa5de983e13286e554053"
+    );
+    const activeSchedule = await Schedule.findById(activeScheduleObj.schedule);
     if (id != null) {
       selectedSchedule = await Schedule.findById(id);
-      if (selectedSchedule.periods) {
-        for (const period of selectedSchedule.periods) {
-          const periodData = await Period.findById(period);
-          selectedPeriods.push(periodData);
-        }
+    } else {
+      selectedSchedule = activeSchedule;
+    }
+    if (selectedSchedule) {
+      for (const period of selectedSchedule.periods) {
+        const periodData = await Period.findById(period);
+        selectedPeriods.push(periodData);
       }
-    } else if (schedules[0] !== null && schedules[0] !== undefined) {
-      selectedSchedule = schedules[0];
     }
 
-    res.render("scheduler", { selectedSchedule, schedules, selectedPeriods });
+    res.render("scheduler", {
+      activeSchedule,
+      selectedSchedule,
+      schedules,
+      selectedPeriods,
+    });
   }
 });
 

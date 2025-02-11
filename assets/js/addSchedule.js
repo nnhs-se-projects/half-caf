@@ -39,7 +39,20 @@ addScheduleButton.addEventListener("click", async () => {
     };
     periods.push(period);
   });
-
+  if (periods.length <= 0) {
+    alert("Please add periods.");
+    return;
+  }
+  for (const period of periods) {
+    if (!period.name || !period.start || !period.end) {
+      alert("Please fill in all period information or delete blank periods.");
+      return;
+    }
+    if (period.start >= period.end) {
+      alert(period.name + "'s start time must be before end time.");
+      return;
+    }
+  }
   const schedule = {
     name,
     periods,

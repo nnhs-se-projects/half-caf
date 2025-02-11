@@ -12,10 +12,6 @@ const scheme = new mongoose.Schema({
     ref: "Period",
     required: true,
   },
-  enabled: {
-    type: Boolean,
-    required: true,
-  },
 });
 
 const Schedule = mongoose.model("Schedule", scheme);

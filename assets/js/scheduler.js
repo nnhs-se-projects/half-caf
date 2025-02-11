@@ -11,3 +11,47 @@ document.getElementById("schedules").addEventListener("change", () => {
   // redirect window
   window.location = updatedURL;
 });
+
+document.getElementById("setActiveBtn").addEventListener("click", async () => {
+  const id = document.getElementById("selectedScheduleId").value;
+  const request = { id };
+  try {
+    const response = await fetch(`/setActiveSchedule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (response.ok) {
+      window.location = `/scheduler`;
+    }
+  } catch (error) {
+    console.error("Error changing schedule: ", error);
+  }
+});
+
+document.getElementById("deleteBtn").addEventListener("click", async () => {
+  const id = document.getElementById("selectedScheduleId").value;
+  if (id === document.getElementById("activeScheduleId").value) {
+    alert("Cannot delete the active schedule");
+    return;
+  }
+  const request = { id };
+  try {
+    const response = await fetch(`/deleteSchedule`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (response.ok) {
+      window.location = `/scheduler`;
+    }
+  } catch (error) {
+    console.error("Error deleting schedule: ", error);
+  }
+});
