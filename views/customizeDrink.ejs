@@ -4,16 +4,20 @@
 
 <!-- Main Site -->
 <head>
-  <h2>Customize Drink</h2>
+  <h2>Customize Drink:</h2>
 </head>
 
 <body>
   <div id="mainPage">
     <h2 id="name"><%=drink.name%></h2>
-    <h4 id="price">Price: $<%=drink.price%></h4>
-    <p>Please fill out this form to customize your drink.</p>
+    <h2 id="price">Price: $<%=drink.price%></h2>
+    <% if(drink.caffeination) {%>
+    <h2>Contains caffeine: Yes</h2>
+    <% } else { %>
+    <h2>Contains caffeine: No</h2>
+    <% } %> <% if(flavors.length > 0) { %>
     <div class="dropdown-check-list">
-      <h6>Choose a Flavor:</h6>
+      <h6>Choose Flavors:</h6>
       <ul class="items">
         <% for (let flavor of flavors) {%>
         <li>
@@ -23,7 +27,7 @@
         <%}%>
       </ul>
     </div>
-    <% if(temps.length > 0) { %>
+    <%}%> <% if(temps.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose a Temperature:</h6>
       <fieldset>
@@ -43,7 +47,7 @@
     </div>
     <% } %>
     <div class="dropdown-check-list">
-      <h6>Choose a Topping:</h6>
+      <h6>Choose Toppings:</h6>
       <ul class="items">
         <% for (let topping of toppings) {%>
         <li>
@@ -53,7 +57,6 @@
         <%}%>
       </ul>
     </div>
-    <div><input id="favorite" type="checkbox" />Save to Favorite</div>
     <input
       type="text"
       id="instructions"
@@ -68,6 +71,7 @@
       maxlength="1"
       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57)) && this.value.length < 1"
     />
+    <div><input id="favorite" type="checkbox" />Save to Favorite</div>
     <input type="submit" class="submit" value="Add to Cart" />
   </div>
 </body>

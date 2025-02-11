@@ -7,7 +7,9 @@
 
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
-    <style>
+  </head>
+
+  <style>
       #logo {
         display: flex;
         align-items: center;
@@ -22,7 +24,6 @@
         font-size: 24px; /* Adjust font size as needed */
       }
     </style>
-  </head>
 
   <body>
     <div id="logo">
@@ -32,12 +33,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-      console.log("Script loaded");
 
       let scene, camera, renderer, model, steamParticles;
 
       function init() {
-        console.log("Initializing scene");
 
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Aspect ratio set to 1 for square canvas
@@ -73,7 +72,6 @@
                 model = gltf.scene;
                 model.traverse(function (child) {
                   if (child.isMesh) {
-                    console.log(child.name);
                     // Check if this is the center area mesh
                     if (child.name === 'Cylinder001_2') { // this is the actual name of the center area mesh
                       child.material.map = texture;
@@ -100,7 +98,6 @@
                 }
 
                 scene.add(model);
-                console.log("Model added to scene");
                 animate();
               },
               undefined,
@@ -230,7 +227,7 @@
         };
         localStorage.setItem("modelRotation", JSON.stringify(rotationState));
       }
-
+      
       init();
     </script>
   </body>

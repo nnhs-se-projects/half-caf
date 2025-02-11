@@ -16,11 +16,6 @@
             <li><%=topping.topping%></li>
           <%}%>
           <li><%=drink.temps%></li>
-          <% if (drink.caffeination === true) { %>
-            <li>Caffeinated</li>
-          <% } else { %>
-            <li>Uncaffeinated</li>
-          <% } %>
         </ul>
         <%if(drink.instructions.length > 40) { %>
         <p><%=drink.instructions.slice(0,40) + "..."%></p>
@@ -60,5 +55,5 @@
     width: 200%;
   }
 </style>
-<script src="/js/teacherMyOrder.js"></script>
+<script src="/js/teacherMyCart.js"></script>
 <%- include('include/_footer') %>

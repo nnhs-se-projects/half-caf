@@ -9,7 +9,9 @@ function addListenerToCancelButtons() {
 
       const message = prompt("Please enter a message for the cancellation:");
       const orderId = cancelButton.value;
-      console.log(orderId);
+
+      cancelButton.disabled = true;
+
       const response = await fetch(`/barista/${orderId}`, {
         method: "DELETE",
         headers: {
@@ -37,8 +39,12 @@ function addListenerToFinishButtons() {
       const counter = document.querySelector(
         `.time-counter[data-order-id="${orderId}"]`
       );
+
       let timerVal = counter.textContent;
       timerVal = convertToSeconds(timerVal);
+
+      finishButton.disabled = true;
+
       const response = await fetch(`/barista/${orderId}`, {
         method: "POST",
         headers: {

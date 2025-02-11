@@ -2,38 +2,55 @@ const { Server } = require("socket.io");
 
 let io;
 function createSocketServer(httpServer) {
-  io = new Server(httpServer, {
-    connectionStateRecovery: {},
-  });
-
-  io.on("connection", (socket) => {
-    // console.log("a user connected");
-
-    // add additional socket.on code here to handle incoming events
-    //  from the client
-
-    socket.on("disconnect", () => {
-      // console.log("user disconnected");
+  if (!io) {
+    io = new Server(httpServer, {
+      connectionStateRecovery: {},
     });
 
-    return io;
-  });
+    io.engine.on("connection_error", (err) => {
+      console.log(err.req); // the request object
+      console.log(err.code); // the error code, for example 1
+      console.log(err.message); // the error message, for example "Session ID unknown"
+      console.log(err.context); // some additional error context
+    });
+
+    io.on("connection", (socket) => {
+      // console.log("a user connected");
+
+      // add additional socket.on code here to handle incoming events
+      //  from the client
+
+      socket.on("disconnect", () => {
+        // console.log("user disconnected");
+      });
+    });
+  }
+
+  return io;
 }
 
 function emitToggleChange() {
-  io.emit("Ordering toggle changed", {});
+  if (io) {
+    io.emit("Ordering toggle changed", {});
+  }
 }
 
 function emitOrderCancelled(data) {
-  io.emit("Order cancelled", data);
+  if (io) {
+    io.emit("Order cancelled", data);
+  }
 }
 
 function emitOrderFinished(data) {
-  io.emit("Order finished", data);
+  if (io) {
+    io.emit("Order finished", data);
+  }
 }
 
 function emitNewOrderPlaced(data) {
-  io.emit("New order placed", data);
+  if (io) {
+    io.emit("New order placed", data);
+  }
 }
 
 module.exports = {

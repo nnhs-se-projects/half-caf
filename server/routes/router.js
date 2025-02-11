@@ -10,17 +10,6 @@ const Drink = require("../model/drink");
 const Order = require("../model/order");
 const Enabled = require("../model/enabled");
 
-const multer = require("multer");
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./assets/img");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "--" + file.originalname);
-  },
-});
-const upload = multer({ storage });
-
 const {
   emitToggleChange,
   emitOrderCancelled,
@@ -356,28 +345,25 @@ route.get("/modifyDrink", async (req, res) => {
   }
 });
 // updates database with new menu item
-route.post("/addDrink", upload.single("image"), async (req, res) => {
-  try {
-    const drink = new MenuItem({
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      popular: req.body.popular,
-      flavors: req.body.checkedFlavors,
-      toppings: req.body.checkedToppings,
-      temps: req.body.checkedTemps,
-      caffeination: req.body.caf,
-      special: req.body.special,
-      imagePath: req.file ? req.file.path : null,
-    });
-    await drink.save();
-    res.status(200).json({ message: "Drink added successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+route.post("/addDrink", async (req, res) => {
+  console.log(req.body);
+  const drink = new MenuItem({
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    popular: req.body.popular,
+    flavors: req.body.checkedFlavors,
+    toppings: req.body.checkedToppings,
+    temps: req.body.checkedTemps,
+    caffeination: req.body.caf,
+    special: req.body.special,
+    imageData: req.body.imageData,
+  });
+  await drink.save();
+  res.status(200).end();
 });
 
-route.post("/modifyDrink/:id", upload.single("image"), async (req, res) => {
+route.post("/modifyDrink/:id", async (req, res) => {
   try {
     const menuItem = await MenuItem.findById(req.params.id);
     menuItem.name = req.body.name;
@@ -391,9 +377,9 @@ route.post("/modifyDrink/:id", upload.single("image"), async (req, res) => {
     menuItem.caffeination = req.body.caf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
-    if (req.file) {
-      menuItem.imagePath = req.file.path;
-    }
+    menuItem.imageData = req.body.imageData
+      ? req.body.imageData
+      : menuItem.imageData;
     await menuItem.save();
     res.status(200).json({ message: "Drink added successfully" });
   } catch (error) {
@@ -418,27 +404,8 @@ route.get("/deleteDrink", async (req, res) => {
   }
 });
 
-const fs = require("fs");
-
 route.delete("/deleteDrink/:id", async (req, res) => {
-  const menuItemId = req.params.id;
-  const menuItem = await MenuItem.findById(menuItemId);
-
-  // Asynchronously delete a file
-  fs.unlink(menuItem.imagePath, (err) => {
-    if (err) {
-      // Handle specific error if any
-      if (err.code === "ENOENT") {
-        console.error("Image file does not exist.");
-      } else {
-        throw err;
-      }
-    } else {
-      console.log("Image File deleted.");
-    }
-  });
-
-  await MenuItem.findByIdAndRemove(menuItemId);
+  await MenuItem.findByIdAndRemove(req.params.id);
   res.end();
 });
 
@@ -1213,7 +1180,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
   res.status(200).send("Drink added to session.");
 });
 
-route.get("/teacherMyOrder", async (req, res) => {
+route.get("/teacherMyCart", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
@@ -1233,7 +1200,7 @@ route.get("/teacherMyOrder", async (req, res) => {
         toppings: drinkToppingsArray,
       };
     }
-    res.render("teacherMyOrder", {
+    res.render("teacherMyCart", {
       cart: req.session.cart,
       customizationDict,
       email: req.session.email,
@@ -1251,7 +1218,7 @@ route.post("/updateCart", async (req, res) => {
   res.status(200).end();
 });
 
-route.post("/teacherMyOrder", async (req, res) => {
+route.post("/teacherMyCart", async (req, res) => {
   let total = 0;
   for (const drink of req.session.cart) {
     total += drink.price;
@@ -1406,7 +1373,7 @@ route.get("/addDrinkToCart/:id", async (req, res) => {
   const drink = await Drink.findById(req.params.id);
   req.session.cart.push(drink);
 
-  res.redirect("/teacherMyOrder");
+  res.redirect("/teacherMyCart");
 });
 
 route.get("/unfavoriteDrink/:id", async (req, res) => {

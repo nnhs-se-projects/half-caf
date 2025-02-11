@@ -3,6 +3,9 @@ const incompleteButtons = document.querySelectorAll("button.incompleteButton");
 for (const incompleteButton of incompleteButtons) {
   incompleteButton.addEventListener("click", async () => {
     const orderId = incompleteButton.value;
+
+    incompleteButton.disabled = true;
+
     const response = await fetch(`/completed/${orderId}`, {
       method: "POST",
       headers: {
