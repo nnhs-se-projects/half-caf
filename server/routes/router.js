@@ -18,6 +18,55 @@ const {
   emitOrderFinished,
   emitNewOrderPlaced,
 } = require("../socket/socket");
+let hasDisabledOrderingFromTime = false;
+async function checkTime() {
+  if (!hasDisabledOrderingFromTime) {
+    const timeBeforeEnd = 7; // 5 minutes before end of period
+
+    const currentTime = new Date();
+    const currentSchedule = await CurrentScheduleDb.findById(
+      "67aaa5de983e13286e554053"
+    );
+    const currentScheduleObject = await Schedule.findById(
+      currentSchedule.schedule
+    );
+    for (const periodId of currentScheduleObject.periods) {
+      const period = await Period.findById(periodId);
+      let periodEndHr = Number(period.end.substring(0, 2));
+      const periodEndMin = Number(period.end.substring(3, 5));
+      if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
+        periodEndHr += 12;
+      }
+      if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
+        periodEndHr = 0;
+      }
+      const endDateObj = new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDay(),
+        periodEndHr,
+        periodEndMin
+      );
+      console.log(endDateObj, currentTime);
+      console.log(endDateObj - currentTime);
+      if (endDateObj - currentTime <= timeBeforeEnd * 60 * 1000) {
+        const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+        toggle.enabled = false;
+        await toggle.save();
+        hasDisabledOrderingFromTime = true;
+        emitToggleChange();
+      } else if (hasDisabledOrderingFromTime) {
+        const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+        toggle.enabled = true;
+        await toggle.save();
+        hasDisabledOrderingFromTime = false;
+        emitToggleChange();
+      }
+    }
+  }
+}
+
+setInterval(checkTime, 10000); // check every 10 sec
 
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
