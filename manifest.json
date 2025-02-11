@@ -1,16 +1,20 @@
 {
   "name": "NNHS Half Caf App",
-  "short_name": "NNHSCoffee",
-  "start_url": "auth.ejs",
+  "short_name": "Half Caf",
+  "start_url": "/auth",
   "display": "standalone",
-  "background_color": "#fdfdfd",
+  "background_color": "#ffffff",
   "theme_color": "#383773",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/assets/models/NNHS-logo.png",
-      "type": "image/png",
-      "sizes": "536x429"
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/models/NNHS-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }

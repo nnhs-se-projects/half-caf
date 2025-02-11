@@ -1,10 +1,11 @@
 const staticNNHSCoffe = "nnhs-coffee-site-v1";
 const assets = [
   "/",
-  "/auth.ejs",
-  "js/auth2.js",
-  "/img/huskie.jpg",
+  "/auth",
+  "/manifest.json",
   "/assets/models/NNHS-logo.png",
+  "/js/auth2.js",
+  "/css/styles.css",
 ];
 
 self.addEventListener("install", (installEvent) => {
