@@ -138,6 +138,7 @@ route.get("/logout", async (req, res) => {
     res.redirect("/");
   });
 });
+
 route.get("/addSchedule", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {
@@ -146,6 +147,7 @@ route.get("/addSchedule", async (req, res) => {
     res.render("addSchedule");
   }
 });
+
 route.post("/addSchedule", async (req, res) => {
   const periodIds = [];
   for (const period of req.body.periods) {
@@ -174,10 +176,14 @@ route.post("/setActiveSchedule", async (req, res) => {
   await currentSchedule.save();
   res.status(201).end();
 });
+
 route.delete("/deleteSchedule", async (req, res) => {
+  const schedule = await Schedule.findById(req.body.id);
+  await Period.deleteMany({ _id: { $in: schedule.periods } });
   await Schedule.findByIdAndRemove(req.body.id);
   res.end();
 });
+
 route.get("/scheduler", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {

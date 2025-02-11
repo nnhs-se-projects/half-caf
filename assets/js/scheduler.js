@@ -38,14 +38,14 @@ document.getElementById("deleteBtn").addEventListener("click", async () => {
     alert("Cannot delete the active schedule");
     return;
   }
-  const request = { id };
+
   try {
     const response = await fetch(`/deleteSchedule`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify({ id }),
     });
 
     if (response.ok) {
