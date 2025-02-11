@@ -21,7 +21,7 @@ const {
 let hasDisabledOrderingFromTime = false;
 async function checkTime() {
   if (!hasDisabledOrderingFromTime) {
-    const timeBeforeEnd = 7; // 5 minutes before end of period
+    const timeBeforeEnd = 5; // 5 minutes before end of period
 
     const currentTime = new Date();
     const currentSchedule = await CurrentScheduleDb.findById(
@@ -32,8 +32,12 @@ async function checkTime() {
     );
     for (const periodId of currentScheduleObject.periods) {
       const period = await Period.findById(periodId);
-      let periodEndHr = Number(period.end.substring(0, 2));
-      const periodEndMin = Number(period.end.substring(3, 5));
+      let periodEndHr = Number(
+        period.end.substring(0, period.end.indexOf(":"))
+      );
+      const periodEndMin = Number(
+        period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
+      );
       if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
         periodEndHr += 12;
       }
@@ -43,12 +47,11 @@ async function checkTime() {
       const endDateObj = new Date(
         currentTime.getFullYear(),
         currentTime.getMonth(),
-        currentTime.getDay(),
+        currentTime.getDate(),
         periodEndHr,
         periodEndMin
       );
       console.log(endDateObj, currentTime);
-      console.log(endDateObj - currentTime);
       if (endDateObj - currentTime <= timeBeforeEnd * 60 * 1000) {
         const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
         toggle.enabled = false;
