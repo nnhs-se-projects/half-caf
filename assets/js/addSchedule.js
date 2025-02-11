@@ -34,11 +34,12 @@ addScheduleButton.addEventListener("click", async () => {
   document.querySelectorAll("div.card").forEach((card) => {
     const period = {
       name: card.children[0].value,
-      start: card.children[1].value,
-      end: card.children[2].value,
+      start: convertTimeToAmPm(card.children[1].value),
+      end: convertTimeToAmPm(card.children[2].value),
     };
     periods.push(period);
   });
+
   if (periods.length <= 0) {
     alert("Please add periods.");
     return;
@@ -76,3 +77,24 @@ addScheduleButton.addEventListener("click", async () => {
     console.error("Error adding schedule: ", error);
   }
 });
+
+function convertTimeToAmPm(timeStr) {
+  const timeSplit = timeStr.split(":");
+  let hours = timeSplit[0];
+  const minutes = timeSplit[1];
+  let meridian;
+
+  if (hours > 12) {
+    meridian = "PM";
+    hours -= 12;
+  } else if (hours < 12) {
+    meridian = "AM";
+    if (hours === 0) {
+      hours = 12;
+    }
+  } else {
+    meridian = "PM";
+  }
+
+  return hours + ":" + minutes + " " + meridian;
+}
