@@ -1,0 +1,44 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<div class="adminPage">
+  <div class="userHdr">Scheduler</div>
+  <a><button>Create Schedule</button></a>
+  <label>Schedule:</label>
+  <select class="select" id="schedules">
+    <% for (let schedule of schedules) {%> <%if(schedule.id === selectedUser.id)
+    { %>
+    <option selected="selected" value="<%=schedule._id%>">
+      <%=schedule.name%>
+    </option>
+    <% } else {%>
+    <option value="<%=schedule._id%>"><%=schedule.name%></option>
+    <%}%> <%}%>
+  </select>
+  <input
+    type="name"
+    id="name"
+    class="content"
+    placeholder="Name"
+    value="<%= schedule.name %>"
+  />
+  <% for (let period of selectedPeriods) { %>
+  <input
+    type="text"
+    class="name"
+    placeholder="Name"
+    value="<%= period.name %>"
+  />
+  <input
+    type="time"
+    class="start"
+    placeholder="Start"
+    value="<%= period.start %>"
+  />
+  <input type="time" class="end" placeholder="End" value="<%= period.end %>" />
+
+  <% } %>
+</div>

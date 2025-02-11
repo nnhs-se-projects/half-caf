@@ -8,6 +8,8 @@ const TempJson = require("../model/temps.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const Schedule = require("../model/schedule");
+const Period = require("../model/period");
 const Enabled = require("../model/enabled");
 
 const {
@@ -135,6 +137,59 @@ route.get("/logout", async (req, res) => {
     // Redirect to home page or login page after logout
     res.redirect("/");
   });
+});
+route.get("/addSchedule", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("addSchedule");
+  }
+});
+route.post("/addSchedule", async (req, res) => {
+  const periodIds = [];
+  for (const period of req.body.periods) {
+    const newPeriod = new Period({
+      name: period.name,
+      start: period.start,
+      end: period.end,
+    });
+    await newPeriod.save();
+
+    periodIds.push(newPeriod._id);
+  }
+  const schedule = new Schedule({
+    name: req.body.name,
+    periods: periodIds,
+    enabled: false,
+  });
+  await schedule.save();
+  res.status(201).end();
+});
+route.get("/scheduler", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const schedules = await Schedule.find();
+    const selectedPeriods = [];
+
+    const { id } = req.query;
+    let selectedSchedule;
+    if (id != null) {
+      selectedSchedule = await Schedule.findById(id);
+      if (selectedSchedule.periods) {
+        for (const period of selectedSchedule.periods) {
+          const periodData = await Period.findById(period);
+          selectedPeriods.push(periodData);
+        }
+      }
+    } else if (schedules[0] !== null && schedules[0] !== undefined) {
+      selectedSchedule = schedules[0];
+    }
+
+    res.render("scheduler", { selectedSchedule, schedules, selectedPeriods });
+  }
 });
 
 route.get("/addUser", async (req, res) => {
