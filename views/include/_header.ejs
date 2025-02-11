@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Half Caf</title>
-
+  
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
     <style>
@@ -14,21 +14,50 @@
         align-items: center;
       }
       #modelContainer {
-        width: 100px; /* Match the width of the current image */
-        height: 100px; /* Match the height of the current image */
+        width: 100px;  
+        height: 100px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
       }
       #pageTitle {
         margin-left: 20px; /* Space between the cup and the text */
         font-size: 24px; /* Adjust font size as needed */
       }
+       .indexTopBar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: whitesmoke;
+        width: 100%;
+        height: 75px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        box-shadow: 0px 5px 10px #888888;
+        z-index: 1000;
+      }
+      .hamburger {
+        left: 0;
+        width: 100px;
+        height: 100px;
+        background-color: #f1f1f1;
+        border: black 1px solid;
+        color: black;
+        text-align: center;
+      }
     </style>
   </head>
 
   <body>
+    <header class="indexTopBar">
+      <button class="hamburger">Hamburger</button>
     <div id="logo">
       <div id="modelContainer"></div>
-
     </div>
+    </header>
+
+    
 </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
