@@ -11,7 +11,7 @@ const Order = require("../model/order");
 const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Enabled = require("../model/enabled");
-const CurrentScheduleDb = require("../model/currentSchedule");
+const Weekday = require("../model/weekdays");
 const {
   emitToggleChange,
   emitOrderCancelled,
@@ -24,13 +24,17 @@ async function checkTime() {
   const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 
   const currentTime = new Date();
-  const currentSchedule = await CurrentScheduleDb.findById(
-    "67aaa5de983e13286e554053"
-  );
-  const currentScheduleObject = await Schedule.findById(
-    currentSchedule.schedule
-  );
-  for (const periodId of currentScheduleObject.periods) {
+  let currentSchedule;
+  try {
+    const currentWeekDay = await Weekday.findOne({
+      day: currentTime.getDay() - 1,
+    });
+    currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+  } catch {
+    return;
+  }
+
+  for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
     const periodEndMin = Number(
@@ -215,16 +219,14 @@ route.post("/addSchedule", async (req, res) => {
     name: req.body.name,
     periods: periodIds,
   });
-  await schedule.save();
-  res.status(201).end();
-});
 
-route.post("/setActiveSchedule", async (req, res) => {
-  const currentSchedule = await CurrentScheduleDb.findById(
-    "67aaa5de983e13286e554053"
-  );
-  currentSchedule.schedule = req.body.id;
-  await currentSchedule.save();
+  for (const day of req.body.days) {
+    const findDay = await Weekday.findOne({ day: day });
+    findDay.schedule = schedule._id;
+    await findDay.save();
+  }
+
+  await schedule.save();
   res.status(201).end();
 });
 
@@ -245,10 +247,17 @@ route.get("/scheduler", async (req, res) => {
 
     const { id } = req.query;
     let selectedSchedule;
-    const activeScheduleObj = await CurrentScheduleDb.findById(
-      "67aaa5de983e13286e554053"
-    );
-    const activeSchedule = await Schedule.findById(activeScheduleObj.schedule);
+    let activeSchedule;
+    try {
+      const currentTime = new Date();
+      const currentWeekDay = await Weekday.findOne({
+        day: currentTime.getDay() - 1,
+      });
+      activeSchedule = await Schedule.findById(currentWeekDay.schedule);
+    } catch {
+      activeSchedule = schedules[0];
+    }
+
     if (id != null) {
       selectedSchedule = await Schedule.findById(id);
     } else {

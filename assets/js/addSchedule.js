@@ -54,9 +54,19 @@ addScheduleButton.addEventListener("click", async () => {
       return;
     }
   }
+
+  const days = [];
+  let i = 0;
+  document.querySelectorAll("input.day").forEach((day) => {
+    if (day.checked) {
+      days.push(i);
+    }
+    i++;
+  });
   const schedule = {
     name,
     periods,
+    days,
   };
 
   try {
