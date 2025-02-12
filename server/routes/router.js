@@ -8,14 +8,71 @@ const TempJson = require("../model/temps.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const Schedule = require("../model/schedule");
+const Period = require("../model/period");
 const Enabled = require("../model/enabled");
-
+const Weekday = require("../model/weekdays");
 const {
   emitToggleChange,
   emitOrderCancelled,
   emitOrderFinished,
   emitNewOrderPlaced,
 } = require("../socket/socket");
+
+let hasDisabledOrderingFromTime = false;
+async function checkTime() {
+  const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
+
+  const currentTime = new Date();
+  let currentSchedule;
+  try {
+    const currentWeekDay = await Weekday.findOne({
+      day: currentTime.getDay() - 1,
+    });
+    currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+  } catch {
+    return;
+  }
+
+  for (const periodId of currentSchedule.periods) {
+    const period = await Period.findById(periodId);
+    let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
+    const periodEndMin = Number(
+      period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
+    );
+    if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
+      periodEndHr += 12;
+    }
+    if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
+      periodEndHr = 0;
+    }
+    const endDateObj = new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate(),
+      periodEndHr,
+      periodEndMin
+    );
+    const difference = endDateObj - currentTime;
+    if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
+      if (!hasDisabledOrderingFromTime) {
+        const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+        toggle.enabled = false;
+        await toggle.save();
+        hasDisabledOrderingFromTime = true;
+        emitToggleChange();
+      }
+    } else if (hasDisabledOrderingFromTime) {
+      const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+      toggle.enabled = true;
+      await toggle.save();
+      hasDisabledOrderingFromTime = false;
+      emitToggleChange();
+    }
+  }
+}
+
+setInterval(checkTime, 5000); // check every 5 sec
 
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
@@ -135,6 +192,91 @@ route.get("/logout", async (req, res) => {
     // Redirect to home page or login page after logout
     res.redirect("/");
   });
+});
+
+route.get("/addSchedule", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("addSchedule");
+  }
+});
+
+route.post("/addSchedule", async (req, res) => {
+  const periodIds = [];
+  for (const period of req.body.periods) {
+    const newPeriod = new Period({
+      name: period.name,
+      start: period.start,
+      end: period.end,
+    });
+    await newPeriod.save();
+
+    periodIds.push(newPeriod._id);
+  }
+  const schedule = new Schedule({
+    name: req.body.name,
+    periods: periodIds,
+  });
+
+  for (const day of req.body.days) {
+    const findDay = await Weekday.findOne({ day: day });
+    findDay.schedule = schedule._id;
+    await findDay.save();
+  }
+
+  await schedule.save();
+  res.status(201).end();
+});
+
+route.delete("/deleteSchedule", async (req, res) => {
+  const schedule = await Schedule.findById(req.body.id);
+  await Period.deleteMany({ _id: { $in: schedule.periods } });
+  await Schedule.findByIdAndRemove(req.body.id);
+  res.end();
+});
+
+route.get("/scheduler", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const schedules = await Schedule.find();
+    const selectedPeriods = [];
+
+    const { id } = req.query;
+    let selectedSchedule;
+    let activeSchedule;
+    try {
+      const currentTime = new Date();
+      const currentWeekDay = await Weekday.findOne({
+        day: currentTime.getDay() - 1,
+      });
+      activeSchedule = await Schedule.findById(currentWeekDay.schedule);
+    } catch {
+      activeSchedule = schedules[0];
+    }
+
+    if (id != null) {
+      selectedSchedule = await Schedule.findById(id);
+    } else {
+      selectedSchedule = activeSchedule;
+    }
+    if (selectedSchedule) {
+      for (const period of selectedSchedule.periods) {
+        const periodData = await Period.findById(period);
+        selectedPeriods.push(periodData);
+      }
+    }
+
+    res.render("scheduler", {
+      activeSchedule,
+      selectedSchedule,
+      schedules,
+      selectedPeriods,
+    });
+  }
 });
 
 route.get("/addUser", async (req, res) => {
