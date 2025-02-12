@@ -862,7 +862,9 @@ route.get("/completed", async (req, res) => {
             const tempFlavor = flavors.find((f) =>
               f._id.equals(drink.flavors[x])
             );
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            if (tempFlavor !== null && tempFlavor !== undefined) {
+              formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            }
           }
         }
         if (drink.toppings.length === 0) {
@@ -872,7 +874,9 @@ route.get("/completed", async (req, res) => {
             const tempTopping = toppings.find((t) =>
               t._id.equals(drink.toppings[x])
             );
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+            if (tempTopping !== null && tempTopping !== undefined) {
+              formattedDrink.toppings.push(" " + tempTopping.topping);
+            }
           }
         }
         formattedDrink.name = drink.name;
@@ -934,7 +938,9 @@ route.get("/cancelledOrders", async (req, res) => {
             const tempFlavor = flavors.find((f) =>
               f._id.equals(drink.flavors[x])
             );
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            if (tempFlavor !== null && tempFlavor !== undefined) {
+              formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            }
           }
         }
         if (drink.toppings.length === 0) {
@@ -944,7 +950,9 @@ route.get("/cancelledOrders", async (req, res) => {
             const tempTopping = toppings.find((t) =>
               t._id.equals(drink.toppings[x])
             );
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+            if (tempTopping !== null && tempTopping !== undefined) {
+              formattedDrink.toppings.push(" " + tempTopping.topping);
+            }
           }
         }
         formattedDrink.name = drink.name;
@@ -1266,7 +1274,9 @@ route.post("/teacherMyCart", async (req, res) => {
           const tempFlavor = flavors.find((f) =>
             f._id.equals(drink.flavors[x])
           );
-          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          if (tempFlavor !== null && tempFlavor !== undefined) {
+            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          }
         }
       }
       if (drink.toppings.length === 0) {
@@ -1276,7 +1286,9 @@ route.post("/teacherMyCart", async (req, res) => {
           const tempTopping = toppings.find((t) =>
             t._id.equals(drink.toppings[x])
           );
-          formattedDrink.toppings.push(" " + tempTopping.topping);
+          if (tempTopping !== null && tempTopping !== undefined) {
+            formattedDrink.toppings.push(" " + tempTopping.topping);
+          }
         }
       }
       formattedDrink.name = drink.name;
