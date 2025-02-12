@@ -1,10 +1,10 @@
 const staticNNHSCoffe = "nnhs-coffee-site-v1";
 const assets = [
   "/",
-  "/auth",
+  "/add-to-home.html",
   "/manifest.json",
   "/assets/models/NNHS-logo.png",
-  "/js/auth2.js",
+  "/assets/js/auth2.js",
   "/css/styles.css",
 ];
 

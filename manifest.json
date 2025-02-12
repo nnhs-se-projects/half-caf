@@ -1,7 +1,7 @@
 {
   "name": "NNHS Half Caf App",
   "short_name": "Half Caf",
-  "start_url": "/auth",
+  "start_url": "/add-to-home.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#383773",
