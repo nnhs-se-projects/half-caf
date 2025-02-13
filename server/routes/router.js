@@ -19,10 +19,9 @@ const {
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
+const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 let hasDisabledOrderingFromTime = false;
 async function checkTime() {
-  const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
-
   const currentTime = new Date();
   let currentSchedule;
   try {
