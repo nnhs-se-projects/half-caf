@@ -5,10 +5,6 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-  isActivated: {
-    type: Boolean,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
