@@ -49,17 +49,15 @@ async function checkTime() {
     }
     const endDateMs = Date.parse(
       new Date(
-        currentTimeDate.getUTCFullYear(),
-        currentTimeDate.getUTCMonth(),
-        currentTimeDate.getUTCDate(),
+        currentTimeDate.getFullYear(),
+        currentTimeDate.getMonth(),
+        currentTimeDate.getDate(),
         periodEndHr,
         periodEndMin
-      ).toLocaleString("en-US", {
-        timeZone: "America/Chicago",
-      })
+      )
     );
     const difference = endDateMs - currentTimeMs;
-    period.name = difference;
+    period.name = currentTimeDate.toString();
     await period.save();
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!period.hasDisabledOrdering) {
