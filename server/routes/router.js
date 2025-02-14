@@ -21,12 +21,10 @@ const {
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
-  const currentTimeMs = Date.parse(
-    new Date().toLocaleString("en-US", {
-      timeZone: "America/Chicago",
-    })
+  const currentTimeDate = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
   );
-  const currentTimeDate = new Date(currentTimeMs);
+  const currentTimeMs = Date.parse(currentTimeDate);
   let currentSchedule;
   try {
     const currentWeekDay = await Weekday.findOne({
