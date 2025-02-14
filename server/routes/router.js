@@ -49,9 +49,9 @@ async function checkTime() {
     }
     const endDateMs = Date.parse(
       new Date(
-        currentTimeDate.getFullYear(),
-        currentTimeDate.getMonth(),
-        currentTimeDate.getDate(),
+        currentTimeDate.getUTCFullYear(),
+        currentTimeDate.getUTCMonth(),
+        currentTimeDate.getUTCDate(),
         periodEndHr,
         periodEndMin
       ).toLocaleString("en-US", {
