@@ -15,6 +15,10 @@ const scheme = new mongoose.Schema({
     type: String,
     required: true,
   },
+  hasDisabledOrdering: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const Period = mongoose.model("Period", scheme);

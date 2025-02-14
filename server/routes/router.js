@@ -20,7 +20,6 @@ const {
 } = require("../socket/socket");
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
-let hasDisabledOrderingFromTime = false;
 async function checkTime() {
   const currentTimeMs = Date.parse(
     new Date().toLocaleString("en-US", {
@@ -63,18 +62,20 @@ async function checkTime() {
     );
     const difference = endDateMs - currentTimeMs;
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
-      if (!hasDisabledOrderingFromTime) {
+      if (!period.hasDisabledOrdering) {
         const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
         toggle.enabled = false;
         await toggle.save();
-        hasDisabledOrderingFromTime = true;
+        period.hasDisabledOrdering = true;
+        await period.save();
         emitToggleChange();
       }
-    } else if (hasDisabledOrderingFromTime) {
+    } else if (period.hasDisabledOrdering) {
       const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
       toggle.enabled = true;
       await toggle.save();
-      hasDisabledOrderingFromTime = false;
+      period.hasDisabledOrdering = false;
+      await period.save();
       emitToggleChange();
     }
   }
@@ -217,6 +218,7 @@ route.post("/addSchedule", async (req, res) => {
       name: period.name,
       start: period.start,
       end: period.end,
+      hasDisabledOrdering: false,
     });
     await newPeriod.save();
 
