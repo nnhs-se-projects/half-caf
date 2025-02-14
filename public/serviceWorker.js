@@ -17,9 +17,14 @@ self.addEventListener("install", (installEvent) => {
 });
 
 self.addEventListener("fetch", (fetchEvent) => {
+  const requestUrl = new URL(fetchEvent.request.url);
+  if (!assets.includes(requestUrl.pathname)) {
+    fetchEvent.respondWith(fetch(fetchEvent.request));
+    return;
+  }
   fetchEvent.respondWith(
-    caches.match(fetchEvent.request).then((res) => {
-      return res || fetch(fetchEvent.request);
-    })
+    caches
+      .match(fetchEvent.request)
+      .then((res) => res || fetch(fetchEvent.request))
   );
 });

@@ -39,6 +39,13 @@
       <p>Tap the share button and then "Add to Home Screen".</p>
     </div>
     <script>
+      // If app is launched in standalone mode, redirect to /auth
+      if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+      ) {
+        window.location.href = "/auth";
+      }
       document.querySelector(".container").style.display = "block";
 
       if ("serviceWorker" in navigator) {
