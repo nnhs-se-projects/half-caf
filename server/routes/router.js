@@ -62,7 +62,6 @@ async function checkTime() {
       })
     );
     const difference = endDateMs - currentTimeMs;
-    console.log(difference / (60 * 1000));
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!hasDisabledOrderingFromTime) {
         const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
