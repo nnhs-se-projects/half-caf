@@ -22,18 +22,20 @@ const {
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 let hasDisabledOrderingFromTime = false;
 async function checkTime() {
-  const currentTime = Date.parse(
+  const currentTimeMs = Date.parse(
     new Date().toLocaleString("en-US", {
       timeZone: "America/Chicago",
     })
   );
+  const currentTimeDate = new Date(currentTimeMs);
   let currentSchedule;
   try {
     const currentWeekDay = await Weekday.findOne({
-      day: currentTime.getDay() - 1,
+      day: currentTimeDate.getDay() - 1,
     });
     currentSchedule = await Schedule.findById(currentWeekDay.schedule);
-  } catch {
+  } catch (error) {
+    console.log(error);
     return;
   }
   for (const periodId of currentSchedule.periods) {
@@ -48,18 +50,18 @@ async function checkTime() {
     if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
       periodEndHr = 0;
     }
-    const endDateObj = Date.parse(
+    const endDateMs = Date.parse(
       new Date(
-        currentTime.getFullYear(),
-        currentTime.getMonth(),
-        currentTime.getDate(),
+        currentTimeDate.getFullYear(),
+        currentTimeDate.getMonth(),
+        currentTimeDate.getDate(),
         periodEndHr,
         periodEndMin
       ).toLocaleString("en-US", {
         timeZone: "America/Chicago",
       })
     );
-    const difference = endDateObj - currentTime;
+    const difference = endDateMs - currentTimeMs;
     console.log(difference / (60 * 1000));
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!hasDisabledOrderingFromTime) {
