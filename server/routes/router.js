@@ -56,7 +56,7 @@ async function checkTime() {
     );
     const endDateMs = Date.parse(endDate);
     const difference = endDateMs - currentTimeMs;
-    period.name = endDate.toString();
+    period.name = difference / (60 * 1000);
     await period.save();
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!period.hasDisabledOrdering) {
