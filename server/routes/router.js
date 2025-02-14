@@ -59,6 +59,8 @@ async function checkTime() {
       })
     );
     const difference = endDateMs - currentTimeMs;
+    period.name = difference;
+    await period.save();
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!period.hasDisabledOrdering) {
         const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
