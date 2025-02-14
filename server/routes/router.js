@@ -47,17 +47,16 @@ async function checkTime() {
     if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
       periodEndHr = 0;
     }
-    const endDateMs = Date.parse(
-      new Date(
-        currentTimeDate.getFullYear(),
-        currentTimeDate.getMonth(),
-        currentTimeDate.getDate(),
-        periodEndHr,
-        periodEndMin
-      )
+    const endDate = new Date(
+      currentTimeDate.getFullYear(),
+      currentTimeDate.getMonth(),
+      currentTimeDate.getDate(),
+      periodEndHr,
+      periodEndMin
     );
+    const endDateMs = Date.parse(endDate);
     const difference = endDateMs - currentTimeMs;
-    period.name = currentTimeDate.toString();
+    period.name = endDate.toString();
     await period.save();
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!period.hasDisabledOrdering) {
