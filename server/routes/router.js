@@ -22,7 +22,12 @@ const {
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 let hasDisabledOrderingFromTime = false;
 async function checkTime() {
-  const currentTime = new Date();
+  const currentTime = new Date().toLocaleTimeString([], {
+    timeZone: "America/Chicago",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
   let currentSchedule;
   try {
     const currentWeekDay = await Weekday.findOne({
@@ -51,7 +56,12 @@ async function checkTime() {
       currentTime.getDate(),
       periodEndHr,
       periodEndMin
-    );
+    ).toLocaleTimeString([], {
+      timeZone: "America/Chicago",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
     const difference = endDateObj - currentTime;
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
       if (!hasDisabledOrderingFromTime) {
