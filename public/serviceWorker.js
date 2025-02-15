@@ -14,6 +14,27 @@ self.addEventListener("install", (installEvent) => {
       cache.addAll(assets);
     })
   );
+  self.skipWaiting(); // Ensure the newest service worker activates immediately.
+});
+
+// New activate event to clean up old caches.
+self.addEventListener("activate", (activateEvent) => {
+  activateEvent.waitUntil(
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== staticNNHSCoffe) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        return self.clients.claim();
+      })
+  );
 });
 
 self.addEventListener("fetch", (fetchEvent) => {
