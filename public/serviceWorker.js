@@ -28,6 +28,7 @@ self.addEventListener("activate", (activateEvent) => {
             if (cacheName !== staticNNHSCoffe) {
               return caches.delete(cacheName);
             }
+            return Promise.resolve();
           })
         );
       })
