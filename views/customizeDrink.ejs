@@ -4,18 +4,22 @@
 
 <!-- Main Site -->
 <head>
-  <h2>Customize Drink:</h2>
+  <h2 class="page-title">Customize Your Drink</h2>
 </head>
 
 <body>
-  <div id="mainPage">
-    <h2 id="name"><%=drink.name%></h2>
-    <h2 id="price">Price: $<%=drink.price%></h2>
-    <% if(drink.caffeination) {%>
-    <h2>Contains caffeine: Yes</h2>
-    <% } else { %>
-    <h2>Contains caffeine: No</h2>
-    <% } %> <% if(flavors.length > 0) { %>
+  <div class="coffee-background"></div>
+  <div id="mainPage" class="customize-container">
+    <div class="drink-header">
+      <h2 id="name"><%=drink.name%></h2>
+      <h2 id="price">$<%=drink.price%></h2>
+      <div
+        class="caffeine-badge <%= drink.caffeination ? 'caffeinated' : 'decaf' %>"
+      >
+        <%= drink.caffeination ? '⚡ Caffeinated' : '😌 Decaf' %>
+      </div>
+    </div>
+    <% if(flavors.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose Flavors:</h6>
       <ul class="items">
@@ -62,27 +66,191 @@
       id="instructions"
       placeholder="Add Any Special Instructions..."
     />
-    <h6>Quantity:</h6>
-    <input
-      type="number"
-      id="quantity"
-      min="1"
-      placeholder="1"
-      maxlength="1"
-      onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 49 && event.charCode <= 57)) && this.value.length < 1"
-    />
-    <div><input id="favorite" type="checkbox" />Save to Favorite</div>
-    <input type="submit" class="submit" value="Add to Cart" />
+    <div class="customization-footer">
+      <div class="quantity-favorite">
+        <div class="quantity-control">
+          <h6>Quantity:</h6>
+          <input
+            type="number"
+            id="quantity"
+            min="1"
+            placeholder="1"
+            maxlength="1"
+          />
+        </div>
+        <label class="favorite-toggle">
+          <input type="checkbox" id="favorite" />
+          <span class="heart"></span>
+          <span class="label">Save as Favorite</span>
+        </label>
+      </div>
+      <input type="submit" class="submit fancy-button" value="Add to Cart" />
+    </div>
   </div>
 </body>
 
 <!-- /Main Site -->
 
 <style>
+  .customize-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(60, 42, 33, 0.15);
+    position: relative;
+    z-index: 1;
+    margin: 2rem auto;
+    margin-left: calc(200px + 2rem); /* Add space for sidebar */
+    max-width: 800px;
+    animation: slideUp 0.5s ease;
+    border: none;
+  }
+
+  .coffee-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 20%,
+        var(--coffee-light) 0%,
+        transparent 50%
+      ),
+      radial-gradient(circle at 80% 80%, var(--cream) 0%, transparent 50%);
+    opacity: 0.3;
+    z-index: -1; /* Changed from 0 to -1 to put it behind everything */
+    pointer-events: none; /* Make sure it doesn't block any interactions */
+  }
+
+  .drink-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .caffeine-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+
+  .caffeinated {
+    background: var(--accent);
+    color: white;
+  }
+
+  .decaf {
+    background: var(--coffee-light);
+    color: var(--coffee-dark);
+  }
+
+  .dropdown-check-list {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    border: none;
+    box-shadow: 0 2px 8px rgba(60, 42, 33, 0.1);
+  }
+
+  .dropdown-check-list ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .dropdown-check-list li {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    position: relative;
+    z-index: 2;
+  }
+
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+  .quantity-favorite {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem 0;
+  }
+
+  .favorite-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .favorite-toggle input {
+    display: none;
+  }
+
+  .favorite-toggle .heart {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+  }
+
+  .favorite-toggle input:checked + .heart {
+    content: "❤️";
+    color: #ff3366;
+    transform: scale(1.2);
+  }
+
+  .favorite-toggle input:not(:checked) + .heart::before {
+    content: "🤍";
+  }
+
+  .favorite-toggle input:checked + .heart::before {
+    content: "❤️";
+  }
+
+  .favorite-toggle .label {
+    color: var(--coffee-dark);
+  }
+
+  .fancy-button {
+    background: var(--accent);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: bold;
+    transform-origin: center;
+    transition: all 0.2s;
+  }
+
+  .fancy-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 159, 28, 0.4);
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
   #mainPage {
     width: 60%;
     align-items: center;
-    margin-left: 7%;
+    margin-left: calc(200px + 7%); /* Adjust margin to account for sidebar */
   }
   #drinkName {
     margin: 0px;
@@ -102,6 +270,15 @@
   }
   input[type="number"] {
     -moz-appearance: textfield;
+  }
+
+  /* Remove focus outlines */
+  input:focus,
+  button:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent);
   }
 </style>
 

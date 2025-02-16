@@ -1,62 +1,228 @@
 <%- include('include/_teacherHeader') %>
 
-<h2>Order History</h2>
+<div id="mainContent">
+  <div class="history-header">
+    <h1 class="page-title">Order History</h1>
+  </div>
 
-<%for (let order of history){%> <%for (let drink of order.drinks){%>
-<div class="card">
-  <div class="container">
-    <h4><b><%=order.timestamp.split("/")[0]%></b></h4>
-    <h5><%=drink.name%>:</h5>
+  <div class="history-container">
+    <% for (let order of history) { %> <% for (let drink of order.drinks) { %>
+    <div class="history-card">
+      <div class="container">
+        <div class="order-header">
+          <h3 class="timestamp"><%=order.timestamp.split("/")[0]%></h3>
+          <span class="room-number">Room <%=order.room%></span>
+        </div>
 
-    <!-- Flavors -->
-    <%let allFlavors=""%> <%for (let i=0; i < drink.flavors.length; i++){%>
-    <%if(i < drink.flavors.length-1){%> <%allFlavors +=
-    drink.flavors[i].flavor+", "%> <%} else {%> <%allFlavors +=
-    drink.flavors[i].flavor%> <%}%> <%}%> <% if(drink.flavors.length > 0) { %>
-    <h9
-      ><span style="font-weight: bold; color: #3f93d8">Flavors:</span>
-      <%=allFlavors%></h9
-    >
-    <%}%>
+        <h3 class="drink-name"><%=drink.name%></h3>
 
-    <!-- Toppings -->
-    <%let allToppings=""%> <%for (let i=0; i < drink.toppings.length; i++){%>
-    <%if(i < drink.toppings.length-1){%> <%allToppings +=
-    drink.toppings[i].topping+", "%> <%} else {%> <%allToppings +=
-    drink.toppings[i].topping%> <%}%> <%}%> <% if(drink.toppings.length > 0) {
-    %>
-    <br />
-    <h9
-      ><span style="font-weight: bold; color: #3f93d8">Topping:</span>
-      <%=allToppings%></h9
-    >
-    <br />
-    <%}%>
-    <h9
-      ><span style="font-weight: bold; color: #3f93d8">Temp:</span>
-      <%=drink.temps%></h9
-    >
-    <br />
-    <h9
-      ><span style="font-weight: bold; color: #3f93d8">Instructions:</span>
-      <%=drink.instructions%></h9
-    >
+        <!-- Flavors -->
+        <% if(drink.flavors.length > 0) { %> <% let allFlavors =
+        drink.flavors.map(f => f.flavor).join(", ") %>
+        <div class="drink-detail">
+          <span class="label">Flavors:</span>
+          <span class="value"><%=allFlavors%></span>
+        </div>
+        <% } %>
 
-    <h6>Room Number: <%=order.room%></h6>
-    <h6>Price: $<%=drink.price%></h6>
+        <!-- Toppings -->
+        <% if(drink.toppings.length > 0) { %> <% let allToppings =
+        drink.toppings.map(t => t.topping).join(", ") %>
+        <div class="drink-detail">
+          <span class="label">Toppings:</span>
+          <span class="value"><%=allToppings%></span>
+        </div>
+        <% } %>
 
-    <% if(drink.favorite === false) { %> <% let link =
-    "/favoriteDrinkFromHistory/" + drink.id; %>
-    <a href="<%=link%>">
-      <button>Favorite</button>
-    </a>
-    <% } else { %>
-    <div class="container">Favorited</div>
-    <%}%> <% let link = "/addDrinkToCart/" + drink.id; %>
-    <a href="<%=link%>">
-      <button>Add to cart</button>
-    </a>
+        <div class="drink-detail">
+          <span class="label">Temperature:</span>
+          <span class="value temp-badge <%=drink.temps.toLowerCase()%>"
+            ><%=drink.temps%></span
+          >
+        </div>
+
+        <% if(drink.instructions) { %>
+        <div class="drink-detail">
+          <span class="label">Instructions:</span>
+          <span class="value"><%=drink.instructions%></span>
+        </div>
+        <% } %>
+
+        <div class="card-footer">
+          <span class="price">$<%=drink.price%></span>
+          <div class="action-buttons">
+            <% if(!drink.favorite) { %>
+            <button
+              class="action-button favorite"
+              onclick="window.location.href='/favoriteDrinkFromHistory/<%=drink.id%>'"
+            >
+              Add to Favorites
+            </button>
+            <% } else { %>
+            <span class="favorited-badge">★ In Favorites</span>
+            <% } %>
+            <button
+              class="action-button reorder"
+              onclick="window.location.href='/addDrinkToCart/<%=drink.id%>'"
+            >
+              Reorder
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %> <% } %>
   </div>
 </div>
 
-<%}}%> <%- include('include/_footer') %>
+<style>
+  .history-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    color: var(--coffee-dark);
+    font-size: 2.5rem;
+    margin: 0;
+  }
+
+  .history-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .history-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    transition: all 0.2s ease;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+
+  .history-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(60, 42, 33, 0.15);
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--cream);
+  }
+
+  .timestamp {
+    color: var(--coffee-dark);
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .room-number {
+    background: var(--coffee-light);
+    color: var(--coffee-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .drink-name {
+    color: var(--coffee-dark);
+    margin: 1rem 0;
+    font-size: 1.5rem;
+  }
+
+  .drink-detail {
+    margin: 0.5rem 0;
+  }
+
+  .label {
+    font-weight: 600;
+    color: var(--coffee-medium);
+    margin-right: 0.5rem;
+  }
+
+  .value {
+    color: var(--coffee-dark);
+  }
+
+  .temp-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .temp-badge.hot {
+    background: #ff6b6b;
+    color: white;
+  }
+
+  .temp-badge.iced {
+    background: #74c0fc;
+    color: white;
+  }
+
+  .temp-badge.blended {
+    background: #9c6ade;
+    color: white;
+  }
+
+  .card-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--coffee-dark);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .action-button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .action-button.favorite {
+    background: var(--coffee-medium);
+    color: white;
+  }
+
+  .action-button.reorder {
+    background: var(--accent);
+    color: var(--coffee-dark);
+  }
+
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(60, 42, 33, 0.2);
+  }
+
+  .favorited-badge {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    background: var(--cream);
+    color: var(--coffee-dark);
+    border-radius: 8px;
+    font-weight: 600;
+  }
+</style>
+
+<%- include('include/_footer') %>

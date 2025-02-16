@@ -14,7 +14,7 @@
       <h1 class="indexTopBar">NNHS Half Caf Barista</h1>
     </div>
 
-    <div class="topnav">
+    <div id="sidebar">
       <a href="/barista">Orders</a>
       <a href="/completed">Completed Orders</a>
       <a href="/cancelledOrders">Cancelled Orders</a>
@@ -45,21 +45,23 @@
         </select>
       </a>
 
-      <label class="on-off">
-        <% if(headerData.enabled === false) { %>
-        <input class="toggle" type="checkbox" id="myCheckbox" />
-        <span class="dis-en"></span>
-        <% } else { %>
-        <input
-          class="toggle"
-          type="checkbox"
-          id="myCheckbox"
-          checked="checked"
-        />
-        <span class="dis-en"></span>
-        <% } %>
-      </label>
-      <h4>Toggle allow ordering</h4>
+      <a>
+        <label class="on-off">
+          <% if(headerData.enabled === false) { %>
+          <input class="toggle" type="checkbox" id="myCheckbox" />
+          <span class="dis-en"></span>
+          <% } else { %>
+          <input
+            class="toggle"
+            type="checkbox"
+            id="myCheckbox"
+            checked="checked"
+          />
+          <span class="dis-en"></span>
+          <% } %>
+        </label>
+        <h4>Allow Orders</h4>
+      </a>
     </div>
     <style>
       .notification {

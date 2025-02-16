@@ -3,7 +3,7 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<div class="adminPage" id="page">
+<div id="mainContent" class="adminPage" id="page">
   <div class="userHdr">Add Drink</div>
   <div>
     Add Image<input
@@ -79,6 +79,67 @@
   <style>
     #tempLabel {
       margin-right: 5px;
+    }
+
+    /* Fix checkbox visibility */
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--coffee-medium);
+      border-radius: 4px;
+      background: white;
+      position: relative;
+      margin-right: 10px;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: "✓";
+      color: white;
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* Specific styles for temperature and options sections */
+    .tempBox input[type="checkbox"],
+    #pageRight > div input[type="checkbox"] {
+      z-index: 1;
+    }
+
+    .tempBox label,
+    #pageRight > div label {
+      display: inline-flex;
+      align-items: center;
+      margin: 5px 0;
+      color: var(--coffee-dark);
+      font-weight: 500;
+    }
+
+    /* Add spacing between sections */
+    .anchor {
+      display: block;
+      margin: 1rem 0 0.5rem 0;
+      font-weight: 600;
+      color: var(--coffee-dark);
+    }
+
+    .tempBox {
+      margin: 0.5rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
   </style>
 

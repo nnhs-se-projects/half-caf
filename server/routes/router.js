@@ -20,19 +20,21 @@ const {
 } = require("../socket/socket");
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
-let hasDisabledOrderingFromTime = false;
 async function checkTime() {
-  const currentTime = new Date();
+  const currentTimeDate = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+  );
+  const currentTimeMs = Date.parse(currentTimeDate);
   let currentSchedule;
   try {
     const currentWeekDay = await Weekday.findOne({
-      day: currentTime.getDay() - 1,
+      day: currentTimeDate.getDay() - 1,
     });
     currentSchedule = await Schedule.findById(currentWeekDay.schedule);
-  } catch {
+  } catch (error) {
+    // console.log(error);
     return;
   }
-
   for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
@@ -45,27 +47,30 @@ async function checkTime() {
     if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
       periodEndHr = 0;
     }
-    const endDateObj = new Date(
-      currentTime.getFullYear(),
-      currentTime.getMonth(),
-      currentTime.getDate(),
+    const endDate = new Date(
+      currentTimeDate.getFullYear(),
+      currentTimeDate.getMonth(),
+      currentTimeDate.getDate(),
       periodEndHr,
       periodEndMin
     );
-    const difference = endDateObj - currentTime;
+    const endDateMs = Date.parse(endDate);
+    const difference = endDateMs - currentTimeMs;
     if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
-      if (!hasDisabledOrderingFromTime) {
+      if (!period.hasDisabledOrdering) {
         const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
         toggle.enabled = false;
         await toggle.save();
-        hasDisabledOrderingFromTime = true;
+        period.hasDisabledOrdering = true;
+        await period.save();
         emitToggleChange();
       }
-    } else if (hasDisabledOrderingFromTime) {
+    } else if (period.hasDisabledOrdering) {
       const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
       toggle.enabled = true;
       await toggle.save();
-      hasDisabledOrderingFromTime = false;
+      period.hasDisabledOrdering = false;
+      await period.save();
       emitToggleChange();
     }
   }
@@ -208,6 +213,7 @@ route.post("/addSchedule", async (req, res) => {
       name: period.name,
       start: period.start,
       end: period.end,
+      hasDisabledOrdering: false,
     });
     await newPeriod.save();
 
