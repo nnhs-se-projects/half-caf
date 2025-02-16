@@ -2,6 +2,7 @@
 <%- include('include/_adminHeader') %>
 <!-- /include header -->
 
+<div id="mainContent">
 <input type="hidden" id="userEmails" value="<%=
 JSON.stringify(userEmails).replace("[", "").replace("]", "").replaceAll('"',"")
 %>" /> <input type="hidden" id="ordersPerUser" value="<%=
@@ -96,6 +97,7 @@ JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
       </tr>
     </thead>
   </table>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

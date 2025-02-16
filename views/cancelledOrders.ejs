@@ -3,81 +3,84 @@
 the only difference is the complete and finish buttons vs the incomplete button-->
 <%- include('include/_baristaHeader') %>
 
-<head>
-  <h5>Cancelled orders:</h5>
-</head>
-<body>
-  <div>
-    <table class="table table-striped">
-      <!--Labels for completed orders page table which displays the previously completed orders-->
-      <thead>
-        <tr id="a">
-          <th scope="col">Room Number</th>
-          <th scope="col">Teacher</th>
-          <th scope="col">Drink</th>
-          <th scope="col">Temp</th>
-          <th scope="col">Flavors</th>
-          <th scope="col">Toppings</th>
-          <th scope="col">Special Instructions</th>
-          <th scope="col">Timestamp</th>
-          <th scope="col">Mark as not cancelled</th>
-        </tr>
-        <!--count is used for tempDrink-->
-        <!--color is used to make the table striped-->
-        <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
-        <!-- < looping through the each order to display each> -->
-        <% for (let order of orders){%> <% showButtons = true; %>
-        <!--displays only orders that HAVE been completed-->
-        <% if(order.cancelled === true){%>
-        <!--loops through the drinks in an order-->
-        <% for(let i = 0; i < order.drinks.length; i++){%>
-        <!--gets the temperature of the drink-->
-        <% let tempDrink = drinkMap.get(count)[i]; %>
-        <!--makes the color change-->
-        <% if(color%2===0){%>
-        <tr id="b">
-          <%}%>
-          <!-- -->
-          <% if(color%2!==0){%>
-        </tr>
+<div id="mainContent">
+  <head>
+    <h5>Cancelled orders:</h5>
+  </head>
+  <body>
+    <div>
+      <table class="table table-striped">
+        <!--Labels for completed orders page table which displays the previously completed orders-->
+        <thead>
+          <tr id="a">
+            <th scope="col">Room Number</th>
+            <th scope="col">Teacher</th>
+            <th scope="col">Drink</th>
+            <th scope="col">Temp</th>
+            <th scope="col">Flavors</th>
+            <th scope="col">Toppings</th>
+            <th scope="col">Special Instructions</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Mark as not cancelled</th>
+          </tr>
+          <!--count is used for tempDrink-->
+          <!--color is used to make the table striped-->
+          <% let count = 0; %> <% let color = 0; %> <% let showButtons = true;
+          %>
+          <!-- < looping through the each order to display each> -->
+          <% for (let order of orders){%> <% showButtons = true; %>
+          <!--displays only orders that HAVE been completed-->
+          <% if(order.cancelled === true){%>
+          <!--loops through the drinks in an order-->
+          <% for(let i = 0; i < order.drinks.length; i++){%>
+          <!--gets the temperature of the drink-->
+          <% let tempDrink = drinkMap.get(count)[i]; %>
+          <!--makes the color change-->
+          <% if(color%2===0){%>
+          <tr id="b">
+            <%}%>
+            <!-- -->
+            <% if(color%2!==0){%>
+          </tr>
 
-        <tr id="c">
-          <%}%>
-          <!--Displays the complete orders in the table-->
-          <!--Each drink in an order is displayed as separate items on the table-->
-          <!--Right now orders has a complete property but this will need to be switched to drink-->
-          <!--Incomplete button needs to mark an individual drink as incomplete and move it to the
+          <tr id="c">
+            <%}%>
+            <!--Displays the complete orders in the table-->
+            <!--Each drink in an order is displayed as separate items on the table-->
+            <!--Right now orders has a complete property but this will need to be switched to drink-->
+            <!--Incomplete button needs to mark an individual drink as incomplete and move it to the
            orders page rather than an entire order-->
-          <th scope="?"><%=order.room%></th>
-          <th scope="?"><%=order.email%></th>
-          <th scope="?"><%=tempDrink.name%></th>
-          <th scope="?"><%=tempDrink.temp%></th>
-          <th scope="?"><%=tempDrink.flavors%></th>
-          <th scope="?"><%=tempDrink.toppings%></th>
-          <th scope="?"><%=tempDrink.instructions%></th>
-          <th scope="?"><%=order.timestamp%></th>
-          <% if(showButtons === true) { %>
-          <th scope="?">
-            <button value="<%=order.id%>" class="uncancelButton">
-              Uncancel
-            </button>
-          </th>
-          <% showButtons = false; %> <%} else { %>
-          <th scope="?">part of the above order</th>
+            <th scope="?"><%=order.room%></th>
+            <th scope="?"><%=order.email%></th>
+            <th scope="?"><%=tempDrink.name%></th>
+            <th scope="?"><%=tempDrink.temp%></th>
+            <th scope="?"><%=tempDrink.flavors%></th>
+            <th scope="?"><%=tempDrink.toppings%></th>
+            <th scope="?"><%=tempDrink.instructions%></th>
+            <th scope="?"><%=order.timestamp%></th>
+            <% if(showButtons === true) { %>
+            <th scope="?">
+              <button value="<%=order.id%>" class="uncancelButton">
+                Uncancel
+              </button>
+            </th>
+            <% showButtons = false; %> <%} else { %>
+            <th scope="?">part of the above order</th>
+            <%}%>
+          </tr>
+          <!--  -->
           <%}%>
-        </tr>
-        <!--  -->
-        <%}%>
-        <!--  -->
-        <%color++;}%>
-        <!--  -->
-        <%count++;}%>
-        <!-- < looping through each drink of every order> -->
-        <!-- < to display each drink on a different line> -->
-      </thead>
-    </table>
-  </div>
-</body>
+          <!--  -->
+          <%color++;}%>
+          <!--  -->
+          <%count++;}%>
+          <!-- < looping through each drink of every order> -->
+          <!-- < to display each drink on a different line> -->
+        </thead>
+      </table>
+    </div>
+  </body>
+</div>
 
 <!--css for formatting on the completed orders page, the colors are for the different rows-->
 <style type="text/css">

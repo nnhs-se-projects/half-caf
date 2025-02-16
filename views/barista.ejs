@@ -1,70 +1,72 @@
 <%- include('include/_baristaHeader') %>
 
-<head>
-  <h5>Orders:</h5>
-</head>
-<body>
-  <div>
-    <table class="table table-striped" id="orderTable">
-      <thead>
-        <!--Labels for order page table which displays the current orders-->
-        <tr id="a">
-          <th scope="col">Room Number</th>
-          <th scope="col">Teacher</th>
-          <th scope="col">Drink</th>
-          <th scope="col">Temp</th>
-          <th scope="col">Flavors</th>
-          <th scope="col">Toppings</th>
-          <th scope="col">Special Instructions</th>
-          <th scope="col">Timestamp</th>
-          <th scope="col">Timer</th>
-          <th scope="col">Cancel Order</th>
-          <th scope="col">Finish Order</th>
-        </tr>
-        <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
-        <% for (let order of orders){%> <% showButtons = true; %> <%
-        if(order.complete === false && order.cancelled === false){%> <% for(let
-        i = 0; i < order.drinks.length; i++){%> <% let tempDrink =
-        drinkMap.get(count)[i]; %> <% if(color%2===0){%>
-        <tr id="b">
-          <%}%> <% if(color%2!==0){%>
-        </tr>
+<div id="mainContent">
+  <head>
+    <h5>Orders:</h5>
+  </head>
+  <body>
+    <div>
+      <table class="table table-striped" id="orderTable">
+        <thead>
+          <!--Labels for order page table which displays the current orders-->
+          <tr id="a">
+            <th scope="col">Room Number</th>
+            <th scope="col">Teacher</th>
+            <th scope="col">Drink</th>
+            <th scope="col">Temp</th>
+            <th scope="col">Flavors</th>
+            <th scope="col">Toppings</th>
+            <th scope="col">Special Instructions</th>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Timer</th>
+            <th scope="col">Cancel Order</th>
+            <th scope="col">Finish Order</th>
+          </tr>
+          <% let count = 0; %> <% let color = 0; %> <% let showButtons = true;
+          %> <% for (let order of orders){%> <% showButtons = true; %> <%
+          if(order.complete === false && order.cancelled === false){%> <%
+          for(let i = 0; i < order.drinks.length; i++){%> <% let tempDrink =
+          drinkMap.get(count)[i]; %> <% if(color%2===0){%>
+          <tr id="b">
+            <%}%> <% if(color%2!==0){%>
+          </tr>
 
-        <tr id="c">
-          <%}%>
-          <th scope="?"><%=order.room%></th>
-          <th scope="?"><%=order.email%></th>
-          <th scope="?"><%=tempDrink.name%></th>
-          <th scope="?"><%=tempDrink.temp%></th>
-          <th scope="?"><%=tempDrink.flavors%></th>
-          <th scope="?"><%=tempDrink.toppings%></th>
-          <th scope="?"><%=tempDrink.instructions%></th>
-          <th scope="?"><%= order.timestamp.split('/')[0] %></th>
-          <th scope="?">
-            <span
-              class="time-counter"
-              data-timestamp="<%= order.timestamp %>"
-              data-order-id="<%= order.id %>"
-            ></span>
-          </th>
+          <tr id="c">
+            <%}%>
+            <th scope="?"><%=order.room%></th>
+            <th scope="?"><%=order.email%></th>
+            <th scope="?"><%=tempDrink.name%></th>
+            <th scope="?"><%=tempDrink.temp%></th>
+            <th scope="?"><%=tempDrink.flavors%></th>
+            <th scope="?"><%=tempDrink.toppings%></th>
+            <th scope="?"><%=tempDrink.instructions%></th>
+            <th scope="?"><%= order.timestamp.split('/')[0] %></th>
+            <th scope="?">
+              <span
+                class="time-counter"
+                data-timestamp="<%= order.timestamp %>"
+                data-order-id="<%= order.id %>"
+              ></span>
+            </th>
 
-          <% if(showButtons === true) { %>
-          <th scope="?">
-            <button value="<%=order.id%>" class="cancelButton">Cancel</button>
-          </th>
-          <th scope="?">
-            <button value="<%=order.id%>" class="finishButton">Finish</button>
-          </th>
-          <% showButtons = false; %> <%} else { %>
-          <th scope="?">part of the above order</th>
-          <th scope="?"></th>
-          <%}%>
-        </tr>
-        <%}%> <%color++;}%> <%count++;}%>
-      </thead>
-    </table>
-  </div>
-</body>
+            <% if(showButtons === true) { %>
+            <th scope="?">
+              <button value="<%=order.id%>" class="cancelButton">Cancel</button>
+            </th>
+            <th scope="?">
+              <button value="<%=order.id%>" class="finishButton">Finish</button>
+            </th>
+            <% showButtons = false; %> <%} else { %>
+            <th scope="?">part of the above order</th>
+            <th scope="?"></th>
+            <%}%>
+          </tr>
+          <%}%> <%color++;}%> <%count++;}%>
+        </thead>
+      </table>
+    </div>
+  </body>
+</div>
 
 <!--css for formatting on the orders page, the colors are for the different rows-->
 <style type="text/css">

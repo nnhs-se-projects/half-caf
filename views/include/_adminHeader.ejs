@@ -14,7 +14,7 @@
       <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
     </div>
 
-    <div class="topnav">
+    <div id="sidebar">
       <a href="/addUser">Add User</a>
       <a href="/deleteUser">Delete User</a>
       <a href="/modifyUser">Modify User</a>
@@ -33,21 +33,23 @@
       >
       <a href="/logout">Logout</a>
 
-      <label class="on-off">
-        <% if (headerData.enabled === false) { %>
-        <input class="toggle" type="checkbox" id="myCheckbox" />
-        <span class="dis-en"></span>
-        <% } else { %>
-        <input
-          class="toggle"
-          type="checkbox"
-          id="myCheckbox"
-          checked="checked"
-        />
-        <span class="dis-en"></span>
-        <% } %>
-      </label>
-      <h4>Toggle allow ordering</h4>
+      <a>
+        <label class="on-off">
+          <% if(headerData.enabled === false) { %>
+          <input class="toggle" type="checkbox" id="myCheckbox" />
+          <span class="dis-en"></span>
+          <% } else { %>
+          <input
+            class="toggle"
+            type="checkbox"
+            id="myCheckbox"
+            checked="checked"
+          />
+          <span class="dis-en"></span>
+          <% } %>
+        </label>
+        <h4>Allow Orders</h4>
+      </a>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/notifications.js"></script>
