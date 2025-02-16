@@ -1,33 +1,243 @@
-<!-- include header -->
 <%- include('include/_adminHeader') %>
-<!-- /include header -->
 
-<!-- Main Site -->
-<!--allows an admin to create a new schedule-->
-<div class="adminPage">
-  <div class="userHdr">Add Schedule</div>
-  <input type="text" id="scheduleName" placeholder="Name" />
-  <div id="periods"></div>
-  <input class="addPeriod" type="button" value="Add Period" />
-  <div>
-    <label>Monday</label>
-    <input type="checkbox" class="day" />
-    <label>Tuesday</label>
-    <input type="checkbox" class="day" />
-    <label>Wednesday</label>
-    <input type="checkbox" class="day" />
-    <label>Thursday</label>
-    <input type="checkbox" class="day" />
-    <label>Friday</label>
-    <input type="checkbox" class="day" />
+<div id="mainContent">
+  <div class="scheduler-header">
+    <h1 class="page-title">Create New Schedule</h1>
   </div>
-  <input class="submit" type="submit" value="Save Schedule" />
+
+  <div class="add-schedule-container">
+    <div class="schedule-form">
+      <div class="input-group">
+        <input
+          type="text"
+          id="scheduleName"
+          placeholder="Schedule Name"
+          class="fancy-input"
+        />
+      </div>
+
+      <div class="periods-container" id="periods">
+        <!-- Periods will be added here dynamically -->
+      </div>
+
+      <button class="action-button add-period addPeriod">
+        <span class="plus-icon">+</span> Add Period
+      </button>
+
+      <div class="days-selection">
+        <h3>Available Days</h3>
+        <div class="days-grid">
+          <label class="day-checkbox">
+            <input type="checkbox" class="day" />
+            <span class="checkbox-custom"></span>
+            <span class="day-label">Monday</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox" class="day" />
+            <span class="checkbox-custom"></span>
+            <span class="day-label">Tuesday</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox" class="day" />
+            <span class="checkbox-custom"></span>
+            <span class="day-label">Wednesday</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox" class="day" />
+            <span class="checkbox-custom"></span>
+            <span class="day-label">Thursday</span>
+          </label>
+          <label class="day-checkbox">
+            <input type="checkbox" class="day" />
+            <span class="checkbox-custom"></span>
+            <span class="day-label">Friday</span>
+          </label>
+        </div>
+      </div>
+
+      <button class="action-button save submit">Save Schedule</button>
+    </div>
+  </div>
 </div>
 
-<!-- /Main Site -->
+<style>
+  .add-schedule-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .schedule-form {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+  }
+
+  .input-group {
+    margin-bottom: 2rem;
+  }
+
+  .fancy-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--coffee-light);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: var(--coffee-dark);
+    transition: all 0.2s ease;
+  }
+
+  .fancy-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255, 159, 28, 0.2);
+  }
+
+  .periods-container {
+    margin-bottom: 2rem;
+  }
+
+  .action-button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 2rem;
+  }
+
+  .action-button.add-period {
+    background: var(--coffee-medium);
+    color: white;
+  }
+
+  .action-button.save {
+    background: var(--accent);
+    color: white;
+    font-size: 1.1rem;
+  }
+
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(60, 42, 33, 0.2);
+  }
+
+  .plus-icon {
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+
+  .days-selection {
+    margin-bottom: 2rem;
+  }
+
+  .days-selection h3 {
+    color: var(--coffee-dark);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .day-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .day-checkbox input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .checkbox-custom {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--coffee-medium);
+    border-radius: 6px;
+    margin-right: 0.8rem;
+    position: relative;
+    background: white;
+    transition: all 0.2s ease;
+  }
+
+  .day-checkbox input:checked + .checkbox-custom {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .day-checkbox input:checked + .checkbox-custom::after {
+    content: "✓";
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .day-label {
+    color: var(--coffee-dark);
+    font-weight: 500;
+  }
+
+  /* Period styles that will be used by the JS */
+  .period-item {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .period-item input {
+    padding: 0.5rem;
+    border: 2px solid var(--coffee-light);
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+
+  .period-item input[type="time"] {
+    padding: 0.5rem;
+    border: 2px solid var(--coffee-light);
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--coffee-dark);
+    background: white;
+    width: 100%;
+  }
+
+  .period-item input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(50%) sepia(30%) saturate(250%) hue-rotate(340deg);
+  }
+
+  .period-item button {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .period-item button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+  }
+</style>
 
 <script src="/js/addSchedule.js"></script>
 
-<!-- include footer -->
 <%- include('include/_footer') %>
-<!-- /include footer -->
