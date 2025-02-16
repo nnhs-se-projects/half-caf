@@ -309,6 +309,7 @@ h4 {
   top: 75px;
   bottom: 0;
   overflow-y: auto; /* Enable scroll if needed */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   box-shadow: 4px 0 20px rgba(60, 42, 33, 0.2);
   transition: transform 0.3s ease; /* Smooth transition */
   transform: translateX(
@@ -513,7 +514,9 @@ a {
 }
 
 /* Mobile specific styles */
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) and (hover: none),
+  (max-width: 768px) and (pointer: coarse) {
+  /* Only apply mobile styles on touch devices or actual mobile devices */
   .hamburger-menu {
     display: block;
   }
@@ -539,10 +542,41 @@ a {
     font-size: 24px;
     padding: 20px;
     text-align: center;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   #mainContent {
     margin-left: 0;
+  }
+}
+
+/* Desktop hover behavior */
+@media (min-width: 769px) {
+  #sidebar:hover {
+    transform: translateX(0);
+  }
+}
+
+/* Override mobile styles for desktop */
+@media (min-width: 769px) {
+  .hamburger-menu {
+    display: none !important;
+  }
+
+  #sidebar {
+    transform: translateX(-190px) !important;
+    width: 200px !important;
+    top: 75px !important;
+    background-color: var(--coffee-dark) !important;
+  }
+
+  #sidebar.active {
+    transform: translateX(-190px) !important;
+  }
+
+  #sidebar:hover {
+    transform: translateX(0) !important;
   }
 }
 
