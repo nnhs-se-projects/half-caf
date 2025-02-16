@@ -521,6 +521,18 @@ a {
     display: block;
   }
 
+  .indexTopBar {
+    background-color: var(
+      --coffee-medium
+    ); /* Change background to coffee color on mobile */
+  }
+
+  #pageTitle {
+    color: var(
+      --cream
+    ); /* Make title text light colored to contrast with dark background */
+  }
+
   #sidebar {
     transform: translateX(-100%);
     width: 100%;
