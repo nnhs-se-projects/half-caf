@@ -59,10 +59,19 @@ input[type="number"],
 select,
 textarea {
   background-color: white;
-  border: 2px solid var(--coffee-light);
+  border: none;
   border-radius: 8px;
   padding: 10px;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(60, 42, 33, 0.1);
+}
+
+input:focus,
+button:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
 input[type="submit"],
@@ -163,13 +172,61 @@ h1.indexTopBar {
 .dropdown-check-list {
   background-color: #ffffff; /* Set a light background color */
   color: #000000; /* Set a dark text color */
-  border: 1px solid #000000; /* Optional: Add a border to match the theme */
+  border: none;
+  box-shadow: 0 2px 8px rgba(60, 42, 33, 0.1);
 }
 
 .dropdown-check-list ul {
   background-color: #ffffff; /* Set a light background color */
   color: #000000; /* Set a dark text color */
-  border: 1px solid #000000; /* Optional: Add a border to match the theme */
+  border: none;
+}
+
+/* Fix checkbox visibility */
+.dropdown-check-list input[type="checkbox"],
+.dropdown-check-list input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--coffee-medium);
+  border-radius: 4px;
+  background: white;
+  position: relative;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.dropdown-check-list input[type="radio"] {
+  border-radius: 50%;
+}
+
+.dropdown-check-list input[type="checkbox"]:checked,
+.dropdown-check-list input[type="radio"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.dropdown-check-list input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+}
+
+.dropdown-check-list input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
 }
 
 .on-off {
