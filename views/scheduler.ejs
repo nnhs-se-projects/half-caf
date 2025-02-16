@@ -1,0 +1,36 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<div class="adminPage">
+
+  <input type="hidden" id="selectedScheduleId" value="<%=selectedSchedule.id%>" />
+  <input type="hidden" id="activeScheduleId" value="<%=activeSchedule.id%>" />
+  <div class="userHdr">Scheduler</div>
+  <a href="/addSchedule"><button>Create Schedule</button></a>
+  <label id="currentSchedule">Active Schedule: <%=activeSchedule.name%></label>
+  <label>Schedule:</label>
+  <select class="select" id="schedules">
+    <% for (let schedule of schedules) {%> <%if(schedule.id ===
+    selectedSchedule.id) { %>
+    <option selected="selected" value="<%=schedule._id%>">
+      <%=schedule.name%>
+    </option>
+    <% } else {%>
+    <option value="<%=schedule._id%>"><%=schedule.name%></option>
+    <%}%> <%}%>
+  </select>
+  <button id="deleteBtn">Delete this schedule</button>
+  <label>Periods:</label>
+  <% for (let period of selectedPeriods) { %>
+  <div class="card">
+    <h3><%=period.name%></h4>
+    <p>Start Time: <%=period.start%></p>
+    <p>End Time: <%=period.end%></p>
+  </div>
+  <% } %>
+</div>
+
+<script src="/js/scheduler.js"></script>

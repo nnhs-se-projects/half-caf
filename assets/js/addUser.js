@@ -2,7 +2,9 @@ const addUserButton = document.querySelector("input.submit");
 addUserButton.addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const userType = document.getElementById("userType").value;
-  const user = { isActivated: true, email, userType };
+  const user = { email, userType };
+
+  addUserButton.disabled = true;
 
   const response = await fetch("/addUser", {
     method: "POST",

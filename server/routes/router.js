@@ -8,19 +8,10 @@ const TempJson = require("../model/temps.json");
 const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const Schedule = require("../model/schedule");
+const Period = require("../model/period");
 const Enabled = require("../model/enabled");
-
-const multer = require("multer");
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./assets/img");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "--" + file.originalname);
-  },
-});
-const upload = multer({ storage });
-
+const Weekday = require("../model/weekdays");
 const {
   emitToggleChange,
   emitOrderCancelled,
@@ -28,12 +19,70 @@ const {
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
+const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
+async function checkTime() {
+  const currentTimeDate = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+  );
+  const currentTimeMs = Date.parse(currentTimeDate);
+  let currentSchedule;
+  try {
+    const currentWeekDay = await Weekday.findOne({
+      day: currentTimeDate.getDay() - 1,
+    });
+    currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+  for (const periodId of currentSchedule.periods) {
+    const period = await Period.findById(periodId);
+    let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
+    const periodEndMin = Number(
+      period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
+    );
+    if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
+      periodEndHr += 12;
+    }
+    if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
+      periodEndHr = 0;
+    }
+    const endDate = new Date(
+      currentTimeDate.getFullYear(),
+      currentTimeDate.getMonth(),
+      currentTimeDate.getDate(),
+      periodEndHr,
+      periodEndMin
+    );
+    const endDateMs = Date.parse(endDate);
+    const difference = endDateMs - currentTimeMs;
+    if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
+      if (!period.hasDisabledOrdering) {
+        const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+        toggle.enabled = false;
+        await toggle.save();
+        period.hasDisabledOrdering = true;
+        await period.save();
+        emitToggleChange();
+      }
+    } else if (period.hasDisabledOrdering) {
+      const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+      toggle.enabled = true;
+      await toggle.save();
+      period.hasDisabledOrdering = false;
+      await period.save();
+      emitToggleChange();
+    }
+  }
+}
+
+setInterval(checkTime, 5000); // check every 5 sec
+
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   if (user === null) {
     if (req.session.email.indexOf("@naperville203.org") > -1) {
       const newUser = new User({
-        isActivated: true,
         email: req.session.email,
         userType: "teacher",
       });
@@ -148,6 +197,92 @@ route.get("/logout", async (req, res) => {
   });
 });
 
+route.get("/addSchedule", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("addSchedule");
+  }
+});
+
+route.post("/addSchedule", async (req, res) => {
+  const periodIds = [];
+  for (const period of req.body.periods) {
+    const newPeriod = new Period({
+      name: period.name,
+      start: period.start,
+      end: period.end,
+      hasDisabledOrdering: false,
+    });
+    await newPeriod.save();
+
+    periodIds.push(newPeriod._id);
+  }
+  const schedule = new Schedule({
+    name: req.body.name,
+    periods: periodIds,
+  });
+
+  for (const day of req.body.days) {
+    const findDay = await Weekday.findOne({ day: day });
+    findDay.schedule = schedule._id;
+    await findDay.save();
+  }
+
+  await schedule.save();
+  res.status(201).end();
+});
+
+route.delete("/deleteSchedule", async (req, res) => {
+  const schedule = await Schedule.findById(req.body.id);
+  await Period.deleteMany({ _id: { $in: schedule.periods } });
+  await Schedule.findByIdAndRemove(req.body.id);
+  res.end();
+});
+
+route.get("/scheduler", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const schedules = await Schedule.find();
+    const selectedPeriods = [];
+
+    const { id } = req.query;
+    let selectedSchedule;
+    let activeSchedule;
+    try {
+      const currentTime = new Date();
+      const currentWeekDay = await Weekday.findOne({
+        day: currentTime.getDay() - 1,
+      });
+      activeSchedule = await Schedule.findById(currentWeekDay.schedule);
+    } catch {
+      activeSchedule = schedules[0];
+    }
+
+    if (id != null) {
+      selectedSchedule = await Schedule.findById(id);
+    } else {
+      selectedSchedule = activeSchedule;
+    }
+    if (selectedSchedule) {
+      for (const period of selectedSchedule.periods) {
+        const periodData = await Period.findById(period);
+        selectedPeriods.push(periodData);
+      }
+    }
+
+    res.render("scheduler", {
+      activeSchedule,
+      selectedSchedule,
+      schedules,
+      selectedPeriods,
+    });
+  }
+});
+
 route.get("/addUser", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {
@@ -159,7 +294,6 @@ route.get("/addUser", async (req, res) => {
 
 route.post("/addUser", async (req, res) => {
   const user = new User({
-    isActivated: true,
     email: req.body.email,
     userType: req.body.userType,
   });
@@ -182,19 +316,6 @@ route.delete("/deleteUser/:id", async (req, res) => {
   const userId = req.params.id;
   await User.findByIdAndRemove(userId);
   res.end();
-});
-
-route.get("/viewUser", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    // access all the users in the database
-    const allUsers = await User.find();
-    res.render("viewUser", {
-      users: allUsers,
-    });
-  }
 });
 
 route.get("/modifyUser", async (req, res) => {
@@ -226,55 +347,6 @@ route.post("/modifyUser/:id", async (req, res) => {
   user.userType = req.body.role;
   await user.save();
   res.status(201).end();
-});
-
-// gets the activated/ deactivated users for the view user filter
-route.get("/users/:status", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const status = req.params.status;
-    try {
-      let users;
-      if (status === "activated") {
-        users = await User.find({ isActivated: true });
-      } else if (status === "deactivated") {
-        users = await User.find({ isActivated: false });
-      } else {
-        // If status is not 'activated' or 'deactivated', fetch all users
-        users = await User.find();
-      }
-      res.json(users);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ error: "Error fetching users" });
-    }
-  }
-});
-
-// not working yet but will update the database based on if the user is activated or deactivated
-route.post("/updateUserStatus", async (req, res) => {
-  const { userIds, isActivated } = req.body;
-  try {
-    await User.updateMany(
-      { _id: { $in: userIds } },
-      { $set: { isActivated: isActivated } }
-    );
-    //   user.isActivated = req.body.isActivated;
-    res.status(200).json({ message: "User status updated successfully." });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal server error." });
-  }
-  // for (let use of allUsers) {
-  //   const userId = req.params.id;
-  //   let user = await use.findById(userId);
-  //   user.isActivated = req.body.isActivated;
-  //   await user.save();
-  //   console.log(user);
-  //   res.status(201).end();
-  // }
 });
 
 route.get("/addDrink", async (req, res) => {
@@ -356,28 +428,25 @@ route.get("/modifyDrink", async (req, res) => {
   }
 });
 // updates database with new menu item
-route.post("/addDrink", upload.single("image"), async (req, res) => {
-  try {
-    const drink = new MenuItem({
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      popular: req.body.popular,
-      flavors: req.body.checkedFlavors,
-      toppings: req.body.checkedToppings,
-      temps: req.body.checkedTemps,
-      caffeination: req.body.caf,
-      special: req.body.special,
-      imagePath: req.file ? req.file.path : null,
-    });
-    await drink.save();
-    res.status(200).json({ message: "Drink added successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+route.post("/addDrink", async (req, res) => {
+  console.log(req.body);
+  const drink = new MenuItem({
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    popular: req.body.popular,
+    flavors: req.body.checkedFlavors,
+    toppings: req.body.checkedToppings,
+    temps: req.body.checkedTemps,
+    caffeination: req.body.caf,
+    special: req.body.special,
+    imageData: req.body.imageData,
+  });
+  await drink.save();
+  res.status(200).end();
 });
 
-route.post("/modifyDrink/:id", upload.single("image"), async (req, res) => {
+route.post("/modifyDrink/:id", async (req, res) => {
   try {
     const menuItem = await MenuItem.findById(req.params.id);
     menuItem.name = req.body.name;
@@ -391,9 +460,9 @@ route.post("/modifyDrink/:id", upload.single("image"), async (req, res) => {
     menuItem.caffeination = req.body.caf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
-    if (req.file) {
-      menuItem.imagePath = req.file.path;
-    }
+    menuItem.imageData = req.body.imageData
+      ? req.body.imageData
+      : menuItem.imageData;
     await menuItem.save();
     res.status(200).json({ message: "Drink added successfully" });
   } catch (error) {
@@ -418,27 +487,8 @@ route.get("/deleteDrink", async (req, res) => {
   }
 });
 
-const fs = require("fs");
-
 route.delete("/deleteDrink/:id", async (req, res) => {
-  const menuItemId = req.params.id;
-  const menuItem = await MenuItem.findById(menuItemId);
-
-  // Asynchronously delete a file
-  fs.unlink(menuItem.imagePath, (err) => {
-    if (err) {
-      // Handle specific error if any
-      if (err.code === "ENOENT") {
-        console.error("Image file does not exist.");
-      } else {
-        throw err;
-      }
-    } else {
-      console.log("Image File deleted.");
-    }
-  });
-
-  await MenuItem.findByIdAndRemove(menuItemId);
+  await MenuItem.findByIdAndRemove(req.params.id);
   res.end();
 });
 
@@ -774,6 +824,12 @@ route.get("/barista", async (req, res) => {
     const flavors = await Flavor.find({});
     const toppings = await Topping.find({});
 
+    for (const order of orders) {
+      if (order.drinks.length === 0) {
+        await Order.findByIdAndRemove(order._id);
+      }
+    }
+
     const drinkMap = new Map();
     for (let i = 0; i < orders.length; i++) {
       const drinkArray = [];
@@ -793,7 +849,9 @@ route.get("/barista", async (req, res) => {
             const tempFlavor = flavors.find((f) =>
               f._id.equals(drink.flavors[x])
             );
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            if (tempFlavor !== null && tempFlavor !== undefined) {
+              formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            }
           }
         }
         if (drink.toppings.length === 0) {
@@ -803,7 +861,9 @@ route.get("/barista", async (req, res) => {
             const tempTopping = toppings.find((t) =>
               t._id.equals(drink.toppings[x])
             );
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+            if (tempTopping !== null && tempTopping !== undefined) {
+              formattedDrink.toppings.push(" " + tempTopping.topping);
+            }
           }
         }
         formattedDrink.name = drink.name;
@@ -885,7 +945,9 @@ route.get("/completed", async (req, res) => {
             const tempFlavor = flavors.find((f) =>
               f._id.equals(drink.flavors[x])
             );
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            if (tempFlavor !== null && tempFlavor !== undefined) {
+              formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            }
           }
         }
         if (drink.toppings.length === 0) {
@@ -895,7 +957,9 @@ route.get("/completed", async (req, res) => {
             const tempTopping = toppings.find((t) =>
               t._id.equals(drink.toppings[x])
             );
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+            if (tempTopping !== null && tempTopping !== undefined) {
+              formattedDrink.toppings.push(" " + tempTopping.topping);
+            }
           }
         }
         formattedDrink.name = drink.name;
@@ -957,7 +1021,9 @@ route.get("/cancelledOrders", async (req, res) => {
             const tempFlavor = flavors.find((f) =>
               f._id.equals(drink.flavors[x])
             );
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            if (tempFlavor !== null && tempFlavor !== undefined) {
+              formattedDrink.flavors.push(" " + tempFlavor.flavor);
+            }
           }
         }
         if (drink.toppings.length === 0) {
@@ -967,7 +1033,9 @@ route.get("/cancelledOrders", async (req, res) => {
             const tempTopping = toppings.find((t) =>
               t._id.equals(drink.toppings[x])
             );
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+            if (tempTopping !== null && tempTopping !== undefined) {
+              formattedDrink.toppings.push(" " + tempTopping.topping);
+            }
           }
         }
         formattedDrink.name = drink.name;
@@ -1207,7 +1275,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
   res.status(200).send("Drink added to session.");
 });
 
-route.get("/teacherMyOrder", async (req, res) => {
+route.get("/teacherMyCart", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
@@ -1227,7 +1295,7 @@ route.get("/teacherMyOrder", async (req, res) => {
         toppings: drinkToppingsArray,
       };
     }
-    res.render("teacherMyOrder", {
+    res.render("teacherMyCart", {
       cart: req.session.cart,
       customizationDict,
       email: req.session.email,
@@ -1245,7 +1313,7 @@ route.post("/updateCart", async (req, res) => {
   res.status(200).end();
 });
 
-route.post("/teacherMyOrder", async (req, res) => {
+route.post("/teacherMyCart", async (req, res) => {
   let total = 0;
   for (const drink of req.session.cart) {
     total += drink.price;
@@ -1289,7 +1357,9 @@ route.post("/teacherMyOrder", async (req, res) => {
           const tempFlavor = flavors.find((f) =>
             f._id.equals(drink.flavors[x])
           );
-          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          if (tempFlavor !== null && tempFlavor !== undefined) {
+            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          }
         }
       }
       if (drink.toppings.length === 0) {
@@ -1299,7 +1369,9 @@ route.post("/teacherMyOrder", async (req, res) => {
           const tempTopping = toppings.find((t) =>
             t._id.equals(drink.toppings[x])
           );
-          formattedDrink.toppings.push(" " + tempTopping.topping);
+          if (tempTopping !== null && tempTopping !== undefined) {
+            formattedDrink.toppings.push(" " + tempTopping.topping);
+          }
         }
       }
       formattedDrink.name = drink.name;
@@ -1400,7 +1472,7 @@ route.get("/addDrinkToCart/:id", async (req, res) => {
   const drink = await Drink.findById(req.params.id);
   req.session.cart.push(drink);
 
-  res.redirect("/teacherMyOrder");
+  res.redirect("/teacherMyCart");
 });
 
 route.get("/unfavoriteDrink/:id", async (req, res) => {

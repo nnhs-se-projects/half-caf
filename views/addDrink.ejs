@@ -5,7 +5,15 @@
 <!-- Main Site -->
 <div id="mainContent" class="adminPage" id="page">
   <div class="userHdr">Add Drink</div>
-  <div>Add Image *REQUIRED*<input type="file" name="image" id="image" /></div>
+  <div>
+    Add Image<input
+      type="file"
+      name="image"
+      id="image"
+      onchange="encodeImageFileAsURL();"
+    />
+  </div>
+  <img id="drinkImg" />
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
@@ -35,7 +43,7 @@
       </ul>
     </div>
     <!--accesses all the temps from the json and displays them as checkboxes-->
-    <span class="anchor">Select Options</span>
+    <span class="anchor">Select Temps</span>
     <div class="tempBox">
       <% for(let temp of temps){ %>
       <label id="tempLabel">
@@ -51,6 +59,7 @@
       <%} %>
     </div>
 
+    <span class="anchor">Select Options</span>
     <!--checkboxes for if a drink is popular, special or if it can be caffeinated-->
     <div>
       <input type="checkbox" id="popular" />

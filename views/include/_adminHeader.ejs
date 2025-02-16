@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Half Caf</title>
+    <link rel="stylesheet" href="/css/pico.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="shortcut icon" type="image/png" href="/img/logo.png" />
+  </head>
+  <body>
     <div class="container" id="logo">
       <%- include('_header') %>
       <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
@@ -12,7 +17,6 @@
     <div id="sidebar">
       <a href="/addUser">Add User</a>
       <a href="/deleteUser">Delete User</a>
-      <a href="/viewUser">View User</a>
       <a href="/modifyUser">Modify User</a>
       <a href="/addDrink">Add Drink</a>
       <a href="/modifyDrink">Modify Drink</a>
@@ -22,15 +26,12 @@
       <a href="/addTopping">Add Topping</a>
       <a href="/DeleteTopping">Delete Topping</a>
       <a href="/metrics">Metrics</a>
+      <a href="/scheduler">Scheduler</a>
       <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
       <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
         >Report a bug</a
       >
       <a href="/logout">Logout</a>
-
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="/js/notifications.js"></script>
-      <script src="/js/refreshOrderingToggle.js"></script>
 
       <a>
         <label class="on-off">
@@ -50,10 +51,9 @@
         <h4>Allow Orders</h4>
       </a>
     </div>
-
-    <link rel="stylesheet" href="/css/pico.min.css" />
-    <link rel="stylesheet" href="/css/styles.css" />
-
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/refreshOrderingToggle.js"></script>
     <script src="/js/toggleEnabled.js"></script>
-  </head>
+  </body>
 </html>
