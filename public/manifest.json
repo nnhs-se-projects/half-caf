@@ -7,12 +7,12 @@
   "theme_color": "#383773",
   "icons": [
     {
-      "src": "/assets/img/Half_Caf_Logo_(1).png",
+      "src": "/test-icon.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/assets/img/Half_Caf_Logo_(1).png",
+      "src": "/test-icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }

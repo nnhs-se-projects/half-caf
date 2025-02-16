@@ -3,7 +3,7 @@ const assets = [
   "/",
   "/add-to-home.html",
   "/manifest.json",
-  "/assets/models/NNHS-logo.png",
+  "/test-icon.png",
   "/assets/js/auth2.js",
   "/css/styles.css",
 ];
