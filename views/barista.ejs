@@ -142,16 +142,17 @@
     padding: 1rem;
     border-top: 2px solid white;
     border-bottom: 2px solid white;
+    color: var(--coffee-dark); /* Darker text color for better readability */
+    font-weight: 500; /* Slightly bolder text */
   }
 
-  .order-row td:first-child {
-    border-left: 2px solid white;
-    border-radius: 8px 0 0 8px;
-  }
-
-  .order-row td:last-child {
-    border-right: 2px solid white;
-    border-radius: 0 8px 8px 0;
+  /* Make certain columns stand out more */
+  .order-row td:nth-child(1), /* Room number */
+  .order-row td:nth-child(3), /* Drink name */
+  .order-row td:nth-child(9) {
+    /* Timer */
+    font-weight: 600;
+    color: #2c1810; /* Even darker shade for important information */
   }
 
   .first-drink {
@@ -176,6 +177,11 @@
 
   .temp-badge.iced {
     background: #74c0fc;
+    color: white;
+  }
+
+  .temp-badge.blended {
+    background: #9c6ade;
     color: white;
   }
 
@@ -205,8 +211,9 @@
   }
 
   .part-of-order {
-    color: var(--coffee-medium);
+    color: #967259; /* Warmer color instead of gray, matching coffee-medium */
     font-style: italic;
+    font-weight: normal; /* Reset font weight for secondary items */
   }
 
   @keyframes steam {

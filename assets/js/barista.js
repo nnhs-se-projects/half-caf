@@ -87,14 +87,16 @@ window.io().on("New order placed", (data) => {
       isFirstDrink ? "first-drink" : "additional-drink"
     }`;
 
+    // Update the temperature badge class to include blended
+    const tempClass = drink.temp.toLowerCase();
+    const tempBadge = `<span class="temp-badge ${tempClass}">${drink.temp}</span>`;
+
     if (isFirstDrink) {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
           <td>${data.order.email}</td>
           <td>${drink.name}</td>
-          <td><span class="temp-badge ${drink.temp.toLowerCase()}">${
-        drink.temp
-      }</span></td>
+          <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
           <td>${drink.toppings}</td>
           <td>${drink.instructions}</td>
@@ -124,9 +126,7 @@ window.io().on("New order placed", (data) => {
           <td>${data.order.room}</td>
           <td>${data.order.email}</td>
           <td>${drink.name}</td>
-          <td><span class="temp-badge ${drink.temp.toLowerCase()}">${
-        drink.temp
-      }</span></td>
+          <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
           <td>${drink.toppings}</td>
           <td>${drink.instructions}</td>
