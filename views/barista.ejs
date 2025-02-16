@@ -53,15 +53,13 @@
             </span>
           </td>
           <% if(showButtons) { %>
-          <td>
+          <td colspan="2">
             <button
               class="action-button cancel cancelButton"
               value="<%=order.id%>"
             >
               Cancel
             </button>
-          </td>
-          <td>
             <button
               class="action-button finish finishButton"
               value="<%=order.id%>"
@@ -70,7 +68,13 @@
             </button>
           </td>
           <% showButtons = false; %> <% } else { %>
-          <td colspan="2" class="part-of-order">Part of above order</td>
+          <td
+            colspan="2"
+            class="part-of-order"
+            style="word-break: break-word; max-width: 150px"
+          >
+            Part of above order
+          </td>
           <% } %>
         </tr>
         <% } %> <% } %> <% count++; %> <% } %>
@@ -83,7 +87,7 @@
   .barista-header {
     display: flex;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem; /* Reduced from 2rem */
   }
 
   .page-title {
@@ -102,22 +106,27 @@
   .orders-container {
     background: white;
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 0.75rem; /* Reduced from 1.5rem */
     box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    max-height: calc(100vh - 180px); /* Adjust based on header height */
+    overflow-y: auto;
   }
 
   .orders-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 8px;
+    border-spacing: 0 4px; /* Reduced from 8px */
   }
 
   .orders-table th {
     background: var(--coffee-dark);
     color: var(--cream);
-    padding: 1rem;
+    padding: 0.75rem; /* Reduced from 1rem */
     font-weight: 600;
     text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
   .orders-table th:first-child {
@@ -139,7 +148,7 @@
   }
 
   .order-row td {
-    padding: 1rem;
+    padding: 0.75rem; /* Reduced from 1rem */
     border-top: 2px solid white;
     border-bottom: 2px solid white;
     color: var(--coffee-dark); /* Darker text color for better readability */
@@ -193,6 +202,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
+    margin-bottom: 5px; /* Add spacing between stacked buttons */
   }
 
   .action-button.cancel {
