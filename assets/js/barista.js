@@ -8,6 +8,10 @@ function addListenerToCancelButtons() {
       }
 
       const message = prompt("Please enter a message for the cancellation:");
+      if (!message) {
+        return;
+      }
+
       const orderId = cancelButton.value;
 
       cancelButton.disabled = true;
