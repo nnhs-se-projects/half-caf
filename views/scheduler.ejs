@@ -4,33 +4,214 @@
 
 <!-- Main Site -->
 
-<div class="adminPage">
-
-  <input type="hidden" id="selectedScheduleId" value="<%=selectedSchedule.id%>" />
-  <input type="hidden" id="activeScheduleId" value="<%=activeSchedule.id%>" />
-  <div class="userHdr">Scheduler</div>
-  <a href="/addSchedule"><button>Create Schedule</button></a>
-  <label id="currentSchedule">Active Schedule: <%=activeSchedule.name%></label>
-  <label>Schedule:</label>
-  <select class="select" id="schedules">
-    <% for (let schedule of schedules) {%> <%if(schedule.id ===
-    selectedSchedule.id) { %>
-    <option selected="selected" value="<%=schedule._id%>">
-      <%=schedule.name%>
-    </option>
-    <% } else {%>
-    <option value="<%=schedule._id%>"><%=schedule.name%></option>
-    <%}%> <%}%>
-  </select>
-  <button id="deleteBtn">Delete this schedule</button>
-  <label>Periods:</label>
-  <% for (let period of selectedPeriods) { %>
-  <div class="card">
-    <h3><%=period.name%></h4>
-    <p>Start Time: <%=period.start%></p>
-    <p>End Time: <%=period.end%></p>
+<div id="mainContent">
+  <div class="scheduler-header">
+    <h1 class="page-title">Schedule Manager</h1>
   </div>
-  <% } %>
+
+  <div class="scheduler-container">
+    <input type="hidden" id="selectedScheduleId" value="<%=selectedSchedule.id%>" />
+    <input type="hidden" id="activeScheduleId" value="<%=activeSchedule.id%>" />
+    
+    <div class="schedule-controls">
+      <button class="action-button create" onclick="window.location.href='/addSchedule'">
+        <span class="button-icon">+</span>
+        Create Schedule
+      </button>
+      
+      <div class="active-schedule">
+        <span class="label">Active Schedule:</span>
+        <span class="value"><%=activeSchedule.name%></span>
+      </div>
+
+      <div class="schedule-selector">
+        <label class="label">Select Schedule:</label>
+        <div class="select-wrapper">
+          <select class="fancy-select" id="schedules">
+            <% for (let schedule of schedules) { %>
+              <option value="<%=schedule._id%>" <%= schedule.id === selectedSchedule.id ? 'selected' : '' %>>
+                <%=schedule.name%>
+              </option>
+            <% } %>
+          </select>
+        </div>
+        <button class="action-button delete" id="deleteBtn">Delete Schedule</button>
+      </div>
+    </div>
+
+    <div class="periods-section">
+      <h2 class="section-title">Periods</h2>
+      <div class="periods-grid">
+        <% for (let period of selectedPeriods) { %>
+          <div class="period-card">
+            <h3 class="period-name"><%=period.name%></h3>
+            <div class="time-details">
+              <div class="time-item">
+                <span class="time-label">Start:</span>
+                <span class="time-value"><%=period.start%></span>
+              </div>
+              <div class="time-item">
+                <span class="time-label">End:</span>
+                <span class="time-value"><%=period.end%></span>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
 </div>
 
+<style>
+  .scheduler-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .scheduler-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    color: var(--coffee-dark);
+    font-size: 2.5rem;
+    margin: 0;
+  }
+
+  .schedule-controls {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .active-schedule {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--cream);
+    border-radius: 8px;
+  }
+
+  .schedule-selector {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .fancy-select {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid var(--coffee-light);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--coffee-dark);
+    background: white;
+    cursor: pointer;
+  }
+
+  .action-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .action-button.create {
+    background: var(--accent);
+    color: white;
+  }
+
+  .action-button.delete {
+    background: #ff6b6b;
+    color: white;
+  }
+
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(60, 42, 33, 0.2);
+  }
+
+  .button-icon {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .label {
+    font-weight: 600;
+    color: var(--coffee-medium);
+    margin-right: 0.5rem;
+  }
+
+  .value {
+    color: var(--coffee-dark);
+    font-weight: 500;
+  }
+
+  .periods-section {
+    margin-top: 2rem;
+  }
+
+  .section-title {
+    color: var(--coffee-dark);
+    margin-bottom: 1rem;
+  }
+
+  .periods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .period-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .period-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(60, 42, 33, 0.15);
+  }
+
+  .period-name {
+    color: var(--coffee-dark);
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+
+  .time-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .time-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--cream);
+    border-radius: 8px;
+  }
+
+  .time-label {
+    color: var(--coffee-medium);
+    font-weight: 600;
+  }
+
+  .time-value {
+    color: var(--coffee-dark);
+    font-weight: 500;
+  }
+</style>
+
 <script src="/js/scheduler.js"></script>
+
+<%- include('include/_footer') %>

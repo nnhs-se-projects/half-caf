@@ -1,97 +1,239 @@
 <%- include('include/_baristaHeader') %>
 
 <div id="mainContent">
-  <head>
-    <h5>Orders:</h5>
-  </head>
-  <body>
-    <div>
-      <table class="table table-striped" id="orderTable">
-        <thead>
-          <!--Labels for order page table which displays the current orders-->
-          <tr id="a">
-            <th scope="col">Room Number</th>
-            <th scope="col">Teacher</th>
-            <th scope="col">Drink</th>
-            <th scope="col">Temp</th>
-            <th scope="col">Flavors</th>
-            <th scope="col">Toppings</th>
-            <th scope="col">Special Instructions</th>
-            <th scope="col">Timestamp</th>
-            <th scope="col">Timer</th>
-            <th scope="col">Cancel Order</th>
-            <th scope="col">Finish Order</th>
-          </tr>
-          <% let count = 0; %> <% let color = 0; %> <% let showButtons = true;
-          %> <% for (let order of orders){%> <% showButtons = true; %> <%
-          if(order.complete === false && order.cancelled === false){%> <%
-          for(let i = 0; i < order.drinks.length; i++){%> <% let tempDrink =
-          drinkMap.get(count)[i]; %> <% if(color%2===0){%>
-          <tr id="b">
-            <%}%> <% if(color%2!==0){%>
-          </tr>
+  <div class="barista-header">
+    <h1 class="page-title">Active Orders</h1>
+    <div class="coffee-decoration">☕</div>
+  </div>
 
-          <tr id="c">
-            <%}%>
-            <th scope="?"><%=order.room%></th>
-            <th scope="?"><%=order.email%></th>
-            <th scope="?"><%=tempDrink.name%></th>
-            <th scope="?"><%=tempDrink.temp%></th>
-            <th scope="?"><%=tempDrink.flavors%></th>
-            <th scope="?"><%=tempDrink.toppings%></th>
-            <th scope="?"><%=tempDrink.instructions%></th>
-            <th scope="?"><%= order.timestamp.split('/')[0] %></th>
-            <th scope="?">
-              <span
-                class="time-counter"
-                data-timestamp="<%= order.timestamp %>"
-                data-order-id="<%= order.id %>"
-              ></span>
-            </th>
-
-            <% if(showButtons === true) { %>
-            <th scope="?">
-              <button value="<%=order.id%>" class="cancelButton">Cancel</button>
-            </th>
-            <th scope="?">
-              <button value="<%=order.id%>" class="finishButton">Finish</button>
-            </th>
-            <% showButtons = false; %> <%} else { %>
-            <th scope="?">part of the above order</th>
-            <th scope="?"></th>
-            <%}%>
-          </tr>
-          <%}%> <%color++;}%> <%count++;}%>
-        </thead>
-      </table>
-    </div>
-  </body>
+  <div class="orders-container">
+    <table class="orders-table" id="orderTable">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Teacher</th>
+          <th>Drink</th>
+          <th>Temp</th>
+          <th>Flavors</th>
+          <th>Toppings</th>
+          <th>Special Instructions</th>
+          <th>Time</th>
+          <th>Timer</th>
+          <th colspan="2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let count = 0; %> <% for (let order of orders){ %> <%
+        if(order.complete === false && order.cancelled === false){ %> <% let
+        showButtons = true; %>
+        <!-- Moved inside the order loop -->
+        <% for(let i = 0; i < order.drinks.length; i++){ %> <% let tempDrink =
+        drinkMap.get(count)[i]; %>
+        <tr
+          class="order-row <%= i === 0 ? 'first-drink' : 'additional-drink' %>"
+        >
+          <td><%=order.room%></td>
+          <td><%=order.email%></td>
+          <td><%=tempDrink.name%></td>
+          <td>
+            <span class="temp-badge <%=tempDrink.temp.toLowerCase()%>"
+              ><%=tempDrink.temp%></span
+            >
+          </td>
+          <td><%=tempDrink.flavors%></td>
+          <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.instructions%></td>
+          <td><%=order.timestamp.split('/')[0]%></td>
+          <td>
+            <span
+              class="time-counter"
+              data-timestamp="<%=order.timestamp%>"
+              data-order-id="<%=order.id%>"
+            >
+            </span>
+          </td>
+          <% if(showButtons) { %>
+          <td>
+            <button
+              class="action-button cancel cancelButton"
+              value="<%=order.id%>"
+            >
+              Cancel
+            </button>
+          </td>
+          <td>
+            <button
+              class="action-button finish finishButton"
+              value="<%=order.id%>"
+            >
+              Complete
+            </button>
+          </td>
+          <% showButtons = false; %> <% } else { %>
+          <td colspan="2" class="part-of-order">Part of above order</td>
+          <% } %>
+        </tr>
+        <% } %> <% } %> <% count++; %> <% } %>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<!--css for formatting on the orders page, the colors are for the different rows-->
-<style type="text/css">
-  table tr#a {
-    background-color: lightblue;
+<style>
+  .barista-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
   }
-  table tr#b {
-    background-color: lightsalmon;
+
+  .page-title {
+    color: var(--coffee-dark);
+    font-size: 2.5rem;
+    margin: 0;
+    font-family: "Fredoka", sans-serif;
   }
-  table tr#c {
-    background-color: rgb(255, 202, 181);
+
+  .coffee-decoration {
+    font-size: 2.5rem;
+    margin-left: 1rem;
+    animation: steam 2s ease-in-out infinite;
   }
-  button#barista {
-    background-color: lightblue;
-    border-color: white;
-    color: black;
+
+  .orders-container {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
   }
-  h5 {
-    font-family: cursive;
-    font-size: 35px;
+
+  .orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+  }
+
+  .orders-table th {
+    background: var(--coffee-dark);
+    color: var(--cream);
+    padding: 1rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .orders-table th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+
+  .orders-table th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+
+  .order-row {
+    background: var(--cream);
+    transition: all 0.2s ease;
+  }
+
+  .order-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(60, 42, 33, 0.1);
+  }
+
+  .order-row td {
+    padding: 1rem;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+    color: var(--coffee-dark); /* Darker text color for better readability */
+    font-weight: 500; /* Slightly bolder text */
+  }
+
+  /* Make certain columns stand out more */
+  .order-row td:nth-child(1), /* Room number */
+  .order-row td:nth-child(3), /* Drink name */
+  .order-row td:nth-child(9) {
+    /* Timer */
+    font-weight: 600;
+    color: #2c1810; /* Even darker shade for important information */
+  }
+
+  .first-drink {
+    background: var(--cream);
+  }
+
+  .additional-drink {
+    background: var(--background);
+  }
+
+  .temp-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .temp-badge.hot {
+    background: #ff6b6b;
+    color: white;
+  }
+
+  .temp-badge.iced {
+    background: #74c0fc;
+    color: white;
+  }
+
+  .temp-badge.blended {
+    background: #9c6ade;
+    color: white;
+  }
+
+  .action-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+
+  .action-button.cancel {
+    background: #ff6b6b;
+    color: white;
+  }
+
+  .action-button.finish {
+    background: var(--accent);
+    color: var(--coffee-dark);
+  }
+
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .part-of-order {
+    color: #967259; /* Warmer color instead of gray, matching coffee-medium */
+    font-style: italic;
+    font-weight: normal; /* Reset font weight for secondary items */
+  }
+
+  @keyframes steam {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(5deg);
+    }
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  .time-counter {
+    font-weight: 600;
+    color: var(--coffee-dark);
   }
 </style>
 
 <script src="/js/barista.js"></script>
 
-<!-- include footer -->
 <%- include('include/_footer') %>
-<!-- /include footer -->
