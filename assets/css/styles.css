@@ -314,6 +314,7 @@ h4 {
   transform: translateX(
     -190px
   ); /* Hide most of sidebar, leaving a 10px trigger area */
+  z-index: 1002; /* Increased z-index to be above all other elements */
 }
 
 #sidebar:hover {
@@ -355,6 +356,8 @@ h4 {
   background-color: white;
   border-radius: 16px;
   border: none;
+  position: relative;
+  z-index: 1; /* Lower z-index to ensure it stays below sidebar */
 }
 
 .card:hover {
