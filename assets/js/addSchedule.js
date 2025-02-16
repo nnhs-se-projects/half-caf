@@ -1,41 +1,23 @@
-const addPeriodButton = document.querySelector("input.addPeriod");
-addPeriodButton.addEventListener("click", async () => {
+document.querySelector(".addPeriod").addEventListener("click", () => {
   const periodDiv = document.createElement("div");
-  periodDiv.className = "card";
-  const periodName = document.createElement("input");
-  periodName.type = "text";
-  periodName.placeholder = "Period Name";
-  periodDiv.appendChild(periodName);
-
-  const periodStart = document.createElement("input");
-  periodStart.type = "time";
-  periodStart.placeholder = "Start Time";
-  periodDiv.appendChild(periodStart);
-
-  const periodEnd = document.createElement("input");
-  periodEnd.type = "time";
-  periodEnd.placeholder = "End Time";
-  periodDiv.appendChild(periodEnd);
-
-  const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Delete";
-  deleteButton.addEventListener("click", () => {
-    periodDiv.remove();
-  });
-  periodDiv.appendChild(deleteButton);
-
+  periodDiv.className = "period-item";
+  periodDiv.innerHTML = `
+    <input type="text" class="name" placeholder="Period Name" />
+    <input type="time" class="startTime" />
+    <input type="time" class="endTime" />
+    <button class="delete-period" onclick="this.parentElement.remove()">Remove</button>
+  `;
   document.getElementById("periods").appendChild(periodDiv);
 });
 
-const addScheduleButton = document.querySelector("input.submit");
-addScheduleButton.addEventListener("click", async () => {
+document.querySelector(".submit").addEventListener("click", async () => {
   const name = document.getElementById("scheduleName").value;
   const periods = [];
-  document.querySelectorAll("div.card").forEach((card) => {
+  document.querySelectorAll("div.period-item").forEach((card) => {
     const period = {
-      name: card.children[0].value,
-      start: convertTimeToAmPm(card.children[1].value),
-      end: convertTimeToAmPm(card.children[2].value),
+      name: card.querySelector(".name").value,
+      start: convertTimeToAmPm(card.querySelector(".startTime").value),
+      end: convertTimeToAmPm(card.querySelector(".endTime").value),
     };
     periods.push(period);
   });
@@ -70,7 +52,7 @@ addScheduleButton.addEventListener("click", async () => {
   };
 
   try {
-    addScheduleButton.disabled = true;
+    document.querySelector(".submit").disabled = true;
 
     const response = await fetch("/addSchedule", {
       method: "POST",
