@@ -1,4 +1,5 @@
 const toggleEnabled = document.querySelector("input.toggle");
+
 toggleEnabled.addEventListener("change", async () => {
   const getEnabled = document.getElementById("myCheckbox").checked;
 

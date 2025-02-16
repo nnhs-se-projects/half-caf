@@ -1,4 +1,6 @@
 <%- include('include/_teacherHeader') %>
+
+<div id="mainContent">
 <body>
   <h2>Cart</h2>
 
@@ -45,6 +47,7 @@
     <h2>Your cart is empty.</h2>
   <% } %>
 </body>
+</div>
 
 <style>
   #page-content {
@@ -53,6 +56,44 @@
   }
   #noOrder {
     width: 200%;
+  }
+
+  /* Updated button styling */
+  .remove {
+    background-color: #ff6b6b; /* Same red as cancel buttons */
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .remove:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+  }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+
+  h4 {
+    color: var(--coffee-dark);
+    margin-bottom: 0.5rem;
   }
 </style>
 <script src="/js/teacherMyCart.js"></script>

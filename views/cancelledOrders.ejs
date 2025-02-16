@@ -1,108 +1,107 @@
-<!--header for barista pages-->
-<!--note this page is very similar to the completed orders page,
-the only difference is the complete and finish buttons vs the incomplete button-->
 <%- include('include/_baristaHeader') %>
 
-<head>
-  <h5>Cancelled orders:</h5>
-</head>
-<body>
-  <div>
-    <table class="table table-striped">
-      <!--Labels for completed orders page table which displays the previously completed orders-->
-      <thead>
-        <tr id="a">
-          <th scope="col">Room Number</th>
-          <th scope="col">Teacher</th>
-          <th scope="col">Drink</th>
-          <th scope="col">Temp</th>
-          <th scope="col">Flavors</th>
-          <th scope="col">Toppings</th>
-          <th scope="col">Special Instructions</th>
-          <th scope="col">Timestamp</th>
-          <th scope="col">Mark as not cancelled</th>
-        </tr>
-        <!--count is used for tempDrink-->
-        <!--color is used to make the table striped-->
-        <% let count = 0; %> <% let color = 0; %> <% let showButtons = true; %>
-        <!-- < looping through the each order to display each> -->
-        <% for (let order of orders){%> <% showButtons = true; %>
-        <!--displays only orders that HAVE been completed-->
-        <% if(order.cancelled === true){%>
-        <!--loops through the drinks in an order-->
-        <% for(let i = 0; i < order.drinks.length; i++){%>
-        <!--gets the temperature of the drink-->
-        <% let tempDrink = drinkMap.get(count)[i]; %>
-        <!--makes the color change-->
-        <% if(color%2===0){%>
-        <tr id="b">
-          <%}%>
-          <!-- -->
-          <% if(color%2!==0){%>
-        </tr>
+<div id="mainContent">
+  <div class="barista-header">
+    <h1 class="page-title">Cancelled Orders</h1>
+    <div class="coffee-decoration">❌</div>
+  </div>
 
-        <tr id="c">
-          <%}%>
-          <!--Displays the complete orders in the table-->
-          <!--Each drink in an order is displayed as separate items on the table-->
-          <!--Right now orders has a complete property but this will need to be switched to drink-->
-          <!--Incomplete button needs to mark an individual drink as incomplete and move it to the
-           orders page rather than an entire order-->
-          <th scope="?"><%=order.room%></th>
-          <th scope="?"><%=order.email%></th>
-          <th scope="?"><%=tempDrink.name%></th>
-          <th scope="?"><%=tempDrink.temp%></th>
-          <th scope="?"><%=tempDrink.flavors%></th>
-          <th scope="?"><%=tempDrink.toppings%></th>
-          <th scope="?"><%=tempDrink.instructions%></th>
-          <th scope="?"><%=order.timestamp%></th>
-          <% if(showButtons === true) { %>
-          <th scope="?">
-            <button value="<%=order.id%>" class="uncancelButton">
-              Uncancel
-            </button>
-          </th>
-          <% showButtons = false; %> <%} else { %>
-          <th scope="?">part of the above order</th>
-          <%}%>
+  <div class="orders-container">
+    <table class="orders-table" id="orderTable">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Teacher</th>
+          <th>Drink</th>
+          <th>Temp</th>
+          <th>Flavors</th>
+          <th>Toppings</th>
+          <th>Special Instructions</th>
+          <th>Time</th>
+          <th>Action</th>
         </tr>
-        <!--  -->
-        <%}%>
-        <!--  -->
-        <%color++;}%>
-        <!--  -->
-        <%count++;}%>
-        <!-- < looping through each drink of every order> -->
-        <!-- < to display each drink on a different line> -->
       </thead>
+      <tbody>
+        <% let count = 0; %> <% for (let order of orders){ %> <%
+        if(order.cancelled === true){ %> <% let showButtons = true; %> <%
+        for(let i = 0; i < order.drinks.length; i++){ %> <% let tempDrink =
+        drinkMap.get(count)[i]; %>
+        <tr
+          class="order-row <%= i === 0 ? 'first-drink' : 'additional-drink' %>"
+        >
+          <td><%=order.room%></td>
+          <td><%=order.email%></td>
+          <td><%=tempDrink.name%></td>
+          <td>
+            <span class="temp-badge <%=tempDrink.temp.toLowerCase()%>"
+              ><%=tempDrink.temp%></span
+            >
+          </td>
+          <td><%=tempDrink.flavors%></td>
+          <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.instructions%></td>
+          <td><%=order.timestamp%></td>
+          <% if(showButtons === true) { %>
+          <td>
+            <button
+              class="action-button uncancel uncancelButton"
+              value="<%=order.id%>"
+            >
+              Uncancel Order
+            </button>
+          </td>
+          <% showButtons = false; %> <% } else { %>
+          <td class="part-of-order">Part of above order</td>
+          <% } %>
+        </tr>
+        <% } %> <% } %> <% count++; %> <% } %>
+      </tbody>
     </table>
   </div>
-</body>
+</div>
 
-<!--css for formatting on the completed orders page, the colors are for the different rows-->
-<style type="text/css">
-  table tr#a {
-    background-color: lightblue;
+<style>
+  /* Same styles as barista.ejs */
+  /* ...existing styles from barista.ejs... */
+
+  /* Additional style for uncancel button */
+  .action-button.uncancel {
+    background: var(--coffee-medium);
+    color: white;
   }
-  table tr#b {
-    background-color: lightsalmon;
+
+  .order-row td {
+    padding: 1rem;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+    color: #543731; /* Slightly darker than coffee-dark for better contrast */
+    font-weight: 500;
   }
-  table tr#c {
-    background-color: rgb(255, 202, 181);
+
+  /* Make certain columns stand out */
+  .order-row td:nth-child(1), /* Room number */
+  .order-row td:nth-child(3), /* Drink name */
+  .order-row td:nth-child(8) {
+    /* Timestamp */
+    font-weight: 600;
+    color: #2c1810;
   }
-  button#barista {
-    background-color: lightblue;
-    border-color: white;
-    color: black;
+
+  .part-of-order {
+    color: var(--coffee-medium);
+    font-style: italic;
   }
-  h5 {
-    font-family: cursive;
-    font-size: 35px;
+
+  /* Make cancelled orders appear slightly muted but ensure text is still readable */
+  .order-row {
+    opacity: 0.9;
+  }
+
+  .order-row:hover {
+    opacity: 1;
   }
 </style>
 
 <script src="/js/cancelledOrders.js"></script>
 
-<!-- include footer -->
 <%- include('include/_footer') %>
-<!-- /include footer -->

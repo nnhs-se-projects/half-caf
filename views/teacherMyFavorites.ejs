@@ -1,15 +1,19 @@
 <%- include('include/_teacherHeader') %>
 
-<head>
-  <h2>My Favorites</h2>
-</head>
-<body>
-  <% if(favoriteDrinks.length > 0) {%> <% let drinkIndex = 0; %> <% for (let
-  drink of favoriteDrinks){%> <% let link = "/addDrinkToCart/" + drink.id; %>
-  <a href="<%=link%>">
-    <div class="card">
+<div id="mainContent">
+  <div class="favorites-header">
+    <h1 class="page-title">My Favorites</h1>
+  </div>
+
+  <div class="favorites-container">
+    <% if(favoriteDrinks.length > 0) { %> <% let drinkIndex = 0; %> <% for (let
+    drink of favoriteDrinks) { %>
+    <div
+      class="favorite-card"
+      onclick="window.location.href='/addDrinkToCart/<%= drink.id %>'"
+    >
       <div class="container">
-        <h5><%=drink.name%>:</h5>
+        <h3 class="drink-name"><%=drink.name%></h3>
 
         <!-- Flavors -->
         <% if(favoriteDrinksFlavors[drinkIndex].length > 0) { %> <%let
@@ -19,11 +23,10 @@
         favoriteDrinksFlavors[drinkIndex][i].flavor+", "%> <%} else {%>
         <%allFlavors += favoriteDrinksFlavors[drinkIndex][i].flavor%> <%}%>
         <%}%>
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Flavors:</span>
-          <%=allFlavors%></h9
-        >
-        <br />
+        <div class="drink-detail">
+          <span class="label">Flavors:</span>
+          <span class="value"><%=allFlavors%></span>
+        </div>
         <%}%>
 
         <!-- Toppings -->
@@ -34,38 +37,128 @@
         favoriteDrinksToppings[drinkIndex][i].topping+", "%> <%} else {%>
         <%allToppings += favoriteDrinksToppings[drinkIndex][i].topping%> <%}%>
         <%}%>
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Toppings:</span>
-          <%=allToppings%></h9
-        >
-        <br />
+        <div class="drink-detail">
+          <span class="label">Toppings:</span>
+          <span class="value"><%=allToppings%></span>
+        </div>
         <%}%>
 
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Temp:</span>
-          <%=drink.temps%></h9
-        >
-        <br />
-        <% if(drink.instructions !== "") {%>
-        <h9
-          ><span style="font-weight: bold; color: #3f93d8">Instructions:</span>
-          <%=drink.instructions%></h9
-        >
+        <div class="drink-detail">
+          <span class="label">Temp:</span>
+          <span class="value"><%=drink.temps%></span>
+        </div>
+
+        <% if(drink.instructions !== "") { %>
+        <div class="drink-detail">
+          <span class="label">Instructions:</span>
+          <span class="value"><%=drink.instructions%></span>
+        </div>
         <%}%>
 
-        <h5>$<%=drink.price%></h5>
-
-        <% link = "/unfavoriteDrink/" + drink.id; %>
-        <a href="<%=link%>">
-          <button>Unfavorite</button>
-        </a>
+        <div class="card-footer">
+          <span class="price">$<%=drink.price%></span>
+          <button
+            class="action-button unfavorite"
+            onclick="event.stopPropagation(); window.location.href='/unfavoriteDrink/<%= drink.id %>'"
+          >
+            Unfavorite
+          </button>
+        </div>
       </div>
     </div>
-  </a>
+    <% drinkIndex++; %> <% } %> <% } else { %>
+    <h2>You have not favorited any drinks.</h2>
+    <% } %>
+  </div>
+</div>
 
-  <%drinkIndex++;}%> <%} else {%>
-  <h2>You have not favorited any drinks.</h2>
-  <%}%>
-</body>
+<style>
+  .favorites-header {
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    color: var(--coffee-dark);
+    font-size: 2.5rem;
+    margin: 0;
+  }
+
+  .favorites-container {
+    max-width: 800px; /* Control maximum width */
+    margin: 0 auto; /* Center the container */
+    padding: 1rem;
+  }
+
+  .favorite-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 1.5rem; /* Add space between cards */
+    width: 100%; /* Full width */
+  }
+
+  .favorite-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(60, 42, 33, 0.15);
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+
+  .drink-name {
+    color: var(--coffee-dark);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .drink-detail {
+    margin: 0.5rem 0;
+    color: var(--coffee-dark);
+  }
+
+  .label {
+    font-weight: 600;
+    color: var(--coffee-medium);
+    margin-right: 0.5rem;
+  }
+
+  .value {
+    color: var(--coffee-dark);
+  }
+
+  .card-footer {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column; /* Stack price and button vertically */
+    gap: 1rem; /* Add space between price and button */
+  }
+
+  .price {
+    font-size: 1.5rem; /* Slightly larger price */
+    font-weight: 600;
+    color: var(--coffee-dark);
+  }
+
+  .action-button.unfavorite {
+    background: #ff6b6b;
+    color: white;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%; /* Make button full width */
+  }
+
+  .action-button.unfavorite:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+  }
+</style>
 
 <%- include('include/_footer') %>

@@ -83,57 +83,65 @@ window.io().on("New order placed", (data) => {
   let isFirstDrink = true;
   for (const drink of data.drinks) {
     const drinkElement = document.createElement("tr");
-    drinkElement.id = lastDrinkColor === "c" ? "b" : "c";
+    drinkElement.className = `order-row ${
+      isFirstDrink ? "first-drink" : "additional-drink"
+    }`;
+
+    // Update the temperature badge class to include blended
+    const tempClass = drink.temp.toLowerCase();
+    const tempBadge = `<span class="temp-badge ${tempClass}">${drink.temp}</span>`;
+
     if (isFirstDrink) {
       drinkElement.innerHTML = `
-          <th scope="?">${data.order.room}</th>
-          <th scope="?">${data.order.email}</th>
-          <th scope="?">${drink.name}</th>
-          <th scope="?">${drink.temp}</th>
-          <th scope="?">${drink.flavors}</th>
-          <th scope="?">${drink.toppings}</th>
-          <th scope="?">${drink.instructions}</th>
-          <th scope="?">${data.order.timestamp.split("/")[0]}</th>
-          <th scope="?">
-            <span
-              class="time-counter"
-              data-timestamp="${data.order.timestamp}"
-              data-order-id="${data.order._id}"
-            ></span>
-          </th>
-          <th scope="?">
-            <button value="${
+          <td>${data.order.room}</td>
+          <td>${data.order.email}</td>
+          <td>${drink.name}</td>
+          <td>${tempBadge}</td>
+          <td>${drink.flavors}</td>
+          <td>${drink.toppings}</td>
+          <td>${drink.instructions}</td>
+          <td>${data.order.timestamp.split("/")[0]}</td>
+          <td>
+            <span class="time-counter" 
+                  data-timestamp="${data.order.timestamp}"
+                  data-order-id="${data.order._id}">
+            </span>
+          </td>
+          <td>
+            <button class="action-button cancel cancelButton" value="${
               data.order._id
-            }" class="cancelButton">Cancel</button>
-          </th>
-          <th scope="?">
-            <button value="${
+            }">
+              Cancel
+            </button>
+          </td>
+          <td>
+            <button class="action-button finish finishButton" value="${
               data.order._id
-            }" class="finishButton">Finish</button>
-          </th>`;
+            }">
+              Complete
+            </button>
+          </td>`;
     } else {
       drinkElement.innerHTML = `
-          <th scope="?">${data.order.room}</th>
-          <th scope="?">${data.order.email}</th>
-          <th scope="?">${drink.name}</th>
-          <th scope="?">${drink.temp}</th>
-          <th scope="?">${drink.flavors}</th>
-          <th scope="?">${drink.toppings}</th>
-          <th scope="?">${drink.instructions}</th>
-          <th scope="?">${data.order.timestamp.split("/")[0]}</th>
-          <th scope="?">
-            <span
-              class="time-counter"
-              data-timestamp="${data.order.timestamp}"
-              data-order-id="${data.order._id}"
-            ></span>
-          </th>
-          <th scope="?">part of the above order</th>
-          <th scope="?"></th>`;
+          <td>${data.order.room}</td>
+          <td>${data.order.email}</td>
+          <td>${drink.name}</td>
+          <td>${tempBadge}</td>
+          <td>${drink.flavors}</td>
+          <td>${drink.toppings}</td>
+          <td>${drink.instructions}</td>
+          <td>${data.order.timestamp.split("/")[0]}</td>
+          <td>
+            <span class="time-counter" 
+                  data-timestamp="${data.order.timestamp}"
+                  data-order-id="${data.order._id}">
+            </span>
+          </td>
+          <td colspan="2" class="part-of-order">Part of above order</td>`;
     }
 
     if (orderTable !== null) {
-      orderTable.getElementsByTagName("thead")[0].appendChild(drinkElement);
+      orderTable.getElementsByTagName("tbody")[0].appendChild(drinkElement);
 
       const numOfOrders = document.querySelectorAll(".finishButton").length;
 
