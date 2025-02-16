@@ -32,7 +32,7 @@ async function checkTime() {
     });
     currentSchedule = await Schedule.findById(currentWeekDay.schedule);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return;
   }
   for (const periodId of currentSchedule.periods) {
