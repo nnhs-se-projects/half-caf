@@ -429,7 +429,7 @@ li {
 }
 
 a {
-  background-color: rgb(41, 41, 49);
+  background-color: rgba(60, 42, 33, 0.1);
 }
 
 /* Animation for page transitions */
