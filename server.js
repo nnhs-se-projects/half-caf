@@ -5,6 +5,7 @@
 
 // import the express module, which exports the express function
 const express = require("express");
+const path = require("path");
 
 // invoke the express function to create an Express
 const app = express();
@@ -33,12 +34,27 @@ app.use(express.json());
 // set the template engine to EJS, which generates HTML with embedded JavaScript
 app.set("view engine", "ejs");
 
-// load assets
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, "public")));
 
+// load assets
 app.use("/css", express.static("assets/css"));
 app.use("/img", express.static("assets/img"));
 app.use("/js", express.static("assets/js"));
 app.use("/models", express.static("assets/models")); // Ensure this line is added to serve the GLB model
+
+// helper function to detect mobile user agents
+function isMobile(userAgent) {
+  return /mobile|android|iphone|ipad|ipod/i.test(userAgent);
+}
+
+app.get("/", (req, res) => {
+  if (isMobile(req.headers["user-agent"])) {
+    res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
+  } else {
+    res.render("auth");
+  }
+});
 
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.

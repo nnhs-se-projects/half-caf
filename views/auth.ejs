@@ -5,20 +5,16 @@
   <script src="js/auth2.js"></script>
 
   <!-- Main Site -->
-
-  <main>
-    <div id="mainContent" class="authForm">
-      <img
-        src="/img/huskie.jpg"
-        style="width: auto; height: 150px; margin: 0px"
-      />
-      <div class="warning">
-        <h1>
-          Ordering through the Half Caf App is currently only available for NNHS
-          staff members.
-        </h1>
-      </div>
-      <div></div>
+  <main
+    style="margin-top: 100px; position: relative; z-index: 1"
+    class="animate-fade-in"
+  >
+    <div class="authForm">
+      <img src="/img/huskie.jpg" style="width: auto; height: 150px" />
+      <h1>
+        Ordering through the Half Caf App is currently only available for NNHS
+        staff members.
+      </h1>
       <!-- from https://developers.google.com/identity/gsi/web/guides/migration#popup-mode_1 -->
       <script src="https://accounts.google.com/gsi/client" async defer></script>
       <div>
@@ -31,6 +27,14 @@
       </div>
     </div>
   </main>
+
+  <div class="wave-container">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>
+
+  <!-- /Main Site -->
 
   <!-- include footer -->
   <%- include('include/_footer') %>

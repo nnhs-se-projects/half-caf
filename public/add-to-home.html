@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add to Home Screen</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/test-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Half Caf App" />
+    <meta name="theme-color" content="#383773" />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 600px;
+      }
+      .container img {
+        width: 100px;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="/test-icon.png" alt="App Logo" />
+      <h1>Add to Home Screen</h1>
+      <p>For the best experience, please add this app to your home screen.</p>
+      <p>Tap the share button and then "Add to Home Screen".</p>
+    </div>
+    <script>
+      // If app is launched in standalone mode, redirect to /auth
+      if (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+      ) {
+        window.location.href = "/auth";
+      }
+      document.querySelector(".container").style.display = "block";
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker
+            .register("/serviceWorker.js")
+            .then((res) => console.log("service worker registered"))
+            .catch((err) => console.log("service worker not registered", err));
+        });
+      }
+    </script>
+  </body>
+</html>
