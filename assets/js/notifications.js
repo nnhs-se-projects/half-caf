@@ -9,6 +9,18 @@ document.addEventListener("click", () => {
   }
 });
 
+// Register service worker if not already registered
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/serviceWorker.js")
+    .then((registration) => {
+      console.log("Service Worker registered with scope:", registration.scope);
+    })
+    .catch((err) => {
+      console.error("Service Worker registration failed:", err);
+    });
+}
+
 const emailInput = document.querySelector("input.emailInput");
 
 window.io().on("connect_error", (err) => {
@@ -28,9 +40,16 @@ window.io().on("Order finished", (data) => {
     emailInput !== null &&
     data.email === emailInput.value
   ) {
-    const notification = new Notification("Order finished", {
-      body: "Your order is finished and is now being delivered.",
-      icon: "../img/Half_Caf_Logo_(1).png",
+    navigator.serviceWorker.ready.then((registration) => {
+      const options = {
+        body: "Your order is finished and is now being delivered.",
+        icon: "../img/Half_Caf_Logo_(1).png",
+      };
+      if (registration.active) {
+        registration.active.postMessage({ title: "Order finished", options });
+      } else {
+        new Notification("Order finished", options);
+      }
     });
   }
 });
@@ -41,9 +60,17 @@ window.io().on("Order cancelled", (data) => {
     emailInput !== null &&
     data.email === emailInput.value
   ) {
-    const notification = new Notification("Order cancelled", {
-      body: "A barista has cancelled your order because: " + data.cancelMessage,
-      icon: "../img/Half_Caf_Logo_(1).png",
+    navigator.serviceWorker.ready.then((registration) => {
+      const options = {
+        body:
+          "A barista has cancelled your order because: " + data.cancelMessage,
+        icon: "../img/Half_Caf_Logo_(1).png",
+      };
+      if (registration.active) {
+        registration.active.postMessage({ title: "Order cancelled", options });
+      } else {
+        new Notification("Order cancelled", options);
+      }
     });
   }
 });

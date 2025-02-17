@@ -58,3 +58,10 @@ self.addEventListener("fetch", (fetchEvent) => {
       .then((res) => res || fetch(fetchEvent.request))
   );
 });
+
+self.addEventListener("message", (event) => {
+  const { title, options } = event.data;
+  if (title) {
+    self.registration.showNotification(title, options);
+  }
+});
