@@ -32,8 +32,16 @@ self.addEventListener("activate", (activateEvent) => {
           })
         );
       })
+      .then(() => self.clients.claim())
       .then(() => {
-        return self.clients.claim();
+        // Notify all clients that a new version is available.
+        return self.clients
+          .matchAll({ type: "window", includeUncontrolled: true })
+          .then((clients) => {
+            clients.forEach((client) =>
+              client.postMessage({ type: "NEW_VERSION_AVAILABLE" })
+            );
+          });
       })
   );
 });
