@@ -3,7 +3,13 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<div id = "mainContent">
+<div id="mainContent">
+  <!-- Modified search bar container -->
+  <div id="searchContainer">
+    <button id="searchToggle"><span class="icon">🔍</span></button>
+    <input type="text" id="searchInput" placeholder="Search for a drink..." style="display: none;" />
+  </div>
+  
   <head>
     <h2>Menu</h2>
     <style>
@@ -65,9 +71,63 @@
           object-fit: cover;
         }
       }
+
+      /* New/updated styles for search bar */
+      #searchContainer {
+        text-align: center;
+        margin: 3rem 0 1rem; /* Push container farther down */
+      }
+      #searchToggle {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+      #searchInput {
+        width: 80%;
+        max-width: 500px;
+        padding: 0.75rem;
+        font-size: 1.2rem;
+        border: 2px solid var(--accent);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(60, 42, 33, 0.2);
+        transition: box-shadow 0.3s ease;
+        margin-left: 1rem;
+      }
+      #searchInput:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--accent);
+      }
     </style>
   </head>
   <body>
+      <!-- New toggle script for search bar -->
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const searchToggle = document.getElementById("searchToggle");
+          const searchInput = document.getElementById("searchInput");
+
+          searchToggle.addEventListener("click", function() {
+            if(searchInput.style.display === "none" || searchInput.style.display === ""){
+              searchInput.style.display = "inline-block";
+              searchInput.focus();
+            } else {
+              searchInput.style.display = "none";
+            }
+          });
+
+          // Live search filtering
+          searchInput.addEventListener("input", function() {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+              const drinkName = card.querySelector("h4")?.innerText.toLowerCase() || "";
+              card.style.display = drinkName.includes(query) ? "" : "none";
+            });
+          });
+        });
+      </script>
+  
       <% for (let drink of menuItems){%>
         <% let link = "/customizeDrink/" + drink.name; %>
         <a href = "<%=link%>">
