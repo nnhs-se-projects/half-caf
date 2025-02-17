@@ -7,13 +7,6 @@
   <!-- Insert notifications script -->
   <script src="js/notifications.js"></script>
 
-  <!-- For mobile PWAs: if already authenticated, skip the login page -->
-  <script>
-    if (localStorage.getItem("authenticated") === "true") {
-      window.location.href = "/redirectUser";
-    }
-  </script>
-
   <!-- Main Site -->
   <main
     style="margin-top: 100px; position: relative; z-index: 1"
