@@ -9,7 +9,7 @@
     <h2 style="margin-bottom: 1rem;">Menu</h2>
     <div id="searchContainer" style="margin-left: 0;">
       <button id="searchToggle"><span class="icon">🔍</span></button>
-      <input type="text" id="searchInput" placeholder="Search for a drink..." style="display: none;" />
+      <input type="text" id="searchInput" placeholder="Search for a drink..." />
     </div>
     <style>
       #mainContent {
@@ -71,9 +71,10 @@
         }
       }
 
-      /* Updated styles for search bar: aligned to left */
+      /* Updated styles for search bar using flex layout */
       #searchContainer {
-        text-align: left;
+        display: flex;
+        align-items: center;
         margin: 1rem 0; /* adjust vertical spacing */
       }
       #searchToggle {
@@ -81,16 +82,22 @@
         border: none;
         font-size: 2rem;
         cursor: pointer;
+        /* no positioning required */
+        margin-right: 0.5rem;
       }
       #searchInput {
-        width: 80%;
-        max-width: 500px;
+        flex-grow: 1;
+        width: auto;
         padding: 0.75rem;
         font-size: 1.2rem;
         border: 2px solid var(--accent);
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(60, 42, 33, 0.2);
         transition: box-shadow 0.3s ease;
+        display: none;
+      }
+      #searchInput.active {
+        display: block;
       }
       #searchInput:focus {
         outline: none;
@@ -110,11 +117,9 @@
           const searchInput = document.getElementById("searchInput");
 
           searchToggle.addEventListener("click", function() {
-            if(searchInput.style.display === "none" || searchInput.style.display === ""){
-              searchInput.style.display = "inline-block";
+            searchInput.classList.toggle("active");
+            if(searchInput.classList.contains("active")){
               searchInput.focus();
-            } else {
-              searchInput.style.display = "none";
             }
           });
 
