@@ -269,8 +269,9 @@ h1.indexTopBar {
   border-radius: 50%;
 }
 
-input:checked + .dis-en {
+
   background-color: var(--coffee-medium);
+
   content: "yay";
 }
 
@@ -309,7 +310,9 @@ h4 {
   top: 75px;
   bottom: 0;
   overflow-y: auto; /* Enable scroll if needed */
-  overflow-x: hidden;
+
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+
   box-shadow: 4px 0 20px rgba(60, 42, 33, 0.2);
   transition: transform 0.3s ease; /* Smooth transition */
   transform: translateX(
@@ -337,6 +340,9 @@ h4 {
 #sidebar a:hover {
   background-color: var(--accent);
   color: var(--coffee-dark);
+
+  transform: translateX(5px);
+
 }
 
 #sidebar a.active {
@@ -444,6 +450,13 @@ a {
   }
 }
 
+
+/* Add this class for fade-in animation */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
@@ -460,4 +473,141 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--coffee-dark);
+
+}
+
+/* Mobile menu styles */
+.hamburger-menu {
+  display: none;
+  cursor: pointer;
+  padding: 15px;
+  z-index: 1003;
+}
+
+.hamburger-icon {
+  width: 30px;
+  height: 3px;
+  background-color: var(--coffee-dark);
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+.close-btn {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.close-btn::before,
+.close-btn::after {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 3px;
+  background-color: #f8552c;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.close-btn::before {
+  transform: rotate(45deg);
+}
+
+.close-btn::after {
+  transform: rotate(-45deg);
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) and (hover: none),
+  (max-width: 768px) and (pointer: coarse) {
+  /* Only apply mobile styles on touch devices or actual mobile devices */
+  .hamburger-menu {
+    display: block;
+  }
+
+  .indexTopBar {
+    background-color: var(
+      --coffee-medium
+    ); /* Change background to coffee color on mobile */
+  }
+
+  #pageTitle {
+    color: var(
+      --cream
+    ); /* Make title text light colored to contrast with dark background */
+  }
+
+  #sidebar {
+    transform: translateX(-100%);
+    width: 100%;
+    top: 0;
+    padding-top: 60px;
+    background-color: var(--cream);
+  }
+
+  #sidebar.active {
+    transform: translateX(0);
+  }
+
+  #sidebar.active .close-btn {
+    display: block;
+  }
+
+  #sidebar a {
+    color: var(--coffee-dark);
+    font-size: 24px;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #mainContent {
+    margin-left: 0;
+  }
+}
+
+/* Desktop hover behavior */
+@media (min-width: 769px) {
+  #sidebar:hover {
+    transform: translateX(0);
+  }
+}
+
+/* Override mobile styles for desktop */
+@media (min-width: 769px) {
+  .hamburger-menu {
+    display: none !important;
+  }
+
+  #sidebar {
+    transform: translateX(-190px) !important;
+    width: 200px !important;
+    top: 75px !important;
+    background-color: var(--coffee-dark) !important;
+  }
+
+  #sidebar.active {
+    transform: translateX(-190px) !important;
+  }
+
+  #sidebar:hover {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Hide the sidebar hover behavior on mobile */
+@media screen and (max-width: 768px) {
+  #sidebar:hover {
+    transform: translateX(-100%);
+  }
+
+  #sidebar.active:hover {
+    transform: translateX(0);
+  }
+
 }
