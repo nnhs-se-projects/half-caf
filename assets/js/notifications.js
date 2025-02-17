@@ -96,10 +96,20 @@ window.io().on("Order cancelled", (data) => {
 
 function enableNotifications() {
   if ("Notification" in window) {
+    // Always attempt to request permission when the button is clicked.
     Notification.requestPermission().then(function (permission) {
-      alert("Notification permission: " + permission);
+      if (permission === "granted") {
+        alert("Notification permission granted.");
+      } else if (permission === "denied") {
+        alert(
+          "Notification permission is still denied. " +
+            'Please go to Settings, search for "Half Caf" in apps, and turn on notifications.'
+        );
+      } else {
+        alert("Notification permission: " + permission);
+      }
     });
   } else {
-    alert("This browser does not support notifications.");
+    alert("This device does not support notifications.");
   }
 }
