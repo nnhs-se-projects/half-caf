@@ -98,7 +98,7 @@ window.io().on("New order placed", (data) => {
     if (isFirstDrink) {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
-          <td>${data.order.email}</td>
+          <td>${data.order.email.split("@")[0]}</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
@@ -111,14 +111,12 @@ window.io().on("New order placed", (data) => {
                   data-order-id="${data.order._id}">
             </span>
           </td>
-          <td>
+          <td colspan="2">
             <button class="action-button cancel cancelButton" value="${
               data.order._id
             }">
               Cancel
             </button>
-          </td>
-          <td>
             <button class="action-button finish finishButton" value="${
               data.order._id
             }">
@@ -128,7 +126,7 @@ window.io().on("New order placed", (data) => {
     } else {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
-          <td>${data.order.email}</td>
+          <td>${data.order.email.split("@")[0]}</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
