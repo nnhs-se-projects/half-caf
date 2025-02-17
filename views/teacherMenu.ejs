@@ -3,9 +3,14 @@
 <!-- /include header -->
 
 <!-- Main Site -->
-<div id = "mainContent">
-  <head>
-    <h2>Menu</h2>
+<div id="mainContent">
+  <!-- Updated header container with increased padding-top and title margin -->
+  <div class="header-section" style="display: flex; flex-direction: column; align-items: flex-start; padding-top: 5rem;">
+    <h2 style="margin-bottom: 1rem;">Menu</h2>
+    <div id="searchContainer" style="margin-left: 0;">
+      <button id="searchToggle"><span class="icon">🔍</span></button>
+      <input type="text" id="searchInput" placeholder="Search for a drink..." />
+    </div>
     <style>
       #mainContent {
         max-width: 1200px;
@@ -64,10 +69,78 @@
           max-height: 300px;
           object-fit: cover;
         }
+
+        #searchInput {
+          flex-grow: 0;
+          width: 50%; /* reduced width */
+        }
+      }
+
+      /* Updated styles for search bar using flex layout */
+      #searchContainer {
+        display: flex;
+        align-items: center;
+        margin: 1rem 0; /* adjust vertical spacing */
+      }
+      #searchToggle {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        /* no positioning required */
+        margin-right: 0.5rem;
+      }
+      #searchInput {
+        flex-grow: 1;
+        width: auto;
+        max-width: 300px; /* added to make the bar shorter */
+        padding: 0.75rem;
+        font-size: 1.2rem;
+        border: 2px solid var(--accent);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(60, 42, 33, 0.2);
+        transition: box-shadow 0.3s ease;
+        display: none;
+      }
+      #searchInput.active {
+        display: block;
+      }
+      #searchInput:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--accent);
+      }
+      /* Optional: header-section spacing */
+      .header-section {
+        margin-bottom: 1rem;
       }
     </style>
-  </head>
+  </div>
   <body>
+      <!-- New toggle script for search bar -->
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const searchToggle = document.getElementById("searchToggle");
+          const searchInput = document.getElementById("searchInput");
+
+          searchToggle.addEventListener("click", function() {
+            searchInput.classList.toggle("active");
+            if(searchInput.classList.contains("active")){
+              searchInput.focus();
+            }
+          });
+
+          // Live search filtering
+          searchInput.addEventListener("input", function() {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+              const drinkName = card.querySelector("h4")?.innerText.toLowerCase() || "";
+              card.style.display = drinkName.includes(query) ? "" : "none";
+            });
+          });
+        });
+      </script>
+  
       <% for (let drink of menuItems){%>
         <% let link = "/customizeDrink/" + drink.name; %>
         <a href = "<%=link%>">
