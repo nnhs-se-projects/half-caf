@@ -521,6 +521,32 @@ a {
   transform: rotate(-45deg);
 }
 
+/* Hide mobile-only elements by default */
+.mobile-only {
+  display: none;
+}
+
+/* Show mobile-only elements and style the theme button on mobile */
+@media (max-width: 768px) and (hover: none), (max-width: 768px) and (pointer: coarse) {
+  .mobile-only {
+    display: block;
+  }
+  .theme-button {
+    background-color: var(--accent);
+    color: var(--coffee-dark);
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .theme-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 159, 28, 0.3);
+  }
+}
+
 /* Mobile specific styles */
 @media (max-width: 768px) and (hover: none),
   (max-width: 768px) and (pointer: coarse) {
