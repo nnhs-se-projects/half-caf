@@ -21,6 +21,11 @@ if ("serviceWorker" in navigator) {
     });
 }
 
+// Helper to detect mobile devices
+function isMobile() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
 const emailInput = document.querySelector("input.emailInput");
 
 window.io().on("connect_error", (err) => {
@@ -40,17 +45,23 @@ window.io().on("Order finished", (data) => {
     emailInput !== null &&
     data.email === emailInput.value
   ) {
-    navigator.serviceWorker.ready.then((registration) => {
-      const options = {
-        body: "Your order is finished and is now being delivered.",
-        icon: "../img/Half_Caf_Logo_(1).png",
-      };
-      if (registration.active) {
-        registration.active.postMessage({ title: "Order finished", options });
-      } else {
-        new Notification("Order finished", options);
-      }
-    });
+    const options = {
+      body: "Your order is finished and is now being delivered.",
+      icon: "../img/Half_Caf_Logo_(1).png",
+    };
+    if (isMobile()) {
+      // Mobile: send notification via service worker
+      navigator.serviceWorker.ready.then((registration) => {
+        if (registration.active) {
+          registration.active.postMessage({ title: "Order finished", options });
+        } else {
+          new Notification("Order finished", options);
+        }
+      });
+    } else {
+      // Desktop: show notification directly
+      new Notification("Order finished", options);
+    }
   }
 });
 
@@ -60,18 +71,26 @@ window.io().on("Order cancelled", (data) => {
     emailInput !== null &&
     data.email === emailInput.value
   ) {
-    navigator.serviceWorker.ready.then((registration) => {
-      const options = {
-        body:
-          "A barista has cancelled your order because: " + data.cancelMessage,
-        icon: "../img/Half_Caf_Logo_(1).png",
-      };
-      if (registration.active) {
-        registration.active.postMessage({ title: "Order cancelled", options });
-      } else {
-        new Notification("Order cancelled", options);
-      }
-    });
+    const options = {
+      body: "A barista has cancelled your order because: " + data.cancelMessage,
+      icon: "../img/Half_Caf_Logo_(1).png",
+    };
+    if (isMobile()) {
+      // Mobile: send notification via service worker
+      navigator.serviceWorker.ready.then((registration) => {
+        if (registration.active) {
+          registration.active.postMessage({
+            title: "Order cancelled",
+            options,
+          });
+        } else {
+          new Notification("Order cancelled", options);
+        }
+      });
+    } else {
+      // Desktop: show notification directly
+      new Notification("Order cancelled", options);
+    }
   }
 });
 
