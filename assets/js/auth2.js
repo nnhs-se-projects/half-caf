@@ -25,6 +25,8 @@ async function handleCredentialResponse(res) {
         "Content-Type": "application/json",
       },
     });
+    // Save a flag so returning mobile users can bypass login
+    localStorage.setItem("authenticated", "true");
     window.location = "/redirectUser";
   }
 }
