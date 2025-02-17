@@ -4,14 +4,13 @@
 
 <!-- Main Site -->
 <div id="mainContent">
-  <!-- Modified search bar container -->
-  <div id="searchContainer">
-    <button id="searchToggle"><span class="icon">🔍</span></button>
-    <input type="text" id="searchInput" placeholder="Search for a drink..." style="display: none;" />
-  </div>
-  
-  <head>
+  <!-- Updated header container with flexbox for left alignment and increased top spacing -->
+  <div class="header-section" style="display: flex; flex-direction: column; align-items: flex-start; padding-top: 3rem;">
     <h2>Menu</h2>
+    <div id="searchContainer" style="margin-left: 0;">
+      <button id="searchToggle"><span class="icon">🔍</span></button>
+      <input type="text" id="searchInput" placeholder="Search for a drink..." style="display: none;" />
+    </div>
     <style>
       #mainContent {
         max-width: 1200px;
@@ -72,10 +71,10 @@
         }
       }
 
-      /* New/updated styles for search bar */
+      /* Updated styles for search bar: aligned to left */
       #searchContainer {
-        text-align: center;
-        margin: 3rem 0 1rem; /* Push container farther down */
+        text-align: left;
+        margin: 1rem 0; /* adjust vertical spacing */
       }
       #searchToggle {
         background: none;
@@ -92,14 +91,17 @@
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(60, 42, 33, 0.2);
         transition: box-shadow 0.3s ease;
-        margin-left: 1rem;
       }
       #searchInput:focus {
         outline: none;
         box-shadow: 0 0 0 3px var(--accent);
       }
+      /* Optional: header-section spacing */
+      .header-section {
+        margin-bottom: 1rem;
+      }
     </style>
-  </head>
+  </div>
   <body>
       <!-- New toggle script for search bar -->
       <script>
