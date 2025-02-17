@@ -95,6 +95,22 @@
     color: var(--coffee-dark);
     margin-bottom: 0.5rem;
   }
+
+  /* Add these media queries at the end of the style block */
+  @media screen and (max-width: 768px) {
+    #page-content {
+      width: 90%;
+      margin: 1rem auto;
+    }
+
+    .card {
+      margin: 1rem;
+    }
+
+    #mainContent {
+      padding: 0 1rem;
+    }
+  }
 </style>
 <script src="/js/teacherMyCart.js"></script>
 <%- include('include/_footer') %>

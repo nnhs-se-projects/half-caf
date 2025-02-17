@@ -159,6 +159,22 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
   }
+
+  /* Add these media queries at the end of the style block */
+  @media screen and (max-width: 768px) {
+    .favorites-container {
+      margin: 0 1rem;
+      padding: 0.5rem;
+    }
+
+    .favorite-card {
+      margin: 1rem 0;
+    }
+
+    .container {
+      padding: 1rem;
+    }
+  }
 </style>
 
 <%- include('include/_footer') %>
