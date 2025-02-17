@@ -117,7 +117,6 @@ window.io().on("New order placed", (data) => {
             }">
               Cancel
             </button>
-            <br>
             <button class="action-button finish finishButton" value="${
               data.order._id
             }">
