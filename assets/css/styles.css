@@ -269,9 +269,8 @@ h1.indexTopBar {
   border-radius: 50%;
 }
 
-
+input:checked + .dis-en {
   background-color: var(--coffee-medium);
-
   content: "yay";
 }
 
@@ -340,9 +339,6 @@ h4 {
 #sidebar a:hover {
   background-color: var(--accent);
   color: var(--coffee-dark);
-
-  transform: translateX(5px);
-
 }
 
 #sidebar a.active {
@@ -450,12 +446,10 @@ a {
   }
 }
 
-
 /* Add this class for fade-in animation */
 .animate-fade-in {
   animation: fadeIn 0.5s ease;
 }
-
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -473,7 +467,6 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--coffee-dark);
-
 }
 
 /* Mobile menu styles */
@@ -609,5 +602,4 @@ a {
   #sidebar.active:hover {
     transform: translateX(0);
   }
-
 }
