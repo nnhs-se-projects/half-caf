@@ -47,3 +47,13 @@ window.io().on("Order cancelled", (data) => {
     });
   }
 });
+
+function enableNotifications() {
+  if ("Notification" in window) {
+    Notification.requestPermission().then(function (permission) {
+      alert("Notification permission: " + permission);
+    });
+  } else {
+    alert("This browser does not support notifications.");
+  }
+}
