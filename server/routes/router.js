@@ -132,7 +132,11 @@ route.use(async (req, res, next) => {
 });
 
 route.get("/auth", (req, res) => {
-  res.render("auth");
+  if (req.session.email) {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("auth");
+  }
 });
 
 async function getUserRoles(email) {
@@ -183,17 +187,17 @@ route.get("/logout", async (req, res) => {
     });
   }
 
+  // Remove drinks from cart and clean up
   for (const drink of req.session.cart) {
     await Drink.findByIdAndRemove(drink);
   }
 
-  // Destroy session/remove user data from session
   req.session.destroy((err) => {
     if (err) {
       return console.error("Logout error:", err);
     }
-    // Redirect to home page or login page after logout
-    res.redirect("/");
+    // Redirect to auth page after logout
+    res.redirect("/auth");
   });
 });
 
