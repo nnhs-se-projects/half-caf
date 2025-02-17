@@ -310,6 +310,7 @@ h4 {
   bottom: 0;
   overflow-y: auto; /* Enable scroll if needed */
   overflow-x: hidden; /* Prevent horizontal scrolling */
+
   box-shadow: 4px 0 20px rgba(60, 42, 33, 0.2);
   transition: transform 0.3s ease; /* Smooth transition */
   transform: translateX(
@@ -466,8 +467,6 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--coffee-dark);
-}
-
 /* Mobile menu styles */
 .hamburger-menu {
   display: none;
