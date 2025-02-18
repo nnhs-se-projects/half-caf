@@ -35,6 +35,9 @@ async function checkTime() {
     // console.log(error);
     return;
   }
+  if (!currentSchedule) {
+    return;
+  }
   for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
@@ -76,7 +79,7 @@ async function checkTime() {
   }
 }
 
-setInterval(checkTime, 5000); // check every 5 sec
+setInterval(checkTime, 15000); // check every 15 sec
 
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });

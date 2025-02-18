@@ -72,8 +72,7 @@ document.querySelector(".submit").addEventListener("click", async () => {
 
 function convertTimeToAmPm(timeStr) {
   const timeSplit = timeStr.split(":");
-  let hours = timeSplit[0];
-  const minutes = timeSplit[1];
+  let hours = Number(timeSplit[0]);
   let meridian;
 
   if (hours > 12) {
@@ -88,5 +87,5 @@ function convertTimeToAmPm(timeStr) {
     meridian = "PM";
   }
 
-  return hours + ":" + minutes + " " + meridian;
+  return hours + ":" + timeSplit[1] + " " + meridian;
 }
