@@ -1,0 +1,16 @@
+<%- include('include/_deliveryHeader') %>
+
+<div id="mainContent">
+  <h1 class="page-title">Delivery Login</h1>
+  <div>
+    <select id="deliveryPerson" class="select">
+      Select User <% for (let person of deliveryPersons) { %>
+      <option value="<%=person.id %>"><%= person.name %></option>
+      <% } %>
+    </select>
+    <input type="password" id="password" placeholder="Password" />
+    <button id="login">Login</button>
+  </div>
+</div>
+
+<script src="js/deliveryLogin.js"></script>

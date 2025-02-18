@@ -12,6 +12,7 @@ const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Enabled = require("../model/enabled");
 const Weekday = require("../model/weekdays");
+const DeliveryPerson = require("../model/deliveryPerson");
 const {
   emitToggleChange,
   emitOrderCancelled,
@@ -1538,6 +1539,48 @@ route.get("/orderConfirmation", async (req, res) => {
     req.session.cart = [];
     res.render("orderConfirmation", { email: req.session.email });
   }
+});
+
+// Delivery People Routes
+
+route.get("/deliveryLogin", async (req, res) => {
+  const deliveryPersons = await DeliveryPerson.find();
+  res.render("deliveryLogin", { deliveryPersons });
+});
+
+route.post("/deliveryLogin", async (req, res) => {
+  console.log(req.body);
+  const attemptedPerson = await DeliveryPerson.findById(req.body.id);
+  const attemptedPin = req.body.pin;
+  if (attemptedPerson.pin === attemptedPin) {
+    res.redirect("/deliveryHome");
+  } else {
+    res.redirect("/deliveryLogin");
+  }
+});
+
+route.get("/deliveryPersonManager", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const deliveryPersons = await DeliveryPerson.find();
+
+    res.render("deliveryPersonManager", { deliveryPersons });
+  }
+});
+route.post("/addDeliveryPerson", async (req, res) => {
+  console.log(req.body);
+  const deliveryPerson = new DeliveryPerson({
+    name: req.body.name,
+    pin: req.body.pin,
+  });
+  await deliveryPerson.save();
+  res.status(201).end();
+});
+route.delete("/deleteDeliveryPerson", async (req, res) => {
+  await DeliveryPerson.findByIdAndRemove(req.body.id);
+  res.end();
 });
 
 // delegate all authentication to the auth.js router
