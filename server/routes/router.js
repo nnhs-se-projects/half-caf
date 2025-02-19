@@ -19,6 +19,9 @@ const {
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
+// Add a global in-memory store for pending notifications
+const pendingNotifications = {};
+
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
@@ -889,9 +892,6 @@ route.get("/barista", async (req, res) => {
 });
 
 route.delete("/barista/:id", async (req, res) => {
-  // await Order.findByIdAndRemove(req.params.id);
-  // res.end();
-
   const order = await Order.findById(req.params.id);
   order.cancelled = true;
   await order.save();
@@ -899,6 +899,15 @@ route.delete("/barista/:id", async (req, res) => {
   emitOrderCancelled({
     cancelMessage: req.body.message,
     email: order.email,
+  });
+
+  // Store pending notification for order cancelled
+  if (!pendingNotifications[order.email])
+    pendingNotifications[order.email] = [];
+  pendingNotifications[order.email].push({
+    type: "Order cancelled",
+    message: "A barista has cancelled your order because: " + req.body.message,
+    timestamp: new Date(),
   });
 
   res.status(201).end();
@@ -918,7 +927,28 @@ route.post("/barista/:id", async (req, res) => {
 
   emitOrderFinished({ email: order.email });
 
+  // Store pending notification for order finished
+  if (!pendingNotifications[order.email])
+    pendingNotifications[order.email] = [];
+  pendingNotifications[order.email].push({
+    type: "Order finished",
+    message: "Your order is finished and is now being delivered.",
+    timestamp: new Date(),
+  });
+
   res.status(201).end();
+});
+
+// New endpoint to fetch notifications for the current session user
+route.get("/notifications", async (req, res) => {
+  const email = req.session.email;
+  let notifications = [];
+  if (email && pendingNotifications[email]) {
+    notifications = pendingNotifications[email];
+    // Clear notifications after sending
+    pendingNotifications[email] = [];
+  }
+  res.json(notifications);
 });
 
 // completed orders page of barista that displays all completed orders
