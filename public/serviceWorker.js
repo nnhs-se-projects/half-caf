@@ -65,3 +65,21 @@ self.addEventListener("message", (event) => {
     self.registration.showNotification(title, options);
   }
 });
+
+self.addEventListener("sync", (event) => {
+  if (event.tag === "sync-notifications") {
+    event.waitUntil(
+      fetch("/notifications")
+        .then((res) => res.json())
+        .then((notifications) => {
+          notifications.forEach((note) => {
+            self.registration.showNotification(note.type, {
+              body: note.message,
+              icon: "/img/Half_Caf_Logo_(1).png",
+            });
+          });
+        })
+        .catch((err) => console.error("Sync fetch error:", err))
+    );
+  }
+});

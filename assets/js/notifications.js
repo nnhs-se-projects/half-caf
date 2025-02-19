@@ -21,6 +21,15 @@ if ("serviceWorker" in navigator) {
     });
 }
 
+// Register background sync for notifications if supported
+if ("serviceWorker" in navigator && "SyncManager" in window) {
+  navigator.serviceWorker.ready.then((registration) => {
+    registration.sync.register("sync-notifications").catch((err) => {
+      console.error("Sync registration failed:", err);
+    });
+  });
+}
+
 // Helper to detect mobile devices
 function isMobile() {
   return window.matchMedia("(max-width: 768px)").matches;
@@ -28,71 +37,70 @@ function isMobile() {
 
 const emailInput = document.querySelector("input.emailInput");
 
-window.io().on("connect_error", (err) => {
-  // the reason of the error, for example "xhr poll error"
-  console.log(err.message);
+// Global Set to track shown notifications
+const shownNotifications = new Set();
 
-  // some additional description, for example the status code of the initial HTTP response
-  console.log(err.description);
+// For mobile clients: use polling only
+if (isMobile()) {
+  setInterval(() => {
+    fetch("/notifications")
+      .then((res) => res.json())
+      .then((notifications) => {
+        notifications.forEach((note) => {
+          const id = note.type + "-" + note.timestamp; // unique id
+          if (shownNotifications.has(id)) return;
+          shownNotifications.add(id);
+          setTimeout(() => shownNotifications.delete(id), 300000);
+          const options = {
+            body: note.message,
+            icon: "../img/Half_Caf_Logo_(1).png",
+          };
+          // Deliver via service worker if available
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              title: note.type,
+              options,
+            });
+          } else {
+            new Notification(note.type, options);
+          }
+        });
+      })
+      .catch((err) => console.error("Error fetching notifications:", err));
+  }, 30000);
+}
 
-  // some additional context, for example the XMLHttpRequest object
-  console.log(err.context);
-});
-
-window.io().on("Order finished", (data) => {
-  if (
-    Notification?.permission === "granted" &&
-    emailInput !== null &&
-    data.email === emailInput.value
-  ) {
-    const options = {
-      body: "Your order is finished and is now being delivered.",
-      icon: "../img/Half_Caf_Logo_(1).png",
-    };
-    if (isMobile()) {
-      // Mobile: send notification via service worker
-      navigator.serviceWorker.ready.then((registration) => {
-        if (registration.active) {
-          registration.active.postMessage({ title: "Order finished", options });
-        } else {
-          new Notification("Order finished", options);
-        }
-      });
-    } else {
-      // Desktop: show notification directly
+// For desktop clients: use socket events only
+if (!isMobile()) {
+  window.io().on("Order finished", (data) => {
+    if (
+      Notification?.permission === "granted" &&
+      emailInput !== null &&
+      data.email === emailInput.value
+    ) {
+      const options = {
+        body: "Your order is finished and is now being delivered.",
+        icon: "../img/Half_Caf_Logo_(1).png",
+      };
       new Notification("Order finished", options);
     }
-  }
-});
+  });
 
-window.io().on("Order cancelled", (data) => {
-  if (
-    Notification?.permission === "granted" &&
-    emailInput !== null &&
-    data.email === emailInput.value
-  ) {
-    const options = {
-      body: "A barista has cancelled your order because: " + data.cancelMessage,
-      icon: "../img/Half_Caf_Logo_(1).png",
-    };
-    if (isMobile()) {
-      // Mobile: send notification via service worker
-      navigator.serviceWorker.ready.then((registration) => {
-        if (registration.active) {
-          registration.active.postMessage({
-            title: "Order cancelled",
-            options,
-          });
-        } else {
-          new Notification("Order cancelled", options);
-        }
-      });
-    } else {
-      // Desktop: show notification directly
+  window.io().on("Order cancelled", (data) => {
+    if (
+      Notification?.permission === "granted" &&
+      emailInput !== null &&
+      data.email === emailInput.value
+    ) {
+      const options = {
+        body:
+          "A barista has cancelled your order because: " + data.cancelMessage,
+        icon: "../img/Half_Caf_Logo_(1).png",
+      };
       new Notification("Order cancelled", options);
     }
-  }
-});
+  });
+}
 
 function enableNotifications() {
   if ("Notification" in window) {
