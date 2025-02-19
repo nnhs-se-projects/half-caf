@@ -62,7 +62,8 @@ app.use(async (req, res, next) => {
   if (
     req.path === "/homePopularDrinks" ||
     req.path === "/homeMenu" ||
-    req.path.toLocaleLowerCase() === "/deliverylogin"
+    req.path === "/deliveryLogin" ||
+    req.path.indexOf("/deliveryHome") !== -1
   ) {
     return next(); // allow access to index without authentication
   }

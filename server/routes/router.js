@@ -1553,10 +1553,16 @@ route.post("/deliveryLogin", async (req, res) => {
   const attemptedPerson = await DeliveryPerson.findById(req.body.id);
   const attemptedPin = req.body.pin;
   if (attemptedPerson.pin === attemptedPin) {
-    res.redirect("/deliveryHome");
+    res.redirect(`/deliveryHome/${attemptedPerson._id}`);
   } else {
+    console.log("fail");
     res.redirect("/deliveryLogin");
   }
+});
+
+route.get("/deliveryHome/:id", async (req, res) => {
+  const deliveryPerson = await DeliveryPerson.findById(req.params.id);
+  res.render("deliveryHome", { deliveryPerson });
 });
 
 route.get("/deliveryPersonManager", async (req, res) => {

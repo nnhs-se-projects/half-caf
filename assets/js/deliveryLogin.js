@@ -12,11 +12,15 @@ loginButton.addEventListener("click", async () => {
         id: selectUserId,
         pin: attemptedPin,
       }),
+    }).then((response) => {
+      if (response.redirected) {
+        window.location.href = response.url;
+      }
     });
     const data = await response.json();
 
     if (response.ok) {
-      window.location = `/deliveryMenu?id=${data.id}`;
+      window.location = `/deliveryHome?id=${data.id}`;
     } else {
       console.error("Server error:", data.error);
     }
