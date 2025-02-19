@@ -1562,7 +1562,81 @@ route.post("/deliveryLogin", async (req, res) => {
 
 route.get("/deliveryHome/:id", async (req, res) => {
   const deliveryPerson = await DeliveryPerson.findById(req.params.id);
-  res.render("deliveryHome", { deliveryPerson });
+  const currentOrder = await Order.findById(deliveryPerson.currentOrder);
+
+  const orders = await Order.find();
+  const drinkIds = orders.flatMap((order) => order.drinks);
+  const drinks = await Drink.find({ _id: { $in: drinkIds } });
+  const flavors = await Flavor.find({});
+  const toppings = await Topping.find({});
+
+  for (const order of orders) {
+    if (order.drinks.length === 0) {
+      await Order.findByIdAndRemove(order._id);
+    }
+  }
+
+  const drinkMap = new Map();
+  for (let i = 0; i < orders.length; i++) {
+    const drinkArray = [];
+    for (let n = 0; n < orders[i].drinks.length; n++) {
+      const formattedDrink = {
+        name: "",
+        flavors: [],
+        toppings: [],
+        temp: "",
+        instructions: "",
+      };
+      const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+      if (drink.flavors.length === 0) {
+        formattedDrink.flavors.push("None");
+      } else {
+        for (let x = 0; x < drink.flavors.length; x++) {
+          const tempFlavor = flavors.find((f) =>
+            f._id.equals(drink.flavors[x])
+          );
+          if (tempFlavor !== null && tempFlavor !== undefined) {
+            formattedDrink.flavors.push(" " + tempFlavor.flavor);
+          }
+        }
+      }
+      if (drink.toppings.length === 0) {
+        formattedDrink.toppings.push("None");
+      } else {
+        for (let x = 0; x < drink.toppings.length; x++) {
+          const tempTopping = toppings.find((t) =>
+            t._id.equals(drink.toppings[x])
+          );
+          if (tempTopping !== null && tempTopping !== undefined) {
+            formattedDrink.toppings.push(" " + tempTopping.topping);
+          }
+        }
+      }
+      formattedDrink.name = drink.name;
+      formattedDrink.temp = drink.temps;
+      formattedDrink.instructions = drink.instructions;
+      drinkArray.push(formattedDrink);
+    }
+    drinkMap.set(i, drinkArray);
+  }
+
+  if (currentOrder === null || currentOrder === undefined) {
+    res.render("deliveryHome", { deliveryPerson });
+  } else {
+    res.render("deliveryProgress", { deliveryPerson, currentOrder });
+  }
+});
+
+route.get("/deliveryProgress/:id", async (req, res) => {
+  let currentDeliverer;
+  for (const deliveryPerson of DeliveryPerson.find()) {
+    if (deliveryPerson.currentOrder === req.params.id) {
+      currentDeliverer = deliveryPerson;
+      break;
+    }
+  }
+  const currentOrder = await Order.findById(req.params.id);
+  res.render("deliveryProgress", { currentDeliverer, currentOrder });
 });
 
 route.get("/deliveryPersonManager", async (req, res) => {

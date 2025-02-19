@@ -1,3 +1,242 @@
 <%- include ('include/_deliveryHeader') %>
-<h1>Delivery Home</h1>
+<div id="mainContent">
+  <div class="barista-header">
+    <h1 class="page-title">Active Orders</h1>
+  </div>
+  <div class="orders-container">
+    <table class="orders-table" id="orderTable">
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Teacher</th>
+          <th>Drink</th>
+          <th>Temp</th>
+          <th>Flavors</th>
+          <th>Toppings</th>
+          <th>Special Instructions</th>
+          <th colspan="2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let count = 0; %> <% for (let order of orders){ %> <%
+        if(order.complete === false && order.cancelled === false){ %> <% let
+        showButtons = true; %>
+        <!-- Moved inside the order loop -->
+        <% for(let i = 0; i < order.drinks.length; i++){ %> <% let tempDrink =
+        drinkMap.get(count)[i]; %>
+        <tr
+          class="order-row <%= i === 0 ? 'first-drink' : 'additional-drink' %>"
+        >
+          <td><%=order.room%></td>
+
+          <td><%=order.email.split('@')[0]%></td>
+
+          <td><%=tempDrink.name%></td>
+          <td>
+            <span class="temp-badge <%=tempDrink.temp.toLowerCase()%>"
+              ><%=tempDrink.temp%></span
+            >
+          </td>
+          <td><%=tempDrink.flavors%></td>
+          <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.instructions%></td>
+          <td><%=order.timestamp.split('/')[0]%></td>
+          <td>
+            <span
+              class="time-counter"
+              data-timestamp="<%=order.timestamp%>"
+              data-order-id="<%=order.id%>"
+            >
+            </span>
+          </td>
+          <% if(showButtons) { %>
+
+          <td colspan="2">
+            <button
+              class="action-button claim claimButton"
+              value="<%=order.id%>"
+            >
+              Claim
+            </button>
+          </td>
+          <% showButtons = false; %> <% } else { %>
+
+          <td
+            colspan="2"
+            class="part-of-order"
+            style="word-break: break-word; max-width: 150px"
+          >
+            Part of above order
+          </td>
+
+          <% } %>
+        </tr>
+        <% } %> <% } %> <% count++; %> <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .barista-header {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 1rem; /* Reduced from 2rem */
+  }
+
+  .page-title {
+    color: var(--coffee-dark);
+    font-size: 2.5rem;
+    margin: 0;
+    font-family: "Fredoka", sans-serif;
+  }
+
+  .coffee-decoration {
+    font-size: 2.5rem;
+    margin-left: 1rem;
+    animation: steam 2s ease-in-out infinite;
+  }
+
+  .orders-container {
+    background: white;
+    border-radius: 16px;
+
+    padding: 0.75rem; /* Reduced from 1.5rem */
+    box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
+    max-height: calc(100vh - 180px); /* Adjust based on header height */
+    overflow-y: auto;
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: separate;
+
+    border-spacing: 0 4px; /* Reduced from 8px */
+  }
+
+  .orders-table th {
+    background: var(--coffee-dark);
+    color: var(--cream);
+
+    padding: 0.75rem; /* Reduced from 1rem */
+    font-weight: 600;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .orders-table th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+
+  .orders-table th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+
+  .order-row {
+    background: var(--cream);
+    transition: all 0.2s ease;
+  }
+
+  .order-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(60, 42, 33, 0.1);
+  }
+
+  .order-row td {
+    padding: 0.75rem; /* Reduced from 1rem */
+
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+    color: var(--coffee-dark); /* Darker text color for better readability */
+    font-weight: 500; /* Slightly bolder text */
+  }
+
+  /* Make certain columns stand out more */
+  .order-row td:nth-child(1), /* Room number */
+  .order-row td:nth-child(3), /* Drink name */
+  .order-row td:nth-child(9) {
+    /* Timer */
+    font-weight: 600;
+    color: #2c1810; /* Even darker shade for important information */
+  }
+
+  .first-drink {
+    background: var(--cream);
+  }
+
+  .additional-drink {
+    background: var(--background);
+  }
+
+  .temp-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .temp-badge.hot {
+    background: #ff6b6b;
+    color: white;
+  }
+
+  .temp-badge.iced {
+    background: #74c0fc;
+    color: white;
+  }
+
+  .temp-badge.blended {
+    background: #9c6ade;
+    color: white;
+  }
+
+  .action-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+
+    margin-bottom: 5px; /* Add spacing between stacked buttons */
+  }
+
+  .action-button.claim {
+    background: var(--accent);
+    color: var(--coffee-dark);
+  }
+
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .part-of-order {
+    color: #967259; /* Warmer color instead of gray, matching coffee-medium */
+    font-style: italic;
+    font-weight: normal; /* Reset font weight for secondary items */
+  }
+
+  @keyframes steam {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(5deg);
+    }
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  .time-counter {
+    font-weight: 600;
+    color: var(--coffee-dark);
+  }
+</style>
+<script src="js/deliveryHome.js"></script>
 <%- include ('include/_footer') %>
