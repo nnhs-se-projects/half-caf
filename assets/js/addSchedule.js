@@ -31,10 +31,6 @@ document.querySelector(".submit").addEventListener("click", async () => {
       alert("Please fill in all period information or delete blank periods.");
       return;
     }
-    if (period.start >= period.end) {
-      alert(period.name + "'s start time must be before end time.");
-      return;
-    }
   }
 
   const days = [];
