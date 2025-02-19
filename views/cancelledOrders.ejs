@@ -40,7 +40,7 @@
           <td><%=tempDrink.flavors%></td>
           <td><%=tempDrink.toppings%></td>
           <td><%=tempDrink.instructions%></td>
-          <td><%=order.timestamp%></td>
+          <td><%=order.timestamp.split('/')[0]%></td>
           <% if(showButtons === true) { %>
           <td>
             <button
