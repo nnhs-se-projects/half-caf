@@ -99,7 +99,6 @@ function enableNotifications() {
     Notification.requestPermission().then(function (permission) {
       if (permission === "granted") {
         alert("Notification permission granted.");
-        subscribeUserToPush(); // Subscribe for push notifications
       } else if (permission === "denied") {
         alert(
           "Notification permission is still denied. " +
@@ -112,36 +111,4 @@ function enableNotifications() {
   } else {
     alert("This device does not support notifications.");
   }
-}
-
-function subscribeUserToPush() {
-  if ("serviceWorker" in navigator && "PushManager" in window) {
-    navigator.serviceWorker.ready.then(function (registration) {
-      const vapidPublicKey = "YOUR_VAPID_PUBLIC_KEY"; // Replace with your public key
-      const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-      registration.pushManager
-        .subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: convertedVapidKey,
-        })
-        .then(function (subscription) {
-          console.log("User is subscribed:", subscription);
-          // TODO: send subscription to your server for notifications.
-        })
-        .catch(function (err) {
-          console.error("Failed to subscribe the user: ", err);
-        });
-    });
-  }
-}
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; i++) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
 }
