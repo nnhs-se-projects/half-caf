@@ -25,8 +25,6 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    // set cookie expiry to 24 hours (~milliseconds)
-    cookie: { maxAge: 1000 * 60 * 60 * 24 },
   })
 );
 
