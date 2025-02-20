@@ -4,15 +4,15 @@ function addListenerToClaimButtons() {
   for (const claimButton of claimButtons) {
     claimButton.addEventListener("click", async () => {
       const orderId = claimButton.value;
-
+      const deliveryPerson = document.getElementById("DeliveryPerson").value;
       claimButton.disabled = true;
 
-      const response = await fetch(`/deliveryProgress/${orderId}`, {
+      const response = await fetch(`/deliveryProgress/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ orderId }),
+        body: JSON.stringify({ orderId, deliveryPerson }),
       });
 
       if (response.ok) {
@@ -120,8 +120,7 @@ window.io().on("New order placed", (data) => {
     isFirstDrink = false;
   }
 
-  addListenerToCancelButtons();
-  addListenerToFinishButtons();
+  addListenerToClaimButtons();
 
   lastDrinkColor = lastDrinkColor === "c" ? "b" : "c";
 });

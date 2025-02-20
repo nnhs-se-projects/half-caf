@@ -21,6 +21,14 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  claimed: {
+    type: Boolean,
+    required: true,
+  },
+  delivered: {
+    type: Boolean,
+    required: true,
+  },
   cancelled: {
     type: Boolean,
     required: true,
