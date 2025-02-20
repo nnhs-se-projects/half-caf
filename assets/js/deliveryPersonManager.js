@@ -40,7 +40,7 @@ document.getElementById("delete").addEventListener("click", async () => {
     }),
   });
   if (response.ok) {
-    window.location = "/DeliveryPersonManager";
+    window.location = "/deliveryPersonManager";
   } else {
     alert("Server error");
   }
