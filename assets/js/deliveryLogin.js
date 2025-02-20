@@ -2,29 +2,22 @@ const loginButton = document.getElementById("login");
 loginButton.addEventListener("click", async () => {
   const selectUserId = document.getElementById("deliveryPerson").value;
   const attemptedPin = document.getElementById("password").value;
-  try {
-    const response = await fetch("deliveryLogin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: selectUserId,
-        pin: attemptedPin,
-      }),
-    }).then((response) => {
-      if (response.redirected) {
-        window.location.href = response.url;
-      }
-    });
-    const data = await response.json();
-
-    if (response.ok) {
-      window.location = `/deliveryHome?id=${data.id}`;
-    } else {
-      console.error("Server error:", data.error);
+  const response = await fetch("deliveryLogin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: selectUserId,
+      pin: attemptedPin,
+    }),
+  }).then((response) => {
+    if (response.redirected) {
+      window.location.href = response.url;
     }
-  } catch (error) {
-    console.error("Error logging in: ", error);
+  });
+
+  if (!response.ok) {
+    console.log("error logging in");
   }
 });

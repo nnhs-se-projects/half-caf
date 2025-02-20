@@ -1551,46 +1551,53 @@ route.get("/deliveryLogin", async (req, res) => {
 });
 
 route.post("/deliveryLogin", async (req, res) => {
-  console.log(req.body);
   const attemptedPerson = await DeliveryPerson.findById(req.body.id);
   const attemptedPin = req.body.pin;
   if (attemptedPerson.pin === attemptedPin) {
-    res.redirect(`/deliveryHome/${attemptedPerson._id}`);
+    req.session.currentDelivererId = req.body.id;
+    res.redirect("/deliveryHome");
   } else {
-    console.log("fail");
+    req.session.currentDelivererId = null;
     res.redirect("/deliveryLogin");
   }
 });
 
-route.get("/deliveryHome/:id", async (req, res) => {
-  const deliveryPerson = await DeliveryPerson.findById(req.params.id);
-  const currentOrder = await Order.findById(deliveryPerson.currentOrder);
+route.get("/deliveryHome/", async (req, res) => {
+  if (
+    req.session.currentDelivererId !== null &&
+    req.session.currentDelivererId !== undefined
+  ) {
+    const orders = await Order.find();
 
-  const orders = await Order.find();
-
-  for (const order of orders) {
-    if (order.drinks.length === 0) {
-      await Order.findByIdAndRemove(order._id);
+    for (const order of orders) {
+      if (order.drinks.length === 0) {
+        await Order.findByIdAndRemove(order._id);
+      }
     }
-  }
 
-  if (currentOrder === null || currentOrder === undefined) {
-    res.render("deliveryHome", { deliveryPerson, orders });
+    res.render("deliveryHome", { orders });
   } else {
-    res.render("deliveryProgress", { deliveryPerson, currentOrder });
+    res.redirect("/deliveryLogin");
   }
 });
 
-route.post("/deliveryProgress/", async (req, res) => {
-  const currentDeliverer = await DeliveryPerson.findById(
-    req.body.deliveryPerson
-  );
-  const currentOrder = await Order.findById(req.body.orderId);
-  currentDeliverer.currentOrder = currentOrder;
-  await currentDeliverer.save();
-  currentOrder.claimed = true;
-  await currentOrder.save();
-  res.render("deliveryProgress", { currentDeliverer, currentOrder });
+route.get("/deliveryProgress/:id", async (req, res) => {
+  if (
+    req.session.currentDelivererId !== null &&
+    req.session.currentDelivererId !== undefined
+  ) {
+    const currentDeliverer = await DeliveryPerson.findById(
+      req.session.currentDelivererId
+    );
+    const currentOrder = await Order.findById(req.params.id);
+    currentDeliverer.currentOrder = currentOrder;
+    await currentDeliverer.save();
+    currentOrder.claimed = true;
+    await currentOrder.save();
+    res.render("deliveryProgress", { currentDeliverer, currentOrder });
+  } else {
+    res.redirect("/deliveryLogin");
+  }
 });
 
 route.get("/deliveryPersonManager", async (req, res) => {
