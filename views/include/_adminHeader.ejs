@@ -7,11 +7,26 @@
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="shortcut icon" type="image/png" href="/img/logo.png" />
+    <style>
+      @media screen and (max-width: 768px) {
+        .full-title {
+          display: none;
+        }
+      }
+      @media screen and (min-width: 769px) {
+        .mobile-title {
+          display: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="container" id="logo">
       <%- include('_header') %>
-      <h1 class="indexTopBar">NNHS Half Caf Admin</h1>
+      <h1 class="indexTopBar">
+        <span class="full-title">NNHS Half Caf Admin</span>
+        <span class="mobile-title">Admin</span>
+      </h1>
     </div>
 
     <div id="sidebar">
@@ -28,6 +43,7 @@
       <a href="/metrics">Metrics</a>
       <a href="/scheduler">Scheduler</a>
       <a href="/teacherMenu">Client View</a>
+      <a href="/barista">Barista View</a>
       <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
       <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
         >Report a bug</a
@@ -56,5 +72,7 @@
     <script src="/js/notifications.js"></script>
     <script src="/js/refreshOrderingToggle.js"></script>
     <script src="/js/toggleEnabled.js"></script>
+    <!-- Add sw-update to listen for updates -->
+    <script src="/js/sw-update.js"></script>
   </body>
 </html>

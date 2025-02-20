@@ -35,6 +35,9 @@ async function checkTime() {
     // console.log(error);
     return;
   }
+  if (!currentSchedule) {
+    return;
+  }
   for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
@@ -76,7 +79,7 @@ async function checkTime() {
   }
 }
 
-setInterval(checkTime, 5000); // check every 5 sec
+setInterval(checkTime, 15000); // check every 15 sec
 
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
@@ -132,7 +135,11 @@ route.use(async (req, res, next) => {
 });
 
 route.get("/auth", (req, res) => {
-  res.render("auth");
+  if (req.session.email) {
+    res.redirect("/redirectUser");
+  } else {
+    res.render("auth");
+  }
 });
 
 async function getUserRoles(email) {
@@ -183,17 +190,17 @@ route.get("/logout", async (req, res) => {
     });
   }
 
+  // Remove drinks from cart and clean up
   for (const drink of req.session.cart) {
     await Drink.findByIdAndRemove(drink);
   }
 
-  // Destroy session/remove user data from session
   req.session.destroy((err) => {
     if (err) {
       return console.error("Logout error:", err);
     }
-    // Redirect to home page or login page after logout
-    res.redirect("/");
+    // Redirect to auth page after logout
+    res.redirect("/auth");
   });
 });
 

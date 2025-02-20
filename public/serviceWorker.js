@@ -32,8 +32,16 @@ self.addEventListener("activate", (activateEvent) => {
           })
         );
       })
+      .then(() => self.clients.claim())
       .then(() => {
-        return self.clients.claim();
+        // Notify all clients that a new version is available.
+        return self.clients
+          .matchAll({ type: "window", includeUncontrolled: true })
+          .then((clients) => {
+            clients.forEach((client) =>
+              client.postMessage({ type: "NEW_VERSION_AVAILABLE" })
+            );
+          });
       })
   );
 });
@@ -49,4 +57,18 @@ self.addEventListener("fetch", (fetchEvent) => {
       .match(fetchEvent.request)
       .then((res) => res || fetch(fetchEvent.request))
   );
+});
+
+self.addEventListener("message", (event) => {
+  const { title, options } = event.data;
+  if (title) {
+    self.registration.showNotification(title, options);
+  }
+});
+
+self.addEventListener("push", (event) => {
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || "Notification";
+  const options = data.options || {};
+  event.waitUntil(self.registration.showNotification(title, options));
 });
