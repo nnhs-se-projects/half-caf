@@ -15,6 +15,14 @@ if ("serviceWorker" in navigator) {
     .register("/serviceWorker.js")
     .then((registration) => {
       console.log("Service Worker registered with scope:", registration.scope);
+      // Register periodic sync if supported (e.g., for mobile background notifications)
+      if ("periodicSync" in registration) {
+        registration.periodicSync
+          .register("notifications-sync", { minInterval: 15 * 60 * 1000 }) // 15 minutes
+          .catch((err) =>
+            console.error("Periodic sync registration failed:", err)
+          );
+      }
     })
     .catch((err) => {
       console.error("Service Worker registration failed:", err);
@@ -27,6 +35,8 @@ function isMobile() {
 }
 
 const emailInput = document.querySelector("input.emailInput");
+const currentEmail =
+  window.loggedInEmail || (emailInput ? emailInput.value : null);
 
 window.io().on("connect_error", (err) => {
   // the reason of the error, for example "xhr poll error"
@@ -42,8 +52,8 @@ window.io().on("connect_error", (err) => {
 window.io().on("Order finished", (data) => {
   if (
     Notification?.permission === "granted" &&
-    emailInput !== null &&
-    data.email === emailInput.value
+    currentEmail &&
+    data.email === currentEmail
   ) {
     const options = {
       body: "Your order is finished and is now being delivered.",
@@ -68,8 +78,8 @@ window.io().on("Order finished", (data) => {
 window.io().on("Order cancelled", (data) => {
   if (
     Notification?.permission === "granted" &&
-    emailInput !== null &&
-    data.email === emailInput.value
+    currentEmail &&
+    data.email === currentEmail
   ) {
     const options = {
       body: "A barista has cancelled your order because: " + data.cancelMessage,
