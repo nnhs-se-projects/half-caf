@@ -2,6 +2,9 @@
 <div id="mainContent">
   <div class="barista-header">
     <h1 class="page-title">Orders Awaiting Pickup</h1>
+    <button class="reload-button">
+      <img id="reload" alt="reload" src="/img/refresh.png" />
+    </button>
   </div>
   <div class="orders-container">
     <table class="orders-table" id="orderTable">
@@ -40,6 +43,31 @@
 </div>
 
 <style>
+  .reload-button {
+    width: 60px;
+    height: 60px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #reload {
+    width: 60px;
+    height: 60px;
+    display: block;
+    background: none !important;
+    filter: none;
+    -webkit-filter: none;
+  }
+
+  .reload-button:hover {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
   .barista-header {
     display: flex;
     align-items: center;
