@@ -15,6 +15,14 @@ if ("serviceWorker" in navigator) {
     .register("/serviceWorker.js")
     .then((registration) => {
       console.log("Service Worker registered with scope:", registration.scope);
+      // Register periodic sync if supported (e.g., for mobile background notifications)
+      if ("periodicSync" in registration) {
+        registration.periodicSync
+          .register("notifications-sync", { minInterval: 15 * 60 * 1000 }) // 15 minutes
+          .catch((err) =>
+            console.error("Periodic sync registration failed:", err)
+          );
+      }
     })
     .catch((err) => {
       console.error("Service Worker registration failed:", err);

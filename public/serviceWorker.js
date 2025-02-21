@@ -72,3 +72,26 @@ self.addEventListener("push", (event) => {
   const options = data.options || {};
   event.waitUntil(self.registration.showNotification(title, options));
 });
+
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "notifications-sync") {
+    event.waitUntil(
+      (async () => {
+        try {
+          // Replace '/notifications' with your actual endpoint that returns notification data
+          const response = await fetch("/notifications");
+          if (!response.ok) throw new Error("Network response was not ok");
+          const notifications = await response.json();
+          notifications.forEach((notification) => {
+            self.registration.showNotification(
+              notification.title,
+              notification.options
+            );
+          });
+        } catch (err) {
+          console.error("Periodic sync failed:", err);
+        }
+      })()
+    );
+  }
+});
