@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
       claimButton.disabled = true;
 
       const response = await fetch(`/deliveryProgress/${orderId}`, {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },

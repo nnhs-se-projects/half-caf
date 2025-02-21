@@ -17,6 +17,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  claimTime: {
+    type: Number,
+    required: true,
+  },
   complete: {
     type: Boolean,
     required: true,

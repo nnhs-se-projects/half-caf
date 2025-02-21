@@ -3,101 +3,123 @@
 <!-- /include header -->
 
 <div id="mainContent">
-<input type="hidden" id="userEmails" value="<%=
-JSON.stringify(userEmails).replace("[", "").replace("]", "").replaceAll('"',"")
-%>" /> <input type="hidden" id="ordersPerUser" value="<%=
-JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>" /> <input
-type="hidden" id="revenuePerUser" value="<%=
-JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" /> <input
-type="hidden" id="toppingNames"
-value="<%=JSON.stringify(toppingNames).replace("[", "").replace("]",
-"").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerTopping"
-value="<%= JSON.stringify(ordersPerTopping).replace("[", "").replace("]", "")
-%>" /> <input type="hidden" id="flavorNames"
-value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
-"").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
-value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "") %>"
-/> <input type="hidden" id="ordersPerHour" value="<%=
-JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
-type="hidden" id="revenuePerHour" value="<%=
-JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" /> <input
-type="hidden" id="averageTimerPerHour" value="<%=
-JSON.stringify(averageTimerPerHour).replace("[", "").replace("]", "") %>" />
-<input type="hidden" id="averageTimer" value="<%=
-JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" />
+  <input type="hidden" id="userEmails" value="<%=
+  JSON.stringify(userEmails).replace("[", "").replace("]",
+  "").replaceAll('"',"") %>" /> <input type="hidden" id="ordersPerUser"
+  value="<%= JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>"
+  /> <input type="hidden" id="revenuePerUser" value="<%=
+  JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" /> <input
+  type="hidden" id="toppingNames"
+  value="<%=JSON.stringify(toppingNames).replace("[", "").replace("]",
+  "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerTopping"
+  value="<%= JSON.stringify(ordersPerTopping).replace("[", "").replace("]", "")
+  %>" /> <input type="hidden" id="flavorNames"
+  value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
+  "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
+  value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "")
+  %>" /> <input type="hidden" id="ordersPerHour" value="<%=
+  JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
+  type="hidden" id="revenuePerHour" value="<%=
+  JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" /> <input
+  type="hidden" id="averageTimerPerHour" value="<%=
+  JSON.stringify(averageTimerPerHour).replace("[", "").replace("]", "") %>" />
+  <input type="hidden" id="averageTimer" value="<%=
+  JSON.stringify(averageTimer).replace("[", "").replace("]", "") %>" /> <input
+  type="hidden" id="averageDeliveryTimePerPerson" value="<%=
+  JSON.stringify(averageDeliveryTimePerPerson).replace("[", "").replace("]", "")
+  %>" /> <input type="hidden" id="delivererNames" value="<%=
+  JSON.stringify(delivererNames).replace("[", "").replace("]", "") %>" />
 
-<div class="charts">
-  <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
-  <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
-  <h6>Orders per hour (total):</h6>
-  <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
-  <h6>Revenue per hour (total):</h6>
-  <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
-  <h6>
-    Average time to complete order (all-time): <%=Math.round(averageTimer)%>(s)
-  </h6>
-  <canvas id="averageTimerPerHourCanvas" width="1980" height="800"></canvas>
-</div>
-<h1>Metrics Per Menu Item:</h1>
-<div>
-  <table>
-    <thead>
-      <tr>
-        <th id="sortNeither" class="menuItemTable"><b>Menu Item</b></th>
-        <th id="sortNeither" class="menuItemTable"><b>Orders</b></th>
-        <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
-      </tr>
-    </thead>
+  <div class="charts">
+    <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
+    <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
+    <h6>Orders per hour (total):</h6>
+    <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
+    <h6>Revenue per hour (total):</h6>
+    <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
+    <h6>
+      Average time to complete order (all-time):
+      <%=Math.round(averageTimer)%>(s)
+    </h6>
+    <canvas id="averageTimerPerHourCanvas" width="1980" height="800"></canvas>
+  </div>
+  <h1>Metrics Per Menu Item:</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="menuItemTable"><b>Menu Item</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Orders</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
+        </tr>
+      </thead>
 
-    <tbody id="menuItemTable">
-      <% for(let i = 0; i < menuItemNames.length; i++) { %>
-      <tr>
-        <td><%=menuItemNames[i]%></td>
-        <td><%=ordersPerMenuItem[i]%></td>
-        <td>$<%=revenuePerMenuItem[i]%></td>
-      </tr>
-      <%}%>
-    </tbody>
+      <tbody id="menuItemTable">
+        <% for(let i = 0; i < menuItemNames.length; i++) { %>
+        <tr>
+          <td><%=menuItemNames[i]%></td>
+          <td><%=ordersPerMenuItem[i]%></td>
+          <td>$<%=revenuePerMenuItem[i]%></td>
+        </tr>
+        <%}%>
+      </tbody>
 
-    <thead>
-      <tr>
-        <th><b>Total</b></th>
-        <th><b><%=totalDrinkOrdersNum%></b></th>
-        <th><b>$<%=totalRevenue%></b></th>
-      </tr>
-    </thead>
-  </table>
-</div>
-<h1>Metrics Per User:</h1>
-<div>
-  <table>
-    <thead>
-      <tr>
-        <th id="sortNeither" class="userTable"><b>User</b></th>
-        <th id="sortNeither" class="userTable"><b>Orders</b></th>
-        <th id="sortNeither" class="userTable"><b>Revenue</b></th>
-      </tr>
-    </thead>
+      <thead>
+        <tr>
+          <th><b>Total</b></th>
+          <th><b><%=totalDrinkOrdersNum%></b></th>
+          <th><b>$<%=totalRevenue%></b></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <h1>Metrics Per User:</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="userTable"><b>User</b></th>
+          <th id="sortNeither" class="userTable"><b>Orders</b></th>
+          <th id="sortNeither" class="userTable"><b>Revenue</b></th>
+        </tr>
+      </thead>
 
-    <tbody id="userTable">
-      <% for(let i = 0; i < userEmails.length; i++) { %>
-      <tr>
-        <td><%=userEmails[i]%></td>
-        <td><%=ordersPerUser[i]%></td>
-        <td>$<%=revenuePerUser[i]%></td>
-      </tr>
-      <%}%>
-    </tbody>
+      <tbody id="userTable">
+        <% for(let i = 0; i < userEmails.length; i++) { %>
+        <tr>
+          <td><%=userEmails[i]%></td>
+          <td><%=ordersPerUser[i]%></td>
+          <td>$<%=revenuePerUser[i]%></td>
+        </tr>
+        <%}%>
+      </tbody>
 
-    <thead>
-      <tr>
-        <th><b>Total</b></th>
-        <th><b><%=totalOrdersNum%></b></th>
-        <th><b>$<%=totalRevenue%></b></th>
-      </tr>
-    </thead>
-  </table>
-</div>
+      <thead>
+        <tr>
+          <th><b>Total</b></th>
+          <th><b><%=totalOrdersNum%></b></th>
+          <th><b>$<%=totalRevenue%></b></th>
+        </tr>
+      </thead>
+    </table>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="userTable"><b>Name</b></th>
+          <th id="sortNeither" class="userTable"><b>Avg. Delivery Time</b></th>
+        </tr>
+      </thead>
+
+      <tbody id="userTable">
+        <% for(let i = 0; i < delivererNames.length; i++) { %>
+        <tr>
+          <td><%=delivererNames[i]%></td>
+          <td><%=averageDeliveryTimePerPerson[i]%></td>
+        </tr>
+        <%}%>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
