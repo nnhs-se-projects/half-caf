@@ -72,3 +72,24 @@ self.addEventListener("push", (event) => {
   const options = data.options || {};
   event.waitUntil(self.registration.showNotification(title, options));
 });
+
+self.addEventListener("sync", (event) => {
+  if (event.tag === "mobileNotifications") {
+    event.waitUntil(handleMobileNotifications());
+  }
+});
+
+async function handleMobileNotifications() {
+  try {
+    // Fetch notifications from the server endpoint (implement this endpoint on your server)
+    const response = await fetch("/mobileNotifications");
+    if (response.ok) {
+      const notifications = await response.json();
+      notifications.forEach((notif) => {
+        self.registration.showNotification(notif.title, notif.options);
+      });
+    }
+  } catch (error) {
+    console.error("Mobile notifications sync failed:", error);
+  }
+}
