@@ -137,15 +137,6 @@ function subscribeUserToPush() {
   }
 }
 
-if (isMobile() && "SyncManager" in window) {
-  navigator.serviceWorker.ready.then((registration) => {
-    registration.sync
-      .register("mobileNotifications")
-      .then(() => console.log("Mobile notifications sync registered."))
-      .catch((err) => console.error("Sync registration failed:", err));
-  });
-}
-
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
