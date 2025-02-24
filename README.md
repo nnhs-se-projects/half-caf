@@ -43,6 +43,8 @@ CLIENT_ID= <find in trello>
 MONGO_URI= <find in trello>
 SESSION_SECRET= <secret key>
 PORT_NUM = 8080 (can change)
+VAPID_PUBLIC_KEY= <find in trello>
+VAPID_PRIVATE_KEY= <find in trello>
 ```
 
 4. Download MongoDB Compass for your computer
