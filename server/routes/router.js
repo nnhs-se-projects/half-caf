@@ -1636,7 +1636,15 @@ route.get("/deliveryProgress/:id", async (req, res) => {
       req.session.currentDelivererId
     );
     const currentOrder = await Order.findById(req.params.id);
-    res.render("deliveryProgress", { currentDeliverer, currentOrder });
+    if (
+      currentOrder !== null &&
+      currentOrder !== undefined &&
+      currentOrder.delivered === false
+    ) {
+      res.render("deliveryProgress", { currentDeliverer, currentOrder });
+    } else {
+      res.redirect("/deliveryHome");
+    }
   } else {
     res.redirect("/deliveryLogin");
   }
