@@ -114,3 +114,47 @@ function enableNotifications() {
     alert("This device does not support notifications.");
   }
 }
+
+// Add VAPID public key (from your .env; be sure this key is public only)
+const VAPID_PUBLIC_KEY =
+  "BNnAiZw2Mq15nUD7Qtc_EMQs0ZLXdGb3cS6dzwhp0M5rU94xVKp1AqvrrK8kXSa-f7AgUN69DYE0oM5vJBhAD54";
+
+// Utility function to convert base64 string to Uint8Array
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+// If running on mobile, subscribe for push notifications
+if (isMobile()) {
+  navigator.serviceWorker.ready.then((registration) => {
+    registration.pushManager.getSubscription().then((subscription) => {
+      if (!subscription) {
+        registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+          })
+          .then((newSubscription) => {
+            // Send subscription details to backend for storing
+            fetch("/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(newSubscription),
+            });
+          })
+          .catch((err) => {
+            console.error("Push subscription failed: ", err);
+          });
+      }
+    });
+  });
+}
