@@ -47,15 +47,18 @@ self.addEventListener("activate", (activateEvent) => {
 });
 
 self.addEventListener("fetch", (fetchEvent) => {
-  const requestUrl = new URL(fetchEvent.request.url);
-  if (!assets.includes(requestUrl.pathname)) {
-    fetchEvent.respondWith(fetch(fetchEvent.request));
-    return;
-  }
   fetchEvent.respondWith(
-    caches
-      .match(fetchEvent.request)
-      .then((res) => res || fetch(fetchEvent.request))
+    caches.open(staticNNHSCoffe).then((cache) => {
+      return fetch(fetchEvent.request)
+        .then((response) => {
+          // Update cache with the latest response
+          cache.put(fetchEvent.request, response.clone());
+          return response;
+        })
+        .catch(() => {
+          return cache.match(fetchEvent.request);
+        });
+    })
   );
 });
 
