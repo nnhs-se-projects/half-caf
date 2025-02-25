@@ -1719,7 +1719,7 @@ route.post("/addDeliveryPerson", async (req, res) => {
 route.delete("/deleteDeliveryPerson", async (req, res) => {
   await DeliveryPerson.findByIdAndRemove(req.body.id);
   res.end();
-
+});
 // Add route to handle push subscriptions for mobile web notifications
 route.post("/subscribe", (req, res) => {
   const subscription = req.body;
