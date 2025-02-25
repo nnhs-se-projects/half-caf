@@ -39,28 +39,28 @@ window.io().on("connect_error", (err) => {
   console.log(err.context);
 });
 
-window.io().on("Order finished", (data) => {
+window.io().on("Order claimed", (data) => {
   if (
     Notification?.permission === "granted" &&
     emailInput !== null &&
     data.email === emailInput.value
   ) {
     const options = {
-      body: "Your order is finished and is now being delivered.",
+      body: "Your order has been picked up and is now being delivered.",
       icon: "../img/Half_Caf_Logo_(1).png",
     };
     if (isMobile()) {
       // Mobile: send notification via service worker
       navigator.serviceWorker.ready.then((registration) => {
         if (registration.active) {
-          registration.active.postMessage({ title: "Order finished", options });
+          registration.active.postMessage({ title: "Order claimed", options });
         } else {
-          new Notification("Order finished", options);
+          new Notification("Order claimed", options);
         }
       });
     } else {
       // Desktop: show notification directly
-      new Notification("Order finished", options);
+      new Notification("Order claimed", options);
     }
   }
 });

@@ -16,7 +16,7 @@ const DeliveryPerson = require("../model/deliveryPerson");
 const {
   emitToggleChange,
   emitOrderCancelled,
-  emitOrderFinished,
+  emitOrderClaimed,
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
@@ -931,8 +931,6 @@ route.post("/barista/:id", async (req, res) => {
     await drink.save();
   }
 
-  emitOrderFinished({ email: order.email });
-
   res.status(201).end();
 });
 
@@ -1622,6 +1620,8 @@ route.post("/deliveryProgress/:id", async (req, res) => {
     currentDeliverer.currentOrder = currentOrder;
     await currentDeliverer.save();
     currentOrder.claimed = true;
+
+    emitOrderClaimed({ email: currentOrder.email });
 
     const currentTimeDate = new Date(
       new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })

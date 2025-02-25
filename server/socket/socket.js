@@ -41,9 +41,9 @@ function emitOrderCancelled(data) {
   }
 }
 
-function emitOrderFinished(data) {
+function emitOrderClaimed(data) {
   if (io) {
-    io.emit("Order finished", data);
+    io.emit("Order claimed", data);
   }
 }
 
@@ -57,6 +57,6 @@ module.exports = {
   createSocketServer,
   emitToggleChange,
   emitOrderCancelled,
-  emitOrderFinished,
+  emitOrderClaimed,
   emitNewOrderPlaced,
 };
