@@ -31,10 +31,6 @@ document.querySelector(".submit").addEventListener("click", async () => {
       alert("Please fill in all period information or delete blank periods.");
       return;
     }
-    if (period.start >= period.end) {
-      alert(period.name + "'s start time must be before end time.");
-      return;
-    }
   }
 
   const days = [];
@@ -72,8 +68,7 @@ document.querySelector(".submit").addEventListener("click", async () => {
 
 function convertTimeToAmPm(timeStr) {
   const timeSplit = timeStr.split(":");
-  let hours = timeSplit[0];
-  const minutes = timeSplit[1];
+  let hours = Number(timeSplit[0]);
   let meridian;
 
   if (hours > 12) {
@@ -88,5 +83,5 @@ function convertTimeToAmPm(timeStr) {
     meridian = "PM";
   }
 
-  return hours + ":" + minutes + " " + meridian;
+  return hours + ":" + timeSplit[1] + " " + meridian;
 }
