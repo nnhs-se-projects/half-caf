@@ -1547,6 +1547,14 @@ route.get("/orderConfirmation", async (req, res) => {
   }
 });
 
+// Add route to handle push subscriptions for mobile web notifications
+route.post("/subscribe", (req, res) => {
+  const subscription = req.body;
+  console.log("Received push subscription:", subscription);
+  // TODO: Store the subscription information in your database for later use with web-push
+  res.status(201).json({ message: "Subscription received" });
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
