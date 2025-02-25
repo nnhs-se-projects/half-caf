@@ -18,7 +18,6 @@ const {
   emitOrderFinished,
   emitNewOrderPlaced,
 } = require("../socket/socket");
-const pushNotification = require("../pushNotification"); // add push notification support
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
@@ -890,6 +889,9 @@ route.get("/barista", async (req, res) => {
 });
 
 route.delete("/barista/:id", async (req, res) => {
+  // await Order.findByIdAndRemove(req.params.id);
+  // res.end();
+
   const order = await Order.findById(req.params.id);
   order.cancelled = true;
   await order.save();
@@ -897,15 +899,6 @@ route.delete("/barista/:id", async (req, res) => {
   emitOrderCancelled({
     cancelMessage: req.body.message,
     email: order.email,
-  });
-
-  // Send push notification for order cancellation
-  pushNotification.sendPushNotification({
-    title: "Order cancelled",
-    options: {
-      body: "A barista has cancelled your order: " + req.body.message,
-      icon: "/img/Half_Caf_Logo_(1).png",
-    },
   });
 
   res.status(201).end();
@@ -924,15 +917,6 @@ route.post("/barista/:id", async (req, res) => {
   }
 
   emitOrderFinished({ email: order.email });
-
-  // Send push notification (for both mobile and desktop when app is closed)
-  pushNotification.sendPushNotification({
-    title: "Order finished",
-    options: {
-      body: "Your order is finished and is now being delivered.",
-      icon: "/img/Half_Caf_Logo_(1).png",
-    },
-  });
 
   res.status(201).end();
 });
@@ -1578,8 +1562,7 @@ route.get("/orderConfirmation", async (req, res) => {
 route.post("/subscribe", (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
-  pushNotification.addSubscription(subscription);
-  // Optionally store subscription per user in DB
+  // TODO: Store the subscription information in your database for later use with web-push
   res.status(201).json({ message: "Subscription received" });
 });
 
