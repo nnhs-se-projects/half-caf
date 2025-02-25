@@ -1067,6 +1067,17 @@ route.post("/cancelledOrders/:id", async (req, res) => {
   res.status(201).end();
 });
 
+route.delete("/wipeOrders", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    await Order.deleteMany();
+    await Drink.deleteMany();
+    res.end();
+  }
+});
+
 route.get("/addFlavor", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {
