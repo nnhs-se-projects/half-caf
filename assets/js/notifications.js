@@ -52,16 +52,10 @@ window.io().on("Order finished", (data) => {
       icon: "../img/Half_Caf_Logo_(1).png",
     };
     if (isMobile()) {
-      // Mobile: send notification via service worker
       navigator.serviceWorker.ready.then((registration) => {
-        if (registration.active) {
-          registration.active.postMessage({ title: "Order finished", options });
-        } else {
-          new Notification("Order finished", options);
-        }
+        registration.showNotification("Order finished", options);
       });
     } else {
-      // Desktop: show notification directly
       new Notification("Order finished", options);
     }
   }
@@ -78,19 +72,10 @@ window.io().on("Order cancelled", (data) => {
       icon: "../img/Half_Caf_Logo_(1).png",
     };
     if (isMobile()) {
-      // Mobile: send notification via service worker
       navigator.serviceWorker.ready.then((registration) => {
-        if (registration.active) {
-          registration.active.postMessage({
-            title: "Order cancelled",
-            options,
-          });
-        } else {
-          new Notification("Order cancelled", options);
-        }
+        registration.showNotification("Order cancelled", options);
       });
     } else {
-      // Desktop: show notification directly
       new Notification("Order cancelled", options);
     }
   }
