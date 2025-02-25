@@ -66,9 +66,25 @@ self.addEventListener("message", (event) => {
   }
 });
 
-self.addEventListener("push", (event) => {
-  const data = event.data ? event.data.json() : {};
-  const title = data.title || "Notification";
+self.addEventListener("push", function (event) {
+  let data = {};
+  if (event.data) {
+    data = event.data.json();
+  }
+  const title = data.title || "New Notification";
   const options = data.options || {};
   event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+  // Optionally focus or open a window
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then(function (clientList) {
+      if (clientList.length > 0) {
+        return clientList[0].focus();
+      }
+      return clients.openWindow("/");
+    })
+  );
 });

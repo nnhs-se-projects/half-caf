@@ -29,7 +29,7 @@
   JSON.stringify(averageDeliveryTimePerPerson).replace("[", "").replace("]", "")
   %>" /> <input type="hidden" id="delivererNames" value="<%=
   JSON.stringify(delivererNames).replace("[", "").replace("]", "") %>" />
-
+  <input type="submit" id="delete-all" value="DELETE ALL DATA" />
   <div class="charts">
     <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
     <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
@@ -51,7 +51,6 @@
           <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
         </tr>
       </thead>
-
       <tbody id="menuItemTable">
         <% for(let i = 0; i < menuItemNames.length; i++) { %>
         <tr>
@@ -124,6 +123,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+  const deleteButton = document.getElementById("delete-all");
+  deleteButton.addEventListener("click", async () => {
+    if (!confirm("Are you sure you want to delete all data?")) {
+      return;
+    }
+    const response = await fetch("/wipeOrders", {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      alert("All data has been deleted.");
+      location.reload();
+    } else {
+      alert("Failed to delete data.");
+    }
+  });
+
   const getCellValue = (tr, idx) =>
     tr.children[idx].innerText || tr.children[idx].textContent;
 
