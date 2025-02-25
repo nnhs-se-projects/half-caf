@@ -38,7 +38,12 @@
       <p>For the best experience, please add this app to your home screen.</p>
       <p>Tap the share button and then "Add to Home Screen".</p>
     </div>
+    <button id="bypass">Continue to App</button>
     <script>
+      document.getElementById("bypass").addEventListener("click", () => {
+        window.location = "/auth";
+      });
+
       // If app is launched in standalone mode, redirect to /auth
       if (
         window.matchMedia("(display-mode: standalone)").matches ||

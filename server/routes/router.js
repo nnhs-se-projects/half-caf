@@ -1067,6 +1067,17 @@ route.post("/cancelledOrders/:id", async (req, res) => {
   res.status(201).end();
 });
 
+route.delete("/wipeOrders", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    await Order.deleteMany();
+    await Drink.deleteMany();
+    res.end();
+  }
+});
+
 route.get("/addFlavor", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {
@@ -1545,6 +1556,14 @@ route.get("/orderConfirmation", async (req, res) => {
     req.session.cart = [];
     res.render("orderConfirmation", { email: req.session.email });
   }
+});
+
+// Add route to handle push subscriptions for mobile web notifications
+route.post("/subscribe", (req, res) => {
+  const subscription = req.body;
+  console.log("Received push subscription:", subscription);
+  // TODO: Store the subscription information in your database for later use with web-push
+  res.status(201).json({ message: "Subscription received" });
 });
 
 // delegate all authentication to the auth.js router

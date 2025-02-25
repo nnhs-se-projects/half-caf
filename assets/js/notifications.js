@@ -27,6 +27,8 @@ function isMobile() {
 }
 
 const emailInput = document.querySelector("input.emailInput");
+const currentEmail =
+  window.loggedInEmail || (emailInput ? emailInput.value : null);
 
 window.io().on("connect_error", (err) => {
   // the reason of the error, for example "xhr poll error"
@@ -42,8 +44,8 @@ window.io().on("connect_error", (err) => {
 window.io().on("Order finished", (data) => {
   if (
     Notification?.permission === "granted" &&
-    emailInput !== null &&
-    data.email === emailInput.value
+    currentEmail &&
+    data.email === currentEmail
   ) {
     const options = {
       body: "Your order is finished and is now being delivered.",
@@ -68,8 +70,8 @@ window.io().on("Order finished", (data) => {
 window.io().on("Order cancelled", (data) => {
   if (
     Notification?.permission === "granted" &&
-    emailInput !== null &&
-    data.email === emailInput.value
+    currentEmail &&
+    data.email === currentEmail
   ) {
     const options = {
       body: "A barista has cancelled your order because: " + data.cancelMessage,
@@ -99,7 +101,6 @@ function enableNotifications() {
     Notification.requestPermission().then(function (permission) {
       if (permission === "granted") {
         alert("Notification permission granted.");
-        subscribeUserToPush(); // Subscribe for push notifications
       } else if (permission === "denied") {
         alert(
           "Notification permission is still denied. " +
@@ -114,34 +115,46 @@ function enableNotifications() {
   }
 }
 
-function subscribeUserToPush() {
-  if ("serviceWorker" in navigator && "PushManager" in window) {
-    navigator.serviceWorker.ready.then(function (registration) {
-      const vapidPublicKey = "YOUR_VAPID_PUBLIC_KEY"; // Replace with your public key
-      const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-      registration.pushManager
-        .subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: convertedVapidKey,
-        })
-        .then(function (subscription) {
-          console.log("User is subscribed:", subscription);
-          // TODO: send subscription to your server for notifications.
-        })
-        .catch(function (err) {
-          console.error("Failed to subscribe the user: ", err);
-        });
-    });
-  }
-}
+// Add VAPID public key (from your .env; be sure this key is public only)
+const VAPID_PUBLIC_KEY =
+  "BNnAiZw2Mq15nUD7Qtc_EMQs0ZLXdGb3cS6dzwhp0M5rU94xVKp1AqvrrK8kXSa-f7AgUN69DYE0oM5vJBhAD54";
 
+// Utility function to convert base64 string to Uint8Array
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; i++) {
+  for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
+}
+
+// If running on mobile, subscribe for push notifications
+if (isMobile()) {
+  navigator.serviceWorker.ready.then((registration) => {
+    registration.pushManager.getSubscription().then((subscription) => {
+      if (!subscription) {
+        registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+          })
+          .then((newSubscription) => {
+            // Send subscription details to backend for storing
+            fetch("/subscribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(newSubscription),
+            });
+          })
+          .catch((err) => {
+            console.error("Push subscription failed: ", err);
+          });
+      }
+    });
+  });
 }
