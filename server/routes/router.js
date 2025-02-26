@@ -19,6 +19,15 @@ const {
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
+const webPush = require("web-push");
+webPush.setVapidDetails(
+  "egkohl279@gmail.com", // use your admin email here
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
+const subscriptions = []; // store subscriptions in memory
+
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
@@ -1562,8 +1571,30 @@ route.get("/orderConfirmation", async (req, res) => {
 route.post("/subscribe", (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
-  // TODO: Store the subscription information in your database for later use with web-push
+  subscriptions.push(subscription);
   res.status(201).json({ message: "Subscription received" });
+});
+
+// added test endpoint to send a push notification to all subscriptions
+route.get("/testPush", async (req, res) => {
+  const payload = JSON.stringify({
+    title: "Push Test",
+    options: {
+      body: "This is a test push notification.",
+      icon: "/test-icon.png",
+    },
+  });
+  const sendPromises = subscriptions.map((sub) => {
+    return webPush
+      .sendNotification(sub, payload)
+      .catch((err) => console.error("Error sending push:", err));
+  });
+  try {
+    await Promise.all(sendPromises);
+    res.status(200).send("Push notifications sent");
+  } catch (err) {
+    res.status(500).send("Error sending push notifications");
+  }
 });
 
 // delegate all authentication to the auth.js router
