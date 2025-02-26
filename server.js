@@ -14,6 +14,14 @@ const app = express();
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env" });
 
+// NEW: Setup web push with VAPID keys
+const webpush = require("web-push");
+webpush.setVapidDetails(
+  "mailto:egkohl279@gmail.com", // replace with your email
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
 // connect to the database
 const connectDB = require("./server/database/connection");
 connectDB();
