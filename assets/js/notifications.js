@@ -133,28 +133,41 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
-// If running on mobile, subscribe for push notifications
-if (isMobile()) {
-  navigator.serviceWorker.ready.then((registration) => {
-    registration.pushManager.getSubscription().then((subscription) => {
-      if (!subscription) {
-        registration.pushManager
-          .subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-          })
-          .then((newSubscription) => {
-            // Send subscription details to backend for storing
-            fetch("/subscribe", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(newSubscription),
+// Utility function to subscribe for push notifications
+function subscribeForPush() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.pushManager.getSubscription().then((subscription) => {
+        if (!subscription) {
+          // Subscribe afresh using the applicationServerKey from environment (public)
+          registration.pushManager
+            .subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+            })
+            .then((newSubscription) => {
+              // Send subscription details to backend for storing
+              fetch("/subscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newSubscription),
+              });
+            })
+            .catch((err) => {
+              console.error("Push subscription failed: ", err);
             });
-          })
-          .catch((err) => {
-            console.error("Push subscription failed: ", err);
+        } else {
+          // Optionally, update subscription on backend periodically
+          fetch("/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(subscription),
           });
-      }
+        }
+      });
     });
-  });
+  }
 }
+
+// Call subscribeForPush on page load or when needed
+subscribeForPush();
