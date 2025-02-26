@@ -59,7 +59,11 @@ app.get("/", (req, res) => {
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
-  if (req.path === "/homePopularDrinks" || req.path === "/homeMenu") {
+  if (
+    req.path === "/homePopularDrinks" ||
+    req.path === "/homeMenu" ||
+    req.path.indexOf("/delivery") !== -1
+  ) {
     return next(); // allow access to index without authentication
   }
   // if the student is already logged in, fetch the student object from the database
