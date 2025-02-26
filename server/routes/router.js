@@ -19,6 +19,9 @@ const {
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
+// NEW: In-memory store for subscriptions
+let subscriptions = [];
+
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
@@ -1562,7 +1565,10 @@ route.get("/orderConfirmation", async (req, res) => {
 route.post("/subscribe", (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
-  // TODO: Store the subscription information in your database for later use with web-push
+
+  // Store the subscription information in an in-memory array
+  subscriptions.push(subscription);
+
   res.status(201).json({ message: "Subscription received" });
 });
 
