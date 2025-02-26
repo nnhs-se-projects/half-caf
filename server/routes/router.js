@@ -19,6 +19,8 @@ const {
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
+let subscriptions = [];
+
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
@@ -1560,10 +1562,36 @@ route.get("/orderConfirmation", async (req, res) => {
 
 // Add route to handle push subscriptions for mobile web notifications
 route.post("/subscribe", (req, res) => {
+  // Get the subscription from the request body
   const subscription = req.body;
+  if (!subscription || !subscription.endpoint) {
+    // validate subscription
+    console.error("Invalid subscription received:", subscription);
+    return res
+      .status(400)
+      .json({ error: "Invalid subscription: missing endpoint" });
+  }
+
   console.log("Received push subscription:", subscription);
-  // TODO: Store the subscription information in your database for later use with web-push
-  res.status(201).json({ message: "Subscription received" });
+  // Store the subscription in memory (or store persistently in your DB)
+  subscriptions.push(subscription);
+
+  // Import webPush function from notifications module
+  const { sendPushNotification } = require("../notifications/webPush");
+  // Prepare a test payload
+  const payload = JSON.stringify({
+    title: "Push Test",
+    options: {
+      body: "Push subscription registered successfully.",
+      icon: "/test-icon.png",
+    },
+  });
+  // Send a test notification to verify VAPID setup works
+  sendPushNotification(subscription, payload);
+
+  res
+    .status(201)
+    .json({ message: "Subscription received and test notification sent" });
 });
 
 // delegate all authentication to the auth.js router
