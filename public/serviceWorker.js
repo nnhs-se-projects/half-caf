@@ -69,24 +69,11 @@ self.addEventListener("message", (event) => {
 self.addEventListener("push", function (event) {
   let data = {};
   if (event.data) {
-    try {
-      data = event.data.json();
-    } catch (error) {
-      console.error("Push event data error:", error);
-      data = {};
-    }
+    data = event.data.json();
   }
   const title = data.title || "New Notification";
-  const options = data.options || {
-    body: "You have a new message.",
-    icon: "/img/Half_Caf_Logo_(1).png",
-    vibrate: [100, 50, 100],
-  };
-  event.waitUntil(
-    self.registration.showNotification(title, options).catch((err) => {
-      console.error("showNotification error:", err);
-    })
-  );
+  const options = data.options || {};
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", function (event) {
