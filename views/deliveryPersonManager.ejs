@@ -1,0 +1,29 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+<div id="mainContent" class="adminPage" id="page">
+  <div class="page-right">
+    <div class="userHdr">Add Delivery Person</div>
+    <input type="text" id="name" placeholder="Name..." />
+    <input type="text" id="pin" placeholder="4 Digit Pin..." />
+    <input type="submit" class="submit" value="Add Delivery Person" />
+  </div>
+  <div class="page-left">
+    <div class="userHdr">Delivery Persons</div>
+    <select id="deliveryPerson" class="select">
+      Select User <% for (let person of deliveryPersons) { %>
+      <option value="<%=person.id %>"><%= person.name %></option>
+      <% } %>
+    </select>
+    <input id="delete" type="submit" class="submit" value="Delete" />
+  </div>
+
+    <script src="/js/deliveryPersonManager.js"></script>
+
+    <!-- include footer -->
+    <%- include('include/_footer') %>
+    <!-- /include footer -->
+  </div>
+</div>

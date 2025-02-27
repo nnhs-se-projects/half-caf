@@ -12,10 +12,11 @@ const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Enabled = require("../model/enabled");
 const Weekday = require("../model/weekdays");
+const DeliveryPerson = require("../model/deliveryPerson");
 const {
   emitToggleChange,
   emitOrderCancelled,
-  emitOrderFinished,
+  emitOrderClaimed,
   emitNewOrderPlaced,
 } = require("../socket/socket");
 
@@ -500,6 +501,18 @@ route.delete("/deleteDrink/:id", async (req, res) => {
 });
 
 route.get("/metrics", async (req, res) => {
+  const deliveryPersons = await DeliveryPerson.find();
+  const delivererNames = [];
+  const averageDeliveryTimePerPerson = [];
+  for (const person of deliveryPersons) {
+    delivererNames.push(person.name);
+    let sum = 0;
+    for (let i = 0; i < person.deliveryTimes.length; i++) {
+      sum += person.deliveryTimes[i];
+    }
+    averageDeliveryTimePerPerson.push(sum / person.deliveryTimes.length);
+  }
+
   const orders = await Order.find();
   const drinks = await Drink.find();
   const users = await User.find();
@@ -816,6 +829,8 @@ route.get("/metrics", async (req, res) => {
     revenuePerHour,
     averageTimerPerHour,
     averageTimer,
+    averageDeliveryTimePerPerson,
+    delivererNames,
   });
 });
 
@@ -915,8 +930,6 @@ route.post("/barista/:id", async (req, res) => {
     drink.completed = true;
     await drink.save();
   }
-
-  emitOrderFinished({ email: order.email });
 
   res.status(201).end();
 });
@@ -1342,6 +1355,9 @@ route.post("/teacherMyCart", async (req, res) => {
       room: req.body.rm,
       timestamp: req.body.timestamp,
       complete: false,
+      claimed: false,
+      claimTime: 0,
+      delivered: false,
       cancelled: false,
       read: false,
       drinks: req.session.cart,
@@ -1558,6 +1574,152 @@ route.get("/orderConfirmation", async (req, res) => {
   }
 });
 
+// Delivery People Routes
+
+route.get("/deliveryLogin", async (req, res) => {
+  const deliveryPersons = await DeliveryPerson.find();
+  res.render("deliveryLogin", { deliveryPersons });
+});
+
+route.post("/deliveryLogin", async (req, res) => {
+  const attemptedPerson = await DeliveryPerson.findById(req.body.id);
+  const attemptedPin = req.body.pin;
+  if (attemptedPerson.pin === attemptedPin) {
+    req.session.currentDelivererId = req.body.id;
+    if (
+      attemptedPerson.currentOrder !== null &&
+      attemptedPerson.currentOrder !== undefined
+    ) {
+      res.redirect("/deliveryProgress/" + attemptedPerson.currentOrder);
+    } else {
+      res.redirect("/deliveryHome");
+    }
+  } else {
+    req.session.currentDelivererId = null;
+    res.redirect("/deliveryLogin");
+  }
+});
+
+route.get("/deliveryHome/", async (req, res) => {
+  if (
+    req.session.currentDelivererId !== null &&
+    req.session.currentDelivererId !== undefined
+  ) {
+    const orders = await Order.find();
+
+    for (const order of orders) {
+      if (order.drinks.length === 0) {
+        await Order.findByIdAndRemove(order._id);
+      }
+    }
+
+    res.render("deliveryHome", { orders });
+  } else {
+    res.redirect("/deliveryLogin");
+  }
+});
+route.post("/deliveryProgress/:id", async (req, res) => {
+  if (
+    req.session.currentDelivererId !== null &&
+    req.session.currentDelivererId !== undefined
+  ) {
+    const currentDeliverer = await DeliveryPerson.findById(
+      req.session.currentDelivererId
+    );
+
+    const currentOrder = await Order.findById(req.params.id);
+    currentDeliverer.currentOrder = currentOrder;
+    await currentDeliverer.save();
+    currentOrder.claimed = true;
+
+    emitOrderClaimed({ email: currentOrder.email });
+
+    const currentTimeDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+    );
+    const currentTimeMs = Date.parse(currentTimeDate);
+    currentOrder.claimTime = currentTimeMs;
+    await currentOrder.save();
+    res.redirect(`/deliveryProgress/${req.params.id}`);
+  } else {
+    res.redirect("/deliveryLogin");
+  }
+});
+route.get("/deliveryProgress/:id", async (req, res) => {
+  if (
+    req.session.currentDelivererId !== null &&
+    req.session.currentDelivererId !== undefined
+  ) {
+    const currentDeliverer = await DeliveryPerson.findById(
+      req.session.currentDelivererId
+    );
+    const currentOrder = await Order.findById(req.params.id);
+    if (
+      currentOrder !== null &&
+      currentOrder !== undefined &&
+      currentOrder.delivered === false
+    ) {
+      res.render("deliveryProgress", { currentDeliverer, currentOrder });
+    } else {
+      res.redirect("/deliveryHome");
+    }
+  } else {
+    res.redirect("/deliveryLogin");
+  }
+});
+
+route.post("/deliveryFinish", async (req, res) => {
+  if (
+    req.session.currentDelivererId !== null &&
+    req.session.currentDelivererId !== undefined
+  ) {
+    const currentDeliverer = await DeliveryPerson.findById(
+      req.session.currentDelivererId
+    );
+    const currentOrder = await Order.findById(currentDeliverer.currentOrder);
+    currentOrder.delivered = true;
+    currentOrder.claimed = false;
+    currentDeliverer.currentOrder = null;
+    const currentTimeDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+    );
+    const currentTimeMs = Date.parse(currentTimeDate);
+    const duration = currentTimeMs - currentOrder.claimTime;
+    currentDeliverer.deliveryTimes.push(duration);
+    await currentOrder.save();
+    await currentDeliverer.save();
+    res.redirect("/deliveryHome");
+  } else {
+    res.redirect("/deliveryLogin");
+  }
+});
+route.get("/deliveryLogOut", async (req, res) => {
+  req.session.currentDelivererId = null;
+  res.redirect("/deliveryLogin");
+});
+route.get("/deliveryPersonManager", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const deliveryPersons = await DeliveryPerson.find();
+
+    res.render("deliveryPersonManager", { deliveryPersons });
+  }
+});
+route.post("/addDeliveryPerson", async (req, res) => {
+  console.log(req.body);
+  const deliveryPerson = new DeliveryPerson({
+    name: req.body.name,
+    pin: req.body.pin,
+  });
+  await deliveryPerson.save();
+  res.status(201).end();
+});
+route.delete("/deleteDeliveryPerson", async (req, res) => {
+  await DeliveryPerson.findByIdAndRemove(req.body.id);
+  res.end();
+});
 // Add route to handle push subscriptions for mobile web notifications
 route.post("/subscribe", (req, res) => {
   const subscription = req.body;
