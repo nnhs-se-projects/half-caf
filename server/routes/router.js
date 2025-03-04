@@ -1087,6 +1087,10 @@ route.delete("/wipeOrders", async (req, res) => {
   } else {
     await Order.deleteMany();
     await Drink.deleteMany();
+    for (const deliveryPerson of await DeliveryPerson.find()) {
+      deliveryPerson.deliveryTimes = [];
+      await deliveryPerson.save();
+    }
     res.end();
   }
 });
