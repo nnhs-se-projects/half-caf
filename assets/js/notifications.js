@@ -157,26 +157,4 @@ if (isMobile()) {
       }
     });
   });
-
-  // Start polling for notifications every 3 seconds when app is minimized
-  setInterval(() => {
-    fetch(`/pollNotifications?email=${encodeURIComponent(currentEmail || "")}`)
-      .then((res) => res.json())
-      .then((notifs) => {
-        notifs.forEach((notification) => {
-          // Show notification via service worker if available
-          if (navigator.serviceWorker) {
-            navigator.serviceWorker.ready.then((registration) => {
-              registration.showNotification(
-                notification.title,
-                notification.options
-              );
-            });
-          } else {
-            new Notification(notification.title, notification.options);
-          }
-        });
-      })
-      .catch((err) => console.error("Polling error:", err));
-  }, 3000);
 }

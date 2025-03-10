@@ -904,6 +904,9 @@ route.get("/barista", async (req, res) => {
 });
 
 route.delete("/barista/:id", async (req, res) => {
+  // await Order.findByIdAndRemove(req.params.id);
+  // res.end();
+
   const order = await Order.findById(req.params.id);
   order.cancelled = true;
   await order.save();
@@ -912,15 +915,7 @@ route.delete("/barista/:id", async (req, res) => {
     cancelMessage: req.body.message,
     email: order.email,
   });
-  // Add notification for order cancellation
-  const notificationsStore = require("../notificationsStore");
-  notificationsStore.addNotification(order.email, {
-    title: "Order cancelled",
-    options: {
-      body: "A barista has cancelled your order because: " + req.body.message,
-      icon: "/test-icon.png",
-    },
-  });
+
   res.status(201).end();
 });
 
@@ -1640,16 +1635,9 @@ route.post("/deliveryProgress/:id", async (req, res) => {
     currentDeliverer.currentOrder = currentOrder;
     await currentDeliverer.save();
     currentOrder.claimed = true;
+
     emitOrderClaimed({ email: currentOrder.email });
-    // Add notification for order claimed
-    const notificationsStore = require("../notificationsStore");
-    notificationsStore.addNotification(currentOrder.email, {
-      title: "Order claimed",
-      options: {
-        body: "Your order has been claimed by a delivery person.",
-        icon: "/test-icon.png",
-      },
-    });
+
     const currentTimeDate = new Date(
       new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
     );
@@ -1743,9 +1731,6 @@ route.post("/subscribe", (req, res) => {
   // TODO: Store the subscription information in your database for later use with web-push
   res.status(201).json({ message: "Subscription received" });
 });
-
-// Add polling notifications route
-route.use("/pollNotifications", require("./notifications"));
 
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
