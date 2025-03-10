@@ -1623,6 +1623,11 @@ route.get("/deliveryHome/", async (req, res) => {
   }
 });
 route.post("/deliveryProgress/:id", async (req, res) => {
+  const currentOrder = await Order.findById(req.params.id);
+  if (!currentOrder.complete) {
+    res.redirect("/deliveryHome");
+    return;
+  }
   if (
     req.session.currentDelivererId !== null &&
     req.session.currentDelivererId !== undefined
@@ -1631,7 +1636,6 @@ route.post("/deliveryProgress/:id", async (req, res) => {
       req.session.currentDelivererId
     );
 
-    const currentOrder = await Order.findById(req.params.id);
     currentDeliverer.currentOrder = currentOrder;
     await currentDeliverer.save();
     currentOrder.claimed = true;
