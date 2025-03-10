@@ -15,8 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json",
         },
       });
-
-      if (response.ok) {
+      if (response.redirected) {
+        alert("Order invalid, try a different order.");
+        window.location = response.url;
+      } else if (response.ok) {
         window.location = `/deliveryProgress/${orderId}`;
       } else {
         console.log("error claiming order");
