@@ -17,10 +17,16 @@ const schema = new mongoose.Schema({
     ref: "Order",
     required: false,
   },
-  deliveryTimes: {
-    type: [Number],
-    required: false,
-  },
+  deliveryTimes: [
+    {
+      duration: Number,
+      orderId: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Order",
+      },
+      email: String,
+    },
+  ],
 });
 
 const deliveryPerson = mongoose.model("DeliveryPerson", schema);
