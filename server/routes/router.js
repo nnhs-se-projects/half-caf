@@ -1198,6 +1198,7 @@ route.get("/teacherMenu", async (req, res) => {
     res.render("teacherMenu", {
       menuItems: menu,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1264,6 +1265,7 @@ route.get("/customizeDrink/:name", async (req, res) => {
           temps: drink.temps,
           toppings,
           email: req.session.email,
+          role: role,
         });
       } else {
         res.status(404).send("Drink not found");
@@ -1334,6 +1336,7 @@ route.get("/teacherMyCart", async (req, res) => {
       cart: req.session.cart,
       customizationDict,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1443,6 +1446,7 @@ route.get("/teacherPopularDrinks", async (req, res) => {
     res.render("teacherPopularDrinks", {
       menuItems: popularMenu,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1501,6 +1505,7 @@ route.get("/teacherMyFavorites", async (req, res) => {
       favoriteDrinksFlavors,
       favoriteDrinksToppings,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1564,6 +1569,7 @@ route.get("/teacherOrderHistory", async (req, res) => {
     res.render("teacherOrderHistory", {
       history: orderHistory.reverse(),
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1574,7 +1580,7 @@ route.get("/orderConfirmation", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     req.session.cart = [];
-    res.render("orderConfirmation", { email: req.session.email });
+    res.render("orderConfirmation", { email: req.session.email, role: role });
   }
 });
 
