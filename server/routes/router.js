@@ -19,6 +19,12 @@ const {
   emitOrderClaimed,
   emitNewOrderPlaced,
 } = require("../socket/socket");
+const devEmails = [
+  "bfjesso@stu.naperville203.org",
+  "rekrzyzanowski@stu.naperville203.org",
+  "jjkrzyzanowski@stu.naperville203.org",
+  "egkohl@stu.naperville203.org",
+];
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
@@ -508,7 +514,7 @@ route.get("/metrics", async (req, res) => {
     delivererNames.push(person.name);
     let sum = 0;
     for (let i = 0; i < person.deliveryTimes.length; i++) {
-      sum += person.deliveryTimes[i];
+      sum += person.deliveryTimes[i].duration;
     }
     averageDeliveryTimePerPerson.push(sum / person.deliveryTimes.length);
   }
@@ -1081,6 +1087,31 @@ route.post("/cancelledOrders/:id", async (req, res) => {
   order.cancelled = false;
   await order.save();
   res.status(201).end();
+});
+
+route.delete("/wipeDevOrders", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const deliveryPersons = await DeliveryPerson.find();
+    for (const person of deliveryPersons) {
+      person.deliveryTimes = person.deliveryTimes.filter((time) => {
+        return !devEmails.includes(time.email);
+      });
+      await person.save();
+    }
+
+    const devOrders = await Order.find({ email: { $in: devEmails } });
+
+    for (const order of devOrders) {
+      for (const drinkId of order.drinks) {
+        await Drink.findByIdAndRemove(drinkId);
+      }
+      await Order.findByIdAndRemove(order._id);
+    }
+    res.status(200).send("Deleted all dev orders");
+  }
 });
 
 route.delete("/wipeOrders", async (req, res) => {
@@ -1702,7 +1733,11 @@ route.post("/deliveryFinish", async (req, res) => {
     );
     const currentTimeMs = Date.parse(currentTimeDate);
     const duration = currentTimeMs - currentOrder.claimTime;
-    currentDeliverer.deliveryTimes.push(duration);
+    currentDeliverer.deliveryTimes.push({
+      duration,
+      orderId: currentOrder._id,
+      email: currentOrder.email,
+    });
     await currentOrder.save();
     await currentDeliverer.save();
     res.redirect("/deliveryHome");
