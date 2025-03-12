@@ -29,7 +29,14 @@ app.use(
 );
 
 // add middleware to handle JSON in HTTP request bodies (used with POST commands)
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(
+  express.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
 
 // set the template engine to EJS, which generates HTML with embedded JavaScript
 app.set("view engine", "ejs");
