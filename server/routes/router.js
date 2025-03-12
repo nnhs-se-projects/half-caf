@@ -1080,6 +1080,16 @@ route.post("/cancelledOrders/:id", async (req, res) => {
   res.status(201).end();
 });
 
+route.delete("/wipeDevOrders", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    await Order.deleteMany({ email: "" });
+    await Drink.deleteMany({ email: "" });
+  }
+});
+
 route.delete("/wipeOrders", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {
