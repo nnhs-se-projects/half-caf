@@ -899,6 +899,7 @@ route.get("/barista", async (req, res) => {
     res.render("barista", {
       orders,
       drinkMap,
+      role,
     });
   }
 });
@@ -993,6 +994,7 @@ route.get("/completed", async (req, res) => {
     res.render("completed", {
       orders,
       drinkMap,
+      role,
     });
   }
 });
@@ -1069,6 +1071,7 @@ route.get("/cancelledOrders", async (req, res) => {
     res.render("cancelledOrders", {
       orders,
       drinkMap,
+      role,
     });
   }
 });
