@@ -44,6 +44,9 @@
     <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
       >Report a bug</a
     >
+    <% if (role === "admin") { %>
+    <a href="/addUser">Admin</a>
+    <% } %>
     <a href="/logout">Logout</a>
   </div>
 

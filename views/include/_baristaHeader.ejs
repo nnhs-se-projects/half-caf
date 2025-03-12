@@ -38,6 +38,10 @@
         >Report a bug</a
       >
 
+      <% if (role === "admin") { %>
+      <a href="/addUser">Admin</a>
+      <% } %>
+
       <a href="/logout">Logout</a>
 
       <% let numOfNewOrders = 0; %> <% for (let order of orders){%> <%
