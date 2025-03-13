@@ -4,18 +4,21 @@
   <div class="pos-grid">
     <div class="drink-container">
       <% for (let drink of menuItems){ %>
-        <div class="pos-card">
-          <div class="pos-container">
-            <h4 class="drink.name"><b><%=drink.name%></b></h4>
-            <img src="<%=drink.imageData%>" alt="<%=drink.name%>" />
-            <h5 class="drink-price">$<%=drink.price%></h5>
-            <% if(drink.description.length > 40) { %>
-            <p><%=drink.description.slice(0,40) + "..."%></p>
-            <% } else { %>
-            <p><%=drink.description%></p>
-            <% } %>
-          </div>
+      <div class="pos-card">
+        <div class="pos-container">
+          <input type="hidden" class="drink-id" value="<%=drink.id%>" />
+          <input type="hidden" class="drink-price" value="<%=drink.price%>" />
+          <input type="hidden" class="drink-name" value="<%=drink.name%>" />
+          <h4><b><%=drink.name%></b></h4>
+          <img src="<%=drink.imageData%>" alt="<%=drink.name%>" />
+          <h5>$<%=drink.price%></h5>
+          <% if(drink.description.length > 40) { %>
+          <p><%=drink.description.slice(0,40) + "..."%></p>
+          <% } else { %>
+          <p><%=drink.description%></p>
+          <% } %>
         </div>
+      </div>
       <% } %>
     </div>
     <div class="order-container">
@@ -26,21 +29,21 @@
             <th>Item</th>
             <th>Price</th>
             <th>Quantity</th>
-            <th>Subtotal</th>
+            <th>Remove</th>
           </tr>
         </thead>
         <tbody>
           <!-- Order items will be added here -->
         </tbody>
-      <div class="order-total">
-        <h4>Total: $<span>0.00</span></h4>
-        <button class="order-button">Order Paid</button>
+      </table>
+      <div class="order-total-container">
+        <h4>Total: $<span class="order-total">0.00</span></h4>
+        <input type="submit" class="" value="Order Paid" />
       </div>
     </div>
   </div>
 </div>
 <style>
-    /* This targets only the pointOfSale page */
   #mainContent .pos-grid {
     display: grid;
     grid-template-columns: 2fr 1fr; /* Drink container takes two-thirds; order container takes one-third */
@@ -48,7 +51,7 @@
     padding: 10px;
     box-sizing: border-box;
   }
-  /* Reset any conflicting styles */
+
   #mainContent .drink-container {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
@@ -58,7 +61,11 @@
     box-sizing: border-box !important;
   }
 
-  /* Use a completely different class name to avoid conflicts */
+  .order-total-container h4 {
+    color: rgb(51, 51, 51);
+    font-size: 1.5rem;
+  }
+
   .pos-card {
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -67,6 +74,8 @@
     box-sizing: border-box;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: white;
+    height: auto;
+    max-height: 200px;
   }
 
   .pos-container {
@@ -98,6 +107,31 @@
     margin: 0;
     height: 30px;
     overflow: hidden;
+  }
+  .order-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  #order-table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  #order-table tbody {
+    display: block;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  #order-table thead,
+  #order-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
   }
 </style>
 

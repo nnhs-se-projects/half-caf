@@ -3,35 +3,38 @@ function addDrinkToOrder(drink) {
   const drinkElement = document.createElement("tr");
   drinkElement.innerHTML = `
     <td>${drink.name}</td>
-    <td>${drink.price}</td>
+    <td>$${drink.price}</td>
+    <td>1</td>
     <td>
-      <button class="action-button cancel cancelButton" value="${drink.id}">
-        Cancel
-      </button>
+      <input type="submit" class="cancelButton" value="Cancel">
+      </input>
     </td>
   `;
   orderTable.getElementsByTagName("tbody")[0].appendChild(drinkElement);
+  const cancelButton = drinkElement.querySelector(".cancelButton");
+  const orderTotal = document.querySelector(".order-total");
+  cancelButton.addEventListener("click", async () => {
+    orderTotal.textContent =
+      Number(orderTotal.textContent) - Number(drink.price);
+    drinkElement.remove();
+  });
+  orderTotal.textContent = Number(orderTotal.textContent) + Number(drink.price);
 }
 
-function addListenerToDrinkCards() {
+document.addEventListener("DOMContentLoaded", () => {
   const drinkCards = document.querySelectorAll(".pos-card");
   for (const card of drinkCards) {
-    card.addEventListener("click", (event) => {
-      const drinkName = card.querySelector(".drink-name").textContent;
-      const drinkPrice = card.querySelector(".drink-price").textContent;
-      const drinkId = card.querySelector(".drink-id").textContent;
-      const drinkImage = card.querySelector(".drink-image").src;
+    card.addEventListener("click", async () => {
+      const drinkName = card.querySelector(".drink-name").value;
+      const drinkPrice = card.querySelector(".drink-price").value;
+      const drinkId = card.querySelector(".drink-id").value;
       const drink = {
         name: drinkName,
         price: drinkPrice,
         id: drinkId,
-        image: drinkImage,
       };
+      console.log(drink);
       addDrinkToOrder(drink);
     });
   }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  addListenerToDrinkCards();
 });
