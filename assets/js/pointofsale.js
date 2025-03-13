@@ -1,3 +1,4 @@
+let currentDrinkId = 0;
 function addDrinkToOrder(drink) {
   const orderTable = document.querySelector("#order-table");
   const drinkElement = document.createElement("tr");
@@ -18,6 +19,7 @@ function addDrinkToOrder(drink) {
       Number(orderTotal.textContent) - Number(drink.price);
     drinkElement.remove();
   });
+  currentDrinkId++;
   orderTotal.textContent = Number(orderTotal.textContent) + Number(drink.price);
 }
 
@@ -32,6 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
         name: drinkName,
         price: drinkPrice,
         id: drinkId,
+        flavors: [],
+        toppings: [],
+        temps: [],
+        caffeination: false,
+        instructions: "",
+        favorite: false,
+        completed: false,
       };
       console.log(drink);
       addDrinkToOrder(drink);
