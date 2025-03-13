@@ -941,6 +941,29 @@ route.post("/barista/:id", async (req, res) => {
   res.status(201).end();
 });
 
+route.get("/pointofsale", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role === "teacher") {
+    res.redirect("/redirectUser");
+  } else {
+    const menuItems = await MenuItem.find();
+    const flavors = await Flavor.find();
+    const toppings = await Topping.find();
+    const temps = TempJson;
+    const orders = await Order.find();
+    res.render("pointofsale", {
+      role,
+      orders,
+      menuItems,
+      flavors,
+      toppings,
+      temps,
+    });
+  }
+});
+
+route.post("/pointofsale", async (req, res) => {});
+
 // completed orders page of barista that displays all completed orders
 route.get("/completed", async (req, res) => {
   const role = await getUserRoles(req.session.email);

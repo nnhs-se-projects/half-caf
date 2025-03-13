@@ -1,0 +1,104 @@
+<%- include('include/_baristaHeader') %>
+<div id="mainContent">
+  <div class="customization-container"></div>
+  <div class="pos-grid">
+    <div class="drink-container">
+      <% for (let drink of menuItems){ %>
+        <div class="pos-card">
+          <div class="pos-container">
+            <h4 class="drink.name"><b><%=drink.name%></b></h4>
+            <img src="<%=drink.imageData%>" alt="<%=drink.name%>" />
+            <h5 class="drink-price">$<%=drink.price%></h5>
+            <% if(drink.description.length > 40) { %>
+            <p><%=drink.description.slice(0,40) + "..."%></p>
+            <% } else { %>
+            <p><%=drink.description%></p>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+    <div class="order-container">
+      <h3>Order</h3>
+      <table id="order-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Order items will be added here -->
+        </tbody>
+      <div class="order-total">
+        <h4>Total: $<span>0.00</span></h4>
+        <button class="order-button">Order Paid</button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+    /* This targets only the pointOfSale page */
+  #mainContent .pos-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Drink container takes two-thirds; order container takes one-third */
+    gap: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  /* Reset any conflicting styles */
+  #mainContent .drink-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Use a completely different class name to avoid conflicts */
+  .pos-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+  }
+
+  .pos-container {
+    padding: 5px;
+  }
+
+  .pos-card h4 {
+    font-size: 0.75rem;
+    margin: 0;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pos-card img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    margin: 5px 0;
+  }
+
+  .pos-card h5 {
+    font-size: 0.8rem;
+    margin: 5px 0;
+  }
+
+  .pos-card p {
+    font-size: 0.75rem;
+    margin: 0;
+    height: 30px;
+    overflow: hidden;
+  }
+</style>
+
+<script src="/js/pointofsale.js"></script>
