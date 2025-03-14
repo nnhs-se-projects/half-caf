@@ -1,4 +1,4 @@
-let currentDrinkId = 0;
+let currentDrinkId;
 function addDrinkToOrder(drink) {
   const orderTable = document.querySelector("#order-table");
   const drinkElement = document.createElement("tr");
@@ -19,7 +19,7 @@ function addDrinkToOrder(drink) {
       Number(orderTotal.textContent) - Number(drink.price);
     drinkElement.remove();
   });
-  currentDrinkId++;
+  currentDrinkId = drink.id;
   orderTotal.textContent = Number(orderTotal.textContent) + Number(drink.price);
 }
 
