@@ -1,5 +1,10 @@
 <%- include('include/_baristaHeader') %>
 <div id="mainContent">
+  <input
+    type="hidden"
+    id="menuItems"
+    value="<%= JSON.stringify(menuItems) %>"
+  />
   <div class="customization-container"></div>
   <div class="pos-grid">
     <div class="drink-container">
