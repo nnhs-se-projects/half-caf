@@ -1,11 +1,18 @@
 <%- include('include/_baristaHeader') %>
 <div id="mainContent">
+  <input type="hidden" id="flavors" value="<%=JSON.stringify(flavors) %>" />
+  <input type="hidden" id="toppings" value="<%=JSON.stringify(toppings) %>" />
+  <input type="hidden" id="temps" value="<%=JSON.stringify(temps) %>" />
   <input
     type="hidden"
-    id="menuItems"
-    value="<%= JSON.stringify(menuItems) %>"
+    id="possibleModifications"
+    value="<%=JSON.stringify(possibleModificationsMap) %>"
   />
-  <div class="customization-container"></div>
+  <div class="customization-container">
+    <h3>Customize Your Drink</h3>
+    <h4 id="currentDrinkText">Current Drink:</h4>
+    <div class="customization-grid"></div>
+  </div>
   <div class="pos-grid">
     <div class="drink-container">
       <% for (let drink of menuItems){ %>

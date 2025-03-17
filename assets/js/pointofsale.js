@@ -1,9 +1,69 @@
 let currentMenuItemId;
 let currentDrink;
 let cart = [];
+let isDrinkSelected = false;
+const currentDrinkText = document.querySelector("#currentDrinkText");
+const orderTable = document.querySelector("#order-table");
+const orderTotal = document.querySelector(".order-total");
+const flavors = document.querySelector(".flavors").value;
+const toppings = document.querySelector(".toppings").value;
+const temps = document.querySelector(".temps").value;
+const possibleModificationsMap = document.querySelector(
+  "#possibleModifications"
+).value;
+function selectDrink(drink) {
+  if (isDrinkSelected) {
+    // save the edits to the current drink before changing to a new one
+  }
+  isDrinkSelected = true;
+  currentMenuItemId = drink.menuItemId;
+  currentDrink = drink;
+  let possibleFlavors = [];
+  let possibleToppings = [];
+  let possibleTemps = [];
+  for (const flavor of flavors) {
+    if (possibleModificationsMap.get(drink.menuItemId).indexOf(flavor) > -1) {
+      possibleFlavors.push(flavor);
+    }
+  }
+  for (const topping of toppings) {
+    if (possibleModificationsMap.get(drink.menuItemId).indexOf(topping) > -1) {
+      possibleToppings.push(topping);
+    }
+  }
+  for (const temp of temps) {
+    if (possibleModificationsMap.get(drink.menuItemId).indexOf(temp) > -1) {
+      possibleTemps.push(temp);
+    }
+  }
+
+  currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
+  document.querySelector(".customization-grid").innerHTML = `
+  <% for (const flavor of possibleFlavors) { %>
+    <div class="flavor">
+      <input type="checkbox" class="flavor" value="<%= flavor %>">
+      <label><%= flavor %></label>
+    </div>
+  <% } %>
+  <% for (const topping of possibleToppings) { %>
+    <div class="topping">
+      <input type="checkbox" class="topping" value="<%= topping %>">
+      <label><%= topping %></label>
+    </div>
+  <% } %>
+  <% for (const temp of possibleTemps) { %>
+    <div class="temp">
+      <input type="checkbox" class="temp" value="<%= temp %>">
+      <label><%= temp %></label>
+    </div>
+  <% } %>
+  <input type="submit" class="saveButton" value="Save">
+    `;
+  const saveButton = document.querySelector(".saveButton");
+}
 function addDrinkToOrder(drink) {
   cart.push(drink);
-  const orderTable = document.querySelector("#order-table");
+
   const drinkElement = document.createElement("tr");
   drinkElement.innerHTML = `
     <input type="hidden" class="drink" value="${drink}">
@@ -16,8 +76,8 @@ function addDrinkToOrder(drink) {
     </td>
   `;
   orderTable.getElementsByTagName("tbody")[0].appendChild(drinkElement);
-  const orderTotal = document.querySelector(".order-total");
   orderTotal.textContent = Number(orderTotal.textContent) + Number(drink.price);
+
   const cancelButton = drinkElement.querySelector(".cancelButton");
   cancelButton.addEventListener("click", async () => {
     orderTotal.textContent =
@@ -25,13 +85,9 @@ function addDrinkToOrder(drink) {
     drinkElement.remove();
     cart.splice(cart.indexOf(drink), 1);
   });
-  currentMenuItemId = drink.menuItemId;
-  currentDrink = drink;
-
   drinkElement.addEventListener("click", async () => {
     const clickedDrink = drinkElement.querySelector(".drink").value;
-    currentMenuItemId = clickedDrink.menuItemId;
-    currentDrink = clickedDrink;
+    selectDrink(clickedDrink);
   });
 }
 

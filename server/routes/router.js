@@ -951,6 +951,20 @@ route.get("/pointofsale", async (req, res) => {
     const toppings = await Topping.find();
     const temps = TempJson;
     const orders = await Order.find();
+    const possibleModificationsMap = new Map();
+    for (const item of menuItems) {
+      const modifications = [];
+      for (const topping of item.toppings) {
+        modifications.push(topping);
+      }
+      for (const flavor of item.flavors) {
+        modifications.push(flavor);
+      }
+      for (const temp of item.temps) {
+        modifications.push(temp);
+      }
+      possibleModificationsMap.set(item._id, modifications);
+    }
     res.render("pointofsale", {
       role,
       orders,
@@ -958,6 +972,7 @@ route.get("/pointofsale", async (req, res) => {
       flavors,
       toppings,
       temps,
+      possibleModificationsMap,
     });
   }
 });
