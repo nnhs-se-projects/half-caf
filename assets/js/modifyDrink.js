@@ -62,6 +62,19 @@ document
 // creates a topping with a name chosen by an admin
 const saveDrinkButton = document.querySelector("input.submit");
 
+const caf = document.getElementById("caffeination");
+const allowDecaf = document.getElementById("allowDecaf");
+
+caf.addEventListener("click", async () => {
+  if (caf.checked) {
+    allowDecaf.parentElement.hidden = false;
+  } else {
+    allowDecaf.parentElement.hidden = true;
+  }
+
+  allowDecaf.checked = false;
+});
+
 saveDrinkButton.addEventListener("click", async () => {
   const id = document.getElementById("filter").value;
   const name = document
@@ -104,7 +117,6 @@ saveDrinkButton.addEventListener("click", async () => {
     }
   }
   const popular = document.getElementById("popular").checked;
-  const caffeination = document.getElementById("caffeination").checked;
   const special = document.getElementById("special").checked;
   const imageData = srcData;
   const drink = {
@@ -115,7 +127,8 @@ saveDrinkButton.addEventListener("click", async () => {
     checkedToppings,
     checkedTemps,
     popular,
-    caf: caffeination,
+    caf: caf.checked,
+    allowDecaf: allowDecaf.checked,
     special,
     imageData,
   };
