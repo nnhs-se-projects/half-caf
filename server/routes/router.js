@@ -968,7 +968,14 @@ route.get("/pointofsale", async (req, res) => {
         modifications.push(temp);
       }
       possibleModificationsMap[item._id] = modifications;
+      if (item.caffeination) {
+        possibleModificationsMap[item._id].push("Caffeine");
+      }
+      if (item.allowDecaf) {
+        possibleModificationsMap[item._id].push("Decaf");
+      }
     }
+
     res.render("pointofsale", {
       role,
       orders,
