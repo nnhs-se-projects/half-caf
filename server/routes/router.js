@@ -453,6 +453,7 @@ route.post("/addDrink", async (req, res) => {
     toppings: req.body.checkedToppings,
     temps: req.body.checkedTemps,
     caffeination: req.body.caf,
+    allowDecaf: req.body.allowDecaf,
     special: req.body.special,
     imageData: req.body.imageData,
   });
@@ -472,6 +473,7 @@ route.post("/modifyDrink/:id", async (req, res) => {
       : [];
     menuItem.temps = req.body.checkedTemps;
     menuItem.caffeination = req.body.caf;
+    menuItem.allowDecaf = req.body.allowDecaf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
     menuItem.imageData = req.body.imageData
@@ -867,9 +869,11 @@ route.get("/barista", async (req, res) => {
           flavors: [],
           toppings: [],
           temp: "",
+          caffeinated: false,
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
@@ -962,9 +966,11 @@ route.get("/completed", async (req, res) => {
           flavors: [],
           toppings: [],
           temp: "",
+          caffeinated: false,
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
@@ -1039,9 +1045,11 @@ route.get("/cancelledOrders", async (req, res) => {
           flavors: [],
           toppings: [],
           temp: "",
+          caffeinated: false,
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
@@ -1323,6 +1331,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       flavors: req.body.checkedFlavors,
       toppings: req.body.checkedToppings,
       temps: req.body.temp,
+      caffeinated: req.body.caf,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
       completed: false,

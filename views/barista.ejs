@@ -16,6 +16,7 @@
           <th>Temp</th>
           <th>Flavors</th>
           <th>Toppings</th>
+          <th>Decaf</th>
           <th>Special Instructions</th>
           <th>Time</th>
           <th>Timer</th>
@@ -44,6 +45,7 @@
           </td>
           <td><%=tempDrink.flavors%></td>
           <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
           <td><%=tempDrink.instructions%></td>
           <td><%=order.timestamp.split('/')[0]%></td>
           <td>
@@ -57,7 +59,6 @@
           <% if(showButtons) { %>
 
           <td colspan="2">
-
             <button
               class="action-button cancel cancelButton"
               value="<%=order.id%>"
@@ -96,7 +97,6 @@
     align-items: center;
 
     margin-bottom: 1rem; /* Reduced from 2rem */
-
   }
 
   .page-title {
@@ -120,7 +120,6 @@
     box-shadow: 0 4px 24px rgba(60, 42, 33, 0.1);
     max-height: calc(100vh - 180px); /* Adjust based on header height */
     overflow-y: auto;
-
   }
 
   .orders-table {
@@ -128,7 +127,6 @@
     border-collapse: separate;
 
     border-spacing: 0 4px; /* Reduced from 8px */
-
   }
 
   .orders-table th {
@@ -141,7 +139,6 @@
     position: sticky;
     top: 0;
     z-index: 1;
-
   }
 
   .orders-table th:first-child {
@@ -163,7 +160,6 @@
   }
 
   .order-row td {
-
     padding: 0.75rem; /* Reduced from 1rem */
 
     border-top: 2px solid white;
@@ -221,7 +217,6 @@
     width: 100%;
 
     margin-bottom: 5px; /* Add spacing between stacked buttons */
-
   }
 
   .action-button.cancel {

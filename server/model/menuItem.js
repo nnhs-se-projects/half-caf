@@ -39,6 +39,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  allowDecaf: {
+    type: Boolean,
+    required: false,
+  },
   special: {
     type: Boolean,
     required: false,

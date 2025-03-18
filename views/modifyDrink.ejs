@@ -125,6 +125,11 @@
           selectedMenuItem.caffeination) ? "checked" : "" %> /> Caffeination
         </li>
         <li>
+          <input id="allowDecaf" type="checkbox" <%= (chosenDrink &&
+          selectedMenuItem.allowDecaf) ? "checked" : "" %> /> Available in
+          Decaf?
+        </li>
+        <li>
           <input id="special" type="checkbox" <%= (chosenDrink &&
           selectedMenuItem.special) ? "checked" : "" %> /> Special?
         </li>
