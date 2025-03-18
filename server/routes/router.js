@@ -988,7 +988,68 @@ route.get("/pointofsale", async (req, res) => {
   }
 });
 
-route.post("/pointofsale", async (req, res) => {});
+route.post("/pointofsale", async (req, res) => {
+  const order = new Order({
+    email: "in-person",
+    room: "half-caf",
+    timestamp: req.body.timestamp,
+    complete: false,
+    claimed: false,
+    claimTime: 0,
+    delivered: false,
+    cancelled: false,
+    drinks: req.body.cart,
+    totalPrice: req.body.total,
+    timer: "uncompleted",
+  });
+  await order.save();
+  const drinks = await Drink.find({ _id: { $in: req.body.cart } });
+  const flavors = await Flavor.find({});
+  const toppings = await Topping.find({});
+  const drinkArray = [];
+  for (let n = 0; n < order.drinks.length; n++) {
+    const formattedDrink = {
+      name: "",
+      flavors: [],
+      toppings: [],
+      temp: "",
+      instructions: "",
+    };
+    const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
+    if (drink.flavors.length === 0) {
+      formattedDrink.flavors.push("None");
+    } else {
+      for (let x = 0; x < drink.flavors.length; x++) {
+        const tempFlavor = flavors.find((f) => f._id.equals(drink.flavors[x]));
+        if (tempFlavor !== null && tempFlavor !== undefined) {
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+    }
+    if (drink.toppings.length === 0) {
+      formattedDrink.toppings.push("None");
+    } else {
+      for (let x = 0; x < drink.toppings.length; x++) {
+        const tempTopping = toppings.find((t) =>
+          t._id.equals(drink.toppings[x])
+        );
+        if (tempTopping !== null && tempTopping !== undefined) {
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+    }
+    formattedDrink.name = drink.name;
+    formattedDrink.temp = drink.temps;
+    formattedDrink.instructions = drink.instructions;
+    drinkArray.push(formattedDrink);
+  }
+
+  emitNewOrderPlaced({
+    order,
+    drinks: drinkArray,
+  });
+  res.status(201).end();
+});
 
 // completed orders page of barista that displays all completed orders
 route.get("/completed", async (req, res) => {
@@ -1454,7 +1515,6 @@ route.post("/teacherMyCart", async (req, res) => {
       claimTime: 0,
       delivered: false,
       cancelled: false,
-      read: false,
       drinks: req.session.cart,
       totalPrice: total,
       timer: "uncompleted",
