@@ -26,7 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedTemp = document.querySelector(".temp-radio:checked")
       ? document.querySelector(".temp-radio:checked").value
       : null;
-
+    const selectedCaffeination = document.querySelector(
+      ".caffeination-checkbox"
+    );
+    if (selectedCaffeination) {
+      currentDrink.caffeinated = !selectedCaffeination.checked;
+    }
     currentDrink.flavors = selectedFlavors;
     currentDrink.toppings = selectedToppings;
     currentDrink.temps = selectedTemp;
@@ -139,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (possibleModificationsMap[drink.menuItemId].indexOf("Decaf") > -1) {
       // Create column for decaf or caffeine
-      const isChecked = currentDrink.caffeination ? "checked" : "";
+      const isChecked = currentDrink.caffeinated ? "" : "checked";
       html += '<div class="customization-column">';
       html += "<h5>Caffeination</h5>";
       html += `
@@ -220,8 +225,8 @@ document.addEventListener("DOMContentLoaded", () => {
         flavors: [],
         toppings: [],
         temps: [],
-        caffeination:
-          possibleModificationsMap[menuItemId].indexOf("Caffeination") > -1,
+        caffeinated:
+          possibleModificationsMap[menuItemId].indexOf("Caffeine") > -1,
         instructions: "",
         favorite: false,
         completed: false,
@@ -241,14 +246,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Process the order
-      console.log("Processing order with items:", cart);
-      alert("Order processed successfully!");
-
       // Clear the cart
       cart = [];
       orderTotal.textContent = "0.00";
       orderTable.getElementsByTagName("tbody")[0].innerHTML = "";
+      currentDrinkText.textContent = "Current Drink: None";
+      isDrinkSelected = false;
+      document.querySelector(".customization-grid").innerHTML = "";
     });
   }
 });
