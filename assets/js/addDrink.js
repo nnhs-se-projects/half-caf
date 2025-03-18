@@ -43,6 +43,19 @@ function encodeImageFileAsURL() {
   }
 }
 
+const caf = document.getElementById("caffeinated");
+const allowDecaf = document.getElementById("allowDecaf");
+
+caf.addEventListener("click", async () => {
+  if (caf.checked) {
+    allowDecaf.parentElement.hidden = false;
+  } else {
+    allowDecaf.parentElement.hidden = true;
+  }
+
+  allowDecaf.checked = false;
+});
+
 addDrinkButton.addEventListener("click", async () => {
   const name = document
     .getElementById("name")
@@ -84,8 +97,6 @@ addDrinkButton.addEventListener("click", async () => {
     }
   }
 
-  const caf = document.getElementById("caffeinated").checked;
-
   const imageData = srcData;
 
   const menuItem = {
@@ -96,7 +107,8 @@ addDrinkButton.addEventListener("click", async () => {
     checkedFlavors,
     checkedToppings,
     checkedTemps,
-    caf,
+    caf: caf.checked,
+    allowDecaf: allowDecaf.checked,
     special,
     imageData,
   };

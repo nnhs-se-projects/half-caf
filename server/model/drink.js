@@ -28,7 +28,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  caffeination: {
+  caffeinated: {
     type: Boolean,
     required: false,
   },
