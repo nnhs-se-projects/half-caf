@@ -71,9 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "<h5>Flavors</h5>";
     if (possibleFlavors.length > 0) {
       possibleFlavors.forEach((flavor) => {
-        const isChecked = currentDrink.flavors.includes(flavor._id)
-          ? "checked"
-          : "";
+        const isChecked =
+          currentDrink.flavors.indexOf(flavor._id) > -1 ? "checked" : "";
         html += `
     <div class="flavor-container">
       <input type="checkbox" id="flavor-${flavor._id}" class="flavor-checkbox" value="${flavor._id}" ${isChecked}/>
@@ -91,9 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "<h5>Toppings</h5>";
     if (possibleToppings.length > 0) {
       possibleToppings.forEach((topping) => {
-        const isChecked = currentDrink.toppings.includes(topping._id)
-          ? "checked"
-          : "";
+        const isChecked =
+          currentDrink.toppings.indexOf(topping._id) > -1 ? "checked" : "";
         html += `
     <div class="topping-container">
       <input type="checkbox" id="topping-${topping._id}" class="topping-checkbox" value="${topping._id}" ${isChecked}/>
@@ -111,10 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "<h5>Temperature</h5>";
     if (possibleTemps.length > 0) {
       possibleTemps.forEach((temp) => {
-        const isChecked = currentDrink.temps.includes(temp) ? "checked" : "";
+        const isChecked =
+          currentDrink.temps && currentDrink.temps.indexOf(temp) > -1
+            ? "checked"
+            : "";
         html += `
     <div class="temp-container">
-      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}"  ${isChecked}/>
+      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" checked="checked"/>
       <label for="temp-${temp}">${temp}</label>
     </div>
     `;
@@ -176,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>$${drink.price}</td>
       <td>1</td>
       <td>
-        <button class="cancelButton">Cancel</button>
+        <input type="submit" value="Cancel" class="cancelButton" />
       </td>
     `;
 

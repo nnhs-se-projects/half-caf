@@ -51,6 +51,43 @@
   </div>
 </div>
 <style>
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--coffee-medium);
+    border-radius: 4px;
+    background: white;
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: "✓";
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    --border-color: orange !important;
+  }
+
   .customization-columns {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
