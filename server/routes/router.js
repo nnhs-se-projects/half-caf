@@ -963,7 +963,7 @@ route.get("/pointofsale", async (req, res) => {
       for (const temp of item.temps) {
         modifications.push(temp);
       }
-      possibleModificationsMap.set(item._id, modifications);
+      possibleModificationsMap[item._id] = modifications;
     }
     res.render("pointofsale", {
       role,

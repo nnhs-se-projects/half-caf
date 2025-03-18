@@ -24,11 +24,6 @@
           <h4><b><%=drink.name%></b></h4>
           <img src="<%=drink.imageData%>" alt="<%=drink.name%>" />
           <h5>$<%=drink.price%></h5>
-          <% if(drink.description.length > 40) { %>
-          <p><%=drink.description.slice(0,40) + "..."%></p>
-          <% } else { %>
-          <p><%=drink.description%></p>
-          <% } %>
         </div>
       </div>
       <% } %>
@@ -56,6 +51,71 @@
   </div>
 </div>
 <style>
+  .customization-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .customization-column {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+
+  .customization-column h5 {
+    margin-top: 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .flavor-container,
+  .topping-container,
+  .temp-container {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .flavor-checkbox,
+  .topping-checkbox,
+  .temp-radio {
+    margin-right: 8px;
+    cursor: pointer;
+  }
+
+  .button-container {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .saveButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .saveButton:hover {
+    background-color: #45a049;
+  }
+
+  /* Responsive layout */
+  @media (max-width: 768px) {
+    .customization-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+  #currentDrinkText {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: rgb(51, 51, 51);
+  }
   #mainContent .pos-grid {
     display: grid;
     grid-template-columns: 2fr 1fr; /* Drink container takes two-thirds; order container takes one-third */
@@ -144,6 +204,27 @@
     display: table;
     width: 100%;
     table-layout: fixed;
+  }
+  .flavor-container,
+  .topping-container,
+  .temp-container {
+    margin: 8px 0;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  .flavor-checkbox,
+  .topping-checkbox,
+  .temp-radio {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+
+  label {
+    cursor: pointer;
   }
 </style>
 
