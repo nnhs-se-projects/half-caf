@@ -5,7 +5,7 @@
 <!-- Main Site -->
 
 <div id="mainContent" class="adminPage">
-  <div class="userHdr">Delete Topping</div>
+  <div class="userHdr">Delete Add-On</div>
   <select id="toDelete">
     <% for (let topping of toppings) { %>
     <option value="<%= topping.id %>"><%= topping.topping %></option>
@@ -15,7 +15,7 @@
     id="delTopping"
     type="submit"
     onclick="deleteTopping()"
-    value="Delete Topping"
+    value="Delete Add-On"
   />
 </div>
 
