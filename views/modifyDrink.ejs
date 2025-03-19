@@ -78,7 +78,7 @@
 
   <div id="pageRight">
     <div id="toppings" class="dropdown-check-list">
-      <span class="anchor">Edit Toppings</span>
+      <span class="anchor">Edit Add-Ons</span>
       <ul class="items">
         <%for (let topping of toppings) { if(chosenDrink == true &&
         selectedMenuItem.toppings.includes(topping._id) == true) { %>
@@ -118,20 +118,19 @@
       <ul class="items">
         <li>
           <input id="popular" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.popular) ? "checked" : "" %> /> Popular?
+          selectedMenuItem.popular) ? "checked" : "" %> /> Popular
         </li>
         <li>
           <input id="caffeination" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.caffeination) ? "checked" : "" %> /> Caffeination
+          selectedMenuItem.caffeination) ? "checked" : "" %> /> Caffeinated
         </li>
         <li>
           <input id="allowDecaf" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.allowDecaf) ? "checked" : "" %> /> Available in
-          Decaf?
+          selectedMenuItem.allowDecaf) ? "checked" : "" %> /> Decaf
         </li>
         <li>
           <input id="special" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.special) ? "checked" : "" %> /> Special?
+          selectedMenuItem.special) ? "checked" : "" %> /> Special
         </li>
       </ul>
     </div>
