@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(currentDrink);
   }
   function selectDrink(drink) {
+    console.log("You selected a drink");
     if (isDrinkSelected) {
       saveDrinkModifications();
     }
@@ -184,6 +185,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>
         <input type="submit" value="Cancel" class="cancelButton" />
       </td>
+      <td>
+        <input type="submit" value="Edit" class="editButton" />
     `;
 
     // Store drink data for retrieval
@@ -196,15 +199,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cancelButton = drinkElement.querySelector(".cancelButton");
     cancelButton.addEventListener("click", () => {
+      if (currentDrink === drink) {
+        currentDrink = null;
+        isDrinkSelected = false;
+        currentDrinkText.textContent = "Current Drink: None";
+        document.querySelector(".customization-grid").innerHTML = "";
+      }
       orderTotal.textContent = (
         Number(orderTotal.textContent) - Number(drink.price)
       ).toFixed(2);
       drinkElement.remove();
       cart.splice(cart.indexOf(drink), 1);
     });
-
-    drinkElement.addEventListener("click", () => {
-      // Get the drink data from the element
+    const editButton = drinkElement.querySelector(".editButton");
+    editButton.addEventListener("click", () => {
       const clickedDrink = JSON.parse(drinkElement.dataset.drink);
       selectDrink(clickedDrink);
     });
@@ -240,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ".order-total-container input[type='submit']"
   );
   if (orderPaidButton) {
-    orderPaidButton.addEventListener("click", () => {
+    orderPaidButton.addEventListener("click", async () => {
       if (cart.length === 0) {
         alert("No items in order");
         return;
@@ -257,13 +265,30 @@ document.addEventListener("DOMContentLoaded", () => {
       hours = hours || 12;
       const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}${ampm}/${seconds}`;
 
-      // Clear the cart
-      cart = [];
-      orderTotal.textContent = "0.00";
-      orderTable.getElementsByTagName("tbody")[0].innerHTML = "";
-      currentDrinkText.textContent = "Current Drink: None";
-      isDrinkSelected = false;
-      document.querySelector(".customization-grid").innerHTML = "";
+      // Send the order to the server
+      const response = await fetch(`/pointofsale`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          order: cart,
+          timestamp: formattedTime,
+          total: Number(orderTotal.textContent),
+        }),
+      });
+
+      if (response.ok) {
+        // Clear the cart
+        cart = [];
+        orderTotal.textContent = "0.00";
+        orderTable.getElementsByTagName("tbody")[0].innerHTML = "";
+        currentDrinkText.textContent = "Current Drink: None";
+        isDrinkSelected = false;
+        document.querySelector(".customization-grid").innerHTML = "";
+      } else {
+        console.log("error deleting flavor");
+      }
     });
   }
 });

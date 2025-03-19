@@ -989,21 +989,37 @@ route.get("/pointofsale", async (req, res) => {
 });
 
 route.post("/pointofsale", async (req, res) => {
+  const drinkIdCart = [];
+  for (const drink of req.body.order) {
+    const newDrink = new Drink({
+      name: drink.name,
+      price: drink.price,
+      temps: drink.temps,
+      flavors: drink.flavors,
+      toppings: drink.toppings,
+      instructions: drink.instructions,
+      completed: false,
+      caffeinated: drink.caffeinated,
+    });
+    await newDrink.save();
+    drinkIdCart.push(newDrink._id);
+  }
+
   const order = new Order({
     email: "in-person",
     room: "half-caf",
     timestamp: req.body.timestamp,
     complete: false,
-    claimed: false,
+    claimed: true, // set to true so that it doesn't show up in the delivery page
     claimTime: 0,
-    delivered: false,
+    delivered: true,
     cancelled: false,
-    drinks: req.body.cart,
+    drinks: drinkIdCart,
     totalPrice: req.body.total,
     timer: "uncompleted",
   });
   await order.save();
-  const drinks = await Drink.find({ _id: { $in: req.body.cart } });
+  const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
   const drinkArray = [];
