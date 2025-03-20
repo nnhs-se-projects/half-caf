@@ -19,6 +19,12 @@ const {
   emitOrderClaimed,
   emitNewOrderPlaced,
 } = require("../socket/socket");
+const devEmails = [
+  "bfjesso@stu.naperville203.org",
+  "rekrzyzanowski@stu.naperville203.org",
+  "jjkrzyzanowski@stu.naperville203.org",
+  "egkohl@stu.naperville203.org",
+];
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
@@ -447,6 +453,7 @@ route.post("/addDrink", async (req, res) => {
     toppings: req.body.checkedToppings,
     temps: req.body.checkedTemps,
     caffeination: req.body.caf,
+    allowDecaf: req.body.allowDecaf,
     special: req.body.special,
     imageData: req.body.imageData,
   });
@@ -466,6 +473,7 @@ route.post("/modifyDrink/:id", async (req, res) => {
       : [];
     menuItem.temps = req.body.checkedTemps;
     menuItem.caffeination = req.body.caf;
+    menuItem.allowDecaf = req.body.allowDecaf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
     menuItem.imageData = req.body.imageData
@@ -508,7 +516,7 @@ route.get("/metrics", async (req, res) => {
     delivererNames.push(person.name);
     let sum = 0;
     for (let i = 0; i < person.deliveryTimes.length; i++) {
-      sum += person.deliveryTimes[i];
+      sum += person.deliveryTimes[i].duration;
     }
     averageDeliveryTimePerPerson.push(sum / person.deliveryTimes.length);
   }
@@ -861,9 +869,11 @@ route.get("/barista", async (req, res) => {
           flavors: [],
           toppings: [],
           temp: "",
+          caffeinated: false,
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
@@ -899,6 +909,7 @@ route.get("/barista", async (req, res) => {
     res.render("barista", {
       orders,
       drinkMap,
+      role,
     });
   }
 });
@@ -934,6 +945,128 @@ route.post("/barista/:id", async (req, res) => {
   res.status(201).end();
 });
 
+route.get("/pointofsale", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role === "teacher") {
+    res.redirect("/redirectUser");
+  } else {
+    const menuItems = await MenuItem.find();
+    const flavors = await Flavor.find();
+    const toppings = await Topping.find();
+    const temps = TempJson;
+    const orders = await Order.find();
+    const possibleModificationsMap = new Map();
+    for (const item of menuItems) {
+      const modifications = [];
+      for (const topping of item.toppings) {
+        modifications.push(topping);
+      }
+      for (const flavor of item.flavors) {
+        modifications.push(flavor);
+      }
+      for (const temp of item.temps) {
+        modifications.push(temp);
+      }
+      possibleModificationsMap[item._id] = modifications;
+      if (item.caffeination) {
+        possibleModificationsMap[item._id].push("Caffeine");
+      }
+      if (item.allowDecaf) {
+        possibleModificationsMap[item._id].push("Decaf");
+      }
+    }
+
+    res.render("pointofsale", {
+      role,
+      orders,
+      menuItems,
+      flavors,
+      toppings,
+      temps,
+      possibleModificationsMap,
+    });
+  }
+});
+
+route.post("/pointofsale", async (req, res) => {
+  const drinkIdCart = [];
+  for (const drink of req.body.order) {
+    const newDrink = new Drink({
+      name: drink.name,
+      price: drink.price,
+      temps: drink.temps,
+      flavors: drink.flavors,
+      toppings: drink.toppings,
+      instructions: drink.instructions,
+      completed: false,
+      caffeinated: drink.caffeinated,
+    });
+    await newDrink.save();
+    drinkIdCart.push(newDrink._id);
+  }
+
+  const order = new Order({
+    email: "in-person",
+    room: "half-caf",
+    timestamp: req.body.timestamp,
+    complete: false,
+    claimed: true, // set to true so that it doesn't show up in the delivery page
+    claimTime: 0,
+    delivered: true,
+    cancelled: false,
+    drinks: drinkIdCart,
+    totalPrice: req.body.total,
+    timer: "uncompleted",
+  });
+  await order.save();
+  const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
+  const flavors = await Flavor.find({});
+  const toppings = await Topping.find({});
+  const drinkArray = [];
+  for (let n = 0; n < order.drinks.length; n++) {
+    const formattedDrink = {
+      name: "",
+      flavors: [],
+      toppings: [],
+      temp: "",
+      instructions: "",
+    };
+    const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
+    if (drink.flavors.length === 0) {
+      formattedDrink.flavors.push("None");
+    } else {
+      for (let x = 0; x < drink.flavors.length; x++) {
+        const tempFlavor = flavors.find((f) => f._id.equals(drink.flavors[x]));
+        if (tempFlavor !== null && tempFlavor !== undefined) {
+          formattedDrink.flavors.push(" " + tempFlavor.flavor);
+        }
+      }
+    }
+    if (drink.toppings.length === 0) {
+      formattedDrink.toppings.push("None");
+    } else {
+      for (let x = 0; x < drink.toppings.length; x++) {
+        const tempTopping = toppings.find((t) =>
+          t._id.equals(drink.toppings[x])
+        );
+        if (tempTopping !== null && tempTopping !== undefined) {
+          formattedDrink.toppings.push(" " + tempTopping.topping);
+        }
+      }
+    }
+    formattedDrink.name = drink.name;
+    formattedDrink.temp = drink.temps;
+    formattedDrink.instructions = drink.instructions;
+    drinkArray.push(formattedDrink);
+  }
+
+  emitNewOrderPlaced({
+    order,
+    drinks: drinkArray,
+  });
+  res.status(201).end();
+});
+
 // completed orders page of barista that displays all completed orders
 route.get("/completed", async (req, res) => {
   const role = await getUserRoles(req.session.email);
@@ -955,9 +1088,11 @@ route.get("/completed", async (req, res) => {
           flavors: [],
           toppings: [],
           temp: "",
+          caffeinated: false,
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
@@ -993,6 +1128,7 @@ route.get("/completed", async (req, res) => {
     res.render("completed", {
       orders,
       drinkMap,
+      role,
     });
   }
 });
@@ -1031,9 +1167,11 @@ route.get("/cancelledOrders", async (req, res) => {
           flavors: [],
           toppings: [],
           temp: "",
+          caffeinated: false,
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
         } else {
@@ -1069,6 +1207,7 @@ route.get("/cancelledOrders", async (req, res) => {
     res.render("cancelledOrders", {
       orders,
       drinkMap,
+      role,
     });
   }
 });
@@ -1078,6 +1217,31 @@ route.post("/cancelledOrders/:id", async (req, res) => {
   order.cancelled = false;
   await order.save();
   res.status(201).end();
+});
+
+route.delete("/wipeDevOrders", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    res.redirect("/redirectUser");
+  } else {
+    const deliveryPersons = await DeliveryPerson.find();
+    for (const person of deliveryPersons) {
+      person.deliveryTimes = person.deliveryTimes.filter((time) => {
+        return !devEmails.includes(time.email);
+      });
+      await person.save();
+    }
+
+    const devOrders = await Order.find({ email: { $in: devEmails } });
+
+    for (const order of devOrders) {
+      for (const drinkId of order.drinks) {
+        await Drink.findByIdAndRemove(drinkId);
+      }
+      await Order.findByIdAndRemove(order._id);
+    }
+    res.status(200).send("Deleted all dev orders");
+  }
 });
 
 route.delete("/wipeOrders", async (req, res) => {
@@ -1194,6 +1358,7 @@ route.get("/teacherMenu", async (req, res) => {
     res.render("teacherMenu", {
       menuItems: menu,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1260,6 +1425,7 @@ route.get("/customizeDrink/:name", async (req, res) => {
           temps: drink.temps,
           toppings,
           email: req.session.email,
+          role: role,
         });
       } else {
         res.status(404).send("Drink not found");
@@ -1283,6 +1449,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       flavors: req.body.checkedFlavors,
       toppings: req.body.checkedToppings,
       temps: req.body.temp,
+      caffeinated: req.body.caf,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
       completed: false,
@@ -1330,6 +1497,7 @@ route.get("/teacherMyCart", async (req, res) => {
       cart: req.session.cart,
       customizationDict,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1359,7 +1527,6 @@ route.post("/teacherMyCart", async (req, res) => {
       claimTime: 0,
       delivered: false,
       cancelled: false,
-      read: false,
       drinks: req.session.cart,
       totalPrice: total,
       timer: "uncompleted",
@@ -1439,6 +1606,7 @@ route.get("/teacherPopularDrinks", async (req, res) => {
     res.render("teacherPopularDrinks", {
       menuItems: popularMenu,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1497,6 +1665,7 @@ route.get("/teacherMyFavorites", async (req, res) => {
       favoriteDrinksFlavors,
       favoriteDrinksToppings,
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1560,6 +1729,7 @@ route.get("/teacherOrderHistory", async (req, res) => {
     res.render("teacherOrderHistory", {
       history: orderHistory.reverse(),
       email: req.session.email,
+      role: role,
     });
   }
 });
@@ -1570,7 +1740,7 @@ route.get("/orderConfirmation", async (req, res) => {
     res.redirect("/redirectUser");
   } else {
     req.session.cart = [];
-    res.render("orderConfirmation", { email: req.session.email });
+    res.render("orderConfirmation", { email: req.session.email, role: role });
   }
 });
 
@@ -1685,7 +1855,11 @@ route.post("/deliveryFinish", async (req, res) => {
     );
     const currentTimeMs = Date.parse(currentTimeDate);
     const duration = currentTimeMs - currentOrder.claimTime;
-    currentDeliverer.deliveryTimes.push(duration);
+    currentDeliverer.deliveryTimes.push({
+      duration,
+      orderId: currentOrder._id,
+      email: currentOrder.email,
+    });
     await currentOrder.save();
     await currentDeliverer.save();
     res.redirect("/deliveryHome");

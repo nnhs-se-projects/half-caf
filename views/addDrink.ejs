@@ -32,7 +32,7 @@
   <!--accesses all the toppings and displays them in a list of checkboxes-->
   <div id="pageRight">
     <div id="toppings" class="dropdown-check-list">
-      <span class="anchor">Select Toppings</span>
+      <span class="anchor">Select Add-Ons</span>
       <ul class="items">
         <% for (let topping of toppings) {%>
         <li>
@@ -72,6 +72,10 @@
     <div>
       <input type="checkbox" id="caffeinated" value="Caffeinated" />
       <label for="caffeinated">Caffeinated</label>
+    </div>
+    <div hidden>
+      <input type="checkbox" id="allowDecaf" value="Available in Decaf" />
+      <label for="allowDecaf">Available in Decaf</label>
     </div>
   </div>
 

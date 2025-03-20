@@ -14,10 +14,18 @@
       <h2 id="name"><%=drink.name%></h2>
       <h2 id="price">$<%=drink.price%></h2>
       <div
+        id="caffeine-badge"
         class="caffeine-badge <%= drink.caffeination ? 'caffeinated' : 'decaf' %>"
       >
         <%= drink.caffeination ? '⚡ Caffeinated' : '😌 Decaf' %>
       </div>
+    </div>
+    <div class="dropdown-check-list" <%=!drink.allowDecaf ? "hidden" : "" %>
+      >
+      <h6>Decaf</h6>
+      <ul class="items">
+        <li><input id="isDecaf" type="checkbox" <%=!drink.caffeination ? "checked" : "" %>/>Decaf</li>
+      </ul>
     </div>
     <% if(flavors.length > 0) { %>
     <div class="dropdown-check-list">
@@ -51,7 +59,7 @@
     </div>
     <% } %>
     <div class="dropdown-check-list">
-      <h6>Choose Toppings:</h6>
+      <h6>Choose Add-Ons:</h6>
       <ul class="items">
         <% for (let topping of toppings) {%>
         <li>
@@ -92,11 +100,9 @@
 <!-- /Main Site -->
 
 <style>
-
   .page-title {
     margin-bottom: 2rem; /* Added: create space below the page title */
   }
-
 
   .customize-container {
     background: rgba(255, 255, 255, 0.95);
@@ -287,7 +293,6 @@
     box-shadow: 0 0 0 2px var(--accent);
   }
 
-
   /* Add these media queries at the end of the style block */
   @media screen and (max-width: 768px) {
     .page-title {
@@ -328,7 +333,6 @@
       box-sizing: border-box;
     }
   }
-
 </style>
 
 <script src="/js/customizeDrink.js"></script>

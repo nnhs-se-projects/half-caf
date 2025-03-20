@@ -1,3 +1,18 @@
+const isDecaf = document.getElementById("isDecaf");
+if (isDecaf !== null) {
+  isDecaf.addEventListener("click", () => {
+    const badge = document.getElementById("caffeine-badge");
+
+    if (isDecaf.checked) {
+      badge.className = "caffeine-badge decaf";
+      badge.innerHTML = "😌 Decaf";
+    } else {
+      badge.className = "caffeine-badge caffeinated";
+      badge.innerHTML = "⚡ Caffeinated";
+    }
+  });
+}
+
 const addToOrderButton = document.querySelector("input.submit");
 addToOrderButton.addEventListener("click", async () => {
   const name = document.getElementById("name").textContent;
@@ -32,6 +47,7 @@ addToOrderButton.addEventListener("click", async () => {
     checkedFlavors,
     checkedToppings,
     temp,
+    caf: !isDecaf.checked,
     instructions,
     favorite,
     quantity,
