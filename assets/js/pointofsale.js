@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Column 2: Toppings
     html += '<div class="customization-column">';
-    html += "<h5>Toppings</h5>";
+    html += "<h5>Add-Ons</h5>";
     if (possibleToppings.length > 0) {
       possibleToppings.forEach((topping) => {
         const isChecked =
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
       });
     } else {
-      html += "<p>No toppings available</p>";
+      html += "<p>No Add-Ons available</p>";
     }
     html += "</div>";
 
@@ -183,10 +183,10 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>$${drink.price}</td>
       <td>1</td>
       <td>
-        <input type="submit" value="Cancel" class="cancelButton" />
+        <input type="submit" value="❌" class="cancelButton" />
       </td>
       <td>
-        <input type="submit" value="Edit" class="editButton" />
+        <input type="submit" value="✏️" class="editButton" />
     `;
 
     // Store drink data for retrieval
