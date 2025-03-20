@@ -1,0 +1,268 @@
+<%- include('include/_baristaHeader') %>
+<div id="mainContent">
+  <input type="hidden" id="flavors" value="<%=JSON.stringify(flavors) %>" />
+  <input type="hidden" id="toppings" value="<%=JSON.stringify(toppings) %>" />
+  <input type="hidden" id="temps" value="<%=JSON.stringify(temps) %>" />
+  <input
+    type="hidden"
+    id="possibleModifications"
+    value="<%=JSON.stringify(possibleModificationsMap) %>"
+  />
+  <div class="customization-container">
+    <h3>Customize Your Drink</h3>
+    <h4 id="currentDrinkText">Current Drink:</h4>
+    <div class="customization-grid"></div>
+  </div>
+  <div class="pos-grid">
+    <div class="drink-container">
+      <% for (let drink of menuItems){ %>
+      <div class="pos-card">
+        <div class="pos-container">
+          <input type="hidden" class="menuItem-id" value="<%=drink.id%>" />
+          <input type="hidden" class="drink-price" value="<%=drink.price%>" />
+          <input type="hidden" class="drink-name" value="<%=drink.name%>" />
+          <h4><b><%=drink.name%></b></h4>
+          <img src="<%=drink.imageData%>" alt="<%=drink.name%>" />
+          <h5>$<%=drink.price%></h5>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <div class="order-container">
+      <h3>Order</h3>
+      <table id="order-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th># of item</th>
+            <th>Remove</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Order items will be added here -->
+        </tbody>
+      </table>
+      <div class="order-total-container">
+        <h4>Total: $<span class="order-total">0.00</span></h4>
+        <input type="submit" class="" value="Order Paid" />
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--coffee-medium);
+    border-radius: 4px;
+    background: white;
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+
+  input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: "✓";
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    --border-color: orange !important;
+  }
+
+  .customization-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .customization-column {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+
+  .customization-column h5 {
+    margin-top: 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .flavor-container,
+  .topping-container,
+  .temp-container {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .flavor-checkbox,
+  .topping-checkbox,
+  .temp-radio {
+    margin-right: 8px;
+    cursor: pointer;
+  }
+
+  .button-container {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .saveButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .saveButton:hover {
+    background-color: #45a049;
+  }
+
+  /* Responsive layout */
+  @media (max-width: 768px) {
+    .customization-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+  #currentDrinkText {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: rgb(51, 51, 51);
+  }
+  #mainContent .pos-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Drink container takes two-thirds; order container takes one-third */
+    gap: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  #mainContent .drink-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .order-total-container h4 {
+    color: rgb(51, 51, 51);
+    font-size: 1.5rem;
+  }
+
+  .pos-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    height: auto;
+    max-height: 200px;
+  }
+
+  .pos-container {
+    padding: 5px;
+  }
+
+  .pos-card h4 {
+    font-size: 0.75rem;
+    margin: 0;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pos-card img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    margin: 5px 0;
+  }
+
+  .pos-card h5 {
+    font-size: 0.8rem;
+    margin: 5px 0;
+  }
+
+  .pos-card p {
+    font-size: 0.75rem;
+    margin: 0;
+    height: 30px;
+    overflow: hidden;
+  }
+  .order-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    overflow-y: hidden;
+  }
+
+  #order-table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  #order-table tbody {
+    display: block;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  #order-table thead,
+  #order-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .flavor-container,
+  .topping-container,
+  .temp-container {
+    margin: 8px 0;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+  }
+  .flavor-checkbox,
+  .topping-checkbox,
+  .temp-radio {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+
+  label {
+    cursor: pointer;
+  }
+</style>
+
+<script src="/js/pointofsale.js"></script>
