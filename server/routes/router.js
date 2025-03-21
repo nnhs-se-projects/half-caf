@@ -149,7 +149,7 @@ route.get("/redirectUser", async (req, res) => {
       res.redirect("/teacherPopularDrinks");
     } else if (
       (user === null || user === undefined) &&
-      req.session.email.indexOf("@stu.naperville203.org") > -1
+      req.session.email.indexOf("@naperville203.org") > -1
     ) {
       console.log("User is a staff member, creating account...");
       const newUser = new User({
