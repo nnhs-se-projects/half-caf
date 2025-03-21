@@ -90,8 +90,10 @@ setInterval(checkTime, 15000); // check every 15 sec
 
 route.get("/", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
-  if (user === null) {
+  console.log(req.session.email);
+  if (user === null || user === undefined) {
     if (req.session.email.indexOf("@naperville203.org") > -1) {
+      console.log("User is a staff member, creating account...");
       const newUser = new User({
         email: req.session.email,
         userType: "teacher",
