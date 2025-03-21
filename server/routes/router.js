@@ -88,37 +88,6 @@ async function checkTime() {
 
 setInterval(checkTime, 15000); // check every 15 sec
 
-route.get("/", async (req, res) => {
-  const user = await User.findOne({ email: req.session.email });
-  console.log("req.session.email: " + req.session.email);
-  if (user === null || user === undefined) {
-    if (req.session.email.indexOf("@naperville203.org") > -1) {
-      console.log("User is a staff member, creating account...");
-      const newUser = new User({
-        email: req.session.email,
-        userType: "teacher",
-      });
-      await newUser.save();
-      res.redirect("/teacherPopularDrinks");
-    } else {
-      // they are not in the database and do not have a staff email
-      res.redirect("/auth");
-    }
-  } else {
-    const menuItems = await MenuItem.find();
-    const popularMenu = [];
-    for (let i = 0; i < menuItems.length; i++) {
-      if (menuItems[i].popular === true) {
-        popularMenu.push(menuItems[i]);
-      }
-    }
-
-    res.render("homePopularDrinks", {
-      menuItems: popularMenu,
-    });
-  }
-});
-
 route.get("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   res.render("_adminHeader", { enabled: toggle });
@@ -167,7 +136,9 @@ async function getUserRoles(email) {
 // Separate redirectUser route is used to easily redirect
 //    the user dependent on their role
 route.get("/redirectUser", async (req, res) => {
+  console.log("Redirecting user.");
   try {
+    const user = await User.findOne({ email: req.session.email });
     const role = await getUserRoles(req.session.email);
     req.session.cart = [];
     if (role === "admin") {
@@ -176,9 +147,20 @@ route.get("/redirectUser", async (req, res) => {
       res.redirect("/barista");
     } else if (role === "teacher") {
       res.redirect("/teacherPopularDrinks");
+    } else if (
+      (user === null || user === undefined) &&
+      req.session.email.indexOf("@stu.naperville203.org") > -1
+    ) {
+      console.log("User is a staff member, creating account...");
+      const newUser = new User({
+        email: req.session.email,
+        userType: "teacher",
+      });
+      await newUser.save();
+      res.redirect("/teacherPopularDrinks");
     } else {
-      console.log("Role Not Recognized");
-      res.redirect("/");
+      req.session.email = "";
+      res.redirect("/auth"); // User is either not a staff member, not in the database, or has an invalid role.
     }
   } catch (error) {
     console.error(error);
