@@ -1,5 +1,6 @@
 const express = require("express");
 const route = express.Router();
+const User = require("../model/user");
 const Topping = require("../model/topping");
 const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
@@ -69,12 +70,12 @@ route.get("/barista", async (req, res) => {
     drinkMap.set(i, drinkArray);
   }
 
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
 
   res.render("barista", {
     orders,
     drinkMap,
-    role,
+    role: user.userType,
   });
 });
 
@@ -133,10 +134,10 @@ route.get("/pointofsale", async (req, res) => {
     }
   }
 
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
 
   res.render("pointofsale", {
-    role,
+    role: user.userType,
     orders,
     menuItems,
     flavors,
@@ -227,7 +228,7 @@ route.post("/barista/pointofsale", async (req, res) => {
 
 // completed orders page of barista that displays all completed orders
 route.get("/barista/completed", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   const orders = await Order.find({ complete: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
@@ -283,7 +284,7 @@ route.get("/barista/completed", async (req, res) => {
   res.render("completed", {
     orders,
     drinkMap,
-    role,
+    role: user.userType,
   });
 });
 
@@ -302,7 +303,7 @@ route.post("/barista/completed/:id", async (req, res) => {
 });
 
 route.get("/barista/cancelledOrders", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   const orders = await Order.find({ cancelled: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
@@ -358,7 +359,7 @@ route.get("/barista/cancelledOrders", async (req, res) => {
   res.render("cancelledOrders", {
     orders,
     drinkMap,
-    role,
+    role: user.userType,
   });
 });
 

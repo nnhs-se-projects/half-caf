@@ -11,12 +11,12 @@ const { emitNewOrderPlaced } = require("../socket/socket");
 
 // Route Teacher Menu
 route.get("/teacher/menu", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   const menu = await MenuItem.find();
   res.render("teacherMenu", {
     menuItems: menu,
     email: req.session.email,
-    role: role,
+    role: user.userType,
   });
 });
 
@@ -54,7 +54,7 @@ async function findToppingsById(id) {
 }
 
 route.get("/teacher/customizeDrink/:name", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   const selectedDrink = req.params.name; // params holds parameters from the URL path
   const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
   try {
@@ -79,7 +79,7 @@ route.get("/teacher/customizeDrink/:name", async (req, res) => {
         temps: drink.temps,
         toppings,
         email: req.session.email,
-        role: role,
+        role: user.userType,
       });
     } else {
       res.status(404).send("Drink not found");
@@ -127,7 +127,7 @@ route.post("/teacher/customizeDrink/:name", async (req, res) => {
 });
 
 route.get("/teacher/myCart", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   const customizationDict = {};
   for (const drink of req.session.cart) {
     const drinkFlavorsArray = [];
@@ -147,7 +147,7 @@ route.get("/teacher/myCart", async (req, res) => {
     cart: req.session.cart,
     customizationDict,
     email: req.session.email,
-    role: role,
+    role: user.userType,
   });
 });
 
@@ -239,7 +239,7 @@ route.post("/teacher/myCart", async (req, res) => {
 });
 
 route.get("/teacher/popularDrinks", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   const menuItems = await MenuItem.find();
   const popularMenu = [];
   for (let i = 0; i < menuItems.length; i++) {
@@ -250,12 +250,11 @@ route.get("/teacher/popularDrinks", async (req, res) => {
   res.render("teacherPopularDrinks", {
     menuItems: popularMenu,
     email: req.session.email,
-    role: role,
+    role: user.userType,
   });
 });
 
 route.get("/teacher/myFavorites", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
   const user = await User.findOne({ email: req.session.email });
 
   const favoriteDrinkIds = user.favoriteDrinks.filter((drink) => drink != null);
@@ -282,7 +281,7 @@ route.get("/teacher/myFavorites", async (req, res) => {
     favoriteDrinksFlavors,
     favoriteDrinksToppings,
     email: req.session.email,
-    role: role,
+    role: user.userType,
   });
 });
 
@@ -323,7 +322,6 @@ route.get("/teacher/favoriteDrinkFromHistory/:id", async (req, res) => {
 });
 
 route.get("/teacher/orderHistory", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
   const user = await User.findOne({ email: req.session.email });
   const orderIds = user.orderHistory.filter((order) => order != null);
   const orders = await Order.find({ _id: { $in: orderIds } }).populate({
@@ -342,12 +340,15 @@ route.get("/teacher/orderHistory", async (req, res) => {
   res.render("teacherOrderHistory", {
     history: orderHistory.reverse(),
     email: req.session.email,
-    role: role,
+    role: user.userType,
   });
 });
 
 route.get("/teacher/orderConfirmation", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
+  const user = await User.findOne({ email: req.session.email });
   req.session.cart = [];
-  res.render("orderConfirmation", { email: req.session.email, role: role });
+  res.render("orderConfirmation", {
+    email: req.session.email,
+    role: user.userType,
+  });
 });

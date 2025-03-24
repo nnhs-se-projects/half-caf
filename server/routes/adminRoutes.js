@@ -20,12 +20,7 @@ const devEmails = [
 ];
 
 route.get("/admin/addSchedule", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    res.render("addSchedule");
-  }
+  res.render("addSchedule");
 });
 
 route.post("/admin/addSchedule", async (req, res) => {
@@ -64,54 +59,44 @@ route.delete("/admin/deleteSchedule", async (req, res) => {
 });
 
 route.get("/admin/scheduler", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const schedules = await Schedule.find();
-    const selectedPeriods = [];
+  const schedules = await Schedule.find();
+  const selectedPeriods = [];
 
-    const { id } = req.query;
-    let selectedSchedule;
-    let activeSchedule;
-    try {
-      const currentTime = new Date();
-      const currentWeekDay = await Weekday.findOne({
-        day: currentTime.getDay() - 1,
-      });
-      activeSchedule = await Schedule.findById(currentWeekDay.schedule);
-    } catch {
-      activeSchedule = schedules[0];
-    }
-
-    if (id != null) {
-      selectedSchedule = await Schedule.findById(id);
-    } else {
-      selectedSchedule = activeSchedule;
-    }
-    if (selectedSchedule) {
-      for (const period of selectedSchedule.periods) {
-        const periodData = await Period.findById(period);
-        selectedPeriods.push(periodData);
-      }
-    }
-
-    res.render("scheduler", {
-      activeSchedule,
-      selectedSchedule,
-      schedules,
-      selectedPeriods,
+  const { id } = req.query;
+  let selectedSchedule;
+  let activeSchedule;
+  try {
+    const currentTime = new Date();
+    const currentWeekDay = await Weekday.findOne({
+      day: currentTime.getDay() - 1,
     });
+    activeSchedule = await Schedule.findById(currentWeekDay.schedule);
+  } catch {
+    activeSchedule = schedules[0];
   }
+
+  if (id != null) {
+    selectedSchedule = await Schedule.findById(id);
+  } else {
+    selectedSchedule = activeSchedule;
+  }
+  if (selectedSchedule) {
+    for (const period of selectedSchedule.periods) {
+      const periodData = await Period.findById(period);
+      selectedPeriods.push(periodData);
+    }
+  }
+
+  res.render("scheduler", {
+    activeSchedule,
+    selectedSchedule,
+    schedules,
+    selectedPeriods,
+  });
 });
 
 route.get("/admin/addUser", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    res.render("addUser");
-  }
+  res.render("addUser");
 });
 
 route.post("/admin/addUser", async (req, res) => {
@@ -124,14 +109,8 @@ route.post("/admin/addUser", async (req, res) => {
 });
 
 route.get("/admin/deleteUser", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const users = await User.find();
-
-    res.render("deleteUser", { users });
-  }
+  const users = await User.find();
+  res.render("deleteUser", { users });
 });
 
 route.delete("/admin/deleteUser/:id", async (req, res) => {
@@ -141,26 +120,21 @@ route.delete("/admin/deleteUser/:id", async (req, res) => {
 });
 
 route.get("/admin/modifyUser", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const allUsers = await User.find();
+  const allUsers = await User.find();
 
-    const { id } = req.query;
+  const { id } = req.query;
 
-    let selectedUser;
-    if (id != null) {
-      selectedUser = await User.findById(id);
-    } else if (allUsers[0] !== null && allUsers[0] !== undefined) {
-      selectedUser = allUsers[0];
-    }
-
-    res.render("modifyUser", {
-      users: allUsers,
-      selectedUser,
-    });
+  let selectedUser;
+  if (id != null) {
+    selectedUser = await User.findById(id);
+  } else if (allUsers[0] !== null && allUsers[0] !== undefined) {
+    selectedUser = allUsers[0];
   }
+
+  res.render("modifyUser", {
+    users: allUsers,
+    selectedUser,
+  });
 });
 
 route.post("/admin/modifyUser/:id", async (req, res) => {
@@ -172,77 +146,66 @@ route.post("/admin/modifyUser/:id", async (req, res) => {
 });
 
 route.get("/admin/addDrink", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const flavors = await Flavor.find();
-    const toppings = await Topping.find();
+  const flavors = await Flavor.find();
+  const toppings = await Topping.find();
 
-    const formattedFlavors = flavors.map((flavor) => {
-      return {
-        flavor: flavor.flavor,
-        id: flavor._id,
-      };
-    });
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
 
-    const formattedToppings = toppings.map((topping) => {
-      return {
-        topping: topping.topping,
-        id: topping._id,
-      };
-    });
-    res.render("addDrink", {
-      temps: TempJson,
-      toppings: formattedToppings,
-      flavors: formattedFlavors,
-    });
-  }
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
+  res.render("addDrink", {
+    temps: TempJson,
+    toppings: formattedToppings,
+    flavors: formattedFlavors,
+  });
 });
 
 // everything loads on the Modify Drink page when a
 // menu item is selected, except for flavors
 route.get("/admin/modifyDrink", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
+  // get id of selected drink
+  const { id } = req.query;
+
+  const menuItems = await MenuItem.find();
+  const toppings = await Topping.find();
+  const flavors = await Flavor.find();
+
+  let selectedMenuItem;
+  // check if any drink has been selected
+  if (id != null) {
+    selectedMenuItem = await MenuItem.findById(id);
+  } else if (menuItems[0] !== null && menuItems[0] !== undefined) {
+    selectedMenuItem = menuItems[0];
   } else {
-    // get id of selected drink
-    const { id } = req.query;
-
-    const menuItems = await MenuItem.find();
-    const toppings = await Topping.find();
-    const flavors = await Flavor.find();
-
-    let selectedMenuItem;
-    // check if any drink has been selected
-    if (id != null) {
-      selectedMenuItem = await MenuItem.findById(id);
-    } else if (menuItems[0] !== null && menuItems[0] !== undefined) {
-      selectedMenuItem = menuItems[0];
-    } else {
-      selectedMenuItem = undefined;
-    }
-
-    const formattedMenuItems = menuItems.map((menuItem) => {
-      return {
-        name: menuItem.name,
-        id: menuItem._id,
-      };
-    });
-
-    res.render("modifyDrink", {
-      menuItems: formattedMenuItems,
-      selectedMenuItem,
-      toppings,
-      flavors,
-      temps: TempJson,
-    });
+    selectedMenuItem = undefined;
   }
+
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+
+  res.render("modifyDrink", {
+    menuItems: formattedMenuItems,
+    selectedMenuItem,
+    toppings,
+    flavors,
+    temps: TempJson,
+  });
 });
 // updates database with new menu item
 route.post("/admin/addDrink", async (req, res) => {
-  console.log(req.body);
   const drink = new MenuItem({
     name: req.body.name,
     description: req.body.description,
@@ -286,20 +249,15 @@ route.post("/admin/modifyDrink/:id", async (req, res) => {
 });
 
 route.get("/admin/deleteDrink", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const menuItems = await MenuItem.find();
+  const menuItems = await MenuItem.find();
 
-    const formattedMenuItems = menuItems.map((menuItem) => {
-      return {
-        name: menuItem.name,
-        id: menuItem._id,
-      };
-    });
-    res.render("deleteDrink", { menuItems: formattedMenuItems });
-  }
+  const formattedMenuItems = menuItems.map((menuItem) => {
+    return {
+      name: menuItem.name,
+      id: menuItem._id,
+    };
+  });
+  res.render("deleteDrink", { menuItems: formattedMenuItems });
 });
 
 route.delete("/admin/deleteDrink/:id", async (req, res) => {
@@ -642,48 +600,33 @@ route.get("/admin/metrics", async (req, res) => {
 });
 
 route.delete("/admin/wipeDevOrders", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const deliveryPersons = await DeliveryPerson.find();
-    for (const person of deliveryPersons) {
-      person.deliveryTimes = person.deliveryTimes.filter((time) => {
-        return !devEmails.includes(time.email);
-      });
-      await person.save();
-    }
-
-    const devOrders = await Order.find({ email: { $in: devEmails } });
-
-    for (const order of devOrders) {
-      for (const drinkId of order.drinks) {
-        await Drink.findByIdAndRemove(drinkId);
-      }
-      await Order.findByIdAndRemove(order._id);
-    }
-    res.status(200).send("Deleted all dev orders");
+  const deliveryPersons = await DeliveryPerson.find();
+  for (const person of deliveryPersons) {
+    person.deliveryTimes = person.deliveryTimes.filter((time) => {
+      return !devEmails.includes(time.email);
+    });
+    await person.save();
   }
+
+  const devOrders = await Order.find({ email: { $in: devEmails } });
+
+  for (const order of devOrders) {
+    for (const drinkId of order.drinks) {
+      await Drink.findByIdAndRemove(drinkId);
+    }
+    await Order.findByIdAndRemove(order._id);
+  }
+  res.status(200).send("Deleted all dev orders");
 });
 
 route.delete("/admin/wipeOrders", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    await Order.deleteMany();
-    await Drink.deleteMany();
-    res.end();
-  }
+  await Order.deleteMany();
+  await Drink.deleteMany();
+  res.end();
 });
 
 route.get("/admin/addFlavor", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    res.render("addFlavor");
-  }
+  res.render("addFlavor");
 });
 
 // updates database with new flavor options
@@ -697,20 +640,15 @@ route.post("/admin/addFlavor", async (req, res) => {
 });
 
 route.get("/admin/deleteFlavor", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const flavors = await Flavor.find();
+  const flavors = await Flavor.find();
 
-    const formattedFlavors = flavors.map((flavor) => {
-      return {
-        flavor: flavor.flavor,
-        id: flavor._id,
-      };
-    });
-    res.render("deleteFlavor", { flavors: formattedFlavors });
-  }
+  const formattedFlavors = flavors.map((flavor) => {
+    return {
+      flavor: flavor.flavor,
+      id: flavor._id,
+    };
+  });
+  res.render("deleteFlavor", { flavors: formattedFlavors });
 });
 
 route.delete("/admin/deleteFlavor/:id", async (req, res) => {
@@ -720,12 +658,7 @@ route.delete("/admin/deleteFlavor/:id", async (req, res) => {
 });
 
 route.get("/admin/addTopping", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    res.render("addTopping");
-  }
+  res.render("addTopping");
 });
 
 // updates database with new topping options
@@ -740,20 +673,15 @@ route.post("/admin/addTopping", async (req, res) => {
 });
 
 route.get("/admin/deleteTopping", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const toppings = await Topping.find();
+  const toppings = await Topping.find();
 
-    const formattedToppings = toppings.map((topping) => {
-      return {
-        topping: topping.topping,
-        id: topping._id,
-      };
-    });
-    res.render("deleteTopping", { toppings: formattedToppings });
-  }
+  const formattedToppings = toppings.map((topping) => {
+    return {
+      topping: topping.topping,
+      id: topping._id,
+    };
+  });
+  res.render("deleteTopping", { toppings: formattedToppings });
 });
 
 route.delete("/admin/deleteTopping/:id", async (req, res) => {

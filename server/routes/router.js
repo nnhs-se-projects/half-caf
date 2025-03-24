@@ -112,14 +112,6 @@ route.use(async (req, res, next) => {
   next();
 });
 
-route.get("/auth", (req, res) => {
-  if (req.session.email) {
-    res.redirect("/redirectUser");
-  } else {
-    res.render("auth");
-  }
-});
-
 async function getUserRoles(email) {
   try {
     const user = await User.findOne({ email }, "userType");
@@ -138,26 +130,14 @@ async function getUserRoles(email) {
 route.get("/redirectUser", async (req, res) => {
   console.log("Redirecting user.");
   try {
-    const user = await User.findOne({ email: req.session.email });
     const role = await getUserRoles(req.session.email);
     req.session.cart = [];
     if (role === "admin") {
-      res.redirect("/addUser");
+      res.redirect("/admin/addUser");
     } else if (role === "barista") {
       res.redirect("/barista");
     } else if (role === "teacher") {
-      res.redirect("/teacherPopularDrinks");
-    } else if (
-      (user === null || user === undefined) &&
-      req.session.email.indexOf("@naperville203.org") > -1
-    ) {
-      console.log("User is a staff member, creating account...");
-      const newUser = new User({
-        email: req.session.email,
-        userType: "teacher",
-      });
-      await newUser.save();
-      res.redirect("/teacherPopularDrinks");
+      res.redirect("/teacher/popularDrinks");
     } else {
       req.session.email = "";
       res.redirect("/auth"); // User is either not a staff member, not in the database, or has an invalid role.

@@ -6,6 +6,7 @@
 // import the express module, which exports the express function
 const express = require("express");
 const path = require("path");
+const User = require("./server/model/user");
 
 // invoke the express function to create an Express
 const app = express();
@@ -59,7 +60,7 @@ app.get("/", (req, res) => {
   if (isMobile(req.headers["user-agent"])) {
     res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
   } else {
-    res.render("auth");
+    res.redirect("auth");
   }
 });
 
@@ -72,12 +73,32 @@ app.use(async (req, res, next) => {
     req.path.indexOf("/delivery") !== -1
   ) {
     return next(); // allow access to index without authentication
-  }
-  // if the student is already logged in, fetch the student object from the database
-  else if (req.session.email === undefined && !req.path.startsWith("/auth")) {
+  } else if (req.session.email === undefined && !req.path.startsWith("/auth")) {
     res.redirect("/auth");
     return;
+  } else if (req.path.startsWith("/teacher")) {
+    const user = await User.findOne({ email: req.session.email });
+    if (user.userType !== "teacher" && user.userType !== "admin") {
+      res.redirect("/redirectUser");
+      return;
+    }
+    next();
+  } else if (req.path.startsWith("/barista")) {
+    const user = await User.findOne({ email: req.session.email });
+    if (user.userType !== "barista" && user.userType !== "admin") {
+      res.redirect("/redirectUser");
+      return;
+    }
+    next();
+  } else if (req.path.startsWith("/admin")) {
+    const user = await User.findOne({ email: req.session.email });
+    if (user.userType !== "admin") {
+      res.redirect("/redirectUser");
+      return;
+    }
+    next();
   }
+
   next();
 });
 
