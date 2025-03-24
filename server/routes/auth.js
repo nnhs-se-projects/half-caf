@@ -12,10 +12,6 @@ const { OAuth2Client } = require("google-auth-library");
 const CLIENT_ID = process.env.CLIENT_ID;
 const oAuth2 = new OAuth2Client(CLIENT_ID);
 
-// route.get("/", (req, res) => {
-//   res.render("auth");
-// });
-
 route.post("/", async (req, res) => {
   const token = req.body.token;
   const ticket = await oAuth2.verifyIdToken({
