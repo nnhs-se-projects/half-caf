@@ -960,7 +960,7 @@ route.get("/pointofsale", async (req, res) => {
       }
     }
 
-    res.render("pointofsale", {
+    res.render("pointOfSale", {
       role,
       orders,
       menuItems,
