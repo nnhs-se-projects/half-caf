@@ -11,7 +11,7 @@ const Order = require("../model/order");
 const { emitOrderCancelled, emitNewOrderPlaced } = require("../socket/socket");
 
 // Main/Home page of barista that displays all current orders
-route.get("/barista", async (req, res) => {
+route.get("/", async (req, res) => {
   const orders = await Order.find();
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
@@ -79,7 +79,7 @@ route.get("/barista", async (req, res) => {
   });
 });
 
-route.delete("/barista/:id", async (req, res) => {
+route.delete("/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.cancelled = true;
   await order.save();
@@ -92,7 +92,7 @@ route.delete("/barista/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.post("/barista/:id", async (req, res) => {
+route.post("/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = true;
   order.timer = req.body.t;
@@ -147,7 +147,7 @@ route.get("/pointofsale", async (req, res) => {
   });
 });
 
-route.post("/barista/pointofsale", async (req, res) => {
+route.post("/pointofsale", async (req, res) => {
   const drinkIdCart = [];
   for (const drink of req.body.order) {
     const newDrink = new Drink({
@@ -227,7 +227,7 @@ route.post("/barista/pointofsale", async (req, res) => {
 });
 
 // completed orders page of barista that displays all completed orders
-route.get("/barista/completed", async (req, res) => {
+route.get("/completed", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const orders = await Order.find({ complete: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
@@ -288,7 +288,7 @@ route.get("/barista/completed", async (req, res) => {
   });
 });
 
-route.post("/barista/completed/:id", async (req, res) => {
+route.post("/completed/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = false;
   await order.save();
@@ -302,7 +302,7 @@ route.post("/barista/completed/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/barista/cancelledOrders", async (req, res) => {
+route.get("/cancelledOrders", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const orders = await Order.find({ cancelled: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
@@ -363,9 +363,11 @@ route.get("/barista/cancelledOrders", async (req, res) => {
   });
 });
 
-route.post("/barista/cancelledOrders/:id", async (req, res) => {
+route.post("/cancelledOrders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.cancelled = false;
   await order.save();
   res.status(201).end();
 });
+
+module.exports = route;

@@ -10,7 +10,7 @@ const Order = require("../model/order");
 const { emitNewOrderPlaced } = require("../socket/socket");
 
 // Route Teacher Menu
-route.get("/teacher/menu", async (req, res) => {
+route.get("/menu", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const menu = await MenuItem.find();
   res.render("teacherMenu", {
@@ -53,7 +53,7 @@ async function findToppingsById(id) {
   }
 }
 
-route.get("/teacher/customizeDrink/:name", async (req, res) => {
+route.get("/customizeDrink/:name", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const selectedDrink = req.params.name; // params holds parameters from the URL path
   const drinkName = decodeURIComponent(selectedDrink.replace("%20/", " ")); // convert URL-friendly string to regular name format
@@ -91,7 +91,7 @@ route.get("/teacher/customizeDrink/:name", async (req, res) => {
   }
 });
 
-route.post("/teacher/customizeDrink/:name", async (req, res) => {
+route.post("/customizeDrink/:name", async (req, res) => {
   // drink user is adding to order
   let quantity = req.body.quantity;
   quantity = quantity < 1 ? 1 : quantity > 9 ? 9 : quantity;
@@ -126,7 +126,7 @@ route.post("/teacher/customizeDrink/:name", async (req, res) => {
   res.status(200).send("Drink added to session.");
 });
 
-route.get("/teacher/myCart", async (req, res) => {
+route.get("/myCart", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const customizationDict = {};
   for (const drink of req.session.cart) {
@@ -151,7 +151,7 @@ route.get("/teacher/myCart", async (req, res) => {
   });
 });
 
-route.post("/teacher/updateCart", async (req, res) => {
+route.post("/updateCart", async (req, res) => {
   console.log("Post Updating cart");
   await Drink.findByIdAndRemove(req.session.cart[req.body.index]);
   req.session.cart.splice(req.body.index, 1);
@@ -159,7 +159,7 @@ route.post("/teacher/updateCart", async (req, res) => {
   res.status(200).end();
 });
 
-route.post("/teacher/myCart", async (req, res) => {
+route.post("/myCart", async (req, res) => {
   let total = 0;
   for (const drink of req.session.cart) {
     total += drink.price;
@@ -238,7 +238,7 @@ route.post("/teacher/myCart", async (req, res) => {
   res.status(200).end();
 });
 
-route.get("/teacher/popularDrinks", async (req, res) => {
+route.get("/popularDrinks", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const menuItems = await MenuItem.find();
   const popularMenu = [];
@@ -254,7 +254,7 @@ route.get("/teacher/popularDrinks", async (req, res) => {
   });
 });
 
-route.get("/teacher/myFavorites", async (req, res) => {
+route.get("/myFavorites", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
 
   const favoriteDrinkIds = user.favoriteDrinks.filter((drink) => drink != null);
@@ -285,15 +285,15 @@ route.get("/teacher/myFavorites", async (req, res) => {
   });
 });
 
-route.get("/teacher/addDrinkToCart/:id", async (req, res) => {
+route.get("/addDrinkToCart/:id", async (req, res) => {
   // drink user is adding to order
   const drink = await Drink.findById(req.params.id);
   req.session.cart.push(drink);
 
-  res.redirect("/teacher/myCart");
+  res.redirect("/myCart");
 });
 
-route.get("/teacher/unfavoriteDrink/:id", async (req, res) => {
+route.get("/unfavoriteDrink/:id", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const index = user.favoriteDrinks.indexOf(req.params.id);
   if (index > -1) {
@@ -304,10 +304,10 @@ route.get("/teacher/unfavoriteDrink/:id", async (req, res) => {
   }
   await user.save();
 
-  res.redirect("/teacher/myFavorites");
+  res.redirect("/myFavorites");
 });
 
-route.get("/teacher/favoriteDrinkFromHistory/:id", async (req, res) => {
+route.get("/favoriteDrinkFromHistory/:id", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const index = user.favoriteDrinks.indexOf(req.params.id);
   if (index === -1) {
@@ -318,10 +318,10 @@ route.get("/teacher/favoriteDrinkFromHistory/:id", async (req, res) => {
     await user.save();
   }
 
-  res.redirect("/teacher/orderHistory");
+  res.redirect("/orderHistory");
 });
 
-route.get("/teacher/orderHistory", async (req, res) => {
+route.get("/orderHistory", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   const orderIds = user.orderHistory.filter((order) => order != null);
   const orders = await Order.find({ _id: { $in: orderIds } }).populate({
@@ -344,7 +344,7 @@ route.get("/teacher/orderHistory", async (req, res) => {
   });
 });
 
-route.get("/teacher/orderConfirmation", async (req, res) => {
+route.get("/orderConfirmation", async (req, res) => {
   const user = await User.findOne({ email: req.session.email });
   req.session.cart = [];
   res.render("orderConfirmation", {
@@ -352,3 +352,5 @@ route.get("/teacher/orderConfirmation", async (req, res) => {
     role: user.userType,
   });
 });
+
+module.exports = route;

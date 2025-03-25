@@ -19,11 +19,11 @@ const devEmails = [
   "egkohl@stu.naperville203.org",
 ];
 
-route.get("/admin/addSchedule", async (req, res) => {
+route.get("/addSchedule", async (req, res) => {
   res.render("addSchedule");
 });
 
-route.post("/admin/addSchedule", async (req, res) => {
+route.post("/addSchedule", async (req, res) => {
   const periodIds = [];
   for (const period of req.body.periods) {
     const newPeriod = new Period({
@@ -51,14 +51,14 @@ route.post("/admin/addSchedule", async (req, res) => {
   res.status(201).end();
 });
 
-route.delete("/admin/deleteSchedule", async (req, res) => {
+route.delete("/deleteSchedule", async (req, res) => {
   const schedule = await Schedule.findById(req.body.id);
   await Period.deleteMany({ _id: { $in: schedule.periods } });
   await Schedule.findByIdAndRemove(req.body.id);
   res.end();
 });
 
-route.get("/admin/scheduler", async (req, res) => {
+route.get("/scheduler", async (req, res) => {
   const schedules = await Schedule.find();
   const selectedPeriods = [];
 
@@ -95,11 +95,11 @@ route.get("/admin/scheduler", async (req, res) => {
   });
 });
 
-route.get("/admin/addUser", async (req, res) => {
+route.get("/addUser", async (req, res) => {
   res.render("addUser");
 });
 
-route.post("/admin/addUser", async (req, res) => {
+route.post("/addUser", async (req, res) => {
   const user = new User({
     email: req.body.email,
     userType: req.body.userType,
@@ -108,18 +108,18 @@ route.post("/admin/addUser", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/admin/deleteUser", async (req, res) => {
+route.get("/deleteUser", async (req, res) => {
   const users = await User.find();
   res.render("deleteUser", { users });
 });
 
-route.delete("/admin/deleteUser/:id", async (req, res) => {
+route.delete("/deleteUser/:id", async (req, res) => {
   const userId = req.params.id;
   await User.findByIdAndRemove(userId);
   res.end();
 });
 
-route.get("/admin/modifyUser", async (req, res) => {
+route.get("/modifyUser", async (req, res) => {
   const allUsers = await User.find();
 
   const { id } = req.query;
@@ -137,7 +137,7 @@ route.get("/admin/modifyUser", async (req, res) => {
   });
 });
 
-route.post("/admin/modifyUser/:id", async (req, res) => {
+route.post("/modifyUser/:id", async (req, res) => {
   const user = await User.findById(req.params.id);
   user.email = req.body.email;
   user.userType = req.body.role;
@@ -145,7 +145,7 @@ route.post("/admin/modifyUser/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/admin/addDrink", async (req, res) => {
+route.get("/addDrink", async (req, res) => {
   const flavors = await Flavor.find();
   const toppings = await Topping.find();
 
@@ -171,7 +171,7 @@ route.get("/admin/addDrink", async (req, res) => {
 
 // everything loads on the Modify Drink page when a
 // menu item is selected, except for flavors
-route.get("/admin/modifyDrink", async (req, res) => {
+route.get("/modifyDrink", async (req, res) => {
   // get id of selected drink
   const { id } = req.query;
 
@@ -205,7 +205,7 @@ route.get("/admin/modifyDrink", async (req, res) => {
   });
 });
 // updates database with new menu item
-route.post("/admin/addDrink", async (req, res) => {
+route.post("/addDrink", async (req, res) => {
   const drink = new MenuItem({
     name: req.body.name,
     description: req.body.description,
@@ -223,7 +223,7 @@ route.post("/admin/addDrink", async (req, res) => {
   res.status(200).end();
 });
 
-route.post("/admin/modifyDrink/:id", async (req, res) => {
+route.post("/modifyDrink/:id", async (req, res) => {
   try {
     const menuItem = await MenuItem.findById(req.params.id);
     menuItem.name = req.body.name;
@@ -248,7 +248,7 @@ route.post("/admin/modifyDrink/:id", async (req, res) => {
   }
 });
 
-route.get("/admin/deleteDrink", async (req, res) => {
+route.get("/deleteDrink", async (req, res) => {
   const menuItems = await MenuItem.find();
 
   const formattedMenuItems = menuItems.map((menuItem) => {
@@ -260,12 +260,12 @@ route.get("/admin/deleteDrink", async (req, res) => {
   res.render("deleteDrink", { menuItems: formattedMenuItems });
 });
 
-route.delete("/admin/deleteDrink/:id", async (req, res) => {
+route.delete("/deleteDrink/:id", async (req, res) => {
   await MenuItem.findByIdAndRemove(req.params.id);
   res.end();
 });
 
-route.get("/admin/metrics", async (req, res) => {
+route.get("/metrics", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   const delivererNames = [];
   const averageDeliveryTimePerPerson = [];
@@ -599,7 +599,7 @@ route.get("/admin/metrics", async (req, res) => {
   });
 });
 
-route.delete("/admin/wipeDevOrders", async (req, res) => {
+route.delete("/wipeDevOrders", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   for (const person of deliveryPersons) {
     person.deliveryTimes = person.deliveryTimes.filter((time) => {
@@ -619,18 +619,18 @@ route.delete("/admin/wipeDevOrders", async (req, res) => {
   res.status(200).send("Deleted all dev orders");
 });
 
-route.delete("/admin/wipeOrders", async (req, res) => {
+route.delete("/wipeOrders", async (req, res) => {
   await Order.deleteMany();
   await Drink.deleteMany();
   res.end();
 });
 
-route.get("/admin/addFlavor", async (req, res) => {
+route.get("/addFlavor", async (req, res) => {
   res.render("addFlavor");
 });
 
 // updates database with new flavor options
-route.post("/admin/addFlavor", async (req, res) => {
+route.post("/addFlavor", async (req, res) => {
   const flavor = new Flavor({
     flavor: req.body.flavor,
     isAvailable: true,
@@ -639,7 +639,7 @@ route.post("/admin/addFlavor", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/admin/deleteFlavor", async (req, res) => {
+route.get("/deleteFlavor", async (req, res) => {
   const flavors = await Flavor.find();
 
   const formattedFlavors = flavors.map((flavor) => {
@@ -651,18 +651,18 @@ route.get("/admin/deleteFlavor", async (req, res) => {
   res.render("deleteFlavor", { flavors: formattedFlavors });
 });
 
-route.delete("/admin/deleteFlavor/:id", async (req, res) => {
+route.delete("/deleteFlavor/:id", async (req, res) => {
   const flavorId = req.params.id;
   await Flavor.findByIdAndRemove(flavorId);
   res.end();
 });
 
-route.get("/admin/addTopping", async (req, res) => {
+route.get("/addTopping", async (req, res) => {
   res.render("addTopping");
 });
 
 // updates database with new topping options
-route.post("/admin/addTopping", async (req, res) => {
+route.post("/addTopping", async (req, res) => {
   const topping = new Topping({
     topping: req.body.topping,
     isAvailable: true,
@@ -672,7 +672,7 @@ route.post("/admin/addTopping", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/admin/deleteTopping", async (req, res) => {
+route.get("/deleteTopping", async (req, res) => {
   const toppings = await Topping.find();
 
   const formattedToppings = toppings.map((topping) => {
@@ -684,8 +684,30 @@ route.get("/admin/deleteTopping", async (req, res) => {
   res.render("deleteTopping", { toppings: formattedToppings });
 });
 
-route.delete("/admin/deleteTopping/:id", async (req, res) => {
+route.delete("/deleteTopping/:id", async (req, res) => {
   const toppingId = req.params.id;
   await Topping.findByIdAndRemove(toppingId);
   res.end();
 });
+
+route.get("/deliveryPersonManager", async (req, res) => {
+  const deliveryPersons = await DeliveryPerson.find();
+  res.render("deliveryPersonManager", { deliveryPersons });
+});
+
+route.post("/addDeliveryPerson", async (req, res) => {
+  console.log(req.body);
+  const deliveryPerson = new DeliveryPerson({
+    name: req.body.name,
+    pin: req.body.pin,
+  });
+  await deliveryPerson.save();
+  res.status(201).end();
+});
+
+route.delete("/deleteDeliveryPerson", async (req, res) => {
+  await DeliveryPerson.findByIdAndRemove(req.body.id);
+  res.end();
+});
+
+module.exports = route;

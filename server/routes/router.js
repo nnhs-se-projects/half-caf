@@ -1,11 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
-const Topping = require("../model/topping");
-const Flavor = require("../model/flavor");
 const MenuItem = require("../model/menuItem");
-const TempJson = require("../model/temps.json");
-const Toppings = require("../model/topping");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
 const Schedule = require("../model/schedule");
@@ -13,18 +9,8 @@ const Period = require("../model/period");
 const Enabled = require("../model/enabled");
 const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
-const {
-  emitToggleChange,
-  emitOrderCancelled,
-  emitOrderClaimed,
-  emitNewOrderPlaced,
-} = require("../socket/socket");
-const devEmails = [
-  "bfjesso@stu.naperville203.org",
-  "rekrzyzanowski@stu.naperville203.org",
-  "jjkrzyzanowski@stu.naperville203.org",
-  "egkohl@stu.naperville203.org",
-];
+
+const { emitToggleChange, emitOrderClaimed } = require("../socket/socket");
 
 const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
@@ -112,31 +98,18 @@ route.use(async (req, res, next) => {
   next();
 });
 
-async function getUserRoles(email) {
-  try {
-    const user = await User.findOne({ email }, "userType");
-    if (user === null) {
-      return null;
-    }
-    const userRole = user.userType;
-    return userRole;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 // Separate redirectUser route is used to easily redirect
 //    the user dependent on their role
 route.get("/redirectUser", async (req, res) => {
   console.log("Redirecting user.");
   try {
-    const role = await getUserRoles(req.session.email);
+    const user = await User.findOne({ email: req.session.email });
     req.session.cart = [];
-    if (role === "admin") {
+    if (user.userType === "admin") {
       res.redirect("/admin/addUser");
-    } else if (role === "barista") {
+    } else if (user.userType === "barista") {
       res.redirect("/barista");
-    } else if (role === "teacher") {
+    } else if (user.userType === "teacher") {
       res.redirect("/teacher/popularDrinks");
     } else {
       req.session.email = "";
@@ -332,29 +305,7 @@ route.get("/deliveryLogOut", async (req, res) => {
   req.session.currentDelivererId = null;
   res.redirect("/deliveryLogin");
 });
-route.get("/deliveryPersonManager", async (req, res) => {
-  const role = await getUserRoles(req.session.email);
-  if (role !== "admin") {
-    res.redirect("/redirectUser");
-  } else {
-    const deliveryPersons = await DeliveryPerson.find();
 
-    res.render("deliveryPersonManager", { deliveryPersons });
-  }
-});
-route.post("/addDeliveryPerson", async (req, res) => {
-  console.log(req.body);
-  const deliveryPerson = new DeliveryPerson({
-    name: req.body.name,
-    pin: req.body.pin,
-  });
-  await deliveryPerson.save();
-  res.status(201).end();
-});
-route.delete("/deleteDeliveryPerson", async (req, res) => {
-  await DeliveryPerson.findByIdAndRemove(req.body.id);
-  res.end();
-});
 // Add route to handle push subscriptions for mobile web notifications
 route.post("/subscribe", (req, res) => {
   const subscription = req.body;

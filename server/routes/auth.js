@@ -13,7 +13,7 @@ const { OAuth2Client } = require("google-auth-library");
 const CLIENT_ID = process.env.CLIENT_ID;
 const oAuth2 = new OAuth2Client(CLIENT_ID);
 
-route.get("/auth", (req, res) => {
+route.get("/", (req, res) => {
   if (req.session.email) {
     res.redirect("/redirectUser");
   } else {
