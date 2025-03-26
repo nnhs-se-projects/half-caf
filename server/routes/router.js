@@ -15,6 +15,7 @@ const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
 const {
   emitToggleChange,
+  emitOrderCompleted,
   emitOrderCancelled,
   emitOrderClaimed,
   emitNewOrderPlaced,
@@ -909,6 +910,7 @@ route.delete("/barista/:id", async (req, res) => {
   emitOrderCancelled({
     cancelMessage: req.body.message,
     email: order.email,
+    orderId: order._id,
   });
 
   res.status(201).end();
@@ -919,6 +921,8 @@ route.post("/barista/:id", async (req, res) => {
   order.complete = true;
   order.timer = req.body.t;
   await order.save();
+
+  emitOrderCompleted({ orderId: order.id });
 
   for (const drinkId of order.drinks) {
     const drink = await Drink.findById(drinkId);
