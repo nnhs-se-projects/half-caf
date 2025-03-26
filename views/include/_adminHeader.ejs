@@ -56,6 +56,7 @@
           <% if(headerData.enabled === false) { %>
           <input class="toggle" type="checkbox" id="myCheckbox" />
           <span class="dis-en"></span>
+          <h4>Enable Orders</h4>
           <% } else { %>
           <input
             class="toggle"
@@ -64,9 +65,9 @@
             checked="checked"
           />
           <span class="dis-en"></span>
+          <h4>Disable Orders</h4>
           <% } %>
         </label>
-        <h4>Allow Orders</h4>
       </a>
     </div>
     <script src="/socket.io/socket.io.js"></script>
