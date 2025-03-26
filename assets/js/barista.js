@@ -98,7 +98,11 @@ window.io().on("New order placed", (data) => {
     if (isFirstDrink) {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
-          <td>${data.order.email.split("@")[0]}</td>
+          <td>${
+            data.order.name && data.order.name.trim()
+              ? data.order.name
+              : data.order.email.split("@")[0]
+          }</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
@@ -126,7 +130,11 @@ window.io().on("New order placed", (data) => {
     } else {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
-          <td>${data.order.email.split("@")[0]}</td>
+          <td>${
+            data.order.name && data.order.name.trim()
+              ? data.order.name
+              : data.order.email.split("@")[0]
+          }</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>

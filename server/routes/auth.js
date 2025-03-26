@@ -23,10 +23,15 @@ route.post("/", async (req, res) => {
     audience: CLIENT_ID,
   });
 
-  // store the authenticated user's email in the session
-  const { sub, email } = ticket.getPayload();
+  // extract payload now with name -- can use for baristas
+  const payload = ticket.getPayload();
+  const { sub, email, name } = payload; // name, given_name, family_name (also available)
   req.session.email = email;
-  console.log(sub, email);
+  req.session.name = name; // store user's full name
+
+  // log name and email to console for testing
+  console.log("Authenticated user:", { name, email });
+
   res.status(201).end();
 });
 

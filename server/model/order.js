@@ -54,6 +54,14 @@ const schema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  name: {
+    type: String,
+    required: false,
+  },
+  isAdmin: {
+    type: Boolean,
+    required: false,
+  },
 });
 
 const Order = mongoose.model("Order", schema);
