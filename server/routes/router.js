@@ -282,6 +282,26 @@ route.get("/scheduler", async (req, res) => {
   }
 });
 
+route.post("/updatePeriod", async (req, res) => {
+  const { periodId, hasDisabledOrdering } = req.body;
+  try {
+    const period = await Period.findById(periodId);
+
+    if (period) {
+      period.hasDisabledOrdering = hasDisabledOrdering;
+      await period.save();
+      console.log("Period updated successfully");
+      res.status(200).json({ message: "Period updated successfully" });
+    } else {
+      console.log("Period not found");
+      res.status(404).json({ message: "Period not found" });
+    }
+  } catch (error) {
+    console.error("Error updating period:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 route.get("/addUser", async (req, res) => {
   const role = await getUserRoles(req.session.email);
   if (role !== "admin") {
