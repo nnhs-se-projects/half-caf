@@ -39,7 +39,7 @@ function addListenerToFinishButtons() {
   for (const finishButton of finishButtons) {
     finishButton.addEventListener("click", async () => {
       const orderId = finishButton.value;
-      console.log("LOG");
+
       const counter = document.querySelector(
         `.time-counter[data-order-id="${orderId}"]`
       );
@@ -174,6 +174,24 @@ window.io().on("New order placed", (data) => {
   addListenerToFinishButtons();
 
   lastDrinkColor = lastDrinkColor === "c" ? "b" : "c";
+});
+
+window.io().on("Order completed", (data) => {
+  const orderRow = document.querySelector(
+    `.time-counter[data-order-id="${data.orderId}"]`
+  ).parentNode.parentNode;
+  if (orderRow) {
+    orderRow.remove();
+  }
+});
+
+window.io().on("Order cancelled", (data) => {
+  const orderRow = document.querySelector(
+    `.time-counter[data-order-id="${data.orderId}"]`
+  ).parentNode.parentNode;
+  if (orderRow) {
+    orderRow.remove();
+  }
 });
 
 function convertToSeconds(timeString) {
