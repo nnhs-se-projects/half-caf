@@ -31,7 +31,10 @@
           class="order-row <%= i === 0 ? 'first-drink' : 'additional-drink' %>"
         >
           <td><%=order.room%></td>
-          <td><%=order.email.split('@')[0]%></td>
+          <td>
+            <%= order.name && order.name.trim() ? order.name :
+            order.email.split('@')[0] %>
+          </td>
           <td><%=tempDrink.name%></td>
           <td>
             <span class="temp-badge <%=tempDrink.temp.toLowerCase()%>"

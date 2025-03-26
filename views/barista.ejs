@@ -35,7 +35,10 @@
         >
           <td><%=order.room%></td>
 
-          <td><%=order.email.split('@')[0]%></td>
+          <td>
+            <%= order.name && order.name.trim() ? order.name :
+            order.email.split('@')[0] %>
+          </td>
 
           <td><%=tempDrink.name%></td>
           <td>

@@ -1001,8 +1001,10 @@ route.post("/pointofsale", async (req, res) => {
     drinks: drinkIdCart,
     totalPrice: req.body.total,
     timer: "uncompleted",
+    name: req.session.name,
   });
   await order.save();
+  //console.log("New point-of-sale order created with name:", order.name);
   const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
@@ -1514,8 +1516,10 @@ route.post("/teacherMyCart", async (req, res) => {
       drinks: req.session.cart,
       totalPrice: total,
       timer: "uncompleted",
+      name: req.session.name,
     });
     await order.save();
+    //console.log("New teacher order created with name:", order.name);
     const user = await User.findOne({ email: req.session.email });
     user.currentOrder = order;
     user.orderHistory.push(order);
