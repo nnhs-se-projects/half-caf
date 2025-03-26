@@ -33,7 +33,9 @@
           <td><%=order.room%></td>
           <td>
             <%=order.name && order.name.trim() ? order.name :
-            order.email.split('@')[0]%>
+            order.email.split('@')[0] %> <% if(order.isAdmin) { %>
+            <span style="color: red"> Admin</span>
+            <% } %>
           </td>
           <td><%=tempDrink.name%></td>
           <td>

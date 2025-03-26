@@ -989,6 +989,8 @@ route.post("/pointofsale", async (req, res) => {
     drinkIdCart.push(newDrink._id);
   }
 
+  const role = await getUserRoles(req.session.email);
+
   const order = new Order({
     email: "in-person",
     room: "half-caf",
@@ -1002,6 +1004,7 @@ route.post("/pointofsale", async (req, res) => {
     totalPrice: req.body.total,
     timer: "uncompleted",
     name: req.session.name,
+    isAdmin: role === "admin",
   });
   await order.save();
   //console.log("New point-of-sale order created with name:", order.name);
@@ -1499,6 +1502,7 @@ route.post("/updateCart", async (req, res) => {
 });
 
 route.post("/teacherMyCart", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
   let total = 0;
   for (const drink of req.session.cart) {
     total += drink.price;
@@ -1517,6 +1521,7 @@ route.post("/teacherMyCart", async (req, res) => {
       totalPrice: total,
       timer: "uncompleted",
       name: req.session.name,
+      isAdmin: role === "admin",
     });
     await order.save();
     //console.log("New teacher order created with name:", order.name);
