@@ -1,3 +1,51 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const checkboxes = document.querySelectorAll(".period-checkbox");
+  console.log("Found checkboxes:", checkboxes.length);
+
+  for (const checkbox of checkboxes) {
+    // Store initial state
+    checkbox.setAttribute("data-initial-state", checkbox.checked);
+
+    checkbox.addEventListener("change", async (event) => {
+      event.preventDefault(); // Prevent default checkbox behavior until confirmed
+      const originalState = checkbox.checked;
+      checkbox.disabled = true;
+
+      try {
+        const periodId = checkbox.id.replace("period-", "");
+        const data = {
+          periodId: periodId,
+          hasDisabledOrdering: checkbox.checked,
+        };
+
+        const response = await fetch("/updatePeriod", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message || response.statusText);
+        }
+
+        // Update the stored state after successful save
+        checkbox.setAttribute("data-initial-state", checkbox.checked);
+      } catch (error) {
+        console.error("Error details:", error);
+        // Revert to original state
+        checkbox.checked = originalState;
+        alert(`Failed to update period: ${error.message}`);
+      } finally {
+        checkbox.disabled = false;
+      }
+    });
+  }
+});
+
 document.getElementById("schedules").addEventListener("change", () => {
   const selectedValue = document.getElementById("schedules").value;
   const urlParams = new URLSearchParams(window.location.search);
