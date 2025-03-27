@@ -59,6 +59,7 @@
       </fieldset>
     </div>
     <% } %>
+    <% if(toppings.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose Add-Ons:</h6>
       <ul class="items">
@@ -70,6 +71,7 @@
         <%}%>
       </ul>
     </div>
+    <%}%>
     <input
       type="text"
       id="instructions"
