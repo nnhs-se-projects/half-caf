@@ -26,11 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify(data),
         });
 
-        const responseData = await response.json();
-
         if (!response.ok) {
-          throw new Error(responseData.message || response.statusText);
+          // Handle non-2xx responses without attempting to parse as JSON
+          throw new Error(
+            `Server error: ${response.status} ${response.statusText}`
+          );
         }
+
+        const responseData = await response.json();
 
         // Update the stored state after successful save
         checkbox.setAttribute("data-initial-state", checkbox.checked);
