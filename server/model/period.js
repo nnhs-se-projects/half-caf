@@ -18,6 +18,10 @@ const scheme = new mongoose.Schema({
   hasDisabledOrdering: {
     type: Boolean,
     required: true,
+  },
+  orderingDisabled: {
+    type: Boolean,
+    required: false,
     default: false,
   },
 });
