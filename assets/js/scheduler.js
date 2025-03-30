@@ -31,9 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(
             `Server error: ${response.status} ${response.statusText}`
           );
+        } else {
+          alert("Period updated successfully");
         }
-
-        const responseData = await response.json();
 
         // Update the stored state after successful save
         checkbox.setAttribute("data-initial-state", checkbox.checked);
