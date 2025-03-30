@@ -15,6 +15,7 @@ const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
 const {
   emitToggleChange,
+  emitOrderCompleted,
   emitOrderCancelled,
   emitOrderClaimed,
   emitNewOrderPlaced,
@@ -26,7 +27,7 @@ const devEmails = [
   "egkohl@stu.naperville203.org",
 ];
 
-const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
+const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
@@ -88,35 +89,6 @@ async function checkTime() {
 
 setInterval(checkTime, 15000); // check every 15 sec
 
-route.get("/", async (req, res) => {
-  const user = await User.findOne({ email: req.session.email });
-  if (user === null) {
-    if (req.session.email.indexOf("@naperville203.org") > -1) {
-      const newUser = new User({
-        email: req.session.email,
-        userType: "teacher",
-      });
-      await newUser.save();
-      res.redirect("/teacherPopularDrinks");
-    } else {
-      // they are not in the database and do not have a staff email
-      res.redirect("/auth");
-    }
-  } else {
-    const menuItems = await MenuItem.find();
-    const popularMenu = [];
-    for (let i = 0; i < menuItems.length; i++) {
-      if (menuItems[i].popular === true) {
-        popularMenu.push(menuItems[i]);
-      }
-    }
-
-    res.render("homePopularDrinks", {
-      menuItems: popularMenu,
-    });
-  }
-});
-
 route.get("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   res.render("_adminHeader", { enabled: toggle });
@@ -165,7 +137,9 @@ async function getUserRoles(email) {
 // Separate redirectUser route is used to easily redirect
 //    the user dependent on their role
 route.get("/redirectUser", async (req, res) => {
+  console.log("Redirecting user.");
   try {
+    const user = await User.findOne({ email: req.session.email });
     const role = await getUserRoles(req.session.email);
     req.session.cart = [];
     if (role === "admin") {
@@ -174,9 +148,20 @@ route.get("/redirectUser", async (req, res) => {
       res.redirect("/barista");
     } else if (role === "teacher") {
       res.redirect("/teacherPopularDrinks");
+    } else if (
+      (user === null || user === undefined) &&
+      req.session.email.indexOf("@naperville203.org") > -1
+    ) {
+      console.log("User is a staff member, creating account...");
+      const newUser = new User({
+        email: req.session.email,
+        userType: "teacher",
+      });
+      await newUser.save();
+      res.redirect("/teacherPopularDrinks");
     } else {
-      console.log("Role Not Recognized");
-      res.redirect("/");
+      req.session.email = "";
+      res.redirect("/auth"); // User is either not a staff member, not in the database, or has an invalid role.
     }
   } catch (error) {
     console.error(error);
@@ -294,6 +279,26 @@ route.get("/scheduler", async (req, res) => {
       schedules,
       selectedPeriods,
     });
+  }
+});
+
+route.post("/updatePeriod", async (req, res) => {
+  const { periodId, hasDisabledOrdering } = req.body;
+  try {
+    const period = await Period.findById(periodId);
+
+    if (period) {
+      period.hasDisabledOrdering = hasDisabledOrdering;
+      await period.save();
+      console.log("Period updated successfully");
+      res.status(200).json({ message: "Period updated successfully" });
+    } else {
+      console.log("Period not found");
+      res.status(404).json({ message: "Period not found" });
+    }
+  } catch (error) {
+    console.error("Error updating period:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -925,6 +930,7 @@ route.delete("/barista/:id", async (req, res) => {
   emitOrderCancelled({
     cancelMessage: req.body.message,
     email: order.email,
+    orderId: order._id,
   });
 
   res.status(201).end();
@@ -935,6 +941,8 @@ route.post("/barista/:id", async (req, res) => {
   order.complete = true;
   order.timer = req.body.t;
   await order.save();
+
+  emitOrderCompleted({ orderId: order.id });
 
   for (const drinkId of order.drinks) {
     const drink = await Drink.findById(drinkId);
@@ -976,7 +984,7 @@ route.get("/pointofsale", async (req, res) => {
       }
     }
 
-    res.render("pointofsale", {
+    res.render("pointOfSale", {
       role,
       orders,
       menuItems,
@@ -1005,6 +1013,8 @@ route.post("/pointofsale", async (req, res) => {
     drinkIdCart.push(newDrink._id);
   }
 
+  const role = await getUserRoles(req.session.email);
+
   const order = new Order({
     email: "in-person",
     room: "half-caf",
@@ -1017,8 +1027,11 @@ route.post("/pointofsale", async (req, res) => {
     drinks: drinkIdCart,
     totalPrice: req.body.total,
     timer: "uncompleted",
+    name: req.session.name,
+    isAdmin: role === "admin",
   });
   await order.save();
+  //console.log("New point-of-sale order created with name:", order.name);
   const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
@@ -1513,6 +1526,7 @@ route.post("/updateCart", async (req, res) => {
 });
 
 route.post("/teacherMyCart", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
   let total = 0;
   for (const drink of req.session.cart) {
     total += drink.price;
@@ -1530,8 +1544,11 @@ route.post("/teacherMyCart", async (req, res) => {
       drinks: req.session.cart,
       totalPrice: total,
       timer: "uncompleted",
+      name: req.session.name,
+      isAdmin: role === "admin",
     });
     await order.save();
+    //console.log("New teacher order created with name:", order.name);
     const user = await User.findOne({ email: req.session.email });
     user.currentOrder = order;
     user.orderHistory.push(order);

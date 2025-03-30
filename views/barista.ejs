@@ -35,7 +35,12 @@
         >
           <td><%=order.room%></td>
 
-          <td><%=order.email.split('@')[0]%></td>
+          <td>
+            <%=order.name && order.name.trim() ? order.name :
+            order.email.split('@')[0] %> <% if(order.isAdmin) { %>
+            <span style="color: red"> Admin</span>
+            <% } %>
+          </td>
 
           <td><%=tempDrink.name%></td>
           <td>
@@ -190,6 +195,7 @@
     border-radius: 20px;
     font-weight: 600;
     font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .temp-badge.hot {
@@ -202,7 +208,7 @@
     color: white;
   }
 
-  .temp-badge.blended {
+  .temp-badge.blended-ice {
     background: #9c6ade;
     color: white;
   }

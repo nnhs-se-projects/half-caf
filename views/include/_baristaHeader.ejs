@@ -31,7 +31,7 @@
 
     <div id="sidebar">
       <a href="/barista">Orders</a>
-      <a href="/pointofsale">Point of Sale</a>
+      <a href="/pointOfSale">Point of Sale</a>
       <a href="/completed">Completed Orders</a>
       <a href="/cancelledOrders">Cancelled Orders</a>
       <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
@@ -70,6 +70,7 @@
           <% if(headerData.enabled === false) { %>
           <input class="toggle" type="checkbox" id="myCheckbox" />
           <span class="dis-en"></span>
+          <h4 style="padding-top: 10px">Orders Disabled</h4>
           <% } else { %>
           <input
             class="toggle"
@@ -78,9 +79,9 @@
             checked="checked"
           />
           <span class="dis-en"></span>
+          <h4 style="padding-top: 10px">Orders Enabled</h4>
           <% } %>
         </label>
-        <h4>Allow Orders</h4>
       </a>
     </div>
     <style>

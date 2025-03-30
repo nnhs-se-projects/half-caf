@@ -39,7 +39,7 @@ function addListenerToFinishButtons() {
   for (const finishButton of finishButtons) {
     finishButton.addEventListener("click", async () => {
       const orderId = finishButton.value;
-      console.log("LOG");
+
       const counter = document.querySelector(
         `.time-counter[data-order-id="${orderId}"]`
       );
@@ -98,7 +98,11 @@ window.io().on("New order placed", (data) => {
     if (isFirstDrink) {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
-          <td>${data.order.email.split("@")[0]}</td>
+          <td>${
+            data.order.name && data.order.name.trim()
+              ? data.order.name
+              : data.order.email.split("@")[0]
+          }</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
@@ -126,7 +130,11 @@ window.io().on("New order placed", (data) => {
     } else {
       drinkElement.innerHTML = `
           <td>${data.order.room}</td>
-          <td>${data.order.email.split("@")[0]}</td>
+          <td>${
+            data.order.name && data.order.name.trim()
+              ? data.order.name
+              : data.order.email.split("@")[0]
+          }</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
@@ -174,6 +182,24 @@ window.io().on("New order placed", (data) => {
   addListenerToFinishButtons();
 
   lastDrinkColor = lastDrinkColor === "c" ? "b" : "c";
+});
+
+window.io().on("Order completed", (data) => {
+  const orderRow = document.querySelector(
+    `.time-counter[data-order-id="${data.orderId}"]`
+  ).parentNode.parentNode;
+  if (orderRow) {
+    orderRow.remove();
+  }
+});
+
+window.io().on("Order cancelled", (data) => {
+  const orderRow = document.querySelector(
+    `.time-counter[data-order-id="${data.orderId}"]`
+  ).parentNode.parentNode;
+  if (orderRow) {
+    orderRow.remove();
+  }
 });
 
 function convertToSeconds(timeString) {
