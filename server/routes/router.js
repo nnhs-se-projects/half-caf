@@ -102,6 +102,7 @@ async function checkTime() {
           toggle.enabled = false;
           await toggle.save();
           emitToggleChange();
+          return;
         }
       }
 
