@@ -102,11 +102,14 @@ window.io().on("New order placed", (data) => {
             data.order.name && data.order.name.trim()
               ? data.order.name
               : data.order.email.split("@")[0]
-          }</td>
+          }
+          ${data.order.isAdmin ? `<span style="color: red"> Admin</span>` : ""}
+          </td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
           <td>${drink.toppings}</td>
+          <td>${drink.caffeinated ? "No" : "Yes"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>
