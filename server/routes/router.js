@@ -27,7 +27,7 @@ const devEmails = [
   "egkohl@stu.naperville203.org",
 ];
 
-const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
+const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
@@ -48,6 +48,7 @@ async function checkTime() {
   }
   for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
+
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
     const periodEndMin = Number(
       period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
@@ -65,24 +66,62 @@ async function checkTime() {
       periodEndHr,
       periodEndMin
     );
+
+    let periodStartHr = Number(
+      period.start.substring(0, period.start.indexOf(":"))
+    );
+    const periodStartMin = Number(
+      period.start.substring(
+        period.start.indexOf(":") + 1,
+        period.start.length - 3
+      )
+    );
+    if (period.start.indexOf("PM") > -1 && periodStartHr !== 12) {
+      periodStartHr += 12;
+    }
+    if (period.start.indexOf("AM") > -1 && periodStartHr === 12) {
+      periodStartHr = 0;
+    }
+    const startDate = new Date(
+      currentTimeDate.getFullYear(),
+      currentTimeDate.getMonth(),
+      currentTimeDate.getDate(),
+      periodStartHr,
+      periodStartMin
+    );
+    const startDateMs = Date.parse(startDate);
     const endDateMs = Date.parse(endDate);
-    const difference = endDateMs - currentTimeMs;
-    if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
-      if (!period.hasDisabledOrdering) {
-        const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-        toggle.enabled = false;
+    const timeToEnd = endDateMs - currentTimeMs;
+    // If during period
+    if (currentTimeMs > startDateMs && currentTimeMs < endDateMs) {
+      const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+
+      // Check if period was manually disabled in the scheduler
+      if (period.orderingDisabled) {
+        if (toggle.enabled) {
+          toggle.enabled = false;
+          await toggle.save();
+          emitToggleChange();
+          return;
+        }
+      }
+
+      // If at the end of the period
+      if (timeToEnd > 0 && timeToEnd <= timeBeforeEnd * 60 * 1000) {
+        if (!period.hasDisabledOrdering) {
+          toggle.enabled = false;
+          await toggle.save();
+          period.hasDisabledOrdering = true;
+          await period.save();
+          emitToggleChange();
+        }
+      } else if (period.hasDisabledOrdering) {
+        toggle.enabled = true;
         await toggle.save();
-        period.hasDisabledOrdering = true;
+        period.hasDisabledOrdering = false;
         await period.save();
         emitToggleChange();
       }
-    } else if (period.hasDisabledOrdering) {
-      const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-      toggle.enabled = true;
-      await toggle.save();
-      period.hasDisabledOrdering = false;
-      await period.save();
-      emitToggleChange();
     }
   }
 }
@@ -283,12 +322,12 @@ route.get("/scheduler", async (req, res) => {
 });
 
 route.post("/updatePeriod", async (req, res) => {
-  const { periodId, hasDisabledOrdering } = req.body;
+  const { periodId, orderingDisabled } = req.body;
   try {
     const period = await Period.findById(periodId);
 
     if (period) {
-      period.hasDisabledOrdering = hasDisabledOrdering;
+      period.orderingDisabled = orderingDisabled;
       await period.save();
       console.log("Period updated successfully");
       res.status(200).json({ message: "Period updated successfully" });

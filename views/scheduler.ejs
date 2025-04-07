@@ -46,15 +46,17 @@
           <div class="period-card">
             <h3 class="period-name"><%=period.name%></h3>
             <div class="disable-ordering-checkbox">
-  <label for="period-<%=period._id%>">Disable Ordering</label>
-  <input 
-    type="checkbox" 
-    class="period-checkbox"
-    id="period-<%=period._id%>"
-    data-period-id="<%=period._id%>"
-    <%= period.hasDisabledOrdering ? 'checked' : '' %>
-  />
-</div>
+              <label for="period-<%=period._id%>" class="checkbox-label">
+                Disable Ordering
+              <input 
+                type="checkbox" 
+                class="period-checkbox"
+                id="period-<%=period._id%>"
+                data-period-id="<%=period._id%>"
+                <%= period.orderingDisabled ? 'checked' : '' %>
+              />
+              </label>
+            </div>
             <div class="time-details">
               <div class="time-item">
                 <span class="time-label">Start:</span>
@@ -73,6 +75,19 @@
 </div>
 
 <style>
+
+.period-name {
+  text-wrap: nowrap;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+
   input[type="checkbox"]:checked {
     background: var(--accent);
     border-color: var(--accent);

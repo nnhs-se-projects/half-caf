@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const periodId = checkbox.id.replace("period-", "");
         const data = {
           periodId: periodId,
-          hasDisabledOrdering: checkbox.checked,
+          orderingDisabled: checkbox.checked,
         };
 
         const response = await fetch("/updatePeriod", {
@@ -26,10 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify(data),
         });
 
-        const responseData = await response.json();
-
         if (!response.ok) {
-          throw new Error(responseData.message || response.statusText);
+          // Handle non-2xx responses without attempting to parse as JSON
+          throw new Error(
+            `Server error: ${response.status} ${response.statusText}`
+          );
+        } else {
+          alert("Period updated successfully");
         }
 
         // Update the stored state after successful save
