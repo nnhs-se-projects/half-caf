@@ -917,6 +917,9 @@ route.get("/barista", async (req, res) => {
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        if (!drink) {
+          break;
+        }
         formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
