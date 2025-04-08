@@ -97,8 +97,13 @@
           <% if(headerData.enabled === false) { %>
           <input class="toggle" type="checkbox" id="myCheckbox" />
           <span class="dis-en"></span>
+          <% if(headerData.reason) { %>
+          <h4 style="padding-top: 10px; font-size: 0.75rem">
+            Orders Disabled (<%=headerData.reason%>)
+          </h4>
+          <%} else { %>
           <h4 style="padding-top: 10px">Orders Disabled</h4>
-          <% } else { %>
+          <% } %> <% } else { %>
           <input
             class="toggle"
             type="checkbox"
