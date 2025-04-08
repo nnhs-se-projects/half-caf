@@ -110,6 +110,7 @@ async function checkTime() {
       if (timeToEnd > 0 && timeToEnd <= timeBeforeEnd * 60 * 1000) {
         if (!period.hasDisabledOrdering) {
           toggle.enabled = false;
+          toggle.reason = "Scheduler";
           await toggle.save();
           period.hasDisabledOrdering = true;
           await period.save();
@@ -137,8 +138,8 @@ route.get("/toggle", async (req, res) => {
 route.post("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
+  toggle.reason = "Admin/Barista";
   await toggle.save();
-
   emitToggleChange();
 });
 
@@ -147,6 +148,7 @@ route.use(async (req, res, next) => {
 
   res.locals.headerData = {
     enabled: toggle.enabled,
+    reason: toggle.reason,
   };
 
   next();
@@ -1073,7 +1075,6 @@ route.post("/pointofsale", async (req, res) => {
     isAdmin: role === "admin",
   });
   await order.save();
-  //console.log("New point-of-sale order created with name:", order.name);
   const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
@@ -1589,7 +1590,6 @@ route.post("/teacherMyCart", async (req, res) => {
       isAdmin: role === "admin",
     });
     await order.save();
-    //console.log("New teacher order created with name:", order.name);
     const user = await User.findOne({ email: req.session.email });
     user.currentOrder = order;
     user.orderHistory.push(order);
