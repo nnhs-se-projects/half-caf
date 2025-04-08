@@ -37,6 +37,7 @@
             <span style="color: red"> Admin</span>
             <% } %>
           </td>
+          <% if (tempDrink) { %>
           <td><%=tempDrink.name%></td>
           <td>
             <span class="temp-badge <%=tempDrink.temp.toLowerCase()%>"
@@ -47,6 +48,7 @@
           <td><%=tempDrink.toppings%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
           <td><%=tempDrink.instructions%></td>
+          <% } %>
           <td><%=order.timestamp.split('/')[0]%></td>
           <% if(showButtons === true) { %>
           <td>

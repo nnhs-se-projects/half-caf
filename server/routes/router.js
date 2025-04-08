@@ -1226,6 +1226,9 @@ route.get("/cancelledOrders", async (req, res) => {
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        if (!drink) {
+          break;
+        }
         formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
@@ -1258,7 +1261,7 @@ route.get("/cancelledOrders", async (req, res) => {
       }
       drinkMap.set(i, drinkArray);
     }
-
+    console.log(drinkMap);
     res.render("cancelledOrders", {
       orders,
       drinkMap,
@@ -1394,10 +1397,6 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   await Topping.findByIdAndRemove(toppingId);
   res.end();
 });
-
-// route.get("/barista", (req, res) => {
-//   res.render("barista");
-// });
 
 route.get("/completed", (req, res) => {
   res.render("completed");
