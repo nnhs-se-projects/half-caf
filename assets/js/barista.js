@@ -70,6 +70,7 @@ let lastDrinkColor;
 let orderTable = null;
 // Add audio instance for new order sound (adjust the path if needed)
 const orderSound = new Audio("../sounds/order-new.wav");
+orderSound.preload = "auto";
 
 document.addEventListener("DOMContentLoaded", () => {
   orderTable = document.getElementById("orderTable");
