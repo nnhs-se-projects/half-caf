@@ -4,11 +4,11 @@ Group Members: Nathan, Naglis, David, Aadi
 
 Group Members v2: Grace, Jessica, Kasey, Owen
 
-Group Members v3 (Best group): Divya, Hansheng, Krish, Sophia
+Group Members v3: Divya, Hansheng, Krish, Sophia
 
-Group Members v4 (Betterer group): Tavneet, Abby, Delilah, Eric
+Group Members v4: Tavneet, Abby, Delilah, Eric
 
-Group Members v5: Bennett, Emran, Jack, Ryan
+Group Members v5 (actually made the app functional and ready for use): Bennett, Emran, Jack, Ryan
 
 ## Insights (Previous Groups)
 
@@ -24,13 +24,12 @@ Use pair programming to your advantage. Just because it may seem faster to divid
 
 ## Platform Requirements
 
-Latest version of VSCode\
-Make sure your operating system is fully updated
+Install Node.js
 
 ## Initial Setup
 
 1. Clone this repository
-2. From a terminal in VS code, run the following:
+2. From a terminal in the repository's directory, run the following command to install all dependencies:
 
 ```
 npm install
@@ -48,8 +47,8 @@ VAPID_PRIVATE_KEY= <find in trello>
 ```
 
 4. Download MongoDB Compass for your computer
-5. Use the URI from the trello to connect to the database
-6. In compass, edit one of the ADMIN users and change their email to your email
+5. Use the URI from the Trello to connect to the database
+6. In Compass, edit one of the ADMIN users and change their email to your email
 7. Run the server from the VS Code debugger
 8. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
 9. Go to Login and sign in with Google
@@ -68,7 +67,8 @@ Chart.js - Renders charts in the metrics page
 
 ## Data Schema
 
-![alt text](dataStructure.png)
+![data model](dataStructure.png)
+(OUTDATED!)
 
 The image above shows the dependencies of the different classes in the dat structure. All of the models are written in js except temps.json (you can find the data model under assets/server/model). Download MongoDB Compass to easily access the database with the same URI written in your ejs file. You can look through Compass to see what the dependencies look like in the actual app.
 
@@ -76,67 +76,9 @@ To explain the image more, each arrow shows a different dependency. The beginnin
 
 Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
 
-## OVERVIEW
+## Features the 2025-2026 team needs to implement:
 
-### ADMIN:
-
-Currently working:\
-Toggle turns on/off the ordering process\
-Add user allows an admin to add a user for a chosen role by their email\
-View user allows an admin to see all users, filter them by their status, and activate/deactivate users\
-Delete user allows an admin to remove a user from the database\
-Add drink allows an admin to add a new menu item to the database. They are able to choose the name of the drink, the description of the drink, the price of the drink, what flavors can be added to the drink, what toppings can be added to the drink, if the drink is popular, if the drink can be caffeinated, what temperatures the drink can be, and if the drink is special\
-Delete drink allows an admin to remove a menu item from the database\
-Add flavor allows an admin to add a flavor to the database\
-Delete flavor allows an admin to remove a flavor from the database\
-Add topping allows an admin to add a topping to the database and add a price for that topping if applicable\
-Delete topping allows an admin to remove a topping from the database\
-Logout button routes the user back to the homepage and signs them out\
-
-Not done:\
-Modify drink allows an admin to load a menu item and make changes to it. Currently everything loads except for the temperatures and the checkboxes for popular, caffeinated, and special do not display. It is technically functional but not fully complete.\
-Mr. Skarr would like for it to be possible to keep track of the amount of each ingredient used in order for him to know when he has to order new ingredients\
-
-### BARISTA:
-
-Currently working:\
-Orders page loads all current orders\
-Completed orders page loads all completed orders\
-Toggle turns on/off the ordering process\
-Logout button routes the user back to the homepage and signs them out\
-
-Not done:\
-Cancel button needs to remove an order and notify the teacher that it was cancelled\
-Finish button has been started but is not fully functional, it needs to change the complete property of an order to true which will make it display on the completed orders page\
-Incomplete button needs to change the complete property of an order to false which will make it display on the orders page\
-Notification drop down needs to display new orders and have the notifications go away once read\
-
-### TEACHER:
-
-Currently Working:\
-Popular Drinks displays drinks that have been marked popular by an admin\
-Menu displays all drinks on the menu and teachers are able to click on them and get taken to the customize drink page\
-Customize drink allows for users to choose flavors and toppings that have been chosen by the admin. They are required to choose a temperature, teachers are not able to to press the 'add to cart' button without choosing a temperature however flavors and toppings are optional. Teachers can also add special instructions.\
-Once they have pressed 'add to cart', they are redirected to My Order aka their cart where their drink card is displayed with a remove button. They can then enter their room number and place their order, as long as order is available.\
-Order History displays past orders with the time they ordered, the drink name and specifications, room number ordered to, and total price of the order.\
-The logout button takes the user back to the auth page.\
-
-Not Done:\
-Teachers cannot order from popular drinks\
-Favorites does not work at all, an Arnold Palmer is currently hardcoded on the page\
-'save to favorite' option does not currently work\
-Drink specifications do not show in the cart.\
-The 'place order' button should not display if the user has nothing in their cart.\
-
-### HOME PAGE:
-
-Currently Working:\
-Popular Drinks displays drinks that have been marked popular by an admin\
-Menu displays all drinks on the menu\
-Login allows for a user to login using their Google account\
-
-Not Done:\
-Registering with a Google account
+1. Inventory
 
 ## Google Authentication Implementation
 
@@ -191,6 +133,3 @@ This file is crucial for initiating the authentication flow from the client's br
 6. Token Verification: auth2.js sends this token to the server via the route defined in auth.js.
 7. Session Update: Upon successful token verification, the user’s email is stored in the session.
 8. Role-Based Redirection: The user is then redirected to /redirectUser, where router.js checks the user's role and redirects them accordingly.
-
-Next Steps:\
-Allow for users to register with Google
