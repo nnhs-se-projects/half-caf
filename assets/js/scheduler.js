@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const periodId = checkbox.id.replace("period-", "");
         const data = {
           periodId: periodId,
-          hasDisabledOrdering: checkbox.checked,
+          orderingDisabled: checkbox.checked,
         };
 
         const response = await fetch("/updatePeriod", {

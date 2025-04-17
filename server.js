@@ -48,6 +48,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/css", express.static("assets/css"));
 app.use("/img", express.static("assets/img"));
 app.use("/js", express.static("assets/js"));
+app.use("/sounds", express.static("assets/sounds"));
 app.use("/models", express.static("assets/models")); // Ensure this line is added to serve the GLB model
 
 // helper function to detect mobile user agents
@@ -90,6 +91,10 @@ createSocketServer(server);
 // to keep this file manageable, we will move the routes to a separate file
 //  the exported router object is an example of middleware
 app.use("/", require("./server/routes/router"));
+
+app.all("*", (req, res) => {
+  res.render("404");
+});
 
 // start the server on port PORT_NUM from .env file
 server.listen(process.env.PORT_NUM, () => {

@@ -53,7 +53,7 @@
                 class="period-checkbox"
                 id="period-<%=period._id%>"
                 data-period-id="<%=period._id%>"
-                <%= period.hasDisabledOrdering ? 'checked' : '' %>
+                <%= period.orderingDisabled ? 'checked' : '' %>
               />
               </label>
             </div>
@@ -75,6 +75,10 @@
 </div>
 
 <style>
+
+.period-name {
+  text-wrap: nowrap;
+}
 .checkbox-label {
   display: flex;
   align-items: center;

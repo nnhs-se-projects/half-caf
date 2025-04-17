@@ -48,6 +48,7 @@ async function checkTime() {
   }
   for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
+
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
     const periodEndMin = Number(
       period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
@@ -65,24 +66,63 @@ async function checkTime() {
       periodEndHr,
       periodEndMin
     );
+
+    let periodStartHr = Number(
+      period.start.substring(0, period.start.indexOf(":"))
+    );
+    const periodStartMin = Number(
+      period.start.substring(
+        period.start.indexOf(":") + 1,
+        period.start.length - 3
+      )
+    );
+    if (period.start.indexOf("PM") > -1 && periodStartHr !== 12) {
+      periodStartHr += 12;
+    }
+    if (period.start.indexOf("AM") > -1 && periodStartHr === 12) {
+      periodStartHr = 0;
+    }
+    const startDate = new Date(
+      currentTimeDate.getFullYear(),
+      currentTimeDate.getMonth(),
+      currentTimeDate.getDate(),
+      periodStartHr,
+      periodStartMin
+    );
+    const startDateMs = Date.parse(startDate);
     const endDateMs = Date.parse(endDate);
-    const difference = endDateMs - currentTimeMs;
-    if (difference > 0 && difference <= timeBeforeEnd * 60 * 1000) {
-      if (!period.hasDisabledOrdering) {
-        const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-        toggle.enabled = false;
+    const timeToEnd = endDateMs - currentTimeMs;
+    // If during period
+    if (currentTimeMs > startDateMs && currentTimeMs < endDateMs) {
+      const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+
+      // Check if period was manually disabled in the scheduler
+      if (period.orderingDisabled) {
+        if (toggle.enabled) {
+          toggle.enabled = false;
+          await toggle.save();
+          emitToggleChange();
+          return;
+        }
+      }
+
+      // If at the end of the period
+      if (timeToEnd > 0 && timeToEnd <= timeBeforeEnd * 60 * 1000) {
+        if (!period.hasDisabledOrdering) {
+          toggle.enabled = false;
+          toggle.reason = "Scheduler";
+          await toggle.save();
+          period.hasDisabledOrdering = true;
+          await period.save();
+          emitToggleChange();
+        }
+      } else if (period.hasDisabledOrdering) {
+        toggle.enabled = true;
         await toggle.save();
-        period.hasDisabledOrdering = true;
+        period.hasDisabledOrdering = false;
         await period.save();
         emitToggleChange();
       }
-    } else if (period.hasDisabledOrdering) {
-      const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-      toggle.enabled = true;
-      await toggle.save();
-      period.hasDisabledOrdering = false;
-      await period.save();
-      emitToggleChange();
     }
   }
 }
@@ -98,8 +138,8 @@ route.get("/toggle", async (req, res) => {
 route.post("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
+  toggle.reason = "Admin/Barista";
   await toggle.save();
-
   emitToggleChange();
 });
 
@@ -108,6 +148,7 @@ route.use(async (req, res, next) => {
 
   res.locals.headerData = {
     enabled: toggle.enabled,
+    reason: toggle.reason,
   };
 
   next();
@@ -283,12 +324,12 @@ route.get("/scheduler", async (req, res) => {
 });
 
 route.post("/updatePeriod", async (req, res) => {
-  const { periodId, hasDisabledOrdering } = req.body;
+  const { periodId, orderingDisabled } = req.body;
   try {
     const period = await Period.findById(periodId);
 
     if (period) {
-      period.hasDisabledOrdering = hasDisabledOrdering;
+      period.orderingDisabled = orderingDisabled;
       await period.save();
       console.log("Period updated successfully");
       res.status(200).json({ message: "Period updated successfully" });
@@ -878,6 +919,9 @@ route.get("/barista", async (req, res) => {
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        if (!drink) {
+          break;
+        }
         formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
@@ -1031,7 +1075,6 @@ route.post("/pointofsale", async (req, res) => {
     isAdmin: role === "admin",
   });
   await order.save();
-  //console.log("New point-of-sale order created with name:", order.name);
   const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
@@ -1184,6 +1227,9 @@ route.get("/cancelledOrders", async (req, res) => {
           instructions: "",
         };
         const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+        if (!drink) {
+          break;
+        }
         formattedDrink.caffeinated = drink.caffeinated;
         if (drink.flavors.length === 0) {
           formattedDrink.flavors.push("None");
@@ -1216,7 +1262,7 @@ route.get("/cancelledOrders", async (req, res) => {
       }
       drinkMap.set(i, drinkArray);
     }
-
+    console.log(drinkMap);
     res.render("cancelledOrders", {
       orders,
       drinkMap,
@@ -1352,10 +1398,6 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   await Topping.findByIdAndRemove(toppingId);
   res.end();
 });
-
-// route.get("/barista", (req, res) => {
-//   res.render("barista");
-// });
 
 route.get("/completed", (req, res) => {
   res.render("completed");
@@ -1548,7 +1590,6 @@ route.post("/teacherMyCart", async (req, res) => {
       isAdmin: role === "admin",
     });
     await order.save();
-    //console.log("New teacher order created with name:", order.name);
     const user = await User.findOne({ email: req.session.email });
     user.currentOrder = order;
     user.orderHistory.push(order);
@@ -1751,13 +1792,46 @@ route.get("/teacherOrderHistory", async (req, res) => {
   }
 });
 
+const dogCoffeeJokes = [
+  "Why did the dog open a coffee shop? He wanted to make some pup-resso for himself!",
+  'What did the dog say when he walked into a fancy coffee shop? "I hope this place isn\'t collie-flower only!"',
+  "How does a Dalmatian take his coffee? Spotted with cream!",
+  "My dog started a coffee business from home. He's really mastered the art of the pour-rover.",
+  "What's a dog's favorite coffee drink? Anything with lots of lappuccino foam!",
+  "Why was the dog fired from the coffee shop? He kept chasing the espresso shots!",
+  'A Labrador walked into a café and ordered a double espresso. The barista asked, "Are you sure? It might keep you up all night!" The Lab replied, "That\'s the point—I\'m a watchdog!"',
+  "What do you call a caffeinated dog? A ground hound!",
+  "My dog learned to make coffee and now he's a barkista with a real nose for quality beans. The only problem is he keeps stealing all the Danish.",
+  "Why couldn't the dog finish his coffee? It was too Ruff-roasted!",
+  "What's a dog's least favorite coffee? Anything de-barked!",
+  "The coffee shop's dog mascot always helps customers find seats. He's their official Lab-locate-or.",
+  "My Chihuahua drinks coffee to feel bigger. Now he thinks he's a Great Dane and keeps ordering venti everything.",
+  "Why did the dog put his coffee on the floor? He likes his drinks ground level!",
+  "What do you call a dog that's had too much coffee? A hypercollie!",
+  "I asked my dog if we should go to the coffee shop. He said, \"I don't know, I'm on the fence.\" Turns out he's more of a border collie than a decision maker.",
+  "My dog opened an elite coffee shop where they only serve pedigree beans. It's strictly no mutt-cha allowed.",
+  "What happened when the dog drank coffee before bed? He was up all night hounding his owner for more!",
+  "The sheepdog refuses to drink anything but coffee with extra foam. He says it reminds him of the flock.",
+  'I took my dog to a coffee cupping event. He had strong opinions—kept saying everything tasted a little "ruff" around the edges!',
+];
 route.get("/orderConfirmation", async (req, res) => {
   const role = await getUserRoles(req.session.email);
+  const dogApiResponse = await fetch(
+    "https://dog.ceo/api/breed/husky/images/random"
+  );
+  const dogApiData = await dogApiResponse.json();
+  const dogImageUrl = dogApiData.message;
+
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
     req.session.cart = [];
-    res.render("orderConfirmation", { email: req.session.email, role: role });
+    res.render("orderConfirmation", {
+      email: req.session.email,
+      role: role,
+      image: dogImageUrl,
+      joke: dogCoffeeJokes[Math.floor(Math.random() * dogCoffeeJokes.length)],
+    });
   }
 });
 

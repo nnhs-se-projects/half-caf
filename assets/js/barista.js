@@ -68,6 +68,10 @@ function addListenerToFinishButtons() {
 
 let lastDrinkColor;
 let orderTable = null;
+// Add audio instance for new order sound (adjust the path if needed)
+const orderSound = new Audio("../sounds/order-new.wav");
+orderSound.preload = "auto";
+
 document.addEventListener("DOMContentLoaded", () => {
   orderTable = document.getElementById("orderTable");
   lastDrinkColor = orderTable.rows[orderTable.rows.length - 1].id;
@@ -77,6 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.io().on("New order placed", (data) => {
+  // Play sound on new order
+  orderSound
+    .play()
+    .catch((error) => console.error("Audio play failed:", error));
+
   if (Notification?.permission === "granted") {
     const notification = new Notification("New order placed", {
       body: "A new order has been placed from room " + data.order.room,
@@ -102,11 +111,14 @@ window.io().on("New order placed", (data) => {
             data.order.name && data.order.name.trim()
               ? data.order.name
               : data.order.email.split("@")[0]
-          }</td>
+          }
+          ${data.order.isAdmin ? `<span style="color: red"> Admin</span>` : ""}
+          </td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.flavors}</td>
           <td>${drink.toppings}</td>
+          <td>${drink.caffeinated ? "No" : "Yes"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>
