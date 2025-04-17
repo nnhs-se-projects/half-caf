@@ -9,6 +9,11 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  reason: {
+    type: String,
+    required: false,
+    default: null,
+  },
 });
 
 const Enabled = mongoose.model("Enabled", schema);
