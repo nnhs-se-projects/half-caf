@@ -1792,13 +1792,46 @@ route.get("/teacherOrderHistory", async (req, res) => {
   }
 });
 
+const dogCoffeeJokes = [
+  "Why did the dog open a coffee shop? He wanted to make some pup-resso for himself!",
+  'What did the dog say when he walked into a fancy coffee shop? "I hope this place isn\'t collie-flower only!"',
+  "How does a Dalmatian take his coffee? Spotted with cream!",
+  "My dog started a coffee business from home. He's really mastered the art of the pour-rover.",
+  "What's a dog's favorite coffee drink? Anything with lots of lappuccino foam!",
+  "Why was the dog fired from the coffee shop? He kept chasing the espresso shots!",
+  'A Labrador walked into a café and ordered a double espresso. The barista asked, "Are you sure? It might keep you up all night!" The Lab replied, "That\'s the point—I\'m a watchdog!"',
+  "What do you call a caffeinated dog? A ground hound!",
+  "My dog learned to make coffee and now he's a barkista with a real nose for quality beans. The only problem is he keeps stealing all the Danish.",
+  "Why couldn't the dog finish his coffee? It was too Ruff-roasted!",
+  "What's a dog's least favorite coffee? Anything de-barked!",
+  "The coffee shop's dog mascot always helps customers find seats. He's their official Lab-locate-or.",
+  "My Chihuahua drinks coffee to feel bigger. Now he thinks he's a Great Dane and keeps ordering venti everything.",
+  "Why did the dog put his coffee on the floor? He likes his drinks ground level!",
+  "What do you call a dog that's had too much coffee? A hypercollie!",
+  "I asked my dog if we should go to the coffee shop. He said, \"I don't know, I'm on the fence.\" Turns out he's more of a border collie than a decision maker.",
+  "My dog opened an elite coffee shop where they only serve pedigree beans. It's strictly no mutt-cha allowed.",
+  "What happened when the dog drank coffee before bed? He was up all night hounding his owner for more!",
+  "The sheepdog refuses to drink anything but coffee with extra foam. He says it reminds him of the flock.",
+  'I took my dog to a coffee cupping event. He had strong opinions—kept saying everything tasted a little "ruff" around the edges!',
+];
 route.get("/orderConfirmation", async (req, res) => {
   const role = await getUserRoles(req.session.email);
+  const dogApiResponse = await fetch(
+    "https://dog.ceo/api/breed/husky/images/random"
+  );
+  const dogApiData = await dogApiResponse.json();
+  const dogImageUrl = dogApiData.message;
+
   if (role !== "teacher" && role !== "admin") {
     res.redirect("/redirectUser");
   } else {
     req.session.cart = [];
-    res.render("orderConfirmation", { email: req.session.email, role: role });
+    res.render("orderConfirmation", {
+      email: req.session.email,
+      role: role,
+      image: dogImageUrl,
+      joke: dogCoffeeJokes[Math.floor(Math.random() * dogCoffeeJokes.length)],
+    });
   }
 });
 
