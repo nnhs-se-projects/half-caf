@@ -8,19 +8,14 @@ Group Members v3: Divya, Hansheng, Krish, Sophia
 
 Group Members v4: Tavneet, Abby, Delilah, Eric
 
-Group Members v5 (actually made the app functional and ready for use): Bennett, Emran, Jack, Ryan
+Group Members v5: Bennett, Emran, Jack, Ryan
 
 ## Insights (Previous Groups)
 
-Do not turn to any of those "easy web app maker" sites and source their code. We tried this for the first sprint and a half, and ultimately we discovered that the coding conventions are so diverse that none of the tutorial code or prior knowledge you have gained applies. It takes longer to understand and modify this code to your needs than it does to make your own web app with your obtained knowledge.
-
-Make sure everyone is on the same page throughout the course of the semester. Take your stand-up meeting times to make sure everyone understands the concepts and has everything they need to work on their assigned tasks. It is okay to slow down to have somebody catch up because by the end of the project it will be a lot more efficient and helpful to have them on the same page.
-
-Use Trello to you advantage, the scrum stuff might feel tedious but it helps the whole team stay organized and keeps all the User stories and tasks for that sprint in line. Consistently update it with the task you're working on to keep the whole team on the same page. Refer back to it when looking for tasks to keep the team going in the same direction.
-
-Create a schedule and stick to it (google calendar is a great tool for this). When writing the code for the website, unknown issues frequently come up. In order to ensure that you have enough time to finish a sprint, leave yourself time at the end of each sprint to tie up loose ends.
-
-Use pair programming to your advantage. Just because it may seem faster to divide and conquer in terms of being able to get tasks done doesn't mean it necessarily is. Having a second set of eyes to catch errors and talk things through with can be extremely beneficial and save you tons of time in the long run.
+- Copilot is a great tool for solving problems and building features. However, it is important that you fully understand the code before you implement it. Blindly "vibe coding" will lead to bad code and a larger mess which will take even more time to resolve.
+- Trello is very important. Even though it may seem tedious, it is necessary to ensure proper organization and teamwork.
+- Pair programming is the greatest tool you have. Before asking copilot or google, ask your teammates. Additionally, if somebody doesn't have a task, they MUST be pair programming.
+- It is important to follow these GitHub best practices: pull requests must be reviewed by another member who will then merge it. Branches should clearly explain the feature. Delete the branch after merging. 
 
 ## Platform Requirements
 
@@ -78,7 +73,8 @@ Enabled is on it's own because it's a separate class. That is the boolean value 
 
 ## Features the 2025-2026 team needs to implement:
 
-1. Inventory
+1. Inventory System
+2. Create an additional server that pulls from dev branch which can be used for testing. 
 
 ## Google Authentication Implementation
 
