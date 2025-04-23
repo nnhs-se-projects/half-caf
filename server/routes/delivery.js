@@ -1,31 +1,16 @@
 const express = require("express");
 const route = express.Router();
-const User = require("../model/user");
-const Topping = require("../model/topping");
-const Flavor = require("../model/flavor");
-const MenuItem = require("../model/menuItem");
-const TempJson = require("../model/temps.json");
-const Drink = require("../model/drink");
 const Order = require("../model/order");
-const Schedule = require("../model/schedule");
-const Period = require("../model/period");
-const Enabled = require("../model/enabled");
-const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
-const {
-  emitToggleChange,
-  emitOrderCompleted,
-  emitOrderCancelled,
-  emitOrderClaimed,
-  emitNewOrderPlaced,
-} = require("../socket/socket");
 
-route.get("/deliveryLogin", async (req, res) => {
+const { emitOrderClaimed } = require("../socket/socket");
+
+route.get("/", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   res.render("deliveryLogin", { deliveryPersons });
 });
 
-route.post("/deliveryLogin", async (req, res) => {
+route.post("/", async (req, res) => {
   const attemptedPerson = await DeliveryPerson.findById(req.body.id);
   const attemptedPin = req.body.pin;
   if (attemptedPerson.pin === attemptedPin) {
@@ -34,9 +19,9 @@ route.post("/deliveryLogin", async (req, res) => {
       attemptedPerson.currentOrder !== null &&
       attemptedPerson.currentOrder !== undefined
     ) {
-      res.redirect("/deliveryProgress/" + attemptedPerson.currentOrder);
+      res.redirect("/progress/" + attemptedPerson.currentOrder);
     } else {
-      res.redirect("/deliveryHome");
+      res.redirect("/home");
     }
   } else {
     req.session.currentDelivererId = null;
@@ -44,7 +29,7 @@ route.post("/deliveryLogin", async (req, res) => {
   }
 });
 
-route.get("/deliveryHome/", async (req, res) => {
+route.get("/home/", async (req, res) => {
   if (
     req.session.currentDelivererId !== null &&
     req.session.currentDelivererId !== undefined
@@ -59,10 +44,11 @@ route.get("/deliveryHome/", async (req, res) => {
 
     res.render("deliveryHome", { orders });
   } else {
-    res.redirect("/deliveryLogin");
+    res.redirect("/");
   }
 });
-route.post("/deliveryProgress/:id", async (req, res) => {
+
+route.post("/progress/:id", async (req, res) => {
   if (
     req.session.currentDelivererId !== null &&
     req.session.currentDelivererId !== undefined
@@ -84,12 +70,13 @@ route.post("/deliveryProgress/:id", async (req, res) => {
     const currentTimeMs = Date.parse(currentTimeDate);
     currentOrder.claimTime = currentTimeMs;
     await currentOrder.save();
-    res.redirect(`/deliveryProgress/${req.params.id}`);
+    res.redirect(`/progress/${req.params.id}`);
   } else {
-    res.redirect("/deliveryLogin");
+    res.redirect("/");
   }
 });
-route.get("/deliveryProgress/:id", async (req, res) => {
+
+route.get("/progress/:id", async (req, res) => {
   if (
     req.session.currentDelivererId !== null &&
     req.session.currentDelivererId !== undefined
@@ -105,14 +92,14 @@ route.get("/deliveryProgress/:id", async (req, res) => {
     ) {
       res.render("deliveryProgress", { currentDeliverer, currentOrder });
     } else {
-      res.redirect("/deliveryHome");
+      res.redirect("/home");
     }
   } else {
-    res.redirect("/deliveryLogin");
+    res.redirect("/");
   }
 });
 
-route.post("/deliveryFinish", async (req, res) => {
+route.post("/finish", async (req, res) => {
   if (
     req.session.currentDelivererId !== null &&
     req.session.currentDelivererId !== undefined
@@ -136,14 +123,15 @@ route.post("/deliveryFinish", async (req, res) => {
     });
     await currentOrder.save();
     await currentDeliverer.save();
-    res.redirect("/deliveryHome");
+    res.redirect("/home");
   } else {
-    res.redirect("/deliveryLogin");
+    res.redirect("/");
   }
 });
-route.get("/deliveryLogOut", async (req, res) => {
+
+route.get("/logout", async (req, res) => {
   req.session.currentDelivererId = null;
-  res.redirect("/deliveryLogin");
+  res.redirect("/");
 });
 
 module.exports = route;
