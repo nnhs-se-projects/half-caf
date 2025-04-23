@@ -6,7 +6,7 @@ for (const uncancelButton of uncancelButtons) {
 
     uncancelButton.disabled = true;
 
-    const response = await fetch(`/cancelledOrders/${orderId}`, {
+    const response = await fetch(`/barista/cancelledOrders/${orderId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -14,7 +14,7 @@ for (const uncancelButton of uncancelButtons) {
     });
 
     if (response.ok) {
-      window.location = "/cancelledOrders";
+      window.location = "/barista/cancelledOrders";
     } else {
       console.log("error uncancelling order");
     }

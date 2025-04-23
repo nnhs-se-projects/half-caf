@@ -3,7 +3,7 @@ for (const button of removeButton) {
   button.addEventListener("click", async () => {
     const itemIndex = button.getAttribute("drink-index");
 
-    const response = await fetch("/updateCart", {
+    const response = await fetch("/teacher/updateCart", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -11,7 +11,7 @@ for (const button of removeButton) {
       body: JSON.stringify({ index: itemIndex }),
     });
     if (response.ok) {
-      window.location = "/teacherMyCart";
+      window.location = "/teacher/myCart";
     } else {
       console.log("error removing drink from cart");
     }
@@ -43,7 +43,7 @@ if (placeOrderButton !== null) {
     hours = hours || 12;
     const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}${ampm}/${seconds}`;
 
-    const response = await fetch("/teacherMyCart", {
+    const response = await fetch("/teacher/myCart", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ if (placeOrderButton !== null) {
       body: JSON.stringify({ rm: roomNum, timestamp: formattedTime }),
     });
     if (response.ok) {
-      window.location = "/orderConfirmation";
+      window.location = "/teacher/orderConfirmation";
     } else {
       console.log("error adding drink");
     }

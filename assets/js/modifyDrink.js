@@ -136,7 +136,7 @@ saveDrinkButton.addEventListener("click", async () => {
   try {
     saveDrinkButton.disabled = true;
 
-    const response = await fetch(`/modifyDrink/${id}`, {
+    const response = await fetch(`/admin/modifyDrink/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -147,7 +147,7 @@ saveDrinkButton.addEventListener("click", async () => {
     const data = await response.json();
 
     if (response.ok) {
-      window.location = `/modifyDrink?id=${id}`;
+      window.location = `/admin/modifyDrink?id=${id}`;
     } else {
       console.error("Server error:", data.error);
     }

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const orderId = claimButton.value;
       claimButton.disabled = true;
 
-      const response = await fetch(`/deliveryProgress/${orderId}`, {
+      const response = await fetch(`/delivery/progress/${orderId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Order invalid, try a different order.");
         window.location = response.url;
       } else if (response.ok) {
-        window.location = `/deliveryProgress/${orderId}`;
+        window.location = `/delivery/progress/${orderId}`;
       } else {
         console.log("error claiming order");
       }

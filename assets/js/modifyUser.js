@@ -27,7 +27,7 @@ updateUserButton.addEventListener("click", async () => {
   try {
     updateUserButton.disabled = true;
 
-    const response = await fetch(`/modifyUser/${id}`, {
+    const response = await fetch(`/admin/modifyUser/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ updateUserButton.addEventListener("click", async () => {
     });
 
     if (response.ok) {
-      window.location = `/modifyUser?id=${id}`;
+      window.location = `/admin/modifyUser?id=${id}`;
     }
   } catch (error) {
     console.error("Error updating drink: ", error);

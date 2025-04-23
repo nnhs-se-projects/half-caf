@@ -25,7 +25,7 @@ route.post("/", async (req, res) => {
     }
   } else {
     req.session.currentDelivererId = null;
-    res.redirect("/deliveryLogin");
+    res.redirect("/");
   }
 });
 

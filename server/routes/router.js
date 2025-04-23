@@ -154,11 +154,11 @@ route.get("/redirectUser", async (req, res) => {
     const role = await getUserRoles(req.session.email);
     req.session.cart = [];
     if (role === "admin") {
-      res.redirect("/addUser");
+      res.redirect("/admin/addUser");
     } else if (role === "barista") {
       res.redirect("/barista");
     } else if (role === "teacher") {
-      res.redirect("/teacherPopularDrinks");
+      res.redirect("/teacher/popularDrinks");
     } else {
       // this case should never be reached
       res.redirect("/auth");

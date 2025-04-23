@@ -6,7 +6,7 @@ for (const incompleteButton of incompleteButtons) {
 
     incompleteButton.disabled = true;
 
-    const response = await fetch(`/completed/${orderId}`, {
+    const response = await fetch(`/barista/completed/${orderId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -14,7 +14,7 @@ for (const incompleteButton of incompleteButtons) {
     });
 
     if (response.ok) {
-      window.location = "/completed";
+      window.location = "/barista/completed";
     } else {
       console.log("error incompleting order");
     }

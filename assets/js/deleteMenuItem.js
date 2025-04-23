@@ -2,7 +2,7 @@
 async function deleteMenuItem() {
   const selectedId = document.querySelector("#toDelete").value;
   console.log(selectedId);
-  const response = await fetch(`/deleteDrink/${selectedId}`, {
+  const response = await fetch(`/admin/deleteDrink/${selectedId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -10,7 +10,7 @@ async function deleteMenuItem() {
   });
 
   if (response.ok) {
-    window.location = "/deleteDrink";
+    window.location = "/admin/deleteDrink";
   } else {
     console.log("error");
   }
