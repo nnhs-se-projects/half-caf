@@ -69,9 +69,9 @@ app.get("/", (req, res) => {
 //  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
   if (
-    req.path === "/homePopularDrinks" ||
-    req.path === "/homeMenu" ||
-    req.path.startsWith("/delivery")
+    req.path.startsWith("/home") ||
+    req.path.startsWith("/delivery") ||
+    req.path.startsWith("/auth")
   ) {
     return next(); // allow access to these pages without authentication
   }

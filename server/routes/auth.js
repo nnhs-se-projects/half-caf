@@ -63,7 +63,7 @@ route.get("/logout", async (req, res) => {
       return console.error("Logout error:", err);
     }
     // Redirect to auth page after logout
-    res.redirect("/");
+    res.redirect("/auth");
   });
 });
 
