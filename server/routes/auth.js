@@ -49,7 +49,7 @@ route.post("/", async (req, res) => {
       });
       await newUser.save();
     } else {
-      console.log("User isn't a staff member and not already in the database.");
+      console.log("User isn't a staff member and isn't in the database.");
       req.session.email = null;
     }
   }
