@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.querySelector(".reload-button");
   reloadButton.addEventListener("click", () => {
-    window.location.href = "/deliveryHome";
+    window.location.href = "/delivery/home";
   });
   const claimButtons = document.querySelectorAll("button.claimButton");
   for (const claimButton of claimButtons) {

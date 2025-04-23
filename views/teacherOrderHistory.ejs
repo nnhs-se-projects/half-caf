@@ -54,7 +54,7 @@
             <% if(!drink.favorite) { %>
             <button
               class="action-button favorite"
-              onclick="window.location.href='/favoriteDrinkFromHistory/<%=drink.id%>'"
+              onclick="window.location.href='/teacher/favoriteDrinkFromHistory/<%=drink.id%>'"
             >
               Add to Favorites
             </button>
@@ -63,7 +63,7 @@
             <% } %>
             <button
               class="action-button reorder"
-              onclick="window.location.href='/addDrinkToCart/<%=drink.id%>'"
+              onclick="window.location.href='/teacher/addDrinkToCart/<%=drink.id%>'"
             >
               Reorder
             </button>
