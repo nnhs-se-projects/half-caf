@@ -54,13 +54,16 @@
       <div class="container" id="logo">
         <%- include('_header') %>
         <h1 id="title" class="indexTopBar">
+          <% if (headerData.enabled === false){ %>
+          <div id="disabledBanner" style="color: #f5ae43">
+            <span>ORDERING DISABLED</span>
+          </div>
+          <% } else { %>
           <span class="full-title">NNHS Half Caf</span>
           <span class="mobile-title">Half Caf</span>
+          <% } %>
         </h1>
       </div>
-      <% if(headerData.enabled === false){ %>
-      <h3 id="noOrder">Ordering is not currently available</h3>
-      <% } %>
     </div>
 
     <!-- Reorder: sidebar appears first, arrow trigger immediately after -->
