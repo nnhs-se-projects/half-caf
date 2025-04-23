@@ -6,6 +6,7 @@
 // import the express module, which exports the express function
 const express = require("express");
 const path = require("path");
+const User = require("./server/model/user");
 
 // invoke the express function to create an Express
 const app = express();
@@ -70,16 +71,47 @@ app.use(async (req, res, next) => {
   if (
     req.path === "/homePopularDrinks" ||
     req.path === "/homeMenu" ||
-    req.path.indexOf("/delivery") !== -1
+    req.path.startsWith("/delivery")
   ) {
-    return next(); // allow access to index without authentication
+    return next(); // allow access to these pages without authentication
   }
-  // if the student is already logged in, fetch the student object from the database
-  else if (req.session.email === undefined && !req.path.startsWith("/auth")) {
-    res.redirect("/auth");
+
+  const email = req.session.email;
+  const user = await User.findOne({ email }, "userType");
+
+  if (!email || !user) {
+    // check for if this is the first time a staff member is logging into the app and create a user for them if so
+    if (email && email.indexOf("@naperville203.org") > -1) {
+      const newUser = new User({
+        email,
+        userType: "teacher",
+      });
+      await newUser.save();
+      res.redirect("/teacher/popularDrinks");
+      return;
+    } else {
+      req.session.email = null;
+    }
+
+    if (!req.path.startsWith("/auth")) {
+      res.redirect("/auth");
+    }
+
     return;
   }
-  next();
+
+  const role = user.userType;
+
+  if (
+    role === "admin" ||
+    (role === "barista" && req.path.startsWith("/barista")) ||
+    (role === "teacher" && req.path.startsWith("/teacher"))
+  ) {
+    next();
+    return;
+  }
+
+  res.redirect("/redirectUser");
 });
 
 // import the http module, which provides an HTTP server
