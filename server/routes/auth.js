@@ -6,6 +6,7 @@
 
 const express = require("express");
 const route = express.Router();
+const User = require("../model/user");
 const Drink = require("../model/drink");
 
 const { OAuth2Client } = require("google-auth-library");
@@ -34,8 +35,24 @@ route.post("/", async (req, res) => {
   req.session.email = email;
   req.session.name = name; // store user's full name
 
-  // log name and email to console for testing
-  console.log("Authenticated user:", { name, email });
+  const user = await User.findOne({ email });
+
+  console.log("Authenticated user with google:", { name, email });
+
+  // check for if this is the first time a staff member is logging into the app and create a user for them if so
+  if (!user) {
+    if (email.indexOf("@naperville203.org") > -1) {
+      console.log("Adding new user to the database.");
+      const newUser = new User({
+        email,
+        userType: "teacher",
+      });
+      await newUser.save();
+    } else {
+      console.log("User isn't a staff member and not already in the database.");
+      req.session.email = null;
+    }
+  }
 
   res.status(201).end();
 });

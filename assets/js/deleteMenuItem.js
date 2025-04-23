@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 async function deleteMenuItem() {
   const selectedId = document.querySelector("#toDelete").value;
-  console.log(selectedId);
   const response = await fetch(`/admin/deleteDrink/${selectedId}`, {
     method: "DELETE",
     headers: {

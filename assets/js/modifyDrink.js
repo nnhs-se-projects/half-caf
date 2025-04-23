@@ -10,7 +10,6 @@ function handleSelectChange() {
 
   // redirect window
   window.location = updatedURL;
-  console.log(updatedURL);
 }
 
 let srcData;

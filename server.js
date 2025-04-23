@@ -69,30 +69,17 @@ app.get("/", (req, res) => {
 //  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
   if (
-    req.path.startsWith("/home") ||
-    req.path.startsWith("/delivery") ||
-    req.path.startsWith("/auth")
+    !req.path.startsWith("/admin") &&
+    !req.path.startsWith("/barista") &&
+    !req.path.startsWith("/teacher")
   ) {
-    return next(); // allow access to these pages without authentication
+    return next(); // allow access to any page that doesn't require authentication
   }
 
   const email = req.session.email;
-  const user = await User.findOne({ email }, "userType");
+  const user = await User.findOne({ email });
 
   if (!email || !user) {
-    // check for if this is the first time a staff member is logging into the app and create a user for them if so
-    if (email && email.indexOf("@naperville203.org") > -1) {
-      const newUser = new User({
-        email,
-        userType: "teacher",
-      });
-      await newUser.save();
-      res.redirect("/teacher/popularDrinks");
-      return;
-    } else {
-      req.session.email = null;
-    }
-
     if (!req.path.startsWith("/auth")) {
       res.redirect("/auth");
     }
