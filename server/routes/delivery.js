@@ -19,13 +19,13 @@ route.post("/", async (req, res) => {
       attemptedPerson.currentOrder !== null &&
       attemptedPerson.currentOrder !== undefined
     ) {
-      res.redirect("/progress/" + attemptedPerson.currentOrder);
+      res.redirect("/delivery/progress/" + attemptedPerson.currentOrder);
     } else {
-      res.redirect("/home");
+      res.redirect("/delivery/home");
     }
   } else {
     req.session.currentDelivererId = null;
-    res.redirect("/");
+    res.redirect("/delivery");
   }
 });
 
@@ -44,7 +44,7 @@ route.get("/home/", async (req, res) => {
 
     res.render("deliveryHome", { orders });
   } else {
-    res.redirect("/");
+    res.redirect("/delivery");
   }
 });
 
@@ -70,9 +70,9 @@ route.post("/progress/:id", async (req, res) => {
     const currentTimeMs = Date.parse(currentTimeDate);
     currentOrder.claimTime = currentTimeMs;
     await currentOrder.save();
-    res.redirect(`/progress/${req.params.id}`);
+    res.redirect(`/delivery/progress/${req.params.id}`);
   } else {
-    res.redirect("/");
+    res.redirect("/delivery");
   }
 });
 
@@ -92,10 +92,10 @@ route.get("/progress/:id", async (req, res) => {
     ) {
       res.render("deliveryProgress", { currentDeliverer, currentOrder });
     } else {
-      res.redirect("/home");
+      res.redirect("/delivery/home");
     }
   } else {
-    res.redirect("/");
+    res.redirect("/delivery");
   }
 });
 
@@ -123,15 +123,15 @@ route.post("/finish", async (req, res) => {
     });
     await currentOrder.save();
     await currentDeliverer.save();
-    res.redirect("/home");
+    res.redirect("/delivery/home");
   } else {
-    res.redirect("/");
+    res.redirect("/delivery");
   }
 });
 
 route.get("/logout", async (req, res) => {
   req.session.currentDelivererId = null;
-  res.redirect("/");
+  res.redirect("/delivery");
 });
 
 module.exports = route;

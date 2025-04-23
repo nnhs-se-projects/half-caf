@@ -305,7 +305,7 @@ route.get("/addDrinkToCart/:id", async (req, res) => {
   const drink = await Drink.findById(req.params.id);
   req.session.cart.push(drink);
 
-  res.redirect("/myCart");
+  res.redirect("/teacher/myCart");
 });
 
 route.get("/unfavoriteDrink/:id", async (req, res) => {
@@ -319,7 +319,7 @@ route.get("/unfavoriteDrink/:id", async (req, res) => {
   }
   await user.save();
 
-  res.redirect("/myFavorites");
+  res.redirect("/teacher/myFavorites");
 });
 
 route.get("/favoriteDrinkFromHistory/:id", async (req, res) => {
@@ -333,7 +333,7 @@ route.get("/favoriteDrinkFromHistory/:id", async (req, res) => {
     await user.save();
   }
 
-  res.redirect("/orderHistory");
+  res.redirect("/teacher/orderHistory");
 });
 
 route.get("/orderHistory", async (req, res) => {
