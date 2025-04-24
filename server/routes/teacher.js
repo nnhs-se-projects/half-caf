@@ -251,6 +251,28 @@ route.post("/myCart", async (req, res) => {
   res.status(200).end();
 });
 
+route.post("/reorder/:id", async (req, res) => {
+  const drink = await Drink.findById(req.params.id);
+
+  const drinkCopy = new Drink({
+    name: drink.name,
+    price: drink.price,
+    flavors: drink.flavors,
+    toppings: drink.toppings,
+    temps: drink.temps,
+    caffeinated: drink.caffeinated,
+    instructions: drink.instructions,
+    favorite: false,
+    completed: false,
+  });
+
+  await drinkCopy.save();
+
+  req.session.cart.push(drinkCopy);
+
+  res.redirect("/teacher/myCart");
+});
+
 route.get("/popularDrinks", async (req, res) => {
   const menuItems = await MenuItem.find();
   const popularMenu = [];
@@ -300,14 +322,6 @@ route.get("/myFavorites", async (req, res) => {
     email: req.session.email,
     role,
   });
-});
-
-route.get("/addDrinkToCart/:id", async (req, res) => {
-  // drink user is adding to order
-  const drink = await Drink.findById(req.params.id);
-  req.session.cart.push(drink);
-
-  res.redirect("/teacher/myCart");
 });
 
 route.get("/unfavoriteDrink/:id", async (req, res) => {
