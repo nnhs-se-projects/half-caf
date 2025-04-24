@@ -34,6 +34,7 @@ route.post("/", async (req, res) => {
   const { email, name } = payload; // name, given_name, family_name (also available)
   req.session.email = email;
   req.session.name = name; // store user's full name
+  req.session.cart = [];
 
   const user = await User.findOne({ email });
 
@@ -71,8 +72,10 @@ route.get("/logout", async (req, res) => {
   }
 
   // Remove drinks from cart and clean up
-  for (const drink of req.session.cart) {
-    await Drink.findByIdAndRemove(drink);
+  if (req.session.cart) {
+    for (const drink of req.session.cart) {
+      await Drink.findByIdAndRemove(drink);
+    }
   }
 
   req.session.destroy((err) => {

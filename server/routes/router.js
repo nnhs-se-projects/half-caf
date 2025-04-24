@@ -166,7 +166,6 @@ route.use(async (req, res, next) => {
 route.get("/redirectUser", async (req, res) => {
   try {
     const role = await getUserRoles(req.session.email);
-    req.session.cart = [];
     if (role === "admin") {
       res.redirect("/admin/addUser");
     } else if (role === "barista") {
@@ -174,7 +173,7 @@ route.get("/redirectUser", async (req, res) => {
     } else if (role === "teacher") {
       res.redirect("/teacher/popularDrinks");
     } else {
-      // this case should never be reached
+      // role is invalid or user is not logged in
       res.redirect("/auth");
     }
   } catch (error) {

@@ -239,6 +239,8 @@ route.post("/myCart", async (req, res) => {
       drinkArray.push(formattedDrink);
     }
 
+    req.session.cart = [];
+
     emitNewOrderPlaced({
       order,
       drinks: drinkArray,
@@ -390,8 +392,6 @@ route.get("/orderConfirmation", async (req, res) => {
   );
   const dogApiData = await dogApiResponse.json();
   const dogImageUrl = dogApiData.message;
-
-  req.session.cart = [];
 
   const role = await getUserRoles(req.session.email);
 
