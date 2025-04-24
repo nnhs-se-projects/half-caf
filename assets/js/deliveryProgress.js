@@ -10,7 +10,7 @@ logOut.addEventListener("click", async () => {
     },
   });
   if (response.ok) {
-    window.location = "/delivery";
+    window.location = "/delivery/login";
   }
 });
 

@@ -5,12 +5,12 @@ const DeliveryPerson = require("../model/deliveryPerson");
 
 const { emitOrderClaimed } = require("../socket/socket");
 
-route.get("/", async (req, res) => {
+route.get("/login", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   res.render("deliveryLogin", { deliveryPersons });
 });
 
-route.post("/", async (req, res) => {
+route.post("/login", async (req, res) => {
   const attemptedPerson = await DeliveryPerson.findById(req.body.id);
   const attemptedPin = req.body.pin;
   if (attemptedPerson.pin === attemptedPin) {
@@ -25,7 +25,7 @@ route.post("/", async (req, res) => {
     }
   } else {
     req.session.currentDelivererId = null;
-    res.redirect("/delivery");
+    res.redirect("/delivery/login");
   }
 });
 
@@ -44,7 +44,7 @@ route.get("/home/", async (req, res) => {
 
     res.render("deliveryHome", { orders });
   } else {
-    res.redirect("/delivery");
+    res.redirect("/delivery/login");
   }
 });
 
@@ -72,7 +72,7 @@ route.post("/progress/:id", async (req, res) => {
     await currentOrder.save();
     res.redirect(`/delivery/progress/${req.params.id}`);
   } else {
-    res.redirect("/delivery");
+    res.redirect("/delivery/login");
   }
 });
 
@@ -95,7 +95,7 @@ route.get("/progress/:id", async (req, res) => {
       res.redirect("/delivery/home");
     }
   } else {
-    res.redirect("/delivery");
+    res.redirect("/delivery/login");
   }
 });
 
@@ -125,13 +125,13 @@ route.post("/finish", async (req, res) => {
     await currentDeliverer.save();
     res.redirect("/delivery/home");
   } else {
-    res.redirect("/delivery");
+    res.redirect("/delivery/login");
   }
 });
 
 route.get("/logout", async (req, res) => {
   req.session.currentDelivererId = null;
-  res.redirect("/delivery");
+  res.redirect("/delivery/login");
 });
 
 module.exports = route;

@@ -49,7 +49,7 @@ async function findToppingsById(id) {
   }
 }
 
-route.get("/", async (req, res) => {
+route.get("/menu", async (req, res) => {
   const menu = await MenuItem.find();
   const role = await getUserRoles(req.session.email);
   res.render("teacherMenu", {
