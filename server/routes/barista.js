@@ -264,6 +264,11 @@ route.get("/completed", async (req, res) => {
   for (let i = 0; i < orders.length; i++) {
     const drinkArray = [];
     for (let n = 0; n < orders[i].drinks.length; n++) {
+      const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+      if (!drink) {
+        continue;
+      }
+
       const formattedDrink = {
         name: "",
         flavors: [],
@@ -272,7 +277,7 @@ route.get("/completed", async (req, res) => {
         caffeinated: false,
         instructions: "",
       };
-      const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
+
       formattedDrink.caffeinated = drink.caffeinated;
       if (drink.flavors.length === 0) {
         formattedDrink.flavors.push("None");
