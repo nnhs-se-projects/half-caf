@@ -1,5 +1,6 @@
 const express = require("express");
 const route = express.Router();
+const path = require("path");
 const User = require("../model/user");
 const MenuItem = require("../model/menuItem");
 const Schedule = require("../model/schedule");
@@ -123,6 +124,19 @@ async function checkTime() {
 }
 
 setInterval(checkTime, 15000); // check every 15 sec
+
+// helper function to detect mobile user agents
+function isMobile(userAgent) {
+  return /mobile|android|iphone|ipad|ipod/i.test(userAgent);
+}
+
+route.get("/", (req, res) => {
+  if (isMobile(req.headers["user-agent"])) {
+    res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
+  } else {
+    res.redirect("/auth");
+  }
+});
 
 route.get("/toggle", async (req, res) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");

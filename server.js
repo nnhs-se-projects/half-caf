@@ -52,19 +52,6 @@ app.use("/js", express.static("assets/js"));
 app.use("/sounds", express.static("assets/sounds"));
 app.use("/models", express.static("assets/models")); // Ensure this line is added to serve the GLB model
 
-// helper function to detect mobile user agents
-function isMobile(userAgent) {
-  return /mobile|android|iphone|ipad|ipod/i.test(userAgent);
-}
-
-app.get("/", (req, res) => {
-  if (isMobile(req.headers["user-agent"])) {
-    res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
-  } else {
-    res.render("auth");
-  }
-});
-
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
