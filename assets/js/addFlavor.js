@@ -6,7 +6,7 @@ addFlavorButton.addEventListener("click", async () => {
 
   addFlavorButton.disabled = true;
 
-  const response = await fetch("/addFlavor", {
+  const response = await fetch("/admin/addFlavor", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,7 +15,7 @@ addFlavorButton.addEventListener("click", async () => {
   });
 
   if (response.ok) {
-    window.location = "/addFlavor";
+    window.location = "/admin/addFlavor";
   } else {
     console.log("error adding flavor");
   }

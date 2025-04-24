@@ -2,7 +2,7 @@ const loginButton = document.getElementById("login");
 loginButton.addEventListener("click", async () => {
   const selectUserId = document.getElementById("deliveryPerson").value;
   const attemptedPin = document.getElementById("password").value;
-  const response = await fetch("deliveryLogin", {
+  const response = await fetch("/delivery/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

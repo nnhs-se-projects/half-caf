@@ -2,7 +2,7 @@
 
 async function deleteUsers() {
   const selectedId = document.querySelector("#toDelete").value;
-  const response = await fetch(`/deleteUser/${selectedId}`, {
+  const response = await fetch(`/admin/deleteUser/${selectedId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -10,7 +10,7 @@ async function deleteUsers() {
   });
 
   if (response.ok) {
-    window.location = "/deleteUser";
+    window.location = "/admin/deleteUser";
   } else {
     console.log("error deleting user");
   }

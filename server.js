@@ -6,6 +6,7 @@
 // import the express module, which exports the express function
 const express = require("express");
 const path = require("path");
+const User = require("./server/model/user");
 
 // invoke the express function to create an Express
 const app = express();
@@ -51,35 +52,40 @@ app.use("/js", express.static("assets/js"));
 app.use("/sounds", express.static("assets/sounds"));
 app.use("/models", express.static("assets/models")); // Ensure this line is added to serve the GLB model
 
-// helper function to detect mobile user agents
-function isMobile(userAgent) {
-  return /mobile|android|iphone|ipad|ipod/i.test(userAgent);
-}
-
-app.get("/", (req, res) => {
-  if (isMobile(req.headers["user-agent"])) {
-    res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
-  } else {
-    res.render("auth");
-  }
-});
-
 // app.use takes a function that is added to the chain of a request.
 //  when we call next(), it goes to the next function in the chain.
 app.use(async (req, res, next) => {
   if (
-    req.path === "/homePopularDrinks" ||
-    req.path === "/homeMenu" ||
-    req.path.indexOf("/delivery") !== -1
+    !req.path.startsWith("/admin") &&
+    !req.path.startsWith("/barista") &&
+    !req.path.startsWith("/teacher")
   ) {
-    return next(); // allow access to index without authentication
+    return next(); // allow access to any page that doesn't require authentication
   }
-  // if the student is already logged in, fetch the student object from the database
-  else if (req.session.email === undefined && !req.path.startsWith("/auth")) {
-    res.redirect("/auth");
+
+  const email = req.session.email;
+  const user = await User.findOne({ email });
+
+  if (!email || !user) {
+    if (!req.path.startsWith("/auth")) {
+      res.redirect("/auth");
+    }
+
     return;
   }
-  next();
+
+  const role = user.userType;
+
+  if (
+    role === "admin" ||
+    (role === "barista" && req.path.startsWith("/barista")) ||
+    (role === "teacher" && req.path.startsWith("/teacher"))
+  ) {
+    next();
+    return;
+  }
+
+  res.redirect("/redirectUser");
 });
 
 // import the http module, which provides an HTTP server

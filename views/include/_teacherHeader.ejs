@@ -68,20 +68,20 @@
 
     <!-- Reorder: sidebar appears first, arrow trigger immediately after -->
     <div id="sidebar">
-      <a href="/teacherPopularDrinks">Popular Drinks</a>
-      <a href="/teacherMenu">Menu</a>
-      <a href="/teacherMyFavorites">My Favorites</a>
-      <a href="/teacherMyCart">My Cart</a>
-      <a href="/teacherOrderHistory">Order History</a>
+      <a href="/teacher/popularDrinks">Popular Drinks</a>
+      <a href="/teacher/menu">Menu</a>
+      <a href="/teacher/myFavorites">My Favorites</a>
+      <a href="/teacher/myCart">My Cart</a>
+      <a href="/teacher/orderHistory">Order History</a>
 
       <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
       <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
         >Report a bug</a
       >
       <% if (role === "admin") { %>
-      <a href="/addUser">Admin</a>
+      <a href="/admin/addUser">Admin</a>
       <% } %>
-      <a href="/logout">Logout</a>
+      <a href="/auth/logout">Logout</a>
     </div>
     <div id="leftTrigger"><span>&rarr;</span></div>
 

@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
           orderingDisabled: checkbox.checked,
         };
 
-        const response = await fetch("/updatePeriod", {
+        const response = await fetch("/admin/updatePeriod", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -71,7 +71,7 @@ document.getElementById("deleteBtn").addEventListener("click", async () => {
   }
 
   try {
-    const response = await fetch(`/deleteSchedule`, {
+    const response = await fetch(`/admin/deleteSchedule`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -80,7 +80,7 @@ document.getElementById("deleteBtn").addEventListener("click", async () => {
     });
 
     if (response.ok) {
-      window.location = `/scheduler`;
+      window.location = `/admin/scheduler`;
     }
   } catch (error) {
     console.error("Error deleting schedule: ", error);

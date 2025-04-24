@@ -129,7 +129,7 @@
     if (!confirm("Are you sure you want to delete all data?")) {
       return;
     }
-    const response = await fetch("/wipeOrders", {
+    const response = await fetch("/admin/wipeOrders", {
       method: "DELETE",
     });
     if (response.ok) {
@@ -144,7 +144,7 @@
     if (!confirm("Are you sure you want to delete all dev orders?")) {
       return;
     }
-    const response = await fetch("/wipeDevOrders", {
+    const response = await fetch("/admin/wipeDevOrders", {
       method: "DELETE",
     });
     if (response.ok) {

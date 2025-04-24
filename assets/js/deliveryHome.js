@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const reloadButton = document.querySelector(".reload-button");
   reloadButton.addEventListener("click", () => {
-    window.location.href = "/deliveryHome";
+    window.location.href = "/delivery/home";
   });
   const claimButtons = document.querySelectorAll("button.claimButton");
   for (const claimButton of claimButtons) {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const orderId = claimButton.value;
       claimButton.disabled = true;
 
-      const response = await fetch(`/deliveryProgress/${orderId}`, {
+      const response = await fetch(`/delivery/progress/${orderId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Order invalid, try a different order.");
         window.location = response.url;
       } else if (response.ok) {
-        window.location = `/deliveryProgress/${orderId}`;
+        window.location = `/delivery/progress/${orderId}`;
       } else {
         console.log("error claiming order");
       }

@@ -10,7 +10,7 @@ document.querySelector("input.submit").addEventListener("click", async () => {
     alert("Please enter a pin");
     return;
   }
-  const response = await fetch("/addDeliveryPerson", {
+  const response = await fetch("/admin/addDeliveryPerson", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ document.querySelector("input.submit").addEventListener("click", async () => {
   });
 
   if (response.ok) {
-    window.location = "/deliveryPersonManager";
+    window.location = "/admin/deliveryPersonManager";
   } else {
     alert("Server error");
   }
@@ -30,7 +30,7 @@ document.querySelector("input.submit").addEventListener("click", async () => {
 
 document.getElementById("delete").addEventListener("click", async () => {
   const selectUserId = document.getElementById("deliveryPerson").value;
-  const response = await fetch("/deleteDeliveryPerson", {
+  const response = await fetch("/admin/deleteDeliveryPerson", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -40,7 +40,7 @@ document.getElementById("delete").addEventListener("click", async () => {
     }),
   });
   if (response.ok) {
-    window.location = "/deliveryPersonManager";
+    window.location = "/admin/deliveryPersonManager";
   } else {
     alert("Server error");
   }

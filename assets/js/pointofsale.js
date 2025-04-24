@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const formattedTime = `${year}-${month}-${day} at ${hours}:${minutes}${ampm}/${seconds}`;
 
       // Send the order to the server
-      const response = await fetch(`/pointofsale`, {
+      const response = await fetch(`/barista/pointofsale`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
