@@ -1,6 +1,5 @@
 const express = require("express");
 const route = express.Router();
-const path = require("path");
 const User = require("../model/user");
 const MenuItem = require("../model/menuItem");
 const Schedule = require("../model/schedule");
@@ -132,7 +131,7 @@ function isMobile(userAgent) {
 
 route.get("/", (req, res) => {
   if (isMobile(req.headers["user-agent"])) {
-    res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
+    res.sendFile("../../public/add-to-home.html");
   } else {
     res.redirect("/auth");
   }
