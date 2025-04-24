@@ -3,27 +3,27 @@ const finish = document.getElementById("finish");
 logOut.addEventListener("click", async () => {
   logOut.disabled = true;
 
-  const response = await fetch("/deliveryLogOut", {
+  const response = await fetch("/delivery/logout", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
   if (response.ok) {
-    window.location = "/deliveryLogin";
+    window.location = "/delivery/login";
   }
 });
 
 finish.addEventListener("click", async () => {
   finish.disabled = true;
 
-  const response = await fetch("/deliveryFinish", {
+  const response = await fetch("/delivery/finish", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
   });
   if (response.ok) {
-    window.location = "/deliveryHome";
+    window.location = "/delivery/home";
   }
 });

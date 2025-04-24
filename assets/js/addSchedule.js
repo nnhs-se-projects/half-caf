@@ -50,7 +50,7 @@ document.querySelector(".submit").addEventListener("click", async () => {
   try {
     document.querySelector(".submit").disabled = true;
 
-    const response = await fetch("/addSchedule", {
+    const response = await fetch("/admin/addSchedule", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +59,7 @@ document.querySelector(".submit").addEventListener("click", async () => {
     });
 
     if (response.ok) {
-      window.location = "/scheduler";
+      window.location = "/admin/scheduler";
     }
   } catch (error) {
     console.error("Error adding schedule: ", error);

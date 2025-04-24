@@ -55,16 +55,19 @@ addToOrderButton.addEventListener("click", async () => {
 
   addToOrderButton.disabled = true;
 
-  const response = await fetch(`/customizeDrink/${encodeURIComponent(name)}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(drink),
-  });
+  const response = await fetch(
+    `/teacher/customizeDrink/${encodeURIComponent(name)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(drink),
+    }
+  );
 
   if (response.ok) {
-    window.location = "/teacherMyCart";
+    window.location = "/teacher/myCart";
   } else {
     console.log("error adding drink");
   }

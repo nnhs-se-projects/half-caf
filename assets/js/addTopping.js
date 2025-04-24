@@ -12,7 +12,7 @@ addToppingButton.addEventListener("click", async () => {
 
   addToppingButton.disabled = true;
 
-  const response = await fetch("/addTopping", {
+  const response = await fetch("/admin/addTopping", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,7 +21,7 @@ addToppingButton.addEventListener("click", async () => {
   });
 
   if (response.ok) {
-    window.location = "/addTopping";
+    window.location = "/admin/addTopping";
   } else {
     console.log("error adding topping");
   }

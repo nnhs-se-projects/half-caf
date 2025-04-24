@@ -6,7 +6,7 @@ addUserButton.addEventListener("click", async () => {
 
   addUserButton.disabled = true;
 
-  const response = await fetch("/addUser", {
+  const response = await fetch("/admin/addUser", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,7 +15,7 @@ addUserButton.addEventListener("click", async () => {
   });
 
   if (response.ok) {
-    window.location = "/addUser";
+    window.location = "/admin/addUser";
   } else {
     console.log("error creating user");
   }

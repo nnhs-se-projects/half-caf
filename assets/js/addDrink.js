@@ -115,7 +115,7 @@ addDrinkButton.addEventListener("click", async () => {
 
   addDrinkButton.disabled = true;
 
-  const response = await fetch("/addDrink", {
+  const response = await fetch("/admin/addDrink", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -123,7 +123,7 @@ addDrinkButton.addEventListener("click", async () => {
     body: JSON.stringify(menuItem),
   });
   if (response.ok) {
-    window.location = "/addDrink";
+    window.location = "/admin/addDrink";
   } else {
     console.log("error adding drink");
   }

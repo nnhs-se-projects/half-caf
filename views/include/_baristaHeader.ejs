@@ -61,19 +61,19 @@
     <!-- Reorder: sidebar first then arrow trigger -->
     <div id="sidebar">
       <a href="/barista">Orders</a>
-      <a href="/pointOfSale">Point of Sale</a>
-      <a href="/completed">Completed Orders</a>
-      <a href="/cancelledOrders">Cancelled Orders</a>
+      <a href="/barista/pointOfSale">Point of Sale</a>
+      <a href="/barista/completed">Completed Orders</a>
+      <a href="/barista/cancelledOrders">Cancelled Orders</a>
       <a href="https://forms.gle/uqQ8SiAY4BUPCTJp8" target="_blank">Feedback</a>
       <a href="https://forms.gle/MuZF7T39r9adDQRT8" target="_blank"
         >Report a bug</a
       >
 
       <% if (role === "admin") { %>
-      <a href="/addUser">Admin</a>
+      <a href="/admin/addUser">Admin</a>
       <% } %>
 
-      <a href="/logout">Logout</a>
+      <a href="/auth/logout">Logout</a>
 
       <% let numOfNewOrders = 0; %> <% for (let order of orders){%> <%
       if(order.complete === false && order.cancelled === false){%><%

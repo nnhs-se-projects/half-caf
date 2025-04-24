@@ -10,7 +10,7 @@
     drink of favoriteDrinks) { %>
     <div
       class="favorite-card"
-      onclick="window.location.href='/addDrinkToCart/<%= drink.id %>'"
+      onclick="window.location.href='/teacher/reorder/<%= drink.id %>'"
     >
       <div class="container">
         <h3 class="drink-name"><%=drink.name%></h3>
@@ -40,7 +40,6 @@
         <div class="drink-detail">
           <span class="label">Toppings:</span>
           <span class="value"><%=allToppings%></span>
-
         </div>
         <%}%>
 
@@ -60,7 +59,7 @@
           <span class="price">$<%=drink.price%></span>
           <button
             class="action-button unfavorite"
-            onclick="event.stopPropagation(); window.location.href='/unfavoriteDrink/<%= drink.id %>'"
+            onclick="event.stopPropagation(); window.location.href='/teacher/unfavoriteDrink/<%= drink.id %>'"
           >
             Unfavorite
           </button>
@@ -161,7 +160,6 @@
     box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
   }
 
-
   /* Add these media queries at the end of the style block */
   @media screen and (max-width: 768px) {
     .favorites-container {
@@ -177,7 +175,6 @@
       padding: 1rem;
     }
   }
-
 </style>
 
 <%- include('include/_footer') %>
