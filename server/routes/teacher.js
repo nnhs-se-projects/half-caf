@@ -251,7 +251,7 @@ route.post("/myCart", async (req, res) => {
   res.status(200).end();
 });
 
-route.post("/reorder/:id", async (req, res) => {
+route.get("/reorder/:id", async (req, res) => {
   const drink = await Drink.findById(req.params.id);
 
   const drinkCopy = new Drink({
