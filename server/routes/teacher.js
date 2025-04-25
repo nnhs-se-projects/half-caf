@@ -161,7 +161,11 @@ route.get("/myCart", async (req, res) => {
 });
 
 route.get("/outgoingOrders", async (req, res) => {
-  const orders = await Order.find({ complete: false, cancelled: false })
+  const orders = await Order.find({
+    complete: false,
+    cancelled: false,
+    email: req.session.email,
+  })
     .populate("drinks")
     .sort({ timestamp: -1 });
 

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Outgoing Orders</title>
+    <style>
+      body {
+        background: #f4f4f9;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 2rem;
+      }
+      .container {
+        max-width: 1200px;
+        margin: auto;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .order-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+      }
+      .order-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        padding: 1.5rem;
+        transition: transform 0.2s ease;
+      }
+      .order-card:hover {
+        transform: translateY(-5px);
+      }
+      .order-header {
+        border-bottom: 1px solid #eee;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+      }
+      .order-header h2 {
+        font-size: 1.25rem;
+        margin: 0;
+        color: #2c3e50;
+      }
+      .order-detail {
+        margin: 0.5rem 0;
+      }
+      .drinks-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .drink-item {
+        background: #ecf0f1;
+        border-radius: 4px;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>My Outgoing Orders</h1>
+      <div class="order-list">
+        <% if (orders.length === 0) { %>
+        <p>No outgoing orders found.</p>
+        <% } else { %> <% orders.forEach(order => { %>
+        <div class="order-card">
+          <div class="order-header">
+            <h2>Room: <%= order.room %></h2>
+          </div>
+          <div class="order-detail">
+            <strong>Order Time:</strong> <%= order.timestamp.split('/')[0] %>
+          </div>
+          <div class="order-detail">
+            <strong>Total Price:</strong> $<%= order.totalPrice.toFixed(2) %>
+          </div>
+          <div class="order-detail">
+            <strong>Drinks:</strong>
+            <ul class="drinks-list">
+              <% order.drinks.forEach(drink => { %>
+              <li class="drink-item">
+                <strong><%= drink.name %></strong> - <% if (drink.toppings &&
+                drink.toppings.length > 0) { %> Toppings: <%=
+                drink.toppings.join(', ') %> <% } else { %> No toppings <% } %>
+              </li>
+              <% }) %>
+            </ul>
+          </div>
+        </div>
+        <% }) %> <% } %>
+      </div>
+    </div>
+  </body>
+</html>
