@@ -7,7 +7,6 @@ const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Enabled = require("../model/enabled");
 const Weekday = require("../model/weekdays");
-const Subscription = require("../model/subscription");
 
 const { emitToggleChange } = require("../socket/socket");
 
@@ -210,18 +209,12 @@ route.get("/homeMenu", async (req, res) => {
   });
 });
 
-// Updated subscribe route to save subscription to DB
-route.post("/subscribe", async (req, res) => {
+// Add route to handle push subscriptions for mobile web notifications
+route.post("/subscribe", (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
-  try {
-    const newSub = new Subscription(subscription);
-    await newSub.save();
-    res.status(201).json({ message: "Subscription received" });
-  } catch (error) {
-    console.error("Error saving subscription:", error);
-    res.status(500).json({ message: "Error saving subscription" });
-  }
+  // TODO: Store the subscription information in your database for later use with web-push
+  res.status(201).json({ message: "Subscription received" });
 });
 
 route.use("/auth", require("./auth"));
@@ -229,8 +222,5 @@ route.use("/admin", require("./admin"));
 route.use("/barista", require("./barista"));
 route.use("/teacher", require("./teacher"));
 route.use("/delivery", require("./delivery"));
-
-// Mount route to send push notifications to all subscriptions.
-route.use("/sendPushNotification", require("./sendPushNotification"));
 
 module.exports = route;
