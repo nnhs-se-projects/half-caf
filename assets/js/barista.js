@@ -214,6 +214,17 @@ window.io().on("Order cancelled", (data) => {
   }
 });
 
+window.io().on("Room updated", (data) => {
+  const orderRow = document.querySelector(
+    `.time-counter[data-order-id="${data.orderId}"]`
+  ).parentNode.parentNode;
+  if (orderRow) {
+    for (const drink of orderRow.children) {
+      drink.firstChild.innerHTML = data.newRoom;
+    }
+  }
+});
+
 function convertToSeconds(timeString) {
   const timeParts = timeString.split(" ");
   let totalSeconds = 0;

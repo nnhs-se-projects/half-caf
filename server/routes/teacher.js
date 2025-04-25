@@ -7,7 +7,7 @@ const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
 
-const { emitNewOrderPlaced } = require("../socket/socket");
+const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
 
 async function getUserRoles(email) {
   try {
@@ -442,6 +442,7 @@ route.post("/updateRoom", async (req, res) => {
     if (order && order.email === req.session.email) {
       order.room = newRoom;
       await order.save();
+      emitRoomUpdated({ orderId, newRoom });
       res.status(200).json({ success: true });
     } else {
       res.status(403).json({ error: "Unauthorized or order not found" });
