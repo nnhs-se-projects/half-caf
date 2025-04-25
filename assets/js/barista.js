@@ -14,7 +14,14 @@ function addListenerToCancelButtons() {
 
       const orderId = cancelButton.value;
 
-      cancelButton.disabled = true;
+      // prevent bugs
+      const finishButtons = document.querySelectorAll("button.finishButton");
+      for (const finishButton of finishButtons) {
+        finishButton.disabled = true;
+      }
+      for (const cancelButton2 of cancelButtons) {
+        cancelButton2.disabled = true;
+      }
 
       const response = await fetch(`/barista/${orderId}`, {
         method: "DELETE",
@@ -47,7 +54,14 @@ function addListenerToFinishButtons() {
       let timerVal = counter.textContent;
       timerVal = convertToSeconds(timerVal);
 
-      finishButton.disabled = true;
+      // prevent bugs
+      const cancelButtons = document.querySelectorAll("button.cancelButton");
+      for (const finishButton2 of finishButtons) {
+        finishButton2.disabled = true;
+      }
+      for (const cancelButton of cancelButtons) {
+        cancelButton.disabled = true;
+      }
 
       const response = await fetch(`/barista/${orderId}`, {
         method: "POST",
