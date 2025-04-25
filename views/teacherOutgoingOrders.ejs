@@ -4,96 +4,582 @@
     <meta charset="UTF-8" />
     <title>My Outgoing Orders</title>
     <style>
+      /* Coffee-themed color variables */
+      :root {
+        --coffee-dark: #3c2a21;
+        --coffee-medium: #967259;
+        --coffee-light: #d8b6a4;
+        --cream: #f8f1e9;
+        --accent: #f5ae43;
+      }
+
       body {
-        background: #f4f4f9;
+        background: var(--cream);
         font-family: sans-serif;
         margin: 0;
-        padding: 2rem;
+        /* Remove the body padding that's causing the sidebar issue */
+        /* padding: 2rem; */
       }
-      .container {
+
+      #mainContent {
         max-width: 1200px;
-        margin: auto;
+        margin: 0 auto;
+        padding: 1rem;
       }
-      h1 {
-        text-align: center;
-        color: #333;
-      }
-      .order-list {
+
+      .header-section {
         display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        justify-content: center;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
       }
-      .order-card {
-        background: white;
+
+      .header-section h2 {
+        font-family: "Fredoka", sans-serif;
+        color: var(--coffee-dark);
+        font-size: 2rem;
+        margin: 0;
+      }
+
+      .coffee-decoration {
+        font-size: 2rem;
+        color: var(--coffee-medium);
+        animation: steam 3s infinite ease-in-out;
+      }
+
+      .orders-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .empty-orders {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--cream);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(60, 42, 33, 0.1);
+      }
+
+      .empty-orders .coffee-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: bounce 2s infinite;
+      }
+
+      .empty-orders p {
+        font-size: 1.2rem;
+        color: var(--coffee-medium);
+        margin-bottom: 2rem;
+      }
+
+      .browse-menu-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--accent);
+        color: var(--coffee-dark);
+        text-decoration: none;
+        font-weight: 600;
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        width: 300px;
-        padding: 1.5rem;
-        transition: transform 0.2s ease;
+        transition: all 0.3s ease;
       }
+
+      .browse-menu-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .order-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .order-card {
+        background: var(--cream);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(60, 42, 33, 0.1);
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s ease;
+        padding-top: 8px; /* Add some padding at the top */
+      }
+
       .order-card:hover {
         transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(60, 42, 33, 0.15);
       }
+
+      .room-badge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: var(--coffee-medium);
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 0.4rem 1rem;
+        border-bottom-right-radius: 8px;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Edit button styling - enhanced for visibility */
+      .edit-room {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 0.3rem;
+        margin-left: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .edit-room::after {
+        content: "Edit";
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent);
+        color: var(--coffee-dark);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .edit-room:hover {
+        background: var(--accent);
+        transform: scale(1.1);
+      }
+
+      .edit-room:hover::after {
+        opacity: 1;
+      }
+
+      .edit-icon {
+        width: 18px; /* Increased from 14px */
+        height: 18px; /* Increased from 14px */
+        stroke-width: 2.5; /* Make the lines thicker */
+      }
+
+      /* Add a visual cue that room number is editable */
+      .room-display {
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+        padding-bottom: 2px;
+      }
+
+      /* Room input styling */
+      .room-input {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 4px;
+        color: white;
+        font-size: 1rem;
+        padding: 0.2rem 0.4rem;
+        width: 60px;
+        margin-right: 0.25rem;
+      }
+
+      .room-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.3);
+        border-color: var(--accent);
+      }
+
+      /* Save button styling */
+      .save-room {
+        background: var(--accent);
+        border: none;
+        border-radius: 4px;
+        color: var(--coffee-dark);
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        transition: all 0.2s ease;
+      }
+
+      .save-room:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Ensure the order header has enough spacing for the room badge */
       .order-header {
-        border-bottom: 1px solid #eee;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
+        background: var(--coffee-dark);
+        color: var(--cream);
+        padding: 1.5rem;
+        padding-top: 2.5rem; /* Increased to make room for the badge */
+        position: relative;
       }
-      .order-header h2 {
-        font-size: 1.25rem;
-        margin: 0;
-        color: #2c3e50;
+
+      .order-header h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
       }
-      .order-detail {
-        margin: 0.5rem 0;
+
+      .order-time {
+        font-size: 0.9rem;
+        opacity: 0.8;
       }
+
+      .order-price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px dashed var(--coffee-light);
+        font-size: 1.1rem;
+      }
+
+      .price-value {
+        font-weight: 700;
+        color: var(--coffee-dark);
+      }
+
+      .drinks-container {
+        padding: 1.5rem;
+      }
+
+      .drinks-container h4 {
+        margin: 0 0 1rem 0;
+        color: var(--coffee-medium);
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
       .drinks-list {
         list-style: none;
         padding: 0;
         margin: 0;
       }
+
       .drink-item {
-        background: #ecf0f1;
-        border-radius: 4px;
-        padding: 0.5rem;
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+
+      .drink-item:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .drink-name {
+        font-weight: 700;
         margin-bottom: 0.5rem;
+        color: var(--coffee-dark);
+      }
+
+      .drink-details {
         font-size: 0.9rem;
+        color: var(--coffee-medium);
+      }
+
+      .temp-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .temp-badge.hot {
+        background: #ff6b6b;
+        color: white;
+      }
+
+      .temp-badge.iced {
+        background: #74c0fc;
+        color: white;
+      }
+
+      .temp-badge.blended {
+        background: #9c6ade;
+        color: white;
+      }
+
+      .drink-toppings {
+        margin: 0.5rem 0;
+        font-style: italic;
+      }
+
+      .drink-instructions {
+        margin-top: 0.5rem;
+        font-style: italic;
+        color: var(--coffee-dark);
+        font-size: 0.85rem;
+      }
+
+      @keyframes steam {
+        0% {
+          transform: translateY(0) rotate(0);
+        }
+        50% {
+          transform: translateY(-5px) rotate(5deg);
+        }
+        100% {
+          transform: translateY(0) rotate(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* Add a pulse animation to draw attention to the edit button */
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(245, 174, 67, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 6px rgba(245, 174, 67, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(245, 174, 67, 0);
+        }
+      }
+
+      /* Apply the animation on page load */
+      .edit-room {
+        animation: pulse 2s ease-out 1s 3;
+      }
+
+      /* Responsive adjustments */
+      @media screen and (max-width: 768px) {
+        .order-list {
+          grid-template-columns: 1fr;
+        }
+
+        .header-section {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-top: 3rem;
+        }
+
+        .coffee-decoration {
+          margin-top: 0.5rem;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>My Outgoing Orders</h1>
-      <div class="order-list">
+    <%- include('include/_teacherHeader') %>
+
+    <div id="mainContent">
+      <div class="header-section">
+        <h2>My Outgoing Orders</h2>
+        <div class="coffee-decoration">☕</div>
+      </div>
+
+      <div class="orders-container">
         <% if (orders.length === 0) { %>
-        <p>No outgoing orders found.</p>
-        <% } else { %> <% orders.forEach(order => { %>
-        <div class="order-card">
-          <div class="order-header">
-            <h2>Room: <%= order.room %></h2>
-          </div>
-          <div class="order-detail">
-            <strong>Order Time:</strong> <%= order.timestamp.split('/')[0] %>
-          </div>
-          <div class="order-detail">
-            <strong>Total Price:</strong> $<%= order.totalPrice.toFixed(2) %>
-          </div>
-          <div class="order-detail">
-            <strong>Drinks:</strong>
-            <ul class="drinks-list">
-              <% order.drinks.forEach(drink => { %>
-              <li class="drink-item">
-                <strong><%= drink.name %></strong> - <% if (drink.toppings &&
-                drink.toppings.length > 0) { %> Toppings: <%=
-                drink.toppings.join(', ') %> <% } else { %> No toppings <% } %>
-              </li>
-              <% }) %>
-            </ul>
-          </div>
+        <div class="empty-orders">
+          <div class="coffee-icon">☕</div>
+          <p>No outgoing orders found. Ready to place one?</p>
+          <a href="/teacher/menu" class="browse-menu-btn">Browse Menu</a>
         </div>
-        <% }) %> <% } %>
+        <% } else { %>
+        <div class="order-list">
+          <% orders.forEach(order => { %>
+          <div class="order-card">
+            <div class="room-badge">
+              Room
+              <span class="room-display" data-order-id="<%= order._id %>"
+                ><%= order.room %></span
+              >
+              <button
+                class="edit-room"
+                data-order-id="<%= order._id %>"
+                title="Click to edit room number"
+              >
+                <svg
+                  class="edit-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15.5 5.5L18.5 8.5M12 19H19M5 15.5L15.5 5.5L18.5 8.5L8 19H5V15.5Z"
+                  />
+                </svg>
+              </button>
+              <div class="edit-controls" style="display: none">
+                <input
+                  type="text"
+                  class="room-input"
+                  data-order-id="<%= order._id %>"
+                  value="<%= order.room %>"
+                  maxlength="10"
+                />
+                <button class="save-room" data-order-id="<%= order._id %>">
+                  Save
+                </button>
+              </div>
+            </div>
+            <div class="order-status">
+              <span class="status-badge">In Progress</span>
+            </div>
+            <div class="order-header">
+              <h3>Order Details</h3>
+              <div class="order-time"><%= order.timestamp.split('/')[0] %></div>
+            </div>
+            <div class="order-price">
+              <span class="price-label">Total:</span>
+              <span class="price-value"
+                >$<%= order.totalPrice.toFixed(2) %></span
+              >
+            </div>
+            <div class="drinks-container">
+              <h4>Drinks</h4>
+              <ul class="drinks-list">
+                <% order.drinks.forEach(drink => { %>
+                <li class="drink-item">
+                  <div class="drink-name"><%= drink.name %></div>
+                  <div class="drink-details">
+                    <span class="temp-badge <%= drink.temps.toLowerCase() %>"
+                      ><%= drink.temps %></span
+                    >
+                    <% if (drink.toppings && drink.toppings.length > 0) { %>
+                    <div class="drink-toppings">
+                      + <%= drink.toppings.join(', ') %>
+                    </div>
+                    <% } %> <% if (drink.instructions) { %>
+                    <div class="drink-instructions">
+                      "<%= drink.instructions %>"
+                    </div>
+                    <% } %>
+                  </div>
+                </li>
+                <% }) %>
+              </ul>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <% } %>
       </div>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".edit-room").forEach((button) => {
+          button.addEventListener("click", function () {
+            const orderId = this.getAttribute("data-order-id");
+            const roomDisplay = document.querySelector(
+              `.room-display[data-order-id="${orderId}"]`
+            );
+            const editControls = this.nextElementSibling;
+            const roomInput = editControls.querySelector(".room-input");
+
+            // Hide display and edit button, show edit controls
+            roomDisplay.style.display = "none";
+            this.style.display = "none";
+            editControls.style.display = "flex";
+            roomInput.focus();
+          });
+        });
+
+        document.querySelectorAll(".save-room").forEach((button) => {
+          button.addEventListener("click", async function () {
+            const orderId = this.getAttribute("data-order-id");
+            const editControls = this.parentElement;
+            const roomBadge = editControls.parentElement;
+            const roomDisplay = roomBadge.querySelector(
+              `.room-display[data-order-id="${orderId}"]`
+            );
+            const editButton = roomBadge.querySelector(
+              `.edit-room[data-order-id="${orderId}"]`
+            );
+            const roomInput = editControls.querySelector(".room-input");
+            const newRoom = roomInput.value.trim();
+
+            if (!newRoom) {
+              alert("Room number cannot be empty");
+              return;
+            }
+
+            try {
+              const response = await fetch("/teacher/updateRoom", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orderId, newRoom }),
+              });
+              if (response.ok) {
+                // Update display
+                roomDisplay.textContent = newRoom;
+                // Toggle display
+                roomDisplay.style.display = "inline";
+                editButton.style.display = "flex";
+                editControls.style.display = "none";
+              } else {
+                alert("Room update failed");
+              }
+            } catch (e) {
+              console.error(e);
+              alert("An error occurred while updating the room");
+            }
+          });
+        });
+
+        // Handle pressing Enter in the input field
+        document.querySelectorAll(".room-input").forEach((input) => {
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              this.parentElement.querySelector(".save-room").click();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              const orderId = this.getAttribute("data-order-id");
+              const editControls = this.parentElement;
+              const roomBadge = editControls.parentElement;
+              const roomDisplay = roomBadge.querySelector(
+                `.room-display[data-order-id="${orderId}"]`
+              );
+              const editButton = roomBadge.querySelector(
+                `.edit-room[data-order-id="${orderId}"]`
+              );
+
+              // Cancel edit mode
+              roomDisplay.style.display = "inline";
+              editButton.style.display = "flex";
+              editControls.style.display = "none";
+            }
+          });
+        });
+      });
+    </script>
+
+    <%- include('include/_footer') %>
   </body>
 </html>

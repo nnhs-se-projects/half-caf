@@ -435,4 +435,21 @@ route.get("/orderConfirmation", async (req, res) => {
   });
 });
 
+route.post("/updateRoom", async (req, res) => {
+  const { orderId, newRoom } = req.body;
+  try {
+    const order = await Order.findById(orderId);
+    if (order && order.email === req.session.email) {
+      order.room = newRoom;
+      await order.save();
+      res.status(200).json({ success: true });
+    } else {
+      res.status(403).json({ error: "Unauthorized or order not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = route;
