@@ -12,22 +12,173 @@
       content="black-translucent"
     />
     <meta name="apple-mobile-web-app-title" content="Half Caf App" />
-    <meta name="theme-color" content="#383773" />
+    <meta name="theme-color" content="#6F4E37" />
     <style>
+      :root {
+        --primary-color: #6f4e37; /* Coffee brown */
+        --secondary-color: #c4a484; /* Cafe au lait */
+        --accent-color: #dab88b; /* Light coffee */
+        --background-color: #fdf6e3; /* Creamy background */
+        --text-color: #3c2a21; /* Dark coffee */
+      }
+
       body {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        text-align: center;
-        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        line-height: 1.5;
+        position: relative;
+        overflow-x: hidden;
       }
+
+      body::before {
+        content: "☕";
+        position: absolute;
+        font-size: 200px;
+        opacity: 0.03;
+        right: -50px;
+        top: -50px;
+        transform: rotate(25deg);
+      }
+
       .container {
-        max-width: 600px;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 30px;
+        box-shadow: 0 20px 40px rgba(111, 78, 55, 0.1);
+        width: 90%;
+        max-width: 400px;
+        animation: slideUp 0.8s ease-out;
+        position: relative;
       }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       .container img {
-        width: 100px;
-        height: auto;
+        width: 90px;
+        height: 90px;
+        margin-bottom: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(111, 78, 55, 0.15);
+        transition: transform 0.3s ease;
+      }
+
+      .container img:hover {
+        transform: scale(1.05);
+      }
+
+      h1 {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin: 0 0 1.5rem 0;
+        font-weight: 700;
+      }
+
+      p {
+        margin: 0.7rem 0;
+        color: var(--text-color);
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .add-to-home-demo {
+        margin: 2rem 0;
+        position: relative;
+        height: 60px;
+      }
+
+      .share-icon {
+        position: absolute;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background: var(--accent-color);
+        border-radius: 10px;
+        animation: pulse 2s infinite;
+      }
+
+      .share-icon::before {
+        content: "↑";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: white;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(218, 184, 139, 0.4);
+        }
+        70% {
+          transform: scale(1.1);
+          box-shadow: 0 0 0 10px rgba(218, 184, 139, 0);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(218, 184, 139, 0);
+        }
+      }
+
+      #bypass {
+        margin-top: 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        max-width: 250px;
+      }
+
+      #bypass:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(111, 78, 55, 0.2);
+      }
+
+      #bypass:active {
+        transform: translateY(0);
+      }
+
+      @media (max-width: 380px) {
+        .container {
+          padding: 1.8rem;
+        }
+
+        h1 {
+          font-size: 1.7rem;
+        }
+
+        .container img {
+          width: 70px;
+          height: 70px;
+        }
       }
     </style>
   </head>
@@ -35,10 +186,16 @@
     <div class="container">
       <img src="/test-icon.png" alt="App Logo" />
       <h1>Add to Home Screen</h1>
-      <p>For the best experience, please add this app to your home screen.</p>
-      <p>Tap the share button and then "Add to Home Screen".</p>
+      <p>
+        For the best coffee ordering experience, add this app to your home
+        screen.
+      </p>
+      <div class="add-to-home-demo">
+        <div class="share-icon"></div>
+      </div>
+      <p>Tap the share button above, then select "Add to Home Screen"</p>
+      <button id="bypass">Continue to App</button>
     </div>
-    <button id="bypass">Continue to App</button>
     <script>
       document.getElementById("bypass").addEventListener("click", () => {
         window.location = "/auth";

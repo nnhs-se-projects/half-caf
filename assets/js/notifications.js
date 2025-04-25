@@ -144,10 +144,10 @@ if (isMobile()) {
             applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
           })
           .then((newSubscription) => {
-            // Show pop-up with push subscription details on mobile
-            alert(
-              "Received push subscription: " + JSON.stringify(newSubscription)
-            );
+            // // Show pop-up with push subscription details on mobile
+            // alert(
+            //   "Received push subscription: " + JSON.stringify(newSubscription)
+            // );
             // Send subscription details to backend for storing
             fetch("/subscribe", {
               method: "POST",
