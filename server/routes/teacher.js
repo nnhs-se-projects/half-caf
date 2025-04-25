@@ -160,6 +160,20 @@ route.get("/myCart", async (req, res) => {
   });
 });
 
+route.get("/outgoingOrders", async (req, res) => {
+  const orders = await Order.find({ complete: false, cancelled: false })
+    .populate("drinks")
+    .sort({ timestamp: -1 });
+
+  const role = await getUserRoles(req.session.email);
+
+  res.render("teacherOutgoingOrders", {
+    orders,
+    email: req.session.email,
+    role,
+  });
+});
+
 route.post("/updateCart", async (req, res) => {
   await Drink.findByIdAndRemove(req.session.cart[req.body.index]);
   req.session.cart.splice(req.body.index, 1);
