@@ -210,9 +210,12 @@ route.get("/homeMenu", async (req, res) => {
 });
 
 // Add route to handle push subscriptions for mobile web notifications
-route.post("/subscribe", (req, res) => {
+route.post("/subscribe", async (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
+  const user = await User.findOne({ email: req.session.email });
+  user.subscription = JSON.stringify(subscription);
+  await user.save();
   // TODO: Store the subscription information in your database for later use with web-push
   res.status(201).json({ message: "Subscription received" });
 });
