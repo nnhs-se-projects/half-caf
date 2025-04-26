@@ -59,6 +59,12 @@ function emitNewOrderPlaced(data) {
   }
 }
 
+function emitRoomUpdated(data) {
+  if (io) {
+    io.emit("Room updated", data);
+  }
+}
+
 module.exports = {
   createSocketServer,
   emitToggleChange,
@@ -66,4 +72,5 @@ module.exports = {
   emitOrderCancelled,
   emitOrderClaimed,
   emitNewOrderPlaced,
+  emitRoomUpdated,
 };
