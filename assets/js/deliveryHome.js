@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json",
         },
       });
-      if (response.url.indexOf("deliveryProgress") === -1) {
+      if (response.url.indexOf("delivery/progress") === -1) {
         alert("Order invalid, try a different order.");
         window.location = response.url;
       } else if (response.ok) {
