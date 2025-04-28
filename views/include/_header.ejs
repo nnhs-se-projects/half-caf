@@ -84,26 +84,28 @@
       document.addEventListener('DOMContentLoaded', function() {
         const hamburger = document.querySelector('.hamburger-menu');
         const sidebar = document.getElementById('sidebar');
-        
-        hamburger.addEventListener('click', function() {
-          sidebar.classList.add('active');
-        });
 
-        // Close sidebar when clicking the close button
-        const closeBtn = document.createElement('div');
-        closeBtn.className = 'close-btn';
-        sidebar.appendChild(closeBtn);
+        if(hamburger && sidebar){
+           hamburger.addEventListener('click', function() {
+            sidebar.classList.add('active');
+          });
 
-        closeBtn.addEventListener('click', function() {
-          sidebar.classList.remove('active');
-        });
+          // Close sidebar when clicking the close button
+          const closeBtn = document.createElement('div');
+          closeBtn.className = 'close-btn';
+          sidebar.appendChild(closeBtn);
 
-        // Close sidebar when clicking outside
-        document.addEventListener('click', function(e) {
-          if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+          closeBtn.addEventListener('click', function() {
             sidebar.classList.remove('active');
-          }
-        });
+          });
+
+          // Close sidebar when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+              sidebar.classList.remove('active');
+            }
+          });
+        }
       });
     </script>
 
