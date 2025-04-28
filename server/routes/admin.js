@@ -11,12 +11,21 @@ const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
+const webPush = require("web-push");
+
 const devEmails = [
   "bfjesso@stu.naperville203.org",
   "rekrzyzanowski@stu.naperville203.org",
   "jjkrzyzanowski@stu.naperville203.org",
   "egkohl@stu.naperville203.org",
 ];
+
+// Set VAPID details. Mke sure ENV IN SERVER HAS IT
+webPush.setVapidDetails(
+  "mailto:admin@example.com",
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
 route.get("/addSchedule", async (req, res) => {
   res.render("addSchedule");
@@ -733,6 +742,37 @@ route.post("/addDeliveryPerson", async (req, res) => {
 route.delete("/deleteDeliveryPerson", async (req, res) => {
   await DeliveryPerson.findByIdAndRemove(req.body.id);
   res.end();
+});
+
+route.get("/sendMobileNotif", async (req, res) => {
+  // Fetch users with an existing subscription stored as a JSON string
+  try {
+    const users = await User.find({
+      subscription: { $exists: true, $ne: null },
+    });
+    for (const user of users) {
+      if (user.subscription) {
+        try {
+          const subscription = JSON.parse(user.subscription);
+          const payload = JSON.stringify({
+            title: "Test Notification",
+            body: "This is a test mobile notification.",
+          });
+          await webPush.sendNotification(subscription, payload);
+        } catch (error) {
+          console.error(
+            "Push notification failed for user:",
+            user.email,
+            error
+          );
+        }
+      }
+    }
+    res.status(200).send("Mobile notifications sent.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error sending notifications.");
+  }
 });
 
 module.exports = route;

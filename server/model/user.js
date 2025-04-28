@@ -28,6 +28,10 @@ const schema = new mongoose.Schema({
     ref: "Drink",
     required: false,
   },
+  subscription: {
+    type: String,
+    required: false,
+  },
 });
 
 const User = mongoose.model("User", schema);

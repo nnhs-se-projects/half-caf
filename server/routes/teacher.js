@@ -7,7 +7,7 @@ const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
 
-const { emitNewOrderPlaced } = require("../socket/socket");
+const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
 
 async function getUserRoles(email) {
   try {
@@ -155,6 +155,24 @@ route.get("/myCart", async (req, res) => {
   res.render("teacherMyCart", {
     cart: req.session.cart,
     customizationDict,
+    email: req.session.email,
+    role,
+  });
+});
+
+route.get("/outgoingOrders", async (req, res) => {
+  const orders = await Order.find({
+    complete: false,
+    cancelled: false,
+    email: req.session.email,
+  })
+    .populate("drinks")
+    .sort({ timestamp: -1 });
+
+  const role = await getUserRoles(req.session.email);
+
+  res.render("teacherOutgoingOrders", {
+    orders,
     email: req.session.email,
     role,
   });
@@ -415,6 +433,24 @@ route.get("/orderConfirmation", async (req, res) => {
     image: dogImageUrl,
     joke: dogCoffeeJokes[Math.floor(Math.random() * dogCoffeeJokes.length)],
   });
+});
+
+route.post("/updateRoom", async (req, res) => {
+  const { orderId, newRoom } = req.body;
+  try {
+    const order = await Order.findById(orderId);
+    if (order && order.email === req.session.email) {
+      order.room = newRoom;
+      await order.save();
+      emitRoomUpdated({ orderId, newRoom });
+      res.status(200).json({ success: true });
+    } else {
+      res.status(403).json({ error: "Unauthorized or order not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 module.exports = route;

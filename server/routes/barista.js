@@ -7,6 +7,13 @@ const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temps.json");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const webPush = require("web-push");
+
+webPush.setVapidDetails(
+  "mailto:admin@example.com",
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
 const {
   emitOrderCompleted,
@@ -109,6 +116,23 @@ route.delete("/:id", async (req, res) => {
     orderId: order._id,
   });
 
+  const user = await User.findOne({ email: order.email });
+  if (user && user.subscription) {
+    try {
+      const subscription = JSON.parse(user.subscription);
+      const payload = JSON.stringify({
+        title: "Order cancelled",
+        options: {
+          body: 'Barista Note: "' + req.body.message + '"',
+          icon: "../img/Half_Caf_Logo_(1).png",
+        },
+      });
+      await webPush.sendNotification(subscription, payload);
+    } catch (error) {
+      console.error("Push notification failed for user:", user.email, error);
+    }
+  }
+
   res.status(201).end();
 });
 
@@ -124,6 +148,23 @@ route.post("/:id", async (req, res) => {
     const drink = await Drink.findById(drinkId);
     drink.completed = true;
     await drink.save();
+  }
+
+  const user = await User.findOne({ email: order.email });
+  if (user && user.subscription) {
+    try {
+      const subscription = JSON.parse(user.subscription);
+      const payload = JSON.stringify({
+        title: "Order in delivery",
+        options: {
+          body: "Your order is finished and is on its way!",
+          icon: "../img/Half_Caf_Logo_(1).png",
+        },
+      });
+      await webPush.sendNotification(subscription, payload);
+    } catch (error) {
+      console.error("Push notification failed for user:", user.email, error);
+    }
   }
 
   res.status(201).end();

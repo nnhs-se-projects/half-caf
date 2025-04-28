@@ -132,7 +132,13 @@ function isMobile(userAgent) {
 
 route.get("/", (req, res) => {
   if (isMobile(req.headers["user-agent"])) {
-    res.sendFile(path.join(__dirname, "public", "add-to-home.html"));
+    const currentFilePath = __filename;
+    const parentDirectory = path.dirname(path.dirname(currentFilePath));
+    const addToHomePath = parentDirectory.substring(
+      0,
+      parentDirectory.lastIndexOf("/")
+    );
+    res.sendFile(path.join(addToHomePath, "public/add-to-home.html"));
   } else {
     res.redirect("/auth");
   }
@@ -204,9 +210,12 @@ route.get("/homeMenu", async (req, res) => {
 });
 
 // Add route to handle push subscriptions for mobile web notifications
-route.post("/subscribe", (req, res) => {
+route.post("/subscribe", async (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
+  const user = await User.findOne({ email: req.session.email });
+  user.subscription = JSON.stringify(subscription);
+  await user.save();
   // TODO: Store the subscription information in your database for later use with web-push
   res.status(201).json({ message: "Subscription received" });
 });

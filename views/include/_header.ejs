@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Half Caf</title>
     <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
@@ -40,7 +40,8 @@
       justify-content: flex-start;
       background-color: var(--cream);
       width: 100%;
-      height: 75px;
+      height: calc(75px + env(safe-area-inset-top, 0));
+      padding-top: env(safe-area-inset-top, 0);
       position: fixed;
       top: 0;
       left: 0;
@@ -48,10 +49,19 @@
       z-index: 1000;
       padding-left: 20px; /* Desktop padding */
     }
-
+    
+    /* Adjust content positioning for mobile */
     @media (max-width: 768px) {
+      body {
+        padding-top: calc(env(safe-area-inset-top, 0));
+      }
+      
       .indexTopBar {
         padding-left: 0 !important;
+      }
+      
+      #sidebar {
+        top: calc(env(safe-area-inset-top, 0)) !important; 
       }
     }
   </style>
@@ -74,26 +84,28 @@
       document.addEventListener('DOMContentLoaded', function() {
         const hamburger = document.querySelector('.hamburger-menu');
         const sidebar = document.getElementById('sidebar');
-        
-        hamburger.addEventListener('click', function() {
-          sidebar.classList.add('active');
-        });
 
-        // Close sidebar when clicking the close button
-        const closeBtn = document.createElement('div');
-        closeBtn.className = 'close-btn';
-        sidebar.appendChild(closeBtn);
+        if(hamburger && sidebar){
+           hamburger.addEventListener('click', function() {
+            sidebar.classList.add('active');
+          });
 
-        closeBtn.addEventListener('click', function() {
-          sidebar.classList.remove('active');
-        });
+          // Close sidebar when clicking the close button
+          const closeBtn = document.createElement('div');
+          closeBtn.className = 'close-btn';
+          sidebar.appendChild(closeBtn);
 
-        // Close sidebar when clicking outside
-        document.addEventListener('click', function(e) {
-          if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+          closeBtn.addEventListener('click', function() {
             sidebar.classList.remove('active');
-          }
-        });
+          });
+
+          // Close sidebar when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+              sidebar.classList.remove('active');
+            }
+          });
+        }
       });
     </script>
 

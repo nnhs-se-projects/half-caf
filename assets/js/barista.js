@@ -14,7 +14,14 @@ function addListenerToCancelButtons() {
 
       const orderId = cancelButton.value;
 
-      cancelButton.disabled = true;
+      // prevent bugs
+      const finishButtons = document.querySelectorAll("button.finishButton");
+      for (const finishButton of finishButtons) {
+        finishButton.disabled = true;
+      }
+      for (const cancelButton2 of cancelButtons) {
+        cancelButton2.disabled = true;
+      }
 
       const response = await fetch(`/barista/${orderId}`, {
         method: "DELETE",
@@ -47,7 +54,14 @@ function addListenerToFinishButtons() {
       let timerVal = counter.textContent;
       timerVal = convertToSeconds(timerVal);
 
-      finishButton.disabled = true;
+      // prevent bugs
+      const cancelButtons = document.querySelectorAll("button.cancelButton");
+      for (const finishButton2 of finishButtons) {
+        finishButton2.disabled = true;
+      }
+      for (const cancelButton of cancelButtons) {
+        cancelButton.disabled = true;
+      }
 
       const response = await fetch(`/barista/${orderId}`, {
         method: "POST",
@@ -197,20 +211,30 @@ window.io().on("New order placed", (data) => {
 });
 
 window.io().on("Order completed", (data) => {
-  const orderRow = document.querySelector(
+  const drinkRows = document.querySelectorAll(
     `.time-counter[data-order-id="${data.orderId}"]`
-  ).parentNode.parentNode;
-  if (orderRow) {
-    orderRow.remove();
+  );
+  for (const drink of drinkRows) {
+    drink.parentNode.parentNode.remove();
   }
 });
 
 window.io().on("Order cancelled", (data) => {
-  const orderRow = document.querySelector(
+  const drinkRows = document.querySelectorAll(
     `.time-counter[data-order-id="${data.orderId}"]`
-  ).parentNode.parentNode;
-  if (orderRow) {
-    orderRow.remove();
+  );
+  for (const drink of drinkRows) {
+    drink.parentNode.parentNode.remove();
+  }
+});
+
+window.io().on("Room updated", (data) => {
+  const drinkRows = document.querySelectorAll(
+    `.time-counter[data-order-id="${data.orderId}"]`
+  );
+  for (const drink of drinkRows) {
+    const roomElement = drink.parentElement.parentElement.firstElementChild;
+    roomElement.innerHTML = data.newRoom;
   }
 });
 
