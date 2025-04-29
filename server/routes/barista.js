@@ -106,34 +106,50 @@ route.get("/", async (req, res) => {
 });
 
 route.delete("/:id", async (req, res) => {
-  const order = await Order.findById(req.params.id);
-  order.cancelled = true;
-  await order.save();
+  try {
+    const order = await Order.findById(req.params.id).populate("drinks");
+    const email = order.email;
 
-  emitOrderCancelled({
-    cancelMessage: req.body.message,
-    email: order.email,
-    orderId: order._id,
-  });
+    const orderItems = order.drinks.map((drink) => ({
+      name: drink.name,
+      temp: drink.temps,
+      flavors: drink.flavors.length > 0 ? drink.flavors.join(", ") : "None",
+      toppings: drink.toppings.length > 0 ? drink.toppings.join(", ") : "None",
+      instructions: drink.instructions,
+    }));
 
-  const user = await User.findOne({ email: order.email });
-  if (user && user.subscription) {
-    try {
-      const subscription = JSON.parse(user.subscription);
-      const payload = JSON.stringify({
-        title: "Order cancelled",
-        options: {
-          body: 'Barista Note: "' + req.body.message + '"',
-          icon: "../img/Half_Caf_Logo_(1).png",
-        },
-      });
-      await webPush.sendNotification(subscription, payload);
-    } catch (error) {
-      console.error("Push notification failed for user:", user.email, error);
+    order.cancelled = true;
+    await order.save();
+
+    emitOrderCancelled({
+      cancelMessage: req.body.message,
+      email: email,
+      orderId: order._id,
+      orderItems: orderItems,
+    });
+
+    const user = await User.findOne({ email: order.email });
+    if (user && user.subscription) {
+      try {
+        const subscription = JSON.parse(user.subscription);
+        const payload = JSON.stringify({
+          title: "Order cancelled",
+          options: {
+            body: 'Barista Note: "' + req.body.message + '"',
+            icon: "../img/Half_Caf_Logo_(1).png",
+          },
+        });
+        await webPush.sendNotification(subscription, payload);
+      } catch (error) {
+        console.error("Push notification failed for user:", user.email, error);
+      }
     }
-  }
 
-  res.status(201).end();
+    res.status(201).end();
+  } catch (error) {
+    console.error("Error cancelling order:", error);
+    res.status(500).end();
+  }
 });
 
 route.post("/:id", async (req, res) => {
@@ -170,7 +186,7 @@ route.post("/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/pointofsale", async (req, res) => {
+route.get("/pointOfSale", async (req, res) => {
   const menuItems = await MenuItem.find();
   const flavors = await Flavor.find();
   const toppings = await Topping.find();
@@ -210,7 +226,7 @@ route.get("/pointofsale", async (req, res) => {
   });
 });
 
-route.post("/pointofsale", async (req, res) => {
+route.post("/pointOfSale", async (req, res) => {
   const drinkIdCart = [];
   for (const drink of req.body.order) {
     const newDrink = new Drink({
