@@ -170,7 +170,7 @@ route.post("/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/pointofsale", async (req, res) => {
+route.get("/pointOfSale", async (req, res) => {
   const menuItems = await MenuItem.find();
   const flavors = await Flavor.find();
   const toppings = await Topping.find();
@@ -210,7 +210,7 @@ route.get("/pointofsale", async (req, res) => {
   });
 });
 
-route.post("/pointofsale", async (req, res) => {
+route.post("/pointOfSale", async (req, res) => {
   const drinkIdCart = [];
   for (const drink of req.body.order) {
     const newDrink = new Drink({
