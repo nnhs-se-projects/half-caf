@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
           total: Number(orderTotal.textContent),
         }),
       });
-
+      console.log(response);
       if (response.ok) {
         // Clear the cart
         cart = [];
