@@ -68,6 +68,9 @@ window.io().on("Order claimed", (data) => {
 });
 
 window.io().on("Order cancelled", (data) => {
+  // Only show cancellation popup for the user who placed the order
+  if (data.email !== currentEmail) return;
+
   if (
     Notification?.permission === "granted" &&
     currentEmail &&
