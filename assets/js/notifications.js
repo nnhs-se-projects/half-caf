@@ -78,7 +78,6 @@ window.io().on("Order cancelled", (data) => {
       icon: "../img/Half_Caf_Logo_(1).png",
     };
     if (isMobile()) {
-      // Mobile: send notification via service worker
       navigator.serviceWorker.ready.then((registration) => {
         if (registration.active) {
           registration.active.postMessage({
@@ -90,9 +89,146 @@ window.io().on("Order cancelled", (data) => {
         }
       });
     } else {
-      // Desktop: show notification directly
       new Notification("Order cancelled", options);
     }
+  }
+
+  // Always add to popup stack if not on barista client
+  if (!window.location.pathname.startsWith("/barista")) {
+    // If visible, show immediately; if not, save pending
+    if (document.visibilityState === "visible") {
+      showOrderCancelledPopup(assignId(data));
+    } else {
+      savePendingOrderCancelled(assignId(data));
+    }
+  }
+});
+
+// Helper: assign unique id if not already present
+function assignId(data) {
+  if (!data.id) {
+    data.id =
+      Date.now().toString() + "_" + Math.random().toString(36).substring(2, 8);
+  }
+  return data;
+}
+
+// Update showOrderCancelledPopup to include a header for dragging and use absolute positioning
+function showOrderCancelledPopup(data) {
+  const popupId = "orderCancelledPopup-" + data.id;
+  // Only create if not already shown
+  if (document.getElementById(popupId)) {
+    return;
+  }
+  const popup = document.createElement("div");
+  popup.id = popupId;
+  // Default initial position if none is saved
+  popup.style.cssText =
+    "position: absolute; top: 20%; left: calc(50% - 150px); width: 300px; background: #fff; border: 1px solid #ccc; padding: 0; z-index: 10000; box-shadow: 0 4px 8px rgba(0,0,0,0.1);";
+
+  // If a saved position exists, restore it
+  const savedPos = localStorage.getItem("popupPos_" + popupId);
+  if (savedPos) {
+    const pos = JSON.parse(savedPos);
+    popup.style.left = pos.left;
+    popup.style.top = pos.top;
+  }
+
+  // Popup includes a draggable header
+  popup.innerHTML = `
+    <div class="popupHeader" style="background: #ccc; padding: 5px; cursor: move; user-select: none;">
+      Order Cancelled
+    </div>
+    <div class="popupContent" style="padding: 15px;">
+      <p>Your order has been cancelled.</p>
+      <p><strong>Note:</strong> ${data.cancelMessage}</p>
+      <button class="closePopup">Close</button>
+    </div>`;
+
+  document.body.appendChild(popup);
+
+  // Make this popup draggable using the header
+  makeDraggable(popup, popup.querySelector(".popupHeader"));
+
+  popup.querySelector(".closePopup").addEventListener("click", () => {
+    popup.remove();
+    removePendingOrderCancelled(data.id);
+    localStorage.removeItem("popupPos_" + popupId);
+  });
+}
+
+// A helper function to make an element draggable using a handle element.
+function makeDraggable(element, handle) {
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  handle.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    const rect = element.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", function (e) {
+    if (isDragging) {
+      element.style.left = e.clientX - offsetX + "px";
+      element.style.top = e.clientY - offsetY + "px";
+    }
+  });
+
+  document.addEventListener("mouseup", function () {
+    if (isDragging) {
+      isDragging = false;
+      // Save the element position
+      localStorage.setItem(
+        "popupPos_" + element.id,
+        JSON.stringify({ left: element.style.left, top: element.style.top })
+      );
+    }
+  });
+}
+
+function removePendingOrderCancelled(cancelId) {
+  let pending = JSON.parse(
+    localStorage.getItem("pendingOrderCancelled") || "[]"
+  );
+  pending = pending.filter((item) => item.id !== cancelId);
+  localStorage.setItem("pendingOrderCancelled", JSON.stringify(pending));
+}
+
+function savePendingOrderCancelled(data) {
+  let pending = JSON.parse(
+    localStorage.getItem("pendingOrderCancelled") || "[]"
+  );
+  pending.push(data);
+  localStorage.setItem("pendingOrderCancelled", JSON.stringify(pending));
+}
+
+// In showPendingOrderCancelled, do not clear the pending cancellations so they persist
+function showPendingOrderCancelled() {
+  let pending = JSON.parse(
+    localStorage.getItem("pendingOrderCancelled") || "[]"
+  );
+  pending.forEach((data) => {
+    showOrderCancelledPopup(data);
+  });
+  // Do NOT clear localStorage here, so that the popups remain on reload.
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (
+    document.visibilityState === "visible" &&
+    !window.location.pathname.startsWith("/barista")
+  ) {
+    showPendingOrderCancelled();
+  }
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  if (!window.location.pathname.startsWith("/barista")) {
+    showPendingOrderCancelled();
   }
 });
 
