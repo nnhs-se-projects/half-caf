@@ -85,11 +85,11 @@
           <input class="toggle" type="checkbox" id="myCheckbox" />
           <span class="dis-en"></span>
           <% if(headerData.reason) { %>
-          <h4 style="padding-top: 10px; font-size: 0.75rem">
+          <h4 style="padding-top: 10px; font-size: 0.75rem; color: white">
             Orders Disabled (<%=headerData.reason%>)
           </h4>
           <%} else { %>
-          <h4 style="padding-top: 10px">Orders Disabled</h4>
+          <h4 style="padding-top: 10px; color: white">Orders Disabled</h4>
           <% } %> <% } else { %>
           <input
             class="toggle"
@@ -98,7 +98,7 @@
             checked="checked"
           />
           <span class="dis-en"></span>
-          <h4 style="padding-top: 10px">Orders Enabled</h4>
+          <h4 style="padding-top: 10px; color: white">Orders Enabled</h4>
           <% } %>
         </label>
       </a>
