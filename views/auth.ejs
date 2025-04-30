@@ -12,6 +12,27 @@
     style="margin-top: 100px; position: relative; z-index: 1"
     class="animate-fade-in"
   >
+    <!-- Add mobile app notification bell -->
+    <div
+      id="mobileAppNotifier"
+      style="
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+      "
+    >
+      <div class="notification-bell" title="Learn about our mobile app">
+        <div class="bell-icon">
+          <div class="bell-top"></div>
+          <div class="bell-body"></div>
+          <div class="bell-clapper"></div>
+        </div>
+        <div class="notification-badge">1</div>
+      </div>
+    </div>
+
     <div class="authForm">
       <img src="/img/huskie.jpg" style="width: auto; height: 150px" />
       <h1>
@@ -54,3 +75,170 @@
   <%- include('include/_footer') %>
   <!-- /include footer -->
 </div>
+
+<style>
+  /* Mobile app notification bell styles */
+  #mobileAppNotifier {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.4s ease; /* Faster fade-in (was 0.8s) */
+  }
+
+  @media screen and (min-width: 769px) {
+    #mobileAppNotifier {
+      /* Only change display property, opacity is handled by JS */
+      display: block;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    #mobileAppNotifier {
+      display: none;
+    }
+  }
+
+  .notification-bell {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #6f4e37 0%, #4a2c14 100%);
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(111, 78, 55, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    animation: float 4s infinite ease-in-out;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .notification-bell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(167, 114, 76, 0.9);
+  }
+
+  .bell-icon {
+    position: relative;
+    width: 48px;
+    height: 48px;
+  }
+
+  .bell-top {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 7px;
+    background: #fff;
+    border-radius: 7px 7px 0 0;
+  }
+
+  .bell-body {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    background: #fff;
+    border-radius: 45% 45% 12px 12px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .bell-body:before {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 7px;
+    background: #fff;
+    border-radius: 4px;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .bell-clapper {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #6f4e37;
+    border-radius: 50%;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: swing 2s infinite ease-in-out;
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes swing {
+    0%,
+    100% {
+      transform: translateX(-50%) rotate(0deg);
+    }
+    20% {
+      transform: translateX(-50%) rotate(10deg);
+    }
+    40% {
+      transform: translateX(-50%) rotate(-10deg);
+    }
+    60% {
+      transform: translateX(-50%) rotate(5deg);
+    }
+    80% {
+      transform: translateX(-50%) rotate(-5deg);
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+    }
+  }
+
+  /* Mobile-only style */
+  .mobile-only {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .mobile-only {
+      display: block;
+    }
+  }
+</style>
