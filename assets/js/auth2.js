@@ -125,7 +125,7 @@ function showMobileAppHologram() {
         
         <div class="qr-section">
           <div class="qr-hologram">
-            <div class="qr-code"></div>
+            <img src="/img/qrcode_nnhshalfcaf.com.png" class="qr-code" alt="QR Code for nnhshalfcaf.com">
             <div class="qr-glare"></div>
           </div>
           <p>Scan to visit on mobile</p>
