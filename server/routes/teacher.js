@@ -45,7 +45,7 @@ async function findToppingsById(id) {
     const toppings = await Topping.findOne({ _id: id });
     return toppings;
   } catch (error) {
-    console.error("Error finding the drink by name:", error);
+    console.error("Error finding the topping: ", error);
   }
 }
 
@@ -170,9 +170,34 @@ route.get("/outgoingOrders", async (req, res) => {
     .sort({ timestamp: -1 });
 
   const role = await getUserRoles(req.session.email);
-
+  const orderObjectArray = [];
+  for (const order of orders) {
+    const tempObject = {
+      id: order._id,
+      drinks: [],
+    };
+    for (const drink of order.drinks) {
+      const drinkObject = {
+        flavors: [],
+        toppings: [],
+        instructions: "",
+      };
+      for (const flavor of drink.flavors) {
+        drinkObject.flavors.push(findFlavorById(flavor).name);
+      }
+      for (const topping of drink.toppings) {
+        drinkObject.toppings.push(findToppingsById(topping).name);
+      }
+      if (drink.instructions) {
+        drinkObject.instructions = drink.instructions;
+      }
+      tempObject.drinks.push(drinkObject);
+    }
+    orderObjectArray.push(tempObject);
+  }
   res.render("teacherOutgoingOrders", {
     orders,
+    orderObjectArray,
     email: req.session.email,
     role,
   });
