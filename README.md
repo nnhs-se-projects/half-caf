@@ -1,16 +1,16 @@
 # Half Caf App
 
-Group Members: Nathan, Naglis, David, Aadi
+Group Members (2020-2021): Nathan, Naglis, David, Aadi
 
-Group Members v2: Grace, Jessica, Kasey, Owen
+Group Members (2021-2022): Grace, Jessica, Kasey, Owen
 
-Group Members v3: Divya, Hansheng, Krish, Sophia
+Group Members (2022-2023): Divya, Hansheng, Krish, Sophia
 
-Group Members v4: Tavneet, Abby, Delilah, Eric
+Group Members (2023-2024): Tavneet, Abby, Delilah, Eric
 
-Group Members v5: Bennett, Emran, Jack, Ryan
+Group Members (2024-2025): Bennett, Emran, Jack, Ryan
 
-## Insights (Previous Groups)
+## Insights (Previous Group)
 
 - Copilot is a great tool for solving problems and building features. However, it is important that you fully understand the code before you implement it. Blindly "vibe coding" will lead to bad code and a larger mess which will take even more time to resolve.
 - Trello is very important. Even though it may seem tedious, it is necessary to ensure proper organization and teamwork.
@@ -45,7 +45,7 @@ VAPID_PRIVATE_KEY= <find in trello>
 5. Use the URI from the Trello to connect to the database
 6. In Compass, edit one of the ADMIN users and change their email to your email
 7. Run the server from the VS Code debugger
-8. Go to a web browser and type in localhost:PORT_NUM (this will take you to popular drinks)
+8. Go to a web browser and type in localhost:PORT_NUM or click the link displayed in terminal
 9. Go to Login and sign in with Google
 10. Now you are on the add user page so add everyone else in your group as a user
 
@@ -74,7 +74,6 @@ Enabled is on it's own because it's a separate class. That is the boolean value 
 ## Features the 2025-2026 team needs to implement:
 
 1. Inventory System
-2. Create an additional server that pulls from dev branch which can be used for testing. 
 
 ## Google Authentication Implementation
 
