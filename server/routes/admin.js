@@ -760,7 +760,10 @@ route.post("/sendAnnouncement", async (req, res) => {
           const subscription = JSON.parse(user.subscription);
           const payload = JSON.stringify({
             title: req.body.subject,
-            body: req.body.message,
+            options: {
+              body: req.body.message,
+              icon: "../img/Half_Caf_Logo_(1).png",
+            },
           });
           await webPush.sendNotification(subscription, payload);
         } catch (error) {
