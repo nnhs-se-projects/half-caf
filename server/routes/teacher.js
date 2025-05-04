@@ -173,20 +173,25 @@ route.get("/outgoingOrders", async (req, res) => {
   const orderObjectArray = [];
   for (const order of orders) {
     const tempObject = {
-      id: order._id,
       drinks: [],
     };
     for (const drink of order.drinks) {
       const drinkObject = {
+        name: drink.name,
         flavors: [],
         toppings: [],
+        temps: [],
         instructions: "",
       };
+      drinkObject.name = drink.name;
+      drinkObject.temps = drink.temps;
       for (const flavor of drink.flavors) {
-        drinkObject.flavors.push(findFlavorById(flavor).name);
+        const flavorObject = await Flavor.find({ _id: flavor });
+        drinkObject.flavors.push(flavorObject[0].flavor);
       }
       for (const topping of drink.toppings) {
-        drinkObject.toppings.push(findToppingsById(topping).name);
+        const toppingObject = await Topping.find({ _id: topping });
+        drinkObject.toppings.push(toppingObject[0].topping);
       }
       if (drink.instructions) {
         drinkObject.instructions = drink.instructions;
