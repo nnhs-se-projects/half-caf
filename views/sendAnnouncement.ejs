@@ -1,38 +1,112 @@
 <%- include('include/_adminHeader') %>
 
 <div id="mainContent" class="adminPage">
-  <div class="userHdr">Send Announcement</div>
-  <label for="subject">Subject:</label>
-  <input type="text" id="subject" name="subject" required />
-  <br />
-  <label for="message">Message:</label>
-  <textarea id="message" name="message" required></textarea>
-  <br />
-  <input id="send" type="submit" value="Send Announcement" />
-</div>
+  <h1>Announcement Center</h1>
+  <div class="announcement-flex-container">
+    <div id="announcementForm" class="announcement-pane">
+      <div class="userHdr">Send Announcement</div>
+      <label for="subject">Subject:</label>
+      <input type="text" id="subject" name="subject" required />
+      <br />
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea>
+      <br />
+      <input id="send" type="submit" value="Send Announcement" />
+    </div>
+    <div id="announcementList" class="announcement-pane">
+      <h2>Previous Announcements</h2>
+      <ul id="announcementItems">
+        <% announcements.forEach(a => { %>
+        <li>
+          <div><strong><%= a.subject %></strong>: <%= a.message %></div>
+          <span class="announcement-date"><%= a.date %></span>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
 
-<script>
-  document.getElementById("send").addEventListener("click", async () => {
-    const subject = document.getElementById("subject").value;
-    const message = document.getElementById("message").value;
+  <script>
+    document.getElementById("send").addEventListener("click", async () => {
+      const subject = document.getElementById("subject").value;
+      const message = document.getElementById("message").value;
 
-    const response = await fetch("/admin/sendAnnouncement", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        subject: subject,
-        message: message,
-      }),
+      const response = await fetch("/admin/sendAnnouncement", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subject: subject,
+          message: message,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Announcement sent successfully!");
+        window.location.reload();
+      } else {
+        alert("Failed to send announcement.");
+      }
     });
-
-    if (response.ok) {
-      alert("Announcement sent successfully!");
-    } else {
-      alert("Failed to send announcement.");
+  </script>
+  <style>
+    /* reset list */
+    #announcementItems {
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
-  });
-</script>
 
-<%- include('include/_footer') %>
+    /* card-style each announcement */
+    #announcementItems li {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.1s ease;
+    }
+    #announcementItems li:hover {
+      transform: translateY(-2px);
+    }
+
+    /* subject styling */
+    #announcementItems li strong {
+      font-weight: 600;
+      margin-right: 0.5rem;
+      color: #333;
+    }
+
+    /* date styling */
+    #announcementItems li .announcement-date {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .announcement-flex-container {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+    .announcement-pane {
+      flex: 1; /* each takes equal space */
+      min-width: 750px; /* or whatever makes sense */
+      max-width: 75%;
+    }
+    @media screen and (max-width: 768px) {
+      .announcement-flex-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .announcement-pane {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+  </style>
+
+  <%- include('include/_footer') %>
+</div>
