@@ -1,0 +1,38 @@
+<%- include('include/_adminHeader') %>
+
+<div id="mainContent" class="adminPage">
+  <div class="userHdr">Send Announcement</div>
+  <label for="subject">Subject:</label>
+  <input type="text" id="subject" name="subject" required />
+  <br />
+  <label for="message">Message:</label>
+  <textarea id="message" name="message" required></textarea>
+  <br />
+  <input id="send" type="submit" value="Send Announcement" />
+</div>
+
+<script>
+  document.getElementById("send").addEventListener("click", async () => {
+    const subject = document.getElementById("subject").value;
+    const message = document.getElementById("message").value;
+
+    const response = await fetch("/admin/sendAnnouncement", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        subject: subject,
+        message: message,
+      }),
+    });
+
+    if (response.ok) {
+      alert("Announcement sent successfully!");
+    } else {
+      alert("Failed to send announcement.");
+    }
+  });
+</script>
+
+<%- include('include/_footer') %>

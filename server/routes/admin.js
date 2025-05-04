@@ -744,7 +744,11 @@ route.delete("/deleteDeliveryPerson", async (req, res) => {
   res.end();
 });
 
-route.get("/sendMobileNotif", async (req, res) => {
+route.get("/sendAnnouncement", async (req, res) => {
+  res.render("sendAnnouncement");
+});
+
+route.post("/sendAnnouncement", async (req, res) => {
   // Fetch users with an existing subscription stored as a JSON string
   try {
     const users = await User.find({
@@ -755,8 +759,8 @@ route.get("/sendMobileNotif", async (req, res) => {
         try {
           const subscription = JSON.parse(user.subscription);
           const payload = JSON.stringify({
-            title: "Test Notification",
-            body: "This is a test mobile notification.",
+            title: req.body.subject,
+            body: req.body.message,
           });
           await webPush.sendNotification(subscription, payload);
         } catch (error) {
