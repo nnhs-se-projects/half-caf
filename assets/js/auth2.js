@@ -8,6 +8,8 @@
 
 // eslint-disable-next-line no-unused-vars
 async function handleCredentialResponse(res) {
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
   const userAgent = navigator.userAgent.toLowerCase();
   const isFirefox = userAgent.includes("firefox");
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
@@ -20,7 +22,7 @@ async function handleCredentialResponse(res) {
   } else {
     await fetch("/auth", {
       method: "POST",
-      body: JSON.stringify({ token: res.credential }),
+      body: JSON.stringify({ token: res.credential, rememberMe: isMobile }),
       headers: {
         "Content-Type": "application/json",
       },
