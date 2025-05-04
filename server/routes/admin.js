@@ -9,6 +9,7 @@ const Drink = require("../model/drink");
 const Order = require("../model/order");
 const Schedule = require("../model/schedule");
 const Period = require("../model/period");
+const Announcement = require("../model/announcement");
 const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
 const webPush = require("web-push");
@@ -744,7 +745,12 @@ route.delete("/deleteDeliveryPerson", async (req, res) => {
   res.end();
 });
 
-route.get("/sendMobileNotif", async (req, res) => {
+route.get("/sendAnnouncement", async (req, res) => {
+  const announcements = await Announcement.find().sort({ Date: -1 });
+  res.render("sendAnnouncement", { announcements });
+});
+
+route.post("/sendAnnouncement", async (req, res) => {
   // Fetch users with an existing subscription stored as a JSON string
   try {
     const users = await User.find({
@@ -755,8 +761,11 @@ route.get("/sendMobileNotif", async (req, res) => {
         try {
           const subscription = JSON.parse(user.subscription);
           const payload = JSON.stringify({
-            title: "Test Notification",
-            body: "This is a test mobile notification.",
+            title: req.body.subject,
+            options: {
+              body: req.body.message,
+              icon: "../img/Half_Caf_Logo_(1).png",
+            },
           });
           await webPush.sendNotification(subscription, payload);
         } catch (error) {
@@ -768,6 +777,12 @@ route.get("/sendMobileNotif", async (req, res) => {
         }
       }
     }
+    const announcement = new Announcement({
+      subject: req.body.subject,
+      message: req.body.message,
+      Date: new Date(),
+    });
+    await announcement.save();
     res.status(200).send("Mobile notifications sent.");
   } catch (error) {
     console.error(error);
