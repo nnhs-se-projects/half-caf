@@ -7,6 +7,7 @@ const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temps.json");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const Ingredient = require("../model/ingredient");
 const Schedule = require("../model/schedule");
 const Period = require("../model/period");
 const Announcement = require("../model/announcement");
@@ -724,6 +725,10 @@ route.delete("/deleteTopping/:id", async (req, res) => {
   const toppingId = req.params.id;
   await Topping.findByIdAndRemove(toppingId);
   res.end();
+});
+
+route.get("/addIngredient", async (req, res) => {
+  res.render("addIngredient");
 });
 
 route.get("/deliveryPersonManager", async (req, res) => {
