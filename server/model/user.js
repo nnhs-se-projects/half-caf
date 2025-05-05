@@ -29,7 +29,7 @@ const schema = new mongoose.Schema({
     required: false,
   },
   subscription: {
-    type: String,
+    type: [String],
     required: false,
   },
 });

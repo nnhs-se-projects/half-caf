@@ -757,9 +757,9 @@ route.post("/sendAnnouncement", async (req, res) => {
       subscription: { $exists: true, $ne: null },
     });
     for (const user of users) {
-      if (user.subscription) {
+      for (let _subscription of user.subscription) {
         try {
-          const subscription = JSON.parse(user.subscription);
+          _subscription = JSON.parse(_subscription);
           const payload = JSON.stringify({
             title: req.body.subject,
             options: {
@@ -767,7 +767,7 @@ route.post("/sendAnnouncement", async (req, res) => {
               icon: "../img/Half_Caf_Logo_(1).png",
             },
           });
-          await webPush.sendNotification(subscription, payload);
+          await webPush.sendNotification(_subscription, payload);
         } catch (error) {
           console.error(
             "Push notification failed for user:",
