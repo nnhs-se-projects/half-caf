@@ -214,6 +214,9 @@ route.post("/subscribe", async (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
   const user = await User.findOne({ email: req.session.email });
+  if (!user.subscription || user.subscription.length === 0) {
+    user.subscription = [];
+  }
   user.subscription.push(JSON.stringify(subscription));
   await user.save();
   // TODO: Store the subscription information in your database for later use with web-push
