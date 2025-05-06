@@ -731,6 +731,28 @@ route.get("/addIngredient", async (req, res) => {
   res.render("addIngredient");
 });
 
+route.post("/addIngredient", async (req, res) => {
+  const ingredient = new Ingredient({
+    name: req.body.name,
+    quantity: req.body.quantity,
+    measure: req.body.measure,
+    price: req.body.price,
+  });
+  await ingredient.save();
+  res.status(201).end();
+});
+
+route.get("/deleteIngredient", async (req, res) => {
+  const ingredients = await Ingredient.find();
+  res.render("deleteIngredient", { ingredients });
+});
+
+route.delete("/deleteIngredient/:id", async (req, res) => {
+  const ingredientId = req.params.id;
+  await Ingredient.findByIdAndRemove(ingredientId);
+  res.end();
+});
+
 route.get("/deliveryPersonManager", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   res.render("deliveryPersonManager", { deliveryPersons });

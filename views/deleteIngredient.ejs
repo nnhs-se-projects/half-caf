@@ -1,0 +1,28 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<div id="mainContent" class="adminPage">
+  <div class="userHdr">Delete Ingredient</div>
+  <select id="toDelete">
+    <% for (let ingredient of ingredients) { %>
+    <option value="<%= ingredient.id %>"><%= ingredient.name %></option>
+    <% } %>
+  </select>
+  <input
+    id="delIngredient"
+    type="submit"
+    onclick="deleteIngredient()"
+    value="Delete Ingredient"
+  />
+</div>
+
+<!-- /Main Site -->
+
+<script src="/js/deleteIngredient.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

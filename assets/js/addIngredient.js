@@ -1,18 +1,11 @@
 // creates an ingredient with the selected name, quantity, measure, and price
 const addIngredientButton = document.querySelector("input.submit");
 
-let srcData;
-
-const name = document.getElementById("name");
-const quantity = document.getElementById("quantity");
-const measure = document.getElementById("measure");
-const price = document.getElementById("price");
-
 addIngredientButton.addEventListener("click", async () => {
-  const name = document.getElementById("name");
-  const quantity = document.getElementById("quantity");
-  const measure = document.getElementById("measure");
-  const price = document.getElementById("price");
+  const name = document.getElementById("name").value;
+  const quantity = document.getElementById("quantity").value;
+  const measure = document.getElementById("measure").value;
+  const price = document.getElementById("price").value;
 
   const Ingredient = {
     name,
