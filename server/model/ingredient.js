@@ -14,12 +14,16 @@ const schema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  measure: {
+  unit: {
     type: String,
     required: true,
   },
   price: {
     type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
     required: true,
   },
 });

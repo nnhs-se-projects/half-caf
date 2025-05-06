@@ -735,8 +735,9 @@ route.post("/addIngredient", async (req, res) => {
   const ingredient = new Ingredient({
     name: req.body.name,
     quantity: req.body.quantity,
-    measure: req.body.measure,
+    unit: req.body.unit,
     price: req.body.price,
+    type: req.body.type,
   });
   await ingredient.save();
   res.status(201).end();
