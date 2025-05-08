@@ -38,18 +38,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const ua = navigator.userAgent;
     let isEmbeddedBrowser = false;
     if (ua.includes("Instagram")) {
+      // Tested and works
       console.log("In Instagram in-app browser");
       isEmbeddedBrowser = true;
     } else if (ua.includes("FBAV")) {
       console.log("In Facebook app");
       isEmbeddedBrowser = true;
-    } else if (ua.includes("Line/")) {
-      console.log("In LINE in-app browser");
-      isEmbeddedBrowser = true;
-    } else if (ua.includes("TikTok")) {
-      console.log("In TikTok in-app browser");
       isEmbeddedBrowser = true;
     } else if (ua.includes("Snapchat")) {
+      // Tested and works
       console.log("In Snapchat in-app browser");
       isEmbeddedBrowser = true;
     }
