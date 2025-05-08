@@ -317,6 +317,8 @@ route.get("/completed", async (req, res) => {
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
 
+  orders.reverse();
+
   const drinkMap = new Map();
   for (let i = 0; i < orders.length; i++) {
     const drinkArray = [];
@@ -397,6 +399,8 @@ route.get("/cancelledOrders", async (req, res) => {
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
   const flavors = await Flavor.find({});
   const toppings = await Topping.find({});
+
+  orders.reverse();
 
   const drinkMap = new Map();
   for (let i = 0; i < orders.length; i++) {

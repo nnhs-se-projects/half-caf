@@ -36,6 +36,11 @@ route.post("/", async (req, res) => {
   req.session.name = name; // store user's full name
   req.session.cart = [];
 
+  // MOBILE LONG LOGIN
+  if (req.body.rememberMe) {
+    req.session.cookie.maxAge = 365 * 24 * 60 * 60 * 1000; // Rn set for a year, could change this later to be something more secure masybe
+  }
+
   const user = await User.findOne({ email });
 
   console.log("Authenticated user with google:", { name, email });
