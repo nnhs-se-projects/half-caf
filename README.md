@@ -15,7 +15,7 @@ Group Members (2024-2025): Bennett, Emran, Jack, Ryan
 - Copilot is a great tool for solving problems and building features. However, it is important that you fully understand the code before you implement it. Blindly "vibe coding" will lead to bad code and a larger mess which will take even more time to resolve.
 - Trello is very important. Even though it may seem tedious, it is necessary to ensure proper organization and teamwork.
 - Pair programming is the greatest tool you have. Before asking copilot or google, ask your teammates. Additionally, if somebody doesn't have a task, they MUST be pair programming.
-- It is important to follow these GitHub best practices: pull requests must be reviewed by another member who will then merge it. Branches should clearly explain the feature. Delete the branch after merging. 
+- It is important to follow these GitHub best practices: pull requests must be reviewed by another member who will then merge it. Branches should clearly explain the feature. Delete the branch after merging.
 
 ## Platform Requirements
 
@@ -62,8 +62,7 @@ Chart.js - Renders charts in the metrics page
 
 ## Data Schema
 
-![data model](dataStructure.png)
-(OUTDATED!)
+![data model](DBModel2025.png)
 
 The image above shows the dependencies of the different classes in the dat structure. All of the models are written in js except temps.json (you can find the data model under assets/server/model). Download MongoDB Compass to easily access the database with the same URI written in your ejs file. You can look through Compass to see what the dependencies look like in the actual app.
 
