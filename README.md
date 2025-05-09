@@ -70,10 +70,6 @@ To explain the image more, each arrow shows a different dependency. The beginnin
 
 Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
 
-## Features the 2025-2026 team needs to implement:
-
-1. Inventory System
-
 ## Google Authentication Implementation
 
 ### Overview
