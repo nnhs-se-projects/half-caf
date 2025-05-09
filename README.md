@@ -113,7 +113,7 @@ The `auth.ejs` file is the front-end component where users interact with Google'
 
 This file is crucial for initiating the authentication flow from the client's browser.
 
-### Mobie Overview
+### Mobile Overview
 
 The app works as a mobile app as well as on the computer website. To get the app on phone, go to nnhshalfcaf.com on a browser(may have to be Safari if on iPhone) and follow the page instructions to add to home screen. Mobile works by converting the app into a PWA(progressive web app) which includes:
 
