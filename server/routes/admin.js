@@ -638,6 +638,21 @@ route.get("/metrics", async (req, res) => {
 route.delete("/wipeOrders", async (req, res) => {
   await Order.deleteMany();
   await Drink.deleteMany();
+
+  const users = await User.find({});
+  for (const user of users) {
+    user.orderHistory = [];
+    user.favoriteDrinks = [];
+    user.currentOrder = null;
+    await user.save();
+  }
+
+  const deliveryPersons = await DeliveryPerson.find({});
+  for (const deliveryPerson of deliveryPersons) {
+    deliveryPerson.currentOrder = null;
+    await deliveryPerson.save();
+  }
+
   res.end();
 });
 
@@ -658,6 +673,15 @@ route.delete("/wipeDevOrders", async (req, res) => {
     }
     await Order.findByIdAndRemove(order._id);
   }
+
+  const users = await User.find({ email: { $in: devEmails } });
+  for (const user of users) {
+    user.orderHistory = [];
+    user.favoriteDrinks = [];
+    user.currentOrder = null;
+    await user.save();
+  }
+
   res.status(200).send("Deleted all dev orders");
 });
 
