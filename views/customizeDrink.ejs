@@ -28,14 +28,14 @@
         <li><input id="isDecaf" type="checkbox" <%=!drink.caffeination ? "checked" : "" %>/>Decaf</li>
       </ul>
     </div>
-    <% if(flavors.length > 0) { %>
+    <% if(ingredients.length > 0) { %>
     <div class="dropdown-check-list">
-      <h6>Choose Flavors:</h6>
+      <h6>Choose Ingredients:</h6>
       <ul class="items">
-        <% for (let flavor of flavors) {%>
+        <% for (let ingredient of ingredients) {%>
         <li>
-          <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
-          flavor.flavor %>
+          <input <%= ingredient.type !== "customizeable"? "hidden checked":"" %> id="ingredients" type="checkbox" value="<%= ingredient.id %>" /><%=
+          ingredient.name %>
         </li>
         <%}%>
       </ul>
@@ -59,19 +59,6 @@
       </fieldset>
     </div>
     <% } %>
-    <% if(toppings.length > 0) { %>
-    <div class="dropdown-check-list">
-      <h6>Choose Add-Ons:</h6>
-      <ul class="items">
-        <% for (let topping of toppings) {%>
-        <li>
-          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
-          topping.topping %>
-        </li>
-        <%}%>
-      </ul>
-    </div>
-    <%}%>
     <input
       type="text"
       id="instructions"

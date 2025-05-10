@@ -14,8 +14,7 @@
           <th>Teacher</th>
           <th>Drink</th>
           <th>Temp</th>
-          <th>Flavors</th>
-          <th>Add-Ons</th>
+          <th>Ingredients</th>
           <th>Decaf</th>
           <th>Special Instructions</th>
           <th>Time</th>
@@ -48,8 +47,7 @@
               ><%=tempDrink.temp%></span
             >
           </td>
-          <td><%=tempDrink.flavors%></td>
-          <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.ingredient%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
           <td><%=tempDrink.instructions%></td>
           <td><%=order.timestamp.split('/')[0]%></td>

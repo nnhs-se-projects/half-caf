@@ -69,7 +69,7 @@ route.get("/", async (req, res) => {
             f._id.equals(drink.ingredients[x])
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
-            formattedDrink.ingredients.push(" " + tempIngredient.ingredient);
+            formattedDrink.ingredients.push(" " + tempIngredient.name);
           }
         }
       }
@@ -259,7 +259,7 @@ route.post("/pointOfSale", async (req, res) => {
           f._id.equals(drink.ingredients[x])
         );
         if (tempIngredient !== null && tempIngredient !== undefined) {
-          formattedDrink.ingredients.push(" " + tempIngredient.ingredient);
+          formattedDrink.ingredients.push(" " + tempIngredient.name);
         }
       }
     }
@@ -311,7 +311,7 @@ route.get("/completed", async (req, res) => {
             f._id.equals(drink.ingredients[x])
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
-            formattedDrink.ingredients.push(" " + tempIngredient.ingredient);
+            formattedDrink.ingredients.push(" " + tempIngredient.name);
           }
         }
       }
@@ -378,7 +378,7 @@ route.get("/cancelledOrders", async (req, res) => {
             f._id.equals(drink.ingredients[x])
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
-            formattedDrink.ingredients.push(" " + tempIngredient.ingredient);
+            formattedDrink.ingredients.push(" " + tempIngredient.name);
           }
         }
       }

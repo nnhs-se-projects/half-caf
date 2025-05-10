@@ -119,7 +119,6 @@ route.get("/myCart", async (req, res) => {
   const customizationDict = {};
   for (const drink of req.session.cart) {
     const drinkIngredientsArray = [];
-    const drinkToppingsArray = [];
     for (const ingredient of drink.ingredients) {
       drinkIngredientsArray.push(await findIngredientById(ingredient));
     }
@@ -236,7 +235,7 @@ route.post("/myCart", async (req, res) => {
             f._id.equals(drink.ingredients[x])
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
-            formattedDrink.ingredients.push(" " + tempIngredient.ingredient);
+            formattedDrink.ingredients.push(" " + tempIngredient.name);
           }
         }
       }

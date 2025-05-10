@@ -577,7 +577,7 @@ route.get("/metrics", async (req, res) => {
       }
     }
 
-    ingredientNames.push(ingredient.ingredient);
+    ingredientNames.push(ingredient.name);
     ordersPerIngredient.push(ordersOfIngredient);
   }
 
