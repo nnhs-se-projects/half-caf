@@ -1,8 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
-const Topping = require("../model/topping");
-const Flavor = require("../model/flavor");
+const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
@@ -31,21 +30,12 @@ async function findDrinkByName(drinkName) {
   }
 }
 
-async function findFlavorById(id) {
+async function findIngredientById(id) {
   try {
-    const flavor = await Flavor.findOne({ _id: id });
-    return flavor;
+    const ingredient = await Ingredient.findOne({ _id: id });
+    return ingredient;
   } catch (error) {
-    console.error("Error finding the flavor:", error);
-  }
-}
-
-async function findToppingsById(id) {
-  try {
-    const toppings = await Topping.findOne({ _id: id });
-    return toppings;
-  } catch (error) {
-    console.error("Error finding the topping: ", error);
+    console.error("Error finding the ingredient:", error);
   }
 }
 
@@ -65,16 +55,10 @@ route.get("/customizeDrink/:name", async (req, res) => {
   try {
     const drink = await findDrinkByName(drinkName); // finds drink by name
 
-    // available flavors array
-    const flavors = [];
-    for (let i = 0; i < drink.flavors.length; i++) {
-      flavors[i] = await findFlavorById(drink.flavors[i]);
-    }
-
-    // available toppings array
-    const toppings = [];
-    for (let i = 0; i < drink.toppings.length; i++) {
-      toppings[i] = await findToppingsById(drink.toppings[i]);
+    // available ingredients array
+    const ingredients = [];
+    for (let i = 0; i < drink.ingredients.length; i++) {
+      ingredients[i] = await findIngredientById(drink.ingredients[i]);
     }
 
     if (drink) {
@@ -82,9 +66,8 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
       res.render("customizeDrink", {
         drink,
-        flavors,
+        ingredients,
         temps: drink.temps,
-        toppings,
         email: req.session.email,
         role,
       });
@@ -106,8 +89,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
     const drink = new Drink({
       name: req.body.name,
       price: req.body.price,
-      flavors: req.body.checkedFlavors,
-      toppings: req.body.checkedToppings,
+      ingredients: req.body.checkedIngredients,
       temps: req.body.temp,
       caffeinated: req.body.caf,
       instructions: req.body.instructions,
@@ -136,17 +118,13 @@ route.post("/customizeDrink/:name", async (req, res) => {
 route.get("/myCart", async (req, res) => {
   const customizationDict = {};
   for (const drink of req.session.cart) {
-    const drinkFlavorsArray = [];
+    const drinkIngredientsArray = [];
     const drinkToppingsArray = [];
-    for (const flavor of drink.flavors) {
-      drinkFlavorsArray.push(await findFlavorById(flavor));
-    }
-    for (const topping of drink.toppings) {
-      drinkToppingsArray.push(await findToppingsById(topping));
+    for (const ingredient of drink.ingredients) {
+      drinkIngredientsArray.push(await findIngredientById(ingredient));
     }
     customizationDict[drink._id] = {
-      flavors: drinkFlavorsArray,
-      toppings: drinkToppingsArray,
+      ingredients: drinkIngredientsArray,
     };
   }
 
@@ -178,20 +156,15 @@ route.get("/outgoingOrders", async (req, res) => {
     for (const drink of order.drinks) {
       const drinkObject = {
         name: drink.name,
-        flavors: [],
-        toppings: [],
+        ingredients: [],
         temps: [],
         instructions: "",
       };
       drinkObject.name = drink.name;
       drinkObject.temps = drink.temps;
-      for (const flavor of drink.flavors) {
-        const flavorObject = await Flavor.find({ _id: flavor });
-        drinkObject.flavors.push(flavorObject[0].flavor);
-      }
-      for (const topping of drink.toppings) {
-        const toppingObject = await Topping.find({ _id: topping });
-        drinkObject.toppings.push(toppingObject[0].topping);
+      for (const ingredient of drink.ingredients) {
+        const ingredientObject = await Ingredient.find({ _id: ingredient });
+        drinkObject.ingredients.push(ingredientObject[0].ingredient);
       }
       if (drink.instructions) {
         drinkObject.instructions = drink.instructions;
@@ -244,40 +217,26 @@ route.post("/myCart", async (req, res) => {
     await user.save();
 
     const drinks = await Drink.find({ _id: { $in: req.session.cart } });
-    const flavors = await Flavor.find({});
-    const toppings = await Topping.find({});
+    const ingredients = await Ingredient.find({});
 
     const drinkArray = [];
     for (let n = 0; n < order.drinks.length; n++) {
       const formattedDrink = {
         name: "",
-        flavors: [],
-        toppings: [],
+        ingredients: [],
         temp: "",
         instructions: "",
       };
       const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
-      if (drink.flavors.length === 0) {
-        formattedDrink.flavors.push("None");
+      if (drink.ingredients.length === 0) {
+        formattedDrink.ingredients.push("None");
       } else {
-        for (let x = 0; x < drink.flavors.length; x++) {
-          const tempFlavor = flavors.find((f) =>
-            f._id.equals(drink.flavors[x])
+        for (let x = 0; x < drink.ingredients.length; x++) {
+          const tempIngredient = ingredients.find((f) =>
+            f._id.equals(drink.ingredients[x])
           );
-          if (tempFlavor !== null && tempFlavor !== undefined) {
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
-          }
-        }
-      }
-      if (drink.toppings.length === 0) {
-        formattedDrink.toppings.push("None");
-      } else {
-        for (let x = 0; x < drink.toppings.length; x++) {
-          const tempTopping = toppings.find((t) =>
-            t._id.equals(drink.toppings[x])
-          );
-          if (tempTopping !== null && tempTopping !== undefined) {
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+          if (tempIngredient !== null && tempIngredient !== undefined) {
+            formattedDrink.ingredients.push(" " + tempIngredient.ingredient);
           }
         }
       }
@@ -305,8 +264,7 @@ route.get("/reorder/:id", async (req, res) => {
   const drinkCopy = new Drink({
     name: drink.name,
     price: drink.price,
-    flavors: drink.flavors,
-    toppings: drink.toppings,
+    ingredients: drink.ingredients,
     temps: drink.temps,
     caffeinated: drink.caffeinated,
     instructions: drink.instructions,
@@ -344,20 +302,12 @@ route.get("/myFavorites", async (req, res) => {
 
   const favoriteDrinkIds = user.favoriteDrinks.filter((drink) => drink != null);
   const favoriteDrinks = await Drink.find({ _id: { $in: favoriteDrinkIds } });
-  const flavorIds = favoriteDrinks.flatMap((drink) => drink.flavors);
-  const toppingIds = favoriteDrinks.flatMap((drink) => drink.toppings);
-  const flavors = await Flavor.find({ _id: { $in: flavorIds } });
-  const toppings = await Topping.find({ _id: { $in: toppingIds } });
+  const ingredientIds = favoriteDrinks.flatMap((drink) => drink.ingredients);
+  const ingredients = await Ingredient.find({ _id: { $in: ingredientIds } });
 
-  const favoriteDrinksFlavors = favoriteDrinks.map((drink) =>
-    drink.flavors.map((flavorId) =>
-      flavors.find((flavor) => flavor._id.equals(flavorId))
-    )
-  );
-
-  const favoriteDrinksToppings = favoriteDrinks.map((drink) =>
-    drink.toppings.map((toppingId) =>
-      toppings.find((topping) => topping._id.equals(toppingId))
+  const favoriteDrinksIngredients = favoriteDrinks.map((drink) =>
+    drink.ingredients.map((ingredientId) =>
+      ingredients.find((ingredient) => ingredient._id.equals(ingredientId))
     )
   );
 
@@ -365,8 +315,7 @@ route.get("/myFavorites", async (req, res) => {
 
   res.render("teacherMyFavorites", {
     favoriteDrinks,
-    favoriteDrinksFlavors,
-    favoriteDrinksToppings,
+    favoriteDrinksIngredients,
     email: req.session.email,
     role,
   });
@@ -405,10 +354,7 @@ route.get("/orderHistory", async (req, res) => {
   const orderIds = user.orderHistory.filter((order) => order != null);
   const orders = await Order.find({ _id: { $in: orderIds } }).populate({
     path: "drinks",
-    populate: [
-      { path: "flavors", model: "Flavor" },
-      { path: "toppings", model: "Topping" },
-    ],
+    populate: [{ path: "ingredients", model: "Ingredient" }],
   });
 
   const orderHistory = orders.filter((order) => order != null);
