@@ -113,6 +113,20 @@ The `auth.ejs` file is the front-end component where users interact with Google'
 
 This file is crucial for initiating the authentication flow from the client's browser.
 
+### Mobile Overview
+
+The app works as a mobile app as well as on the computer website. To get the app on phone, go to nnhshalfcaf.com on a browser(may have to be Safari if on iPhone) and follow the page instructions to add to home screen. Mobile works by converting the app into a PWA(progressive web app) which includes:
+
+- Service worker
+- Manifest
+- Add to Home HTML Page
+- App Icon
+
+All of these files are within the 'public' folder -- needed for mobile setup to work.
+
+Mobile Notifications are implemented with the service worker, and the subscription endpoints(the place where notifications are sent to) for every user are stored in the MongoDB database under user. When adding visual changes, check changes it causes on both mobile and computer screens.
+
+
 ### Flow of Control:
 
 1. User Visits the Site: They attempt to access a protected route.
