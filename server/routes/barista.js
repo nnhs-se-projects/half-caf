@@ -129,19 +129,24 @@ route.delete("/:id", async (req, res) => {
     });
 
     const user = await User.findOne({ email: order.email });
-    if (user && user.subscription) {
-      try {
-        const subscription = JSON.parse(user.subscription);
-        const payload = JSON.stringify({
-          title: "Order cancelled",
-          options: {
-            body: 'Barista Note: "' + req.body.message + '"',
-            icon: "../img/Half_Caf_Logo_(1).png",
-          },
-        });
-        await webPush.sendNotification(subscription, payload);
-      } catch (error) {
-        console.error("Push notification failed for user:", user.email, error);
+    if (user && user.subscription && user.subscription.length) {
+      const payload = JSON.stringify({
+        title: "Order cancelled",
+        options: {
+          body: 'Barista Note: "' + req.body.message + '"',
+          icon: "../img/Half_Caf_Logo_(1).png",
+        },
+      });
+      for (const sub of user.subscription) {
+        try {
+          await webPush.sendNotification(sub, payload);
+        } catch (error) {
+          console.error(
+            "Push notification failed for user:",
+            user.email,
+            error
+          );
+        }
       }
     }
 
@@ -167,19 +172,20 @@ route.post("/:id", async (req, res) => {
   }
 
   const user = await User.findOne({ email: order.email });
-  if (user && user.subscription) {
-    try {
-      const subscription = JSON.parse(user.subscription);
-      const payload = JSON.stringify({
-        title: "Order in delivery",
-        options: {
-          body: "Your order is finished and is on its way!",
-          icon: "../img/Half_Caf_Logo_(1).png",
-        },
-      });
-      await webPush.sendNotification(subscription, payload);
-    } catch (error) {
-      console.error("Push notification failed for user:", user.email, error);
+  if (user && user.subscription && user.subscription.length) {
+    const payload = JSON.stringify({
+      title: "Order in delivery",
+      options: {
+        body: "Your order is finished and is on its way!",
+        icon: "../img/Half_Caf_Logo_(1).png",
+      },
+    });
+    for (const sub of user.subscription) {
+      try {
+        await webPush.sendNotification(sub, payload);
+      } catch (error) {
+        console.error("Push notification failed for user:", user.email, error);
+      }
     }
   }
 
