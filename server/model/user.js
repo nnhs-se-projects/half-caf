@@ -29,8 +29,9 @@ const schema = new mongoose.Schema({
     required: false,
   },
   subscription: {
-    type: String,
-    required: false,
+    // mixed because the current stored subscriptions are only strings so this lets both go thro.
+    type: [mongoose.Schema.Types.Mixed],
+    default: [],
   },
 });
 
