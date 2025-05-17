@@ -130,8 +130,7 @@ window.io().on("New order placed", (data) => {
           </td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
-          <td>${drink.flavors}</td>
-          <td>${drink.toppings}</td>
+          <td>${drink.ingredients}</td>
           <td>${drink.caffeinated ? "No" : "Yes"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
@@ -163,8 +162,7 @@ window.io().on("New order placed", (data) => {
           }</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
-          <td>${drink.flavors}</td>
-          <td>${drink.toppings}</td>
+          <td>${drink.ingredients}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>

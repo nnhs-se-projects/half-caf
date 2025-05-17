@@ -33,7 +33,7 @@
       <ul class="items">
         <% if(drinkIngredients.length > 0) { %>
         <% for (let ingredient of drinkIngredients) {%>
-        <li <%= ingredient.type === "uncustomizeable" ? "hidden": ""  %>>
+        <li <%= ingredient.type === "uncustomizable" ? "hidden": ""  %>>
           <input checked id="ingredients" type="checkbox" value="<%= ingredient.id %>" /><%=
           ingredient.name %>
         </li>

@@ -63,7 +63,7 @@ route.get("/customizeDrink/:name", async (req, res) => {
 
     // all other ingredients that are customizable but not part of the drink by default
     const otherIngredients = await Ingredient.find({
-      type: "customizeable",
+      type: "customizable",
       _id: { $nin: drink.ingredients },
     });
 

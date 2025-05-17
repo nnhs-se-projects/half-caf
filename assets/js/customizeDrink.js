@@ -17,20 +17,14 @@ const addToOrderButton = document.querySelector("input.submit");
 addToOrderButton.addEventListener("click", async () => {
   const name = document.getElementById("name").textContent;
   const price = document.getElementById("price").textContent.match(/(\d+)/)[0];
-  const flavors = document.querySelectorAll("input#flavors");
-  const checkedFlavors = [];
-  for (let i = 0; i < flavors.length; i++) {
-    if (flavors[i].checked) {
-      checkedFlavors.push(flavors[i].value);
+  const ingredients = document.querySelectorAll("input#ingredients");
+  const checkedIngredients = [];
+  for (let i = 0; i < ingredients.length; i++) {
+    if (ingredients[i].checked) {
+      checkedIngredients.push(ingredients[i].value);
     }
   }
-  const toppings = document.querySelectorAll("input#toppings");
-  const checkedToppings = [];
-  for (let i = 0; i < toppings.length; i++) {
-    if (toppings[i].checked) {
-      checkedToppings.push(toppings[i].value);
-    }
-  }
+
   const tempInput = document.querySelector("input.temps:checked");
   const temp = tempInput !== null ? tempInput.value : "Default";
 
@@ -44,8 +38,7 @@ addToOrderButton.addEventListener("click", async () => {
   const drink = {
     name,
     price,
-    checkedFlavors,
-    checkedToppings,
+    checkedIngredients,
     temp,
     caf: !isDecaf.checked,
     instructions,
