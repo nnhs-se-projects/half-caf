@@ -86,9 +86,13 @@
                     </span>
 
                     <% if (drink.ingredients && drink.ingredients.length) { %>
-                    <div class="drink-ingredients">
-                      Ingredients: <%= drink.ingredients.join(', ') %>
-                    </div>
+                    <% let allIngredients = ""; %> <% for(let i = 0; i <
+                    drink.ingredients.length; i++) {
+                    if(drink.ingredients[i].type == "customizable") {
+                    allIngredients += drink.ingredients[i].name; if(i !=
+                    drink.ingredients.length - 1) { allIngredients += ", "; } }
+                    } %>
+                    <div class="drink-ingredients"><%= allIngredients %></div>
                     <% } %> %> <% if (drink.instructions) { %>
                     <div class="drink-instructions">
                       "<%= drink.instructions %>"

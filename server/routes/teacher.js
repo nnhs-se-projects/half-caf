@@ -170,7 +170,7 @@ route.get("/outgoingOrders", async (req, res) => {
       drinkObject.temps = drink.temps;
       for (const ingredient of drink.ingredients) {
         const ingredientObject = await Ingredient.find({ _id: ingredient });
-        drinkObject.ingredients.push(ingredientObject[0].ingredient);
+        drinkObject.ingredients.push(ingredientObject[0]);
       }
       if (drink.instructions) {
         drinkObject.instructions = drink.instructions;
