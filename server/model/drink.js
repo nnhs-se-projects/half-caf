@@ -19,6 +19,9 @@ const schema = new mongoose.Schema({
     ref: "Ingredient",
     required: true,
   },
+  ingredientCounts: {
+    type: [Number],
+  },
   temps: {
     type: String,
     required: true,

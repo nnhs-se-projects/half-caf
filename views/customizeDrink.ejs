@@ -34,16 +34,18 @@
         <% if(drinkIngredients.length > 0) { %>
         <% for (let ingredient of drinkIngredients) {%>
         <li <%= ingredient.type === "uncustomizable" ? "hidden": ""  %>>
-          <input checked id="ingredients" type="checkbox" value="<%= ingredient.id %>" /><%=
+          <input checked id="drinkIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
           ingredient.name %>
+          <input type="number" value="1">
         </li>
         <%}}%>
 
         <% if(otherIngredients.length > 0) { %>
         <% for (let ingredient of otherIngredients) {%>
           <li>
-            <input id="ingredients" type="checkbox" value="<%= ingredient.id %>" /><%=
+            <input id="otherIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
             ingredient.name %>
+            <input hidden type="number" value="1">
           </li>
           <%}}%>
       </ul>

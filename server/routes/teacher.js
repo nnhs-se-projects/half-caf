@@ -96,7 +96,8 @@ route.post("/customizeDrink/:name", async (req, res) => {
     const drink = new Drink({
       name: req.body.name,
       price: req.body.price,
-      ingredients: req.body.checkedIngredients,
+      ingredients: req.body.ingredients,
+      ingredientCounts: req.body.ingredientCounts,
       temps: req.body.temp,
       caffeinated: req.body.caf,
       instructions: req.body.instructions,
@@ -163,11 +164,13 @@ route.get("/outgoingOrders", async (req, res) => {
       const drinkObject = {
         name: drink.name,
         ingredients: [],
+        ingredientCounts: [],
         temps: [],
         instructions: "",
       };
       drinkObject.name = drink.name;
       drinkObject.temps = drink.temps;
+      drinkObject.ingredientCounts = drink.ingredientCounts;
       for (const ingredient of drink.ingredients) {
         const ingredientObject = await Ingredient.find({ _id: ingredient });
         drinkObject.ingredients.push(ingredientObject[0]);
@@ -242,7 +245,12 @@ route.post("/myCart", async (req, res) => {
             f._id.equals(drink.ingredients[x])
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
-            formattedDrink.ingredients.push(" " + tempIngredient.name);
+            const ingredientCount = drink.ingredientCounts[x];
+            const ingredientCountStr =
+              ingredientCount === 0 ? "No " : ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name
+            );
           }
         }
       }

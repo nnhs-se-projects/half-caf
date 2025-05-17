@@ -69,7 +69,12 @@ route.get("/", async (req, res) => {
             f._id.equals(drink.ingredients[x])
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
-            formattedDrink.ingredients.push(" " + tempIngredient.name);
+            const ingredientCount = drink.ingredientCounts[x];
+            const ingredientCountStr =
+              ingredientCount === 0 ? "No " : ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name
+            );
           }
         }
       }
@@ -149,6 +154,12 @@ route.post("/:id", async (req, res) => {
     const drink = await Drink.findById(drinkId);
     drink.completed = true;
     await drink.save();
+
+    for (let i = 0; i < drink.ingredients.length; i++) {
+      const ingredient = await Ingredient.findById(drink.ingredients[i]);
+      ingredient.quantity -= drink.ingredientCounts[i];
+      await ingredient.save();
+    }
   }
 
   const user = await User.findOne({ email: order.email });
@@ -259,7 +270,12 @@ route.post("/pointOfSale", async (req, res) => {
           f._id.equals(drink.ingredients[x])
         );
         if (tempIngredient !== null && tempIngredient !== undefined) {
-          formattedDrink.ingredients.push(" " + tempIngredient.name);
+          const ingredientCount = drink.ingredientCounts[x];
+          const ingredientCountStr =
+            ingredientCount === 0 ? "No " : ingredientCount + " ";
+          formattedDrink.ingredients.push(
+            " " + ingredientCountStr + tempIngredient.name
+          );
         }
       }
     }

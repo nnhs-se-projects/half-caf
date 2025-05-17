@@ -19,7 +19,9 @@
         <!-- Ingredients -->
         <% if(drink.ingredients.length > 0) { %> <% let allIngredients = "";
         for(let i = 0; i < drink.ingredients.length; i++) {
-        if(drink.ingredients[i].type == "customizable"){ allIngredients +=
+        if(drink.ingredients[i].type == "customizable"){
+        if(drink.ingredientCounts[i] === 0){ allIngredients += "No "; } else {
+        allIngredients += (drink.ingredientCounts[i] + " "); } allIngredients +=
         drink.ingredients[i].name; if(i != drink.ingredients.length - 1) {
         allIngredients += ", "; } } } %>
         <div class="drink-detail">
