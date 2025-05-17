@@ -353,7 +353,7 @@ function showOrderCancelledPopup(data) {
         font-weight: bold;
       }
 
-      .coffee-item-ingredients, .coffee-item-toppings {
+      .coffee-item-ingredients, .coffee-item-ingredients {
         color: #5D4037;
         margin-top: 3px;
       }
