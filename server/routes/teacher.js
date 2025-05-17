@@ -55,25 +55,17 @@ route.get("/customizeDrink/:name", async (req, res) => {
   try {
     const drink = await findDrinkByName(drinkName); // finds drink by name
 
-    // available ingredients array
+    // ingredients that are part of the drink by default (uncustomizable and customizable)
     const drinkIngredients = [];
-
-    const ingredients = await Ingredient.find({}); // finds all ingredients
     for (let i = 0; i < drink.ingredients.length; i++) {
       drinkIngredients[i] = await findIngredientById(drink.ingredients[i]);
     }
 
-    // adds all ingredients that are customizeable and not in the drink to the array
-    const otherIngredients = [];
-
-    for (let x = 0; x < ingredients.length; x++) {
-      if (
-        drinkIngredients.contains(ingredients[x]) === false &&
-        ingredients[x].type === "customizeable"
-      ) {
-        otherIngredients.push(ingredients[x]);
-      }
-    }
+    // all other ingredients that are customizable but not part of the drink by default
+    const otherIngredients = await Ingredient.find({
+      type: "customizeable",
+      _id: { $nin: drink.ingredients },
+    });
 
     if (drink) {
       const role = await getUserRoles(req.session.email);
