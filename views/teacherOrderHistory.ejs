@@ -16,21 +16,15 @@
 
         <h3 class="drink-name"><%=drink.name%></h3>
 
-        <!-- Flavors -->
-        <% if(drink.flavors.length > 0) { %> <% let allFlavors =
-        drink.flavors.map(f => f.flavor).join(", ") %>
+        <!-- Ingredients -->
+        <% if(drink.ingredients.length > 0) { %> <% let allIngredients = "";
+        for(let i = 0; i < drink.ingredients.length; i++) {
+        if(drink.ingredients[i].type == "customizable"){ allIngredients +=
+        drink.ingredients[i].name; if(i != drink.ingredients.length - 1) {
+        allIngredients += ", "; } } } %>
         <div class="drink-detail">
-          <span class="label">Flavors:</span>
-          <span class="value"><%=allFlavors%></span>
-        </div>
-        <% } %>
-
-        <!-- Toppings -->
-        <% if(drink.toppings.length > 0) { %> <% let allToppings =
-        drink.toppings.map(t => t.topping).join(", ") %>
-        <div class="drink-detail">
-          <span class="label">Toppings:</span>
-          <span class="value"><%=allToppings%></span>
+          <span class="label">Ingredients:</span>
+          <span class="value"><%=allIngredients%></span>
         </div>
         <% } %>
 

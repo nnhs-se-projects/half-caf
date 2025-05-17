@@ -15,31 +15,18 @@
       <div class="container">
         <h3 class="drink-name"><%=drink.name%></h3>
 
-        <!-- Flavors -->
-        <% if(favoriteDrinksFlavors[drinkIndex].length > 0) { %> <%let
-        allFlavors=""%> <%for (let i=0; i <
-        favoriteDrinksFlavors[drinkIndex].length; i++){%> <%if(i <
-        drink.flavors.length-1){%> <%allFlavors +=
-        favoriteDrinksFlavors[drinkIndex][i].flavor+", "%> <%} else {%>
-        <%allFlavors += favoriteDrinksFlavors[drinkIndex][i].flavor%> <%}%>
-        <%}%>
+        <!-- Ingredients favoriteDrinksIngredients[drinkIndex] -->
+        <% if(favoriteDrinksIngredients[drinkIndex].length > 0) { %> <%let
+        allIngredients=""%> <%for (let i=0; i <
+        favoriteDrinksIngredients[drinkIndex].length; i++){%> <% if(
+        favoriteDrinksIngredients[drinkIndex][i].type === "uncustomizable")
+        {continue;} %> <%if(i < drink.ingredients.length-1){%> <%allIngredients
+        += favoriteDrinksIngredients[drinkIndex][i].name+", "%> <%} else {%>
+        <%allIngredients += favoriteDrinksIngredients[drinkIndex][i].name%>
+        <%}%> <%}%>
         <div class="drink-detail">
-          <span class="label">Flavors:</span>
-          <span class="value"><%=allFlavors%></span>
-        </div>
-        <%}%>
-
-        <!-- Toppings -->
-        <% if(favoriteDrinksToppings[drinkIndex].length > 0) { %> <%let
-        allToppings=""%> <%for (let i=0; i <
-        favoriteDrinksToppings[drinkIndex].length; i++){%> <%if(i <
-        drink.flavors.length-1){%> <%allToppings +=
-        favoriteDrinksToppings[drinkIndex][i].topping+", "%> <%} else {%>
-        <%allToppings += favoriteDrinksToppings[drinkIndex][i].topping%> <%}%>
-        <%}%>
-        <div class="drink-detail">
-          <span class="label">Toppings:</span>
-          <span class="value"><%=allToppings%></span>
+          <span class="label">Ingredients:</span>
+          <span class="value"><%=allIngredients%></span>
         </div>
         <%}%>
 

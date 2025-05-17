@@ -54,51 +54,32 @@
   <% } %>
 
   <!-- for loop for all option checkboxes -->
-  <div id="flavorsList" class="dropdown-check-list">
-    <span class="anchor">Edit Flavors</span>
+  <div id="ingredientsList" class="dropdown-check-list">
+    <span class="anchor">Edit Ingredients</span>
     <ul class="items">
-      <%for (let flavor of flavors) { if(chosenDrink == true &&
-      selectedMenuItem.flavors.includes(flavor._id) == true) { %>
+      <%for (let ingredient of ingredients) { if(chosenDrink == true &&
+      selectedMenuItem.ingredients.includes(ingredient._id) == true) { %>
       <li>
         <input
-          id="flavor"
+          id="ingredients"
           type="checkbox"
           checked="checked"
-          value="<%= flavor._id %>"
-        /><%= flavor.flavor %>
+          value="<%= ingredient._id %>"
+        /><%= ingredient.name %>
       </li>
       <% } else { %>
       <li>
-        <input id="flavor" type="checkbox" value="<%= flavor._id %>" /><%=
-        flavor.flavor %>
+        <input
+          id="ingredients"
+          type="checkbox"
+          value="<%= ingredient._id %>"
+        /><%= ingredient.name %>
       </li>
       <% } }%>
     </ul>
   </div>
 
   <div id="pageRight">
-    <div id="toppings" class="dropdown-check-list">
-      <span class="anchor">Edit Add-Ons</span>
-      <ul class="items">
-        <%for (let topping of toppings) { if(chosenDrink == true &&
-        selectedMenuItem.toppings.includes(topping._id) == true) { %>
-        <li>
-          <input
-            id="toppings"
-            type="checkbox"
-            checked="checked"
-            value="<%= topping._id %>"
-          /><%= topping.topping %>
-        </li>
-        <% } else { %>
-        <li>
-          <input id="toppings" type="checkbox" value="<%= topping._id %>" /><%=
-          topping.topping %>
-        </li>
-        <% } }%>
-      </ul>
-    </div>
-
     <div id="tempBox" class="dropdown-check-list">
       <span class="anchor">Edit Temp</span>
       <ul class="items">
@@ -143,7 +124,7 @@
     #pageRight {
       float: right;
     }
-    #flavorsList {
+    #ingredientsList {
       float: left;
     }
   </style>
