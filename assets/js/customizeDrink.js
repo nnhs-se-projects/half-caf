@@ -53,18 +53,34 @@ addToOrderButton.addEventListener("click", async () => {
   for (let i = 0; i < otherIngredients.length; i++) {
     if (otherIngredients[i].checked) {
       ingredients.push(otherIngredients[i].value);
-      ingredientCounts.push(
+      let count = Number(
         otherIngredients[i].parentElement.lastElementChild.value
       );
+
+      if (count < 1 || count > 100) {
+        count = 1;
+      }
+
+      ingredientCounts.push(count);
     }
   }
 
   const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
   for (let i = 0; i < drinkIngredients.length; i++) {
     ingredients.push(drinkIngredients[i].value); // default ingredients are added to the list even if they are not checked so that the barista can explicitly see that the user wants none of this ingredient
-    ingredientCounts.push(
+    let count = Number(
       drinkIngredients[i].parentElement.lastElementChild.value
     );
+
+    if (count < 1 || count > 100) {
+      count = 1;
+    }
+
+    if (!drinkIngredients[i].checked) {
+      count = 0;
+    }
+
+    ingredientCounts.push(count);
   }
 
   const tempInput = document.querySelector("input.temps:checked");
