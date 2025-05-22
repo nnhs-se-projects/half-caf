@@ -4,19 +4,54 @@
   <div class="header-section" style="display: flex; flex-direction: column; align-items: flex-start; padding-top: 5rem;">
     <h2 style="margin-bottom: 1rem;">Popular Drinks</h2>
   </div>
+  <% 
+  const badgeTextOptions = ["Popular!", "Hot Pick!", "Trending!", "Favorite!", "Top Choice!"];
+  const badgeColors = ["#ff5252", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#e91e63"];
+%>
+<% for (let drink of menuItems){%>
+  <% if (drink.popular) { // Process only popular drinks for badges %>
+    <% let link = "/teacher/customizeDrink/" + drink.name; %>
+    <a href = "<%=link%>">
+      <div class="card">
+        <%
+          // Generate random values for the badge
+          const randomTop = Math.floor(Math.random() * 60) + 10; // 10% to 70% from top
+          const randomLeft = Math.floor(Math.random() * 60) + 10; // 10% to 70% from left
+          const randomRotation = Math.floor(Math.random() * 40) - 20; // -20deg to 20deg
+          const randomBadgeText = badgeTextOptions[Math.floor(Math.random() * badgeTextOptions.length)];
+          const randomColor = badgeColors[Math.floor(Math.random() * badgeColors.length)];
+        %>
+        <div class="popular-badge"
+             style="top: <%= randomTop %>%;
+                    left: <%= randomLeft %>%;
+                    --rotation: <%= randomRotation %>deg; /* CSS variable for animation */
+                    background-color: <%= randomColor %>;">
+          <%= randomBadgeText %>
+        </div>
+        <div class="container">
+          <h4><b><%=drink.name%></h4>
+          <img src="<%=drink.imageData%>" alt="<%=drink.name%>" style="width:100%">
+          <h5>$<%=drink.price%></h5>
+          <%if(drink.description.length > 40) { %>
+          <p><%=drink.description.slice(0,40) + "..."%></p>
+          <% } else { %>
+            <p><%=drink.description%></p>
+          <% } %>
+        </div>
+      </div>
+    </a>
+  <% } %>
+<%}%>
+
+</div>
   
-  <!-- Popular floating text elements -->
-  <div class="popular-badge" style="top: 20%; left: 10%;">Popular!</div>
-  <div class="popular-badge" style="top: 40%; right: 15%;">Hot Pick!</div>
-  <div class="popular-badge" style="bottom: 30%; left: 20%;">Trending!</div>
-  <div class="popular-badge" style="bottom: 18%; right: 10%;">Favorite!</div>
-  
+ 
   <style>
     #mainContent {
       max-width: 1200px;
       margin: 0 auto;
       padding: 1rem;
-      position: relative; /* Required for absolute positioning of badges */
+      position: relative; 
     }
 
     /* Floating popular badges styling */
@@ -29,58 +64,20 @@
       border-radius: 8px;
       z-index: 10;
       opacity: 0.8;
-      transform: rotate(var(--rotation));
-      animation: float 8s infinite ease-in-out;
       box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-      pointer-events: none; /* Make sure it doesn't interfere with clicks */
-      --rotation: 0deg;
+      pointer-events: none;
     }
     
-    .popular-badge:nth-child(1) {
-      background-color: #ff5252;
-      --rotation: -15deg;
-      animation-delay: 0s;
-    }
-    
-    .popular-badge:nth-child(2) {
-      background-color: #ff9800;
-      --rotation: 10deg;
-      animation-delay: 1s;
-    }
-    
-    .popular-badge:nth-child(3) {
-      background-color: #4caf50;
-      --rotation: -5deg;
-      animation-delay: 2s;
-    }
-    
-    .popular-badge:nth-child(4) {
-      background-color: #2196f3;
-      --rotation: 8deg;
-      animation-delay: 1.5s;
-    }
-    
-    .popular-badge:nth-child(5) {
-      background-color: #9c27b0;
-      --rotation: -12deg;
-      animation-delay: 0.5s;
-    }
-    
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0) rotate(var(--rotation));
-      }
-      50% {
-        transform: translateY(-15px) rotate(var(--rotation));
-      }
-    }
 
     /* Existing card styling */
     .card {
       margin: 1rem;
       transition: transform 0.2s ease;
-      position: relative;
-      z-index: 1;
+      position: relative; 
+      z-index: 1; 
+      background-color: #fff; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
     }
 
     .card .container {
@@ -142,26 +139,8 @@
     }
   </style>
 
-  <body>
-    <% for (let drink of menuItems){%>
-      <% let link = "/teacher/customizeDrink/" + drink.name; %>
-      <a href = "<%=link%>">
-        <div class="card">
-          <div class="container">
-            <h4><b><%=drink.name%></h4>
-            <img src="<%=drink.imageData%>" alt="<%=drink.name%>" style="width:100%">
-            <h5>$<%=drink.price%></h5>
-            <%if(drink.description.length > 40) { %>
-            <p><%=drink.description.slice(0,40) + "..."%></p>
-            <% } else { %>
-              <p><%=drink.description%></p>
-            <% } %>
-          </div>
-        </div>
-      </a>
-    <%}%>
-  </body>
-</div>
+
+
   
 <!-- include footer -->
 <%- include('include/_footer') %>
