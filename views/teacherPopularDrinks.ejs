@@ -9,7 +9,7 @@
   const badgeColors = ["#ff5252", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#e91e63"];
 %>
 <% for (let drink of menuItems){%>
-  <% if (drink.popular) { // Process only popular drinks for badges %>
+  
     <% let link = "/teacher/customizeDrink/" + drink.name; %>
     <a href = "<%=link%>">
       <div class="card">
@@ -40,7 +40,6 @@
         </div>
       </div>
     </a>
-  <% } %>
 <%}%>
 
 </div>
