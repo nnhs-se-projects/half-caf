@@ -127,7 +127,6 @@ All of these files are within the 'public' folder -- needed for mobile setup to 
 
 Mobile Notifications are implemented with the service worker, and the subscription endpoints(the place where notifications are sent to) for every user are stored in the MongoDB database under user. When adding visual changes, check changes it causes on both mobile and computer screens.
 
-
 ### Flow of Control:
 
 1. User Visits the Site: They attempt to access a protected route.

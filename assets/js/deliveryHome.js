@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const logoutButton = document.querySelector(".logout-button");
+  logoutButton.addEventListener("click", async () => {
+    window.location.href = "/delivery/login";
+  });
+
   const reloadButton = document.querySelector(".reload-button");
   reloadButton.addEventListener("click", () => {
     window.location.href = "/delivery/home";

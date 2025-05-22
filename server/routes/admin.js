@@ -775,29 +775,29 @@ route.get("/sendAnnouncement", async (req, res) => {
 });
 
 route.post("/sendAnnouncement", async (req, res) => {
-  // Fetch users with an existing subscription stored as a JSON string
   try {
     const users = await User.find({
       subscription: { $exists: true, $ne: null },
     });
     for (const user of users) {
-      if (user.subscription) {
-        try {
-          const subscription = JSON.parse(user.subscription);
-          const payload = JSON.stringify({
-            title: req.body.subject,
-            options: {
-              body: req.body.message,
-              icon: "../img/Half_Caf_Logo_(1).png",
-            },
-          });
-          await webPush.sendNotification(subscription, payload);
-        } catch (error) {
-          console.error(
-            "Push notification failed for user:",
-            user.email,
-            error
-          );
+      if (user.subscription && user.subscription.length) {
+        const payload = JSON.stringify({
+          title: req.body.subject,
+          options: {
+            body: req.body.message,
+            icon: "../img/Half_Caf_Logo_(1).png",
+          },
+        });
+        for (const sub of user.subscription) {
+          try {
+            await webPush.sendNotification(sub, payload);
+          } catch (error) {
+            console.error(
+              "Push notification failed for user:",
+              user.email,
+              error
+            );
+          }
         }
       }
     }
