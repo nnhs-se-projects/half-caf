@@ -1,5 +1,6 @@
 function addListenerToCancelButtons() {
   const cancelButtons = document.querySelectorAll("button.cancelButton");
+  const finishButtons = document.querySelectorAll("button.finishButton");
 
   for (const cancelButton of cancelButtons) {
     cancelButton.addEventListener("click", async () => {
@@ -15,7 +16,6 @@ function addListenerToCancelButtons() {
       const orderId = cancelButton.value;
 
       // prevent bugs
-      const finishButtons = document.querySelectorAll("button.finishButton");
       for (const finishButton of finishButtons) {
         finishButton.disabled = true;
       }
@@ -42,6 +42,7 @@ function addListenerToCancelButtons() {
 
 function addListenerToFinishButtons() {
   const finishButtons = document.querySelectorAll("button.finishButton");
+  const cancelButtons = document.querySelectorAll("button.cancelButton");
 
   for (const finishButton of finishButtons) {
     finishButton.addEventListener("click", async () => {
@@ -55,7 +56,6 @@ function addListenerToFinishButtons() {
       timerVal = convertToSeconds(timerVal);
 
       // prevent bugs
-      const cancelButtons = document.querySelectorAll("button.cancelButton");
       for (const finishButton2 of finishButtons) {
         finishButton2.disabled = true;
       }
