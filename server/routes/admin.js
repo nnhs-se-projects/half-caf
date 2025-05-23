@@ -644,6 +644,32 @@ route.post("/addIngredient", async (req, res) => {
   res.status(201).end();
 });
 
+route.get("/editIngredient", async (req, res) => {
+  const ingredients = await Ingredient.find();
+  // Determine the selected ingredient if an id query parameter is provided
+  const { id } = req.query;
+  let selectedIngredient = null;
+  if (id != null) {
+    selectedIngredient = await Ingredient.findById(id);
+  } else if (ingredients[0] !== null && ingredients[0] !== undefined) {
+    selectedIngredient = ingredients[0];
+  } else {
+    selectedIngredient = undefined;
+  }
+  res.render("editIngredient", { ingredients, selectedIngredient });
+});
+
+route.post("/editIngredient/:id", async (req, res) => {
+  const ingredient = await Ingredient.findById(req.params.id);
+  ingredient.name = req.body.name;
+  ingredient.quantity = req.body.quantity;
+  ingredient.unit = req.body.unit;
+  ingredient.price = req.body.price;
+  ingredient.type = req.body.type;
+  await ingredient.save();
+  res.status(201).end();
+});
+
 route.get("/deleteIngredient", async (req, res) => {
   const ingredients = await Ingredient.find();
   res.render("deleteIngredient", { ingredients });

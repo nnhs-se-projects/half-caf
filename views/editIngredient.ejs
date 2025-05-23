@@ -1,0 +1,89 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+<div id="mainContent" class="adminPage">
+  <!-- Check if ingredient has been chosen -->
+  <% let chosenIngredient = false; %> <% if(selectedIngredient == undefined) {
+  chosenIngredient = false; } else {chosenIngredient = true; } %>
+  <div class="userHdr">Edit Ingredient</div>
+  <select class="select" id="filter">
+    <% for (let ingredient of ingredients) { %>
+      <% if (selectedIngredient && selectedIngredient.id == ingredient.id) { %>
+      <option value="<%=ingredient.id %>" selected="selected">
+        <%= ingredient.name %>
+      </option>
+      <% } else { %>
+      <option value="<%=ingredient.id %>"><%= ingredient.name %></option>
+      <% } %>
+    <% } %>
+  </select>
+
+
+  <% if(chosenIngredient == true) { %>
+
+    <h6>Name:</h6>  
+  <textarea id="name" class="content" placeholder="Edit Name..."><%=selectedIngredient.name %></textarea
+  >
+  <h6>Quantity:</h6>
+  <textarea id="quantity" class="content" placeholder="Edit Quantity..."><%=selectedIngredient.quantity %></textarea
+  >
+  <h6>Unit:</h6>
+  <textarea id="unit" class="content" placeholder="Edit Unit..."><%= selectedIngredient.unit %></textarea
+  ><h6>Price:</h6>
+  <textarea id="price" class="content" placeholder="Edit Price..."><%=selectedIngredient.price %></textarea
+  >
+
+  <% } else { %>
+  <textarea class="content" placeholder="Edit Name..."></textarea>
+  <textarea class="content" placeholder="Edit Quantity..."></textarea>
+  <textarea class="content" placeholder="Edit Unit..."></textarea>
+  <textarea class="content" placeholder="Edit Price..."></textarea>
+  <% } %>
+
+  <h6>Type:</h6>
+  <div class="dropdown-check-list">
+    <fieldset>
+      <label>
+        <input
+          class="types"
+          name="types"
+          type="radio"
+          value="customizable"
+          checked
+        />
+        customizable by user
+      </label>
+      <label>
+        <input
+          class="types"
+          name="types"
+          type="radio"
+          value="uncustomizable"
+          checked
+        />
+        not customizable by user
+      </label>
+    </fieldset>
+  </div>
+
+    <input class="submit" type="submit" value="Save Ingredient" />
+  </div>
+
+  <!-- /Main Site -->
+  <style>
+    #pageRight {
+      float: right;
+    }
+  </style>
+
+  <script src="/js/editIngredient.js"></script>
+  <script>
+    window.selectedMenuItem = selectedMenuItem || "null";
+  </script>
+
+  <!-- include footer -->
+  <%- include('include/_footer') %>
+  <!-- /include footer -->
+</div>
