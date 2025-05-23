@@ -605,6 +605,21 @@ route.get("/metrics", async (req, res) => {
 route.delete("/wipeOrders", async (req, res) => {
   await Order.deleteMany();
   await Drink.deleteMany();
+
+  const users = await User.find({});
+  for (const user of users) {
+    user.orderHistory = [];
+    user.favoriteDrinks = [];
+    user.currentOrder = null;
+    await user.save();
+  }
+
+  const deliveryPersons = await DeliveryPerson.find({});
+  for (const deliveryPerson of deliveryPersons) {
+    deliveryPerson.currentOrder = null;
+    await deliveryPerson.save();
+  }
+
   res.end();
 });
 
@@ -625,6 +640,15 @@ route.delete("/wipeDevOrders", async (req, res) => {
     }
     await Order.findByIdAndRemove(order._id);
   }
+
+  const users = await User.find({ email: { $in: devEmails } });
+  for (const user of users) {
+    user.orderHistory = [];
+    user.favoriteDrinks = [];
+    user.currentOrder = null;
+    await user.save();
+  }
+
   res.status(200).send("Deleted all dev orders");
 });
 
@@ -706,29 +730,29 @@ route.get("/sendAnnouncement", async (req, res) => {
 });
 
 route.post("/sendAnnouncement", async (req, res) => {
-  // Fetch users with an existing subscription stored as a JSON string
   try {
     const users = await User.find({
       subscription: { $exists: true, $ne: null },
     });
     for (const user of users) {
-      if (user.subscription) {
-        try {
-          const subscription = JSON.parse(user.subscription);
-          const payload = JSON.stringify({
-            title: req.body.subject,
-            options: {
-              body: req.body.message,
-              icon: "../img/Half_Caf_Logo_(1).png",
-            },
-          });
-          await webPush.sendNotification(subscription, payload);
-        } catch (error) {
-          console.error(
-            "Push notification failed for user:",
-            user.email,
-            error
-          );
+      if (user.subscription && user.subscription.length) {
+        const payload = JSON.stringify({
+          title: req.body.subject,
+          options: {
+            body: req.body.message,
+            icon: "../img/Half_Caf_Logo_(1).png",
+          },
+        });
+        for (const sub of user.subscription) {
+          try {
+            await webPush.sendNotification(sub, payload);
+          } catch (error) {
+            console.error(
+              "Push notification failed for user:",
+              user.email,
+              error
+            );
+          }
         }
       }
     }

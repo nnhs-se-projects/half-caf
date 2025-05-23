@@ -35,6 +35,25 @@ async function handleCredentialResponse(res) {
 document.addEventListener("DOMContentLoaded", function () {
   // First, wait for everything to be fully loaded
   window.addEventListener("load", function () {
+    const ua = navigator.userAgent;
+    let isEmbeddedBrowser = false;
+    if (ua.includes("Instagram")) {
+      // Tested and works
+      console.log("In Instagram in-app browser");
+      isEmbeddedBrowser = true;
+    } else if (ua.includes("FBAV")) {
+      console.log("In Facebook app");
+      isEmbeddedBrowser = true;
+      isEmbeddedBrowser = true;
+    } else if (ua.includes("Snapchat")) {
+      // Tested and works
+      console.log("In Snapchat in-app browser");
+      isEmbeddedBrowser = true;
+    }
+    if (isEmbeddedBrowser) {
+      this.document.getElementById("embeddedWarning").innerText =
+        "This site may not work properly in this app. Please open in Safari if you are on iOS or any other browser on Android.";
+    }
     // Reduced delay to 300ms (was 1000ms)
     setTimeout(() => {
       const mobileAppNotifier = document.getElementById("mobileAppNotifier");
