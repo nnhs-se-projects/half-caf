@@ -281,6 +281,11 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
+route.get("/inventoryManager", async (req, res) => {
+  const ingredients = await Ingredient.find();
+  res.render("inventoryManager", { ingredients });
+});
+
 route.get("/metrics", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   const delivererNames = [];

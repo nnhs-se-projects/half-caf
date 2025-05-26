@@ -1,0 +1,110 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<div id="mainContent">
+  <h1>Ingredients:</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="ingredientsTable"><b>Ingredient</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Quantity</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Unit</b></th>
+        </tr>
+      </thead>
+      <tbody id="ingredientsTable">
+        <% for(const ingredient of ingredients) { %>
+        <tr>
+          <td><%=ingredient.name%></td>
+          <td><%=ingredient.quantity%></td>
+          <td><%=ingredient.unit%></td>
+        </tr>
+        <%}%>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const getCellValue = (tr, idx) =>
+    tr.children[idx].innerText || tr.children[idx].textContent;
+
+  const comparer = (idx, asc) => (a, b) =>
+    ((v1, v2) =>
+      v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2)
+        ? v1 - v2
+        : v1[0] === "$"
+        ? Number(v1.substring(1)) - Number(v2.substring(1))
+        : v2.toString().localeCompare(v1))(
+      getCellValue(asc ? a : b, idx),
+      getCellValue(asc ? b : a, idx)
+    );
+  document.querySelectorAll("th.ingredientsTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.ingredientsTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("ingredientsTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+</script>
+
+<style>
+  table td,
+  table th {
+    border: 1px solid silver;
+    color: #1a1a1a;
+  }
+  h6 {
+    color: #ff582c;
+  }
+  #sortNeither:after,
+  #sortDown:after,
+  #sortUp:after {
+    content: " ";
+    position: relative;
+    left: 2px;
+    border: 8px solid transparent;
+  }
+
+  #sortNeither:after,
+  #sortDown:after {
+    border-top-color: silver;
+  }
+
+  #sortNeither:after,
+  #sortUp:after {
+    border-bottom-color: silver;
+  }
+
+  #sortNeither,
+  #sortDown,
+  #sortUp {
+    padding-right: 10px;
+  }
+
+  .charts {
+    display: inline-block;
+  }
+</style>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
