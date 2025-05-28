@@ -10,11 +10,14 @@
         <tr>
           <th id="sortNeither" class="ingredientsTable"><b>Ingredient</b></th>
           <th id="sortNeither" class="ingredientsTable"><b>Quantity</b></th>
+          <th id="sortNeither" class="ingredientsTable">
+            <b>Daily Average Consumption (past 10 business days)</b>
+          </th>
           <th id="sortNeither" class="ingredientsTable"><b>Unit</b></th>
         </tr>
       </thead>
       <tbody id="ingredientsTable">
-        <% for(const ingredient of ingredients) { %>
+        <% let i = 0; %> <% for(const ingredient of ingredients) { %>
         <tr <% if(ingredient.orderThreshold>
           ingredient.quantity) { %>style="background-color: #ffcccc;"<% } %>>
           <td>
@@ -23,9 +26,10 @@
             >
           </td>
           <td><%=ingredient.quantity%></td>
+          <td><%=dailyConsumptionAvgs[i]%></td>
           <td><%=ingredient.unit%></td>
         </tr>
-        <%}%>
+        <%i++;}%>
       </tbody>
     </table>
   </div>

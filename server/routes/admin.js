@@ -283,7 +283,32 @@ route.delete("/deleteDrink/:id", async (req, res) => {
 
 route.get("/inventoryManager", async (req, res) => {
   const ingredients = await Ingredient.find();
-  res.render("inventoryManager", { ingredients });
+  const orders = await Order.find();
+  const dailyConsumptionAvgs = [];
+  const currentTime = new Date().getTime();
+  for (const ingredient of ingredients) {
+    let totalConsumption = 0;
+    for (const order of orders) {
+      const orderDate = new Date(order.timestamp);
+      const orderTime = orderDate.getTime();
+      if (
+        order.complete === true &&
+        orderTime >= currentTime - 1209600000 // 14 days in milliseconds
+      ) {
+        for (const drinkId of order.drinks) {
+          const drink = await Drink.findById(drinkId);
+          if (drink && drink.ingredients.includes(ingredient.id)) {
+            totalConsumption +=
+              drink.ingredientCounts[ingredient.indexOf(ingredient.id)];
+          }
+        }
+      }
+    }
+    dailyConsumptionAvgs.push(
+      totalConsumption / 10 // Average over the last 10 business days
+    );
+  }
+  res.render("inventoryManager", { ingredients, dailyConsumptionAvgs });
 });
 
 route.get("/metrics", async (req, res) => {
