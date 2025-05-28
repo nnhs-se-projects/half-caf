@@ -4,6 +4,7 @@ const addIngredientButton = document.querySelector("input.submit");
 addIngredientButton.addEventListener("click", async () => {
   const name = document.getElementById("name").value;
   const quantity = document.getElementById("quantity").value;
+  const orderThreshold = document.getElementById("orderThreshold").value;
   const unit = document.getElementById("unit").value;
   const price = document.getElementById("price").value;
   const typeInput = document.querySelector("input.types:checked");
@@ -12,6 +13,7 @@ addIngredientButton.addEventListener("click", async () => {
   const Ingredient = {
     name,
     quantity,
+    orderThreshold,
     unit,
     price,
     type,

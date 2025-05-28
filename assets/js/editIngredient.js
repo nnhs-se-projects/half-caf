@@ -27,6 +27,7 @@ saveIngredientButton.addEventListener("click", async () => {
     .replace("\\", "");
 
   const quantity = document.getElementById("quantity").value;
+  const orderThreshold = document.getElementById("orderThreshold").value;
   const unit = document.getElementById("unit").value;
 
   const price = document.getElementById("price").value.replace(/[^.\d]/g, "");
@@ -41,6 +42,7 @@ saveIngredientButton.addEventListener("click", async () => {
   const ingredient = {
     name,
     quantity,
+    orderThreshold,
     unit,
     price,
     type,

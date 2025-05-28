@@ -29,6 +29,9 @@
   <h6>Quantity:</h6>
   <textarea id="quantity" class="content" placeholder="Edit Quantity..."><%=selectedIngredient.quantity %></textarea
   >
+  <h6>Order Threshold:</h6>
+  <textarea id="orderThreshold" class="content" placeholder="Edit Order Threshold..."><%=selectedIngredient.orderThreshold %></textarea
+  >
   <h6>Unit:</h6>
   <textarea id="unit" class="content" placeholder="Edit Unit..."><%= selectedIngredient.unit %></textarea
   ><h6>Price:</h6>
@@ -38,6 +41,7 @@
   <% } else { %>
   <textarea class="content" placeholder="Edit Name..."></textarea>
   <textarea class="content" placeholder="Edit Quantity..."></textarea>
+  <textarea class="content" placeholder="Edit Order Threshold..."></textarea>
   <textarea class="content" placeholder="Edit Unit..."></textarea>
   <textarea class="content" placeholder="Edit Price..."></textarea>
   <% } %>

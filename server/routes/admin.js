@@ -665,6 +665,7 @@ route.post("/addIngredient", async (req, res) => {
   const ingredient = new Ingredient({
     name: req.body.name,
     quantity: req.body.quantity,
+    orderThreshold: req.body.orderThreshold,
     unit: req.body.unit,
     price: req.body.price,
     type: req.body.type,
@@ -692,6 +693,7 @@ route.post("/editIngredient/:id", async (req, res) => {
   const ingredient = await Ingredient.findById(req.params.id);
   ingredient.name = req.body.name;
   ingredient.quantity = req.body.quantity;
+  ingredient.orderThreshold = req.body.orderThreshold;
   ingredient.unit = req.body.unit;
   ingredient.price = req.body.price;
   ingredient.type = req.body.type;
