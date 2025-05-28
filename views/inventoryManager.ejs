@@ -15,8 +15,13 @@
       </thead>
       <tbody id="ingredientsTable">
         <% for(const ingredient of ingredients) { %>
-        <tr>
-          <td><%=ingredient.name%></td>
+        <tr <% if(ingredient.orderThreshold>
+          ingredient.quantity) { %>style="background-color: #ffcccc;"<% } %>>
+          <td>
+            <a href="editIngredient?id=<%=ingredient.id%>"
+              ><%=ingredient.name%></a
+            >
+          </td>
           <td><%=ingredient.quantity%></td>
           <td><%=ingredient.unit%></td>
         </tr>
