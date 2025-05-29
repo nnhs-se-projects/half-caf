@@ -286,26 +286,32 @@ route.get("/inventoryManager", async (req, res) => {
   const orders = await Order.find();
   const dailyConsumptionAvgs = [];
   const currentTime = new Date().getTime();
+  const days = [];
   for (const ingredient of ingredients) {
     let totalConsumption = 0;
     for (const order of orders) {
-      const orderDate = new Date(order.timestamp);
+      const orderDate = new Date(
+        order.timestamp.substring(0, order.timestamp.indexOf(" "))
+      );
       const orderTime = orderDate.getTime();
       if (
         order.complete === true &&
         orderTime >= currentTime - 1209600000 // 14 days in milliseconds
       ) {
+        if (days.indexOf(orderTime) === -1) {
+          days.push(orderTime);
+        }
         for (const drinkId of order.drinks) {
           const drink = await Drink.findById(drinkId);
           if (drink && drink.ingredients.includes(ingredient.id)) {
             totalConsumption +=
-              drink.ingredientCounts[ingredient.indexOf(ingredient.id)];
+              drink.ingredientCounts[drink.ingredients.indexOf(ingredient.id)];
           }
         }
       }
     }
     dailyConsumptionAvgs.push(
-      totalConsumption / 10 // Average over the last 10 business days
+      days.length === 0 ? 0 : totalConsumption / days.length // Average over the last 10 business days (assuming no orders are placed on weekends)
     );
   }
   res.render("inventoryManager", { ingredients, dailyConsumptionAvgs });
