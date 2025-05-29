@@ -13,6 +13,9 @@
           <th id="sortNeither" class="ingredientsTable">
             <b>Daily Average Consumption (past 10 business days)</b>
           </th>
+          <th id="sortNeither" class="ingredientsTable">
+            <b>Daily Average Cost</b>
+          </th>
           <th id="sortNeither" class="ingredientsTable"><b>Unit</b></th>
         </tr>
       </thead>
@@ -27,6 +30,7 @@
           </td>
           <td><%=ingredient.quantity%></td>
           <td><%=dailyConsumptionAvgs[i]%></td>
+          <td>$<%=dailyConsumptionAvgs[i] * ingredient.price%></td>
           <td><%=ingredient.unit%></td>
         </tr>
         <%i++;}%>
