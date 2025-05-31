@@ -40,16 +40,16 @@
     <table>
       <thead>
         <tr>
-          <th id="sortNeither" class="ingredientsTable"><b>Menu Item</b></th>
-          <th id="sortNeither" class="ingredientsTable"><b>Expense</b></th>
-          <th id="sortNeither" class="ingredientsTable"><b>Revenue</b></th>
-          <th id="sortNeither" class="ingredientsTable"><b>Profit</b></th>
-          <th id="sortNeither" class="ingredientsTable">
+          <th id="sortNeither" class="menuItemTable"><b>Menu Item</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Expense</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Profit</b></th>
+          <th id="sortNeither" class="menuItemTable">
             <b>Profit Margin</b>
           </th>
         </tr>
       </thead>
-      <tbody id="ingredientsTable">
+      <tbody id="menuItemTable">
         <% i = 0; %> <% for(const menuItem of menuItems) { %>
         <tr <% if((menuItem.price - menuItemExpenses[i])>
           0) { %>style="background-color: #a7f989;"<% } %> <% if((menuItem.price
@@ -100,6 +100,30 @@
         }
       });
       const table = document.getElementById("ingredientsTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+  document.querySelectorAll("th.menuItemTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.menuItemTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("menuItemTable");
       Array.from(table.querySelectorAll("tr"))
         .sort(
           comparer(
