@@ -31,15 +31,12 @@
           </td>
           <td><%=ingredient.quantity%></td>
           <td><%=dailyConsumptionAvgs[i]%></td>
-          <td>$<%=dailyConsumptionAvgs[i] * ingredient.price%></td>
+          <td>$<%=(dailyConsumptionAvgs[i] * ingredient.price).toFixed(2)%></td>
           <td><%=ingredient.unit%></td>
         </tr>
         <%i++;}%>
       </tbody>
     </table>
-  </div>
-</div>
-<div>
     <table>
       <thead>
         <tr>
@@ -51,21 +48,22 @@
         </tr>
       </thead>
       <tbody id="ingredientsTable">
-        <% let i = 0; %> <% for(const menuItem of menuItems) { %>
+        <% i = 0; %> <% for(const menuItem of menuItems) { %>
           <td> 
           <a href="modifyDrink?id=<%=menuItem.id%>"
               ><%=menuItem.name%></a
             >
           </td>
-          <td><%=menuItemExpenses[i]%></td>
-          <td><%=menuItem.price%></td>
-          <td>$<%=menuItem.price - menuItemExpenses[i]%></td>
-          <td><%=(menuItem.price - menuItemExpenses[i]) / menuItem.price * 100%>%</td>
+          <td>$<%=menuItemExpenses[i].toFixed(2)%></td>
+          <td>$<%=menuItem.price.toFixed(2)%></td>
+          <td>$<%=(menuItem.price - menuItemExpenses[i]).toFixed(2)%></td>
+          <td><%=((menuItem.price - menuItemExpenses[i]) / menuItem.price * 100).toFixed(2)%>%</td>
         </tr>
         <%i++;}%>
       </tbody>
     </table>
   </div>
+</div>
 
 <script>
   const getCellValue = (tr, idx) =>
