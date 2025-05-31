@@ -44,20 +44,27 @@
           <th id="sortNeither" class="ingredientsTable"><b>Expense</b></th>
           <th id="sortNeither" class="ingredientsTable"><b>Revenue</b></th>
           <th id="sortNeither" class="ingredientsTable"><b>Profit</b></th>
-          <th id="sortNeither" class="ingredientsTable"><b>Profit Margin</b></th>
+          <th id="sortNeither" class="ingredientsTable">
+            <b>Profit Margin</b>
+          </th>
         </tr>
       </thead>
       <tbody id="ingredientsTable">
         <% i = 0; %> <% for(const menuItem of menuItems) { %>
-          <td> 
-          <a href="modifyDrink?id=<%=menuItem.id%>"
-              ><%=menuItem.name%></a
-            >
+        <tr <% if((menuItem.price - menuItemExpenses[i])>
+          0) { %>style="background-color: #a7f989;"<% } %> <% if((menuItem.price
+          - menuItemExpenses[i]) < 0) { %>style="background-color: #ffcccc;"<% }
+          %>>
+          <td>
+            <a href="modifyDrink?id=<%=menuItem.id%>"><%=menuItem.name%></a>
           </td>
           <td>$<%=menuItemExpenses[i].toFixed(2)%></td>
           <td>$<%=menuItem.price.toFixed(2)%></td>
           <td>$<%=(menuItem.price - menuItemExpenses[i]).toFixed(2)%></td>
-          <td><%=((menuItem.price - menuItemExpenses[i]) / menuItem.price * 100).toFixed(2)%>%</td>
+          <td>
+            <%=((menuItem.price - menuItemExpenses[i]) / menuItem.price *
+            100).toFixed(2)%>%
+          </td>
         </tr>
         <%i++;}%>
       </tbody>
