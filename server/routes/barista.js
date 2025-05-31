@@ -100,22 +100,41 @@ route.delete("/:id", async (req, res) => {
     const order = await Order.findById(req.params.id).populate("drinks");
     const email = order.email;
 
-    const orderItems = order.drinks.map((drink) => ({
-      name: drink.name,
-      temp: drink.temps,
-      ingredients:
-        drink.ingredients.length > 0 ? drink.ingredients.join(", ") : "None",
-      instructions: drink.instructions,
-    }));
+    const orderItems = [];
+    for (const drink of order.drinks) {
+      let ingredientsStr = "";
+      let i = 0;
+      for (const ingredientId of drink.ingredients) {
+        const ingredient = await Ingredient.findById(ingredientId);
+
+        if (ingredient.type === "customizable") {
+          ingredientsStr +=
+            drink.ingredientCounts[i] === 0
+              ? "No "
+              : drink.ingredientCounts[i] + " ";
+          ingredientsStr += ingredient.name + ", ";
+        }
+
+        i++;
+      }
+      ingredientsStr = ingredientsStr.substring(0, ingredientsStr.length - 2);
+      const item = {
+        name: drink.name,
+        temp: drink.temps,
+        ingredients: ingredientsStr.length > 0 ? ingredientsStr : "None",
+        instructions: drink.instructions,
+      };
+      orderItems.push(item);
+    }
 
     order.cancelled = true;
     await order.save();
 
     emitOrderCancelled({
       cancelMessage: req.body.message,
-      email: email,
+      email,
       orderId: order._id,
-      orderItems: orderItems,
+      orderItems,
     });
 
     const user = await User.findOne({ email: order.email });

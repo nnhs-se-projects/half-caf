@@ -165,7 +165,7 @@ function showOrderCancelledPopup(data) {
               <div class="coffee-item-temp">${item.temp || ""}</div>
               ${
                 item.ingredients
-                  ? `<div class="coffee-item-ingredients">Ingredients: ${item.ingredients}</div>`
+                  ? `<div class="coffee-item-ingredients">${item.ingredients}</div>`
                   : ""
               }
             </li>
@@ -396,7 +396,7 @@ function showOrderCancelledPopup(data) {
     </div>
     
     <div class="popup-content">
-      <p>Your coffee order has been cancelled.</p>
+      <p>Your order has been cancelled.</p>
       
       <div class="coffee-note">
         <div class="barista-message">Barista note:</div>
