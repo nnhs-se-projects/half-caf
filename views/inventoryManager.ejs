@@ -69,6 +69,37 @@
         <%i++;}%>
       </tbody>
     </table>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="drinkTable">
+            <b>Drink (Last 50 drinks ordered)</b>
+          </th>
+          <th id="sortNeither" class="drinkTable"><b>Expense</b></th>
+          <th id="sortNeither" class="drinkTable"><b>Revenue</b></th>
+          <th id="sortNeither" class="drinkTable"><b>Profit</b></th>
+          <th id="sortNeither" class="drinkTable">
+            <b>Profit Margin</b>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="drinkTable">
+        <% i = 0; %> <% for(const drink of drinks) { %>
+        <tr <% if((drink.price - drinkExpenses[i])>
+          0) { %>style="background-color: #a7f989;"<% } %> <% if((drink.price -
+          drinkExpenses[i]) < 0) { %>style="background-color: #ffcccc;"<% } %>>
+          <td><%=menuItem.name%></td>
+          <td>$<%=drinkExpenses[i].toFixed(2)%></td>
+          <td>$<%=drink.price.toFixed(2)%></td>
+          <td>$<%=(drink.price - drinkExpenses[i]).toFixed(2)%></td>
+          <td>
+            <%=((drink.price - drinkExpenses[i]) / drink.price *
+            100).toFixed(2)%>%
+          </td>
+        </tr>
+        <%i++;}%>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -124,6 +155,30 @@
         }
       });
       const table = document.getElementById("menuItemTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+  document.querySelectorAll("th.drinkTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.drinkTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("drinkTable");
       Array.from(table.querySelectorAll("tr"))
         .sort(
           comparer(
