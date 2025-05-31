@@ -90,10 +90,12 @@
                     drink.ingredients.length; i++) {
                     if(drink.ingredients[i].type == "customizable") {
                     allIngredients += (drink.ingredientCounts[i] == 0 ? "No " :
-                    drink.ingredientCounts[i] + " ") +
-                    drink.ingredients[i].name; if(i != drink.ingredients.length
-                    - 1) { allIngredients += ", "; } } } %>
-                    <div class="drink-ingredients"><%= allIngredients %></div>
+                    drink.ingredientCounts[i] + " ") + drink.ingredients[i].name
+                    + ", "; } } %>
+                    <div class="drink-ingredients">
+                      <%= allIngredients.substring(0, allIngredients.length-2)
+                      %>
+                    </div>
                     <% } %> %> <% if (drink.instructions) { %>
                     <div class="drink-instructions">
                       "<%= drink.instructions %>"

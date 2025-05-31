@@ -22,11 +22,12 @@
         if(drink.ingredients[i].type == "customizable"){
         if(drink.ingredientCounts[i] === 0){ allIngredients += "No "; } else {
         allIngredients += (drink.ingredientCounts[i] + " "); } allIngredients +=
-        drink.ingredients[i].name; if(i != drink.ingredients.length - 1) {
-        allIngredients += ", "; } } } %>
+        drink.ingredients[i].name + ", "; } } %>
         <div class="drink-detail">
           <span class="label">Ingredients:</span>
-          <span class="value"><%=allIngredients%></span>
+          <span class="value"
+            ><%=allIngredients.substring(0, allIngredients.length-2)%></span
+          >
         </div>
         <% } %>
 
