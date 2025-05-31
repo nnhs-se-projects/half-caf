@@ -57,8 +57,8 @@
   <div id="ingredientsList" class="dropdown-check-list">
     <span class="anchor">Edit Ingredients</span>
     <ul class="items">
-      <%for (let ingredient of ingredients) { if(chosenDrink == true &&
-      selectedMenuItem.ingredients.includes(ingredient._id) == true) { %>
+      <% let i = 0; for (let ingredient of ingredients) { if(chosenDrink == true
+      && selectedMenuItem.ingredients.includes(ingredient._id) == true) { %>
       <li>
         <input
           id="ingredients"
@@ -66,58 +66,61 @@
           checked="checked"
           value="<%= ingredient._id %>"
         /><%= ingredient.name %>
+        <input
+          type="number"
+          value="<%=selectedMenuItem.ingredientCounts[i]%>"
+          min="0"
+        />
       </li>
-      <% } else { %>
+      <% i++; } else { %>
       <li>
         <input
           id="ingredients"
           type="checkbox"
           value="<%= ingredient._id %>"
         /><%= ingredient.name %>
+        <input hidden type="number" value="0" min="0" />
       </li>
       <% } }%>
     </ul>
   </div>
 
-  <div id="pageRight">
-    <div id="tempBox" class="dropdown-check-list">
-      <span class="anchor">Edit Temp</span>
-      <ul class="items">
-        <% for(let temp of temps){ %>
-        <li>
-          <input type="checkbox" id="temp" class="temps" name="temps"
-          value="<%=temp%>" <%= (chosenDrink &&
-          selectedMenuItem.temps.includes(temp)) ? "checked" : "" %> />
-          <%=temp%>
-        </li>
-        <%} %>
-      </ul>
-    </div>
-
-    <div id="options" class="dropdown-check-list">
-      <span class="anchor">Edit Options</span>
-      <ul class="items">
-        <li>
-          <input id="popular" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.popular) ? "checked" : "" %> /> Popular
-        </li>
-        <li>
-          <input id="caffeination" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.caffeination) ? "checked" : "" %> /> Caffeinated
-        </li>
-        <li>
-          <input id="allowDecaf" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.allowDecaf) ? "checked" : "" %> /> Decaf
-        </li>
-        <li>
-          <input id="special" type="checkbox" <%= (chosenDrink &&
-          selectedMenuItem.special) ? "checked" : "" %> /> Special
-        </li>
-      </ul>
-    </div>
-
-    <input class="submit" type="submit" value="Save Drink" />
+  <div id="tempBox" class="dropdown-check-list">
+    <span class="anchor">Edit Temp</span>
+    <ul class="items">
+      <% for(let temp of temps){ %>
+      <li>
+        <input type="checkbox" id="temp" class="temps" name="temps"
+        value="<%=temp%>" <%= (chosenDrink &&
+        selectedMenuItem.temps.includes(temp)) ? "checked" : "" %> /> <%=temp%>
+      </li>
+      <%} %>
+    </ul>
   </div>
+
+  <div id="options" class="dropdown-check-list">
+    <span class="anchor">Edit Options</span>
+    <ul class="items">
+      <li>
+        <input id="popular" type="checkbox" <%= (chosenDrink &&
+        selectedMenuItem.popular) ? "checked" : "" %> /> Popular
+      </li>
+      <li>
+        <input id="caffeination" type="checkbox" <%= (chosenDrink &&
+        selectedMenuItem.caffeination) ? "checked" : "" %> /> Caffeinated
+      </li>
+      <li>
+        <input id="allowDecaf" type="checkbox" <%= (chosenDrink &&
+        selectedMenuItem.allowDecaf) ? "checked" : "" %> /> Decaf
+      </li>
+      <li>
+        <input id="special" type="checkbox" <%= (chosenDrink &&
+        selectedMenuItem.special) ? "checked" : "" %> /> Special
+      </li>
+    </ul>
+  </div>
+
+  <input class="submit" type="submit" value="Save Drink" />
 
   <!-- /Main Site -->
   <style>

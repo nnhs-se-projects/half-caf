@@ -53,6 +53,21 @@ function encodeImageFileAsURL() {
   }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const ingredients = document.querySelectorAll("input#ingredients");
+  for (const ingredient of ingredients) {
+    ingredient.addEventListener("click", () => {
+      const numElem = ingredient.parentElement.lastElementChild;
+      numElem.hidden = !numElem.hidden;
+      if (numElem.hidden) {
+        numElem.value = 0;
+      } else {
+        numElem.value = 1;
+      }
+    });
+  }
+});
+
 // listen for change in the dropdown menu
 document
   .getElementById("filter")
@@ -101,9 +116,18 @@ saveDrinkButton.addEventListener("click", async () => {
 
   const ingredients = document.querySelectorAll("input#ingredients");
   const checkedIngredients = [];
+  const ingredientCounts = [];
   for (let i = 0; i < ingredients.length; i++) {
     if (ingredients[i].checked) {
       checkedIngredients.push(ingredients[i].value);
+
+      let count = Number(ingredients[i].parentElement.lastElementChild.value);
+
+      if (count < 1 || count > 100) {
+        count = 1;
+      }
+
+      ingredientCounts.push(count);
     }
   }
 
@@ -115,6 +139,7 @@ saveDrinkButton.addEventListener("click", async () => {
     description,
     price,
     checkedIngredients,
+    ingredientCounts,
     checkedTemps,
     popular,
     caf: caf.checked,

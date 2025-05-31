@@ -102,18 +102,15 @@ addDrinkButton.addEventListener("click", async () => {
   for (let i = 0; i < ingredients.length; i++) {
     if (ingredients[i].checked) {
       checkedIngredients.push(ingredients[i].value);
-    }
-    let count = Number(ingredients[i].parentElement.lastElementChild.value);
 
-    if (count < 1 || count > 100) {
-      count = 1;
-    }
+      let count = Number(ingredients[i].parentElement.lastElementChild.value);
 
-    if (!ingredients[i].checked) {
-      count = 0;
-    }
+      if (count < 1 || count > 100) {
+        count = 1;
+      }
 
-    ingredientCounts.push(count);
+      ingredientCounts.push(count);
+    }
   }
 
   const imageData = srcData;

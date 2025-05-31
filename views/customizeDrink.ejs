@@ -32,20 +32,20 @@
       <h6>Choose Ingredients:</h6>
       <ul class="items">
         <% if(drinkIngredients.length > 0) { %>
-        <% for (let ingredient of drinkIngredients) {%>
+        <% let i = 0; for (let ingredient of drinkIngredients) {%>
         <li <%= ingredient.type === "uncustomizable" ? "hidden": ""  %>>
           <input checked id="drinkIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
           ingredient.name %>
-          <input type="number" value="1">
+          <input type="number" value="<%=drink.ingredientCounts[i]%>">
         </li>
-        <%}}%>
+        <%i++;}}%>
 
         <% if(otherIngredients.length > 0) { %>
         <% for (let ingredient of otherIngredients) {%>
           <li>
             <input id="otherIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
             ingredient.name %>
-            <input hidden type="number" value="1">
+            <input hidden type="number" value="0">
           </li>
           <%}}%>
       </ul>

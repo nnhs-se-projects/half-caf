@@ -230,6 +230,7 @@ route.post("/addDrink", async (req, res) => {
     price: req.body.price,
     popular: req.body.popular,
     ingredients: req.body.checkedIngredients,
+    ingredientCounts: req.body.ingredientCounts,
     temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     allowDecaf: req.body.allowDecaf,
@@ -249,6 +250,7 @@ route.post("/modifyDrink/:id", async (req, res) => {
     menuItem.ingredients = req.body.checkedIngredients
       ? req.body.checkedIngredients
       : [];
+    menuItem.ingredientCounts = req.body.ingredientCounts;
     menuItem.temps = req.body.checkedTemps;
     menuItem.caffeination = req.body.caf;
     menuItem.allowDecaf = req.body.allowDecaf;
@@ -318,15 +320,23 @@ route.get("/inventoryManager", async (req, res) => {
   const menuItemExpenses = [];
   for (const menuItem of menuItems) {
     let totalCost = 0;
+    let i = 0;
     for (const ingredientId of menuItem.ingredients) {
       const ingredient = await Ingredient.findById(ingredientId);
       if (ingredient) {
-        totalCost += ingredient.price * ;
+        totalCost += ingredient.price * menuItem.ingredientCounts[i];
       }
+      i++;
     }
+    menuItemExpenses.push(totalCost);
   }
 
-  res.render("inventoryManager", { ingredients, dailyConsumptionAvgs });
+  res.render("inventoryManager", {
+    ingredients,
+    dailyConsumptionAvgs,
+    menuItems,
+    menuItemExpenses,
+  });
 });
 
 route.get("/metrics", async (req, res) => {
