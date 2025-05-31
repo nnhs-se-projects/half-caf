@@ -39,6 +39,33 @@
     </table>
   </div>
 </div>
+<div>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="ingredientsTable"><b>Menu Item</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Expense</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Revenue</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Profit</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Profit Margin</b></th>
+        </tr>
+      </thead>
+      <tbody id="ingredientsTable">
+        <% let i = 0; %> <% for(const menuItem of menuItems) { %>
+          <td> 
+          <a href="modifyDrink?id=<%=menuItem.id%>"
+              ><%=menuItem.name%></a
+            >
+          </td>
+          <td><%=menuItemExpenses[i]%></td>
+          <td><%=menuItem.price%></td>
+          <td>$<%=menuItem.price - menuItemExpenses[i]%></td>
+          <td><%=(menuItem.price - menuItemExpenses[i]) / menuItem.price * 100%>%</td>
+        </tr>
+        <%i++;}%>
+      </tbody>
+    </table>
+  </div>
 
 <script>
   const getCellValue = (tr, idx) =>

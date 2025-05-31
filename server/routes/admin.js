@@ -312,6 +312,20 @@ route.get("/inventoryManager", async (req, res) => {
       totalConsumption / 10 // Average over the last 10 business days (assuming no orders are placed on weekends)
     );
   }
+
+  // For each menu item add up the cost of the ingredients and push to a list
+  const menuItems = await MenuItem.find();
+  const menuItemExpenses = [];
+  for (const menuItem of menuItems) {
+    let totalCost = 0;
+    for (const ingredientId of menuItem.ingredients) {
+      const ingredient = await Ingredient.findById(ingredientId);
+      if (ingredient) {
+        totalCost += ingredient.price * ;
+      }
+    }
+  }
+
   res.render("inventoryManager", { ingredients, dailyConsumptionAvgs });
 });
 
