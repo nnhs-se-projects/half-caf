@@ -177,7 +177,7 @@ route.get("/redirectUser", async (req, res) => {
     if (role === "admin") {
       res.redirect("/admin/addUser");
     } else if (role === "barista") {
-      res.redirect("/barista");
+      res.redirect("/barista/orders");
     } else if (role === "teacher") {
       res.redirect("/teacher/popularDrinks");
     } else {

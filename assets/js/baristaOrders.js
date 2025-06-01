@@ -23,7 +23,7 @@ function addListenerToCancelButtons() {
         cancelButton2.disabled = true;
       }
 
-      const response = await fetch(`/barista/${orderId}`, {
+      const response = await fetch(`/barista/orders/${orderId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function addListenerToCancelButtons() {
       });
 
       if (response.ok) {
-        window.location = "/barista";
+        window.location = "/barista/orders";
       } else {
         console.log("error deleting order");
       }
@@ -63,7 +63,7 @@ function addListenerToFinishButtons() {
         cancelButton.disabled = true;
       }
 
-      const response = await fetch(`/barista/${orderId}`, {
+      const response = await fetch(`/barista/orders/${orderId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ function addListenerToFinishButtons() {
       });
 
       if (response.ok) {
-        window.location = "/barista";
+        window.location = "/barista/orders";
       } else {
         console.log("error finishing order");
       }

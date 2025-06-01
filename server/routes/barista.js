@@ -33,7 +33,7 @@ async function getUserRoles(email) {
   }
 }
 
-route.get("/", async (req, res) => {
+route.get("/orders", async (req, res) => {
   const orders = await Order.find();
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
@@ -95,7 +95,7 @@ route.get("/", async (req, res) => {
   });
 });
 
-route.delete("/:id", async (req, res) => {
+route.delete("/orders/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("drinks");
     const email = order.email;
@@ -166,7 +166,7 @@ route.delete("/:id", async (req, res) => {
   }
 });
 
-route.post("/:id", async (req, res) => {
+route.post("/orders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = true;
   order.timer = req.body.t;
@@ -323,7 +323,7 @@ route.post("/pointOfSale", async (req, res) => {
 });
 
 // completed orders page of barista that displays all completed orders
-route.get("/completed", async (req, res) => {
+route.get("/completedOrders", async (req, res) => {
   const orders = await Order.find({ complete: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
@@ -376,14 +376,14 @@ route.get("/completed", async (req, res) => {
 
   const role = await getUserRoles(req.session.email);
 
-  res.render("completed", {
+  res.render("completedOrders", {
     orders,
     drinkMap,
     role,
   });
 });
 
-route.post("/completed/:id", async (req, res) => {
+route.post("/completedOrders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = false;
   await order.save();
