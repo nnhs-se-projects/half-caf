@@ -248,7 +248,6 @@ route.get("/pointOfSale", async (req, res) => {
 route.post("/pointOfSale", async (req, res) => {
   const drinkIdCart = [];
   for (const drink of req.body.order) {
-    console.log(drink);
     const newDrink = new Drink({
       name: drink.name,
       price: drink.price,
