@@ -331,11 +331,30 @@ route.get("/inventoryManager", async (req, res) => {
     menuItemExpenses.push(totalCost);
   }
 
+  // For each of the past 50 drinks ordered up the cost of the ingredients and push to a list
+  const drinks = await Drink.find({ completed: true });
+  drinks.reverse().slice(0, 50);
+  const drinkExpenses = [];
+  for (const drink of drinks) {
+    let totalCost = 0;
+    let i = 0;
+    for (const ingredientId of drink.ingredients) {
+      const ingredient = await Ingredient.findById(ingredientId);
+      if (ingredient) {
+        totalCost += ingredient.price * drink.ingredientCounts[i];
+      }
+      i++;
+    }
+    drinkExpenses.push(totalCost);
+  }
+
   res.render("inventoryManager", {
     ingredients,
     dailyConsumptionAvgs,
     menuItems,
     menuItemExpenses,
+    drinks,
+    drinkExpenses,
   });
 });
 
