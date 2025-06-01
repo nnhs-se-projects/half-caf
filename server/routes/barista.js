@@ -215,8 +215,11 @@ route.get("/pointOfSale", async (req, res) => {
   const possibleModificationsMap = new Map();
   for (const item of menuItems) {
     const modifications = [];
+    let i = 0;
     for (const ingredient of item.ingredients) {
       modifications.push(ingredient);
+      modifications.push(item.ingredientCounts[i]);
+      i++;
     }
     for (const temp of item.temps) {
       modifications.push(temp);
@@ -245,11 +248,13 @@ route.get("/pointOfSale", async (req, res) => {
 route.post("/pointOfSale", async (req, res) => {
   const drinkIdCart = [];
   for (const drink of req.body.order) {
+    console.log(drink);
     const newDrink = new Drink({
       name: drink.name,
       price: drink.price,
       temps: drink.temps,
       ingredients: drink.ingredients,
+      ingredientCounts: drink.ingredientCounts,
       instructions: drink.instructions,
       completed: false,
       caffeinated: drink.caffeinated,

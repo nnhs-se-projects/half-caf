@@ -20,6 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".ingredient-checkbox:checked")
     ).map((checkbox) => checkbox.value);
 
+    const ingredientCounts = [];
+    const ingredientCheckboxes = document.querySelectorAll(
+      ".ingredient-checkbox:checked"
+    );
+    for (const ingredient of ingredientCheckboxes) {
+      ingredientCounts.push(
+        Number(ingredient.parentElement.lastElementChild.value)
+      );
+    }
+
     const selectedTemp = document.querySelector(".temp-radio:checked")
       ? document.querySelector(".temp-radio:checked").value
       : null;
@@ -32,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     currentDrink.ingredients = selectedIngredients;
+    currentDrink.ingredientCounts = ingredientCounts;
     currentDrink.temps = selectedTemp;
     const instructions = document.querySelector("#drink-instructions").value;
     currentDrink.instructions = instructions;
@@ -50,10 +61,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const possibleTemps = [];
     currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
     for (const ingredient of ingredients) {
-      if (
-        possibleModificationsMap[drink.menuItemId].indexOf(ingredient._id) > -1
-      ) {
-        possibleIngredients.push(ingredient);
+      const indx = possibleModificationsMap[drink.menuItemId].indexOf(
+        ingredient._id
+      );
+      if (indx > -1) {
+        possibleIngredients.push({
+          ingredient,
+          count: possibleModificationsMap[drink.menuItemId][indx + 1],
+        });
+      } else if (ingredient.type === "customizable") {
+        possibleIngredients.push({
+          ingredient,
+          count: 0,
+        });
       }
     }
 
@@ -71,30 +91,39 @@ document.addEventListener("DOMContentLoaded", () => {
     if (possibleIngredients.length > 0) {
       possibleIngredients.forEach((ingredient) => {
         const isChecked =
-          currentDrink.ingredients.indexOf(ingredient._id) > -1
+          possibleModificationsMap[drink.menuItemId].indexOf(
+            ingredient.ingredient._id
+          ) > -1
             ? "checked"
             : "";
         html += `
-    <div class="ingredient-container">
-      <input type="checkbox" id="ingredient-${ingredient._id}" class="ingredient-checkbox" value="${ingredient._id}" ${isChecked}/>
-      <label for="ingredient-${ingredient._id}">${ingredient.name}</label>
+    <div ${
+      ingredient.ingredient.type === "uncustomizable" ? "hidden" : ""
+    } class="ingredient-container">
+      <input type="checkbox" id="ingredient-${
+        ingredient.ingredient._id
+      }" class="ingredient-checkbox" value="${
+          ingredient.ingredient._id
+        }" ${isChecked}/>
+      <label for="ingredient-${ingredient.ingredient._id}">${
+          ingredient.ingredient.name
+        }</label>
+      <input ${isChecked ? "" : "hidden"} type="number" value="${
+          ingredient.count
+        }" min="0" />
     </div>
     `;
       });
     } else {
       html += "<p>No ingredients available</p>";
     }
-    html += "</div>";
 
+    html += "</div>";
     // Column 3: Temperature
     html += '<div class="customization-column">';
     html += "<h5>Temperature</h5>";
     if (possibleTemps.length > 0) {
       possibleTemps.forEach((temp) => {
-        const isChecked =
-          currentDrink.temps && currentDrink.temps.indexOf(temp) > -1
-            ? "checked"
-            : "";
         html += `
     <div class="temp-container">
       <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" checked="checked"/>
@@ -141,6 +170,22 @@ document.addEventListener("DOMContentLoaded", () => {
       '<div class="button-container"><button class="saveButton">Save Drink</button></div>';
 
     document.querySelector(".customization-grid").innerHTML = html;
+
+    const ingredientCheckBoxes = document.querySelectorAll(
+      ".ingredient-checkbox"
+    );
+    for (const ingredient of ingredientCheckBoxes) {
+      ingredient.addEventListener("click", () => {
+        const numElem = ingredient.parentElement.lastElementChild;
+        numElem.hidden = !numElem.hidden;
+        if (numElem.hidden) {
+          numElem.value = 0;
+        } else {
+          numElem.value = 1;
+        }
+      });
+    }
+
     // Add save button functionality
     const saveButton = document.querySelector(".saveButton");
     if (saveButton) {
@@ -207,6 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         price: drinkPrice,
         menuItemId: menuItemId,
         ingredients: [],
+        ingredientCounts: [],
         temps: [],
         caffeinated:
           possibleModificationsMap[menuItemId].indexOf("Caffeine") > -1,
@@ -252,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
           total: Number(orderTotal.textContent),
         }),
       });
-      console.log(response);
+
       if (response.ok) {
         // Clear the cart
         cart = [];

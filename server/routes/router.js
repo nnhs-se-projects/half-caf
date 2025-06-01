@@ -34,7 +34,9 @@ async function checkTime() {
     const currentWeekDay = await Weekday.findOne({
       day: currentTimeDate.getDay() - 1,
     });
-    currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+    if (currentWeekDay) {
+      currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+    }
   } catch (error) {
     // console.log(error);
     return;
