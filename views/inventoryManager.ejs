@@ -3,9 +3,9 @@
 <!-- /include header -->
 
 <div id="mainContent">
-  <h1>Ingredients:</h1>
-  <h6>*Red indicates the ingredient's quantity is too low</h6>
   <div>
+    <h1>Ingredients:</h1>
+    <h6>*Red indicates the ingredient's quantity is too low</h6>
     <table>
       <thead>
         <tr>
@@ -37,6 +37,8 @@
         <%i++;}%>
       </tbody>
     </table>
+
+    <h1>Menu Items:</h1>
     <table>
       <thead>
         <tr>
@@ -69,11 +71,17 @@
         <%i++;}%>
       </tbody>
     </table>
+
+    <h1>Past orders:</h1>
+    <h6>
+      These are the last 50 drinks ordered, which may contain additional add-ons
+      that contribute to the expense.
+    </h6>
     <table>
       <thead>
         <tr>
           <th id="sortNeither" class="drinkTable">
-            <b>Drink (Last 50 drinks ordered)</b>
+            <b>Drink</b>
           </th>
           <th id="sortNeither" class="drinkTable"><b>Expense</b></th>
           <th id="sortNeither" class="drinkTable"><b>Revenue</b></th>
