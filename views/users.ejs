@@ -1,0 +1,598 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<div class="userHdr">Users</div>
+
+<div class="users-container">
+  <div class="users-header">
+    <div class="search-container">
+      <input
+        type="text"
+        id="emailSearch"
+        placeholder="Search by email..."
+        class="search-input"
+      />
+    </div>
+    <button class="action-button add-user" id="addUserBtn">
+      <span class="plus-icon">+</span> Add User
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="users-table" id="usersTable">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>User Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let user of users) { %>
+        <tr
+          data-user-id="<%= user._id %>"
+          data-email="<%= user.email.toLowerCase() %>"
+        >
+          <td><%= user.email %></td>
+          <td>
+            <span class="user-type-badge <%= user.userType %>">
+              <%= user.userType %>
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button
+              class="action-button edit"
+              data-user-id="<%= user._id %>"
+              data-user-email="<%= user.email %>"
+              data-user-type="<%= user.userType %>"
+              title="Edit User"
+            >
+              Edit
+            </button>
+            <button
+              class="action-button delete"
+              data-user-id="<%= user._id %>"
+              data-user-email="<%= user.email %>"
+              title="Delete User"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <div id="noResults" class="no-results" style="display: none">
+      <p>No users found matching your search.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New User</h2>
+      <span class="close" data-modal="addUserModal">&times;</span>
+    </div>
+    <form id="addUserForm">
+      <div class="form-group">
+        <label for="addUserEmail">Email:</label>
+        <input type="email" id="addUserEmail" name="email" required />
+      </div>
+      <div class="form-group">
+        <label for="addUserType">User Type:</label>
+        <select id="addUserType" name="userType" required>
+          <option value="">Select User Type</option>
+          <option value="admin">Admin</option>
+          <option value="barista">Barista</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" data-modal="addUserModal">
+          Cancel
+        </button>
+        <button type="submit" class="btn-submit">Add User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit User</h2>
+      <span class="close" data-modal="editUserModal">&times;</span>
+    </div>
+    <form id="editUserForm">
+      <input type="hidden" id="editUserId" name="userId" />
+      <div class="form-group">
+        <label for="editUserEmail">Email:</label>
+        <input type="email" id="editUserEmail" name="email" required />
+      </div>
+      <div class="form-group">
+        <label for="editUserType">User Type:</label>
+        <select id="editUserType" name="userType" required>
+          <option value="admin">Admin</option>
+          <option value="barista">Barista</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" data-modal="editUserModal">
+          Cancel
+        </button>
+        <button type="submit" class="btn-submit">Update User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div id="deleteUserModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Delete User</h2>
+      <span class="close" data-modal="deleteUserModal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete the user:</p>
+      <p class="user-to-delete" id="deleteUserEmail"></p>
+      <p class="warning">This action cannot be undone.</p>
+    </div>
+    <form id="deleteUserForm">
+      <input type="hidden" id="deleteUserId" name="userId" />
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" data-modal="deleteUserModal">
+          Cancel
+        </button>
+        <button type="submit" class="btn-delete">Delete User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    position: relative;
+    flex: 3;
+    max-width: none;
+    min-width: 250px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 2px 8px rgba(60, 42, 33, 0.1);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent, #f5ae43);
+    box-shadow: 0 4px 12px rgba(245, 174, 67, 0.2);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .no-results p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .users-container {
+    width: 100%;
+    margin: 0;
+    padding: 2rem;
+  }
+
+  .users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(60, 42, 33, 0.1);
+    overflow: hidden;
+  }
+
+  .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .users-table thead {
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .users-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .users-table tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  .users-table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  .users-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .user-type-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .user-type-badge.admin {
+    background: #ff5252;
+    color: white;
+  }
+
+  .user-type-badge.barista {
+    background: #4caf50;
+    color: white;
+  }
+
+  .user-type-badge.teacher {
+    background: #2196f3;
+    color: white;
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+
+  .action-button {
+    background: var(--accent, #f5ae43);
+    color: var(--coffee-dark, #3c2a21);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .action-button:hover {
+    background: var(--coffee-medium, #8b4513);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .action-button.add-user {
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    flex: 1;
+  }
+
+  .action-button.add-user:hover {
+    background: var(--accent, #f5ae43);
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .action-button.edit {
+    background: #2196f3;
+    color: white;
+  }
+
+  .action-button.edit:hover {
+    background: #1976d2;
+  }
+
+  .action-button.delete {
+    background: #f44336;
+    color: white;
+  }
+
+  .action-button.delete:hover {
+    background: #d32f2f;
+  }
+
+  .plus-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .close {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .close:hover {
+    color: var(--accent, #f5ae43);
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent, #f5ae43);
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .btn-cancel,
+  .btn-submit,
+  .btn-delete {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-cancel {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background: #5a6268;
+  }
+
+  .btn-submit {
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+  }
+
+  .btn-submit:hover {
+    background: var(--accent, #f5ae43);
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background: #c82333;
+  }
+
+  .user-to-delete {
+    font-weight: bold;
+    color: var(--coffee-dark, #3c2a21);
+    font-size: 1.1rem;
+    margin: 1rem 0;
+  }
+
+  .warning {
+    color: #dc3545;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive design */
+  @media screen and (max-width: 768px) {
+    .users-container {
+      padding: 1rem;
+    }
+
+    .users-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-container {
+      max-width: none;
+      min-width: none;
+      order: 1;
+    }
+
+    .action-button.add-user {
+      order: 2;
+      justify-content: center;
+    }
+
+    .users-table {
+      font-size: 0.9rem;
+    }
+
+    .users-table th,
+    .users-table td {
+      padding: 0.75rem 0.5rem;
+    }
+
+    .action-button {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+    }
+
+    .modal-content {
+      width: 95%;
+      margin: 1rem;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-actions {
+      padding: 1rem;
+    }
+
+    .modal-actions {
+      flex-direction: column;
+    }
+
+    .btn-cancel,
+    .btn-submit,
+    .btn-delete {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .users-table th:nth-child(2),
+    .users-table td:nth-child(2) {
+      display: none;
+    }
+
+    .actions-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .action-button {
+      margin-right: 0;
+      text-align: center;
+      width: 100%;
+    }
+  }</style
+>>
+
+<script src="/js/users.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

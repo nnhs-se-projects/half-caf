@@ -123,9 +123,9 @@ route.post("/updatePeriod", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-route.get("/addUser", async (req, res) => {
-  res.render("addUser");
+route.get("/users", async (req, res) => {
+  const users = await User.find();
+  res.render("users", { users });
 });
 
 route.post("/addUser", async (req, res) => {
@@ -137,33 +137,10 @@ route.post("/addUser", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/deleteUser", async (req, res) => {
-  const users = await User.find();
-  res.render("deleteUser", { users });
-});
-
 route.delete("/deleteUser/:id", async (req, res) => {
   const userId = req.params.id;
   await User.findByIdAndRemove(userId);
   res.end();
-});
-
-route.get("/modifyUser", async (req, res) => {
-  const allUsers = await User.find();
-
-  const { id } = req.query;
-
-  let selectedUser;
-  if (id != null) {
-    selectedUser = await User.findById(id);
-  } else if (allUsers[0] !== null && allUsers[0] !== undefined) {
-    selectedUser = allUsers[0];
-  }
-
-  res.render("modifyUser", {
-    users: allUsers,
-    selectedUser,
-  });
 });
 
 route.post("/modifyUser/:id", async (req, res) => {
