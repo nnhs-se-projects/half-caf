@@ -3,7 +3,6 @@
  */
 
 const mongoose = require("mongoose");
-// const MenuItem = require("./menuItem");
 
 const schema = new mongoose.Schema({
   name: {
@@ -15,6 +14,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   orderThreshold: {
+    // if the quantity is less than this number, the ingredient will be highlighted red on the inventory page
     type: Number,
     required: true,
   },

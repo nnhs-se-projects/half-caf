@@ -5,19 +5,15 @@
 <!-- Main Site -->
 <div id="mainContent" class="adminPage" id="page">
   <div class="userHdr">Add Ingredient</div>
-  <input type="text" id="name" placeholder="Name..." />
-  <input
-    type="number"
-    id="quantity"
-    placeholder="Quantity...amount in storage"
-  />
+  <input type="text" id="name" placeholder="Name" />
+  <input type="number" id="quantity" placeholder="Amount in storage now" />
   <input
     type="number"
     id="orderThreshold"
-    placeholder="Quantity at which more of the ingredient should be ordered"
+    placeholder="Order threshold of ingredient*"
   />
-  <input type="text" id="unit" placeholder="Unit...measure of 1" />
-  <input type="number" id="price" placeholder="Price...price per unit" />
+  <input type="text" id="unit" placeholder="Unit name (e.g. pumps)" />
+  <input type="number" id="price" placeholder="Price per unit" />
 
   <div class="dropdown-check-list">
     <h6>Choose type of ingredient:</h6>
@@ -46,6 +42,11 @@
   </div>
 
   <input type="submit" class="submit" value="Add Ingredient" />
+
+  <h6>
+    *The ingredient will be highlighted as red on the inventory page if the
+    quantity is below this number
+  </h6>
   <style>
     #tempLabel {
       margin-right: 5px;

@@ -331,8 +331,24 @@ route.get("/inventoryManager", async (req, res) => {
     menuItemExpenses.push(totalCost);
   }
 
-  // For each of the past 50 drinks ordered up the cost of the ingredients and push to a list
   const drinks = await Drink.find({ completed: true });
+
+  let allTimeExpenses = 0;
+  let allTimeRevenue = 0;
+  for (const drink of drinks) {
+    let i = 0;
+    for (const ingredientId of drink.ingredients) {
+      const ingredient = await Ingredient.findById(ingredientId);
+      if (ingredient) {
+        allTimeExpenses += ingredient.price * drink.ingredientCounts[i];
+      }
+      i++;
+    }
+
+    allTimeRevenue += drink.price;
+  }
+
+  // get individual costs for the last 50 drinks
   drinks.reverse().slice(0, 50);
   const drinkExpenses = [];
   for (const drink of drinks) {
@@ -355,6 +371,8 @@ route.get("/inventoryManager", async (req, res) => {
     menuItemExpenses,
     drinks,
     drinkExpenses,
+    allTimeExpenses,
+    allTimeRevenue,
   });
 });
 
