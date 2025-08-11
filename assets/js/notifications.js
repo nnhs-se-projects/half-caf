@@ -164,13 +164,8 @@ function showOrderCancelledPopup(data) {
               <div class="coffee-item-name">${item.name}</div>
               <div class="coffee-item-temp">${item.temp || ""}</div>
               ${
-                item.flavors
-                  ? `<div class="coffee-item-flavors">Flavors: ${item.flavors}</div>`
-                  : ""
-              }
-              ${
-                item.toppings
-                  ? `<div class="coffee-item-toppings">Toppings: ${item.toppings}</div>`
+                item.ingredients
+                  ? `<div class="coffee-item-ingredients">${item.ingredients}</div>`
                   : ""
               }
             </li>
@@ -358,7 +353,7 @@ function showOrderCancelledPopup(data) {
         font-weight: bold;
       }
 
-      .coffee-item-flavors, .coffee-item-toppings {
+      .coffee-item-ingredients, .coffee-item-ingredients {
         color: #5D4037;
         margin-top: 3px;
       }
@@ -401,7 +396,7 @@ function showOrderCancelledPopup(data) {
     </div>
     
     <div class="popup-content">
-      <p>Your coffee order has been cancelled.</p>
+      <p>Your order has been cancelled.</p>
       
       <div class="coffee-note">
         <div class="barista-message">Barista note:</div>

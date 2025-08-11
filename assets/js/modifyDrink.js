@@ -53,12 +53,26 @@ function encodeImageFileAsURL() {
   }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const ingredients = document.querySelectorAll("input#ingredients");
+  for (const ingredient of ingredients) {
+    ingredient.addEventListener("click", () => {
+      const numElem = ingredient.parentElement.lastElementChild;
+      numElem.hidden = !numElem.hidden;
+      if (numElem.hidden) {
+        numElem.value = 0;
+      } else {
+        numElem.value = 1;
+      }
+    });
+  }
+});
+
 // listen for change in the dropdown menu
 document
   .getElementById("filter")
   .addEventListener("change", handleSelectChange);
 
-// creates a topping with a name chosen by an admin
 const saveDrinkButton = document.querySelector("input.submit");
 
 const caf = document.getElementById("caffeination");
@@ -100,21 +114,23 @@ saveDrinkButton.addEventListener("click", async () => {
     return;
   }
 
-  const flavors = document.querySelectorAll("input#flavor");
-  const checkedFlavors = [];
-  for (let i = 0; i < flavors.length; i++) {
-    if (flavors[i].checked) {
-      checkedFlavors.push(flavors[i].value);
+  const ingredients = document.querySelectorAll("input#ingredients");
+  const checkedIngredients = [];
+  const ingredientCounts = [];
+  for (let i = 0; i < ingredients.length; i++) {
+    if (ingredients[i].checked) {
+      checkedIngredients.push(ingredients[i].value);
+
+      let count = Number(ingredients[i].parentElement.lastElementChild.value);
+
+      if (count < 1 || count > 100) {
+        count = 1;
+      }
+
+      ingredientCounts.push(count);
     }
   }
 
-  const toppings = document.querySelectorAll("input#toppings");
-  const checkedToppings = [];
-  for (let i = 0; i < toppings.length; i++) {
-    if (toppings[i].checked) {
-      checkedToppings.push(toppings[i].value);
-    }
-  }
   const popular = document.getElementById("popular").checked;
   const special = document.getElementById("special").checked;
   const imageData = srcData;
@@ -122,8 +138,8 @@ saveDrinkButton.addEventListener("click", async () => {
     name,
     description,
     price,
-    checkedFlavors,
-    checkedToppings,
+    checkedIngredients,
+    ingredientCounts,
     checkedTemps,
     popular,
     caf: caf.checked,

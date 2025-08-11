@@ -14,22 +14,20 @@ const schema = new mongoose.Schema({
     required: false,
   },
   price: {
-    type: String,
+    type: Number,
     required: true,
   },
   popular: {
     type: Boolean,
     required: false,
   },
-  flavors: {
+  ingredients: {
     type: [mongoose.Schema.ObjectId],
-    ref: "Flavor",
+    ref: "Ingredient",
     required: true,
   },
-  toppings: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "Topping",
-    required: true,
+  ingredientCounts: {
+    type: [Number],
   },
   temps: {
     type: [String],

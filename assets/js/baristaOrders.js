@@ -23,7 +23,7 @@ function addListenerToCancelButtons() {
         cancelButton2.disabled = true;
       }
 
-      const response = await fetch(`/barista/${orderId}`, {
+      const response = await fetch(`/barista/orders/${orderId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function addListenerToCancelButtons() {
       });
 
       if (response.ok) {
-        window.location = "/barista";
+        window.location = "/barista/orders";
       } else {
         console.log("error deleting order");
       }
@@ -63,7 +63,7 @@ function addListenerToFinishButtons() {
         cancelButton.disabled = true;
       }
 
-      const response = await fetch(`/barista/${orderId}`, {
+      const response = await fetch(`/barista/orders/${orderId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ function addListenerToFinishButtons() {
       });
 
       if (response.ok) {
-        window.location = "/barista";
+        window.location = "/barista/orders";
       } else {
         console.log("error finishing order");
       }
@@ -130,8 +130,7 @@ window.io().on("New order placed", (data) => {
           </td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
-          <td>${drink.flavors}</td>
-          <td>${drink.toppings}</td>
+          <td>${drink.ingredients}</td>
           <td>${drink.caffeinated ? "No" : "Yes"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
@@ -163,8 +162,7 @@ window.io().on("New order placed", (data) => {
           }</td>
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
-          <td>${drink.flavors}</td>
-          <td>${drink.toppings}</td>
+          <td>${drink.ingredients}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>

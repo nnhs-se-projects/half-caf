@@ -14,15 +14,13 @@ const schema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  flavors: {
+  ingredients: {
     type: [mongoose.Schema.ObjectId],
-    ref: "Flavor",
+    ref: "Ingredient",
     required: true,
   },
-  toppings: {
-    type: [mongoose.Schema.ObjectId],
-    ref: "Topping",
-    required: true,
+  ingredientCounts: {
+    type: [Number],
   },
   temps: {
     type: String,

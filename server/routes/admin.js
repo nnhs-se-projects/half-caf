@@ -1,8 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
-const Topping = require("../model/topping");
-const Flavor = require("../model/flavor");
+const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temps.json");
 const Drink = require("../model/drink");
@@ -175,26 +174,11 @@ route.post("/modifyUser/:id", async (req, res) => {
 });
 
 route.get("/addDrink", async (req, res) => {
-  const flavors = await Flavor.find();
-  const toppings = await Topping.find();
+  const ingredients = await Ingredient.find();
 
-  const formattedFlavors = flavors.map((flavor) => {
-    return {
-      flavor: flavor.flavor,
-      id: flavor._id,
-    };
-  });
-
-  const formattedToppings = toppings.map((topping) => {
-    return {
-      topping: topping.topping,
-      id: topping._id,
-    };
-  });
   res.render("addDrink", {
     temps: TempJson,
-    toppings: formattedToppings,
-    flavors: formattedFlavors,
+    ingredients,
   });
 });
 
@@ -212,8 +196,7 @@ route.get("/modifyDrink", async (req, res) => {
   const { id } = req.query;
 
   const menuItems = await MenuItem.find();
-  const toppings = await Topping.find();
-  const flavors = await Flavor.find();
+  const ingredients = await Ingredient.find();
 
   let selectedMenuItem;
   // check if any drink has been selected
@@ -235,8 +218,7 @@ route.get("/modifyDrink", async (req, res) => {
   res.render("modifyDrink", {
     menuItems: formattedMenuItems,
     selectedMenuItem,
-    toppings,
-    flavors,
+    ingredients,
     temps: TempJson,
   });
 });
@@ -247,8 +229,8 @@ route.post("/addDrink", async (req, res) => {
     description: req.body.description,
     price: req.body.price,
     popular: req.body.popular,
-    flavors: req.body.checkedFlavors,
-    toppings: req.body.checkedToppings,
+    ingredients: req.body.checkedIngredients,
+    ingredientCounts: req.body.ingredientCounts,
     temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     allowDecaf: req.body.allowDecaf,
@@ -265,10 +247,10 @@ route.post("/modifyDrink/:id", async (req, res) => {
     menuItem.name = req.body.name;
     menuItem.description = req.body.description;
     menuItem.price = req.body.price;
-    menuItem.flavors = req.body.checkedFlavors ? req.body.checkedFlavors : [];
-    menuItem.toppings = req.body.checkedToppings
-      ? req.body.checkedToppings
+    menuItem.ingredients = req.body.checkedIngredients
+      ? req.body.checkedIngredients
       : [];
+    menuItem.ingredientCounts = req.body.ingredientCounts;
     menuItem.temps = req.body.checkedTemps;
     menuItem.caffeination = req.body.caf;
     menuItem.allowDecaf = req.body.allowDecaf;
@@ -301,6 +283,99 @@ route.delete("/deleteDrink/:id", async (req, res) => {
   res.end();
 });
 
+route.get("/inventoryManager", async (req, res) => {
+  const ingredients = await Ingredient.find();
+  const orders = await Order.find();
+  const dailyConsumptionAvgs = [];
+  const currentTime = new Date().getTime();
+  for (const ingredient of ingredients) {
+    let totalConsumption = 0;
+    for (const order of orders) {
+      const orderDateStr = order.timestamp.substring(
+        0,
+        order.timestamp.indexOf(" ") // only get the year, day, and month
+      );
+      const orderDate = new Date(orderDateStr);
+      const orderTime = orderDate.getTime();
+      if (
+        order.complete === true &&
+        orderTime >= currentTime - 1209600000 // 14 days in milliseconds
+      ) {
+        for (const drinkId of order.drinks) {
+          const drink = await Drink.findById(drinkId);
+          if (drink && drink.ingredients.includes(ingredient.id)) {
+            totalConsumption +=
+              drink.ingredientCounts[drink.ingredients.indexOf(ingredient.id)];
+          }
+        }
+      }
+    }
+    dailyConsumptionAvgs.push(
+      totalConsumption / 10 // Average over the last 10 business days (assuming no orders are placed on weekends)
+    );
+  }
+
+  // For each menu item add up the cost of the ingredients and push to a list
+  const menuItems = await MenuItem.find();
+  const menuItemExpenses = [];
+  for (const menuItem of menuItems) {
+    let totalCost = 0;
+    let i = 0;
+    for (const ingredientId of menuItem.ingredients) {
+      const ingredient = await Ingredient.findById(ingredientId);
+      if (ingredient) {
+        totalCost += ingredient.price * menuItem.ingredientCounts[i];
+      }
+      i++;
+    }
+    menuItemExpenses.push(totalCost);
+  }
+
+  const drinks = await Drink.find({ completed: true });
+
+  let allTimeExpenses = 0;
+  let allTimeRevenue = 0;
+  for (const drink of drinks) {
+    let i = 0;
+    for (const ingredientId of drink.ingredients) {
+      const ingredient = await Ingredient.findById(ingredientId);
+      if (ingredient) {
+        allTimeExpenses += ingredient.price * drink.ingredientCounts[i];
+      }
+      i++;
+    }
+
+    allTimeRevenue += drink.price;
+  }
+
+  // get individual costs for the last 50 drinks
+  drinks.reverse().slice(0, 50);
+  const drinkExpenses = [];
+  for (const drink of drinks) {
+    let totalCost = 0;
+    let i = 0;
+    for (const ingredientId of drink.ingredients) {
+      const ingredient = await Ingredient.findById(ingredientId);
+      if (ingredient) {
+        totalCost += ingredient.price * drink.ingredientCounts[i];
+      }
+      i++;
+    }
+    drinkExpenses.push(totalCost);
+  }
+
+  res.render("inventoryManager", {
+    ingredients,
+    dailyConsumptionAvgs,
+    menuItems,
+    menuItemExpenses,
+    drinks,
+    drinkExpenses,
+    allTimeExpenses,
+    allTimeRevenue,
+  });
+});
+
 route.get("/metrics", async (req, res) => {
   const deliveryPersons = await DeliveryPerson.find();
   const delivererNames = [];
@@ -317,8 +392,7 @@ route.get("/metrics", async (req, res) => {
   const orders = await Order.find();
   const drinks = await Drink.find();
   const users = await User.find();
-  const flavors = await Flavor.find();
-  const toppings = await Topping.find();
+  const ingredients = await Ingredient.find();
   const menuItems = await MenuItem.find();
 
   const ordersPerHour = [
@@ -585,33 +659,23 @@ route.get("/metrics", async (req, res) => {
     revenuePerMenuItem.push(revenueOfMenuItem);
   }
 
-  const toppingNames = [];
-  const ordersPerTopping = [];
-  for (const topping of toppings) {
-    let ordersOfTopping = 0;
+  const ingredientNames = [];
+  const ordersPerIngredient = [];
+  for (const ingredient of ingredients) {
+    let ordersOfIngredient = 0;
     for (const drink of drinks) {
-      if (drink.completed === true && drink.toppings.includes(topping.id)) {
-        ordersOfTopping++;
+      if (
+        drink.completed === true &&
+        drink.ingredients.includes(ingredient.id)
+      ) {
+        ordersOfIngredient++;
       }
     }
 
-    toppingNames.push(topping.topping);
-    ordersPerTopping.push(ordersOfTopping);
+    ingredientNames.push(ingredient.name);
+    ordersPerIngredient.push(ordersOfIngredient);
   }
 
-  const flavorNames = [];
-  const ordersPerFlavor = [];
-  for (const flavor of flavors) {
-    let ordersOfFlavor = 0;
-    for (const drink of drinks) {
-      if (drink.completed === true && drink.flavors.includes(flavor.id)) {
-        ordersOfFlavor++;
-      }
-    }
-
-    flavorNames.push(flavor.flavor);
-    ordersPerFlavor.push(ordersOfFlavor);
-  }
   res.render("metrics", {
     userEmails,
     ordersPerUser,
@@ -619,10 +683,8 @@ route.get("/metrics", async (req, res) => {
     menuItemNames,
     ordersPerMenuItem,
     revenuePerMenuItem,
-    toppingNames,
-    ordersPerTopping,
-    flavorNames,
-    ordersPerFlavor,
+    ingredientNames,
+    ordersPerIngredient,
     totalOrdersNum,
     totalDrinkOrdersNum,
     totalRevenue,
@@ -685,68 +747,58 @@ route.delete("/wipeDevOrders", async (req, res) => {
   res.status(200).send("Deleted all dev orders");
 });
 
-route.get("/addFlavor", async (req, res) => {
-  res.render("addFlavor");
+route.get("/addIngredient", async (req, res) => {
+  res.render("addIngredient");
 });
 
-// updates database with new flavor options
-route.post("/addFlavor", async (req, res) => {
-  const flavor = new Flavor({
-    flavor: req.body.flavor,
-    isAvailable: true,
-  });
-  await flavor.save();
-  res.status(201).end();
-});
-
-route.get("/deleteFlavor", async (req, res) => {
-  const flavors = await Flavor.find();
-
-  const formattedFlavors = flavors.map((flavor) => {
-    return {
-      flavor: flavor.flavor,
-      id: flavor._id,
-    };
-  });
-  res.render("deleteFlavor", { flavors: formattedFlavors });
-});
-
-route.delete("/deleteFlavor/:id", async (req, res) => {
-  const flavorId = req.params.id;
-  await Flavor.findByIdAndRemove(flavorId);
-  res.end();
-});
-
-route.get("/addTopping", async (req, res) => {
-  res.render("addTopping");
-});
-
-// updates database with new topping options
-route.post("/addTopping", async (req, res) => {
-  const topping = new Topping({
-    topping: req.body.topping,
-    isAvailable: true,
+route.post("/addIngredient", async (req, res) => {
+  const ingredient = new Ingredient({
+    name: req.body.name,
+    quantity: req.body.quantity,
+    orderThreshold: req.body.orderThreshold,
+    unit: req.body.unit,
     price: req.body.price,
+    type: req.body.type,
   });
-  await topping.save();
+  await ingredient.save();
   res.status(201).end();
 });
 
-route.get("/deleteTopping", async (req, res) => {
-  const toppings = await Topping.find();
-
-  const formattedToppings = toppings.map((topping) => {
-    return {
-      topping: topping.topping,
-      id: topping._id,
-    };
-  });
-  res.render("deleteTopping", { toppings: formattedToppings });
+route.get("/editIngredient", async (req, res) => {
+  const ingredients = await Ingredient.find();
+  // Determine the selected ingredient if an id query parameter is provided
+  const { id } = req.query;
+  let selectedIngredient = null;
+  if (id != null) {
+    selectedIngredient = await Ingredient.findById(id);
+  } else if (ingredients[0] !== null && ingredients[0] !== undefined) {
+    selectedIngredient = ingredients[0];
+  } else {
+    selectedIngredient = undefined;
+  }
+  res.render("editIngredient", { ingredients, selectedIngredient });
 });
 
-route.delete("/deleteTopping/:id", async (req, res) => {
-  const toppingId = req.params.id;
-  await Topping.findByIdAndRemove(toppingId);
+route.post("/editIngredient/:id", async (req, res) => {
+  const ingredient = await Ingredient.findById(req.params.id);
+  ingredient.name = req.body.name;
+  ingredient.quantity = req.body.quantity;
+  ingredient.orderThreshold = req.body.orderThreshold;
+  ingredient.unit = req.body.unit;
+  ingredient.price = req.body.price;
+  ingredient.type = req.body.type;
+  await ingredient.save();
+  res.status(201).end();
+});
+
+route.get("/deleteIngredient", async (req, res) => {
+  const ingredients = await Ingredient.find();
+  res.render("deleteIngredient", { ingredients });
+});
+
+route.delete("/deleteIngredient/:id", async (req, res) => {
+  const ingredientId = req.params.id;
+  await Ingredient.findByIdAndRemove(ingredientId);
   res.end();
 });
 

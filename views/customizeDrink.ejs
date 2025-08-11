@@ -28,19 +28,29 @@
         <li><input id="isDecaf" type="checkbox" <%=!drink.caffeination ? "checked" : "" %>/>Decaf</li>
       </ul>
     </div>
-    <% if(flavors.length > 0) { %>
     <div class="dropdown-check-list">
-      <h6>Choose Flavors:</h6>
+      <h6>Choose Ingredients:</h6>
       <ul class="items">
-        <% for (let flavor of flavors) {%>
-        <li>
-          <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
-          flavor.flavor %>
+        <% if(drinkIngredients.length > 0) { %>
+        <% let i = 0; for (let ingredient of drinkIngredients) {%>
+        <li <%= ingredient.type === "uncustomizable" ? "hidden": ""  %>>
+          <input checked id="drinkIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
+          ingredient.name %>
+          <input type="number" value="<%=drink.ingredientCounts[i]%>">
         </li>
-        <%}%>
+        <%i++;}}%>
+
+        <% if(otherIngredients.length > 0) { %>
+        <% for (let ingredient of otherIngredients) {%>
+          <li>
+            <input id="otherIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
+            ingredient.name %>
+            <input hidden type="number" value="0">
+          </li>
+          <%}}%>
       </ul>
     </div>
-    <%}%> <% if(temps.length > 0) { %>
+    <% if(temps.length > 0) { %>
     <div class="dropdown-check-list">
       <h6>Choose a Temperature:</h6>
       <fieldset>
@@ -59,19 +69,6 @@
       </fieldset>
     </div>
     <% } %>
-    <% if(toppings.length > 0) { %>
-    <div class="dropdown-check-list">
-      <h6>Choose Add-Ons:</h6>
-      <ul class="items">
-        <% for (let topping of toppings) {%>
-        <li>
-          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
-          topping.topping %>
-        </li>
-        <%}%>
-      </ul>
-    </div>
-    <%}%>
     <input
       type="text"
       id="instructions"

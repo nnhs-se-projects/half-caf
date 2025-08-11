@@ -85,15 +85,18 @@
                       <%= drink.temps %>
                     </span>
 
-                    <% if (drink.flavors && drink.flavors.length) { %>
-                    <div class="drink-flavors">
-                      Flavors: <%= drink.flavors.join(', ') %>
+                    <% if (drink.ingredients && drink.ingredients.length) { %>
+                    <% let allIngredients = ""; %> <% for(let i = 0; i <
+                    drink.ingredients.length; i++) {
+                    if(drink.ingredients[i].type == "customizable") {
+                    allIngredients += (drink.ingredientCounts[i] == 0 ? "No " :
+                    drink.ingredientCounts[i] + " ") + drink.ingredients[i].name
+                    + ", "; } } %>
+                    <div class="drink-ingredients">
+                      <%= allIngredients.substring(0, allIngredients.length-2)
+                      %>
                     </div>
-                    <% } %> <% if (drink.toppings && drink.toppings.length) { %>
-                    <div class="drink-toppings">
-                      + Add-Ons: <%= drink.toppings.join(', ') %>
-                    </div>
-                    <% } %> <% if (drink.instructions) { %>
+                    <% } %> %> <% if (drink.instructions) { %>
                     <div class="drink-instructions">
                       "<%= drink.instructions %>"
                     </div>
@@ -430,7 +433,7 @@
       color: white;
     }
 
-    .drink-toppings {
+    .drink-ingredients {
       margin: 0.5rem 0;
       font-style: italic;
     }

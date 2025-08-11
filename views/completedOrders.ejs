@@ -16,8 +16,7 @@
           <th>Teacher</th>
           <th>Drink</th>
           <th>Temp</th>
-          <th>Flavors</th>
-          <th>Toppings</th>
+          <th>Ingredients</th>
           <th>Decaf</th>
           <th>Special Instructions</th>
           <th>Time</th>
@@ -45,8 +44,7 @@
               ><%=tempDrink.temp%></span
             >
           </td>
-          <td><%=tempDrink.flavors%></td>
-          <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.ingredients%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
           <td><%=tempDrink.instructions%></td>
           <td><%=order.timestamp.split('/')[0]%></td>
@@ -111,6 +109,6 @@
   }
 </style>
 
-<script src="/js/completed.js"></script>
+<script src="/js/completedOrders.js"></script>
 
 <%- include('include/_footer') %>

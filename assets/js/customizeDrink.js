@@ -13,24 +13,76 @@ if (isDecaf !== null) {
   });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const otherIngredients = document.querySelectorAll("input#otherIngredients");
+  for (const otherIngredient of otherIngredients) {
+    otherIngredient.addEventListener("click", () => {
+      const numElem = otherIngredient.parentElement.lastElementChild;
+      numElem.hidden = !numElem.hidden;
+      if (numElem.hidden) {
+        numElem.value = 0;
+      } else {
+        numElem.value = 1;
+      }
+    });
+  }
+
+  const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
+  for (const drinkIngredient of drinkIngredients) {
+    drinkIngredient.addEventListener("click", () => {
+      const numElem = drinkIngredient.parentElement.lastElementChild;
+      numElem.hidden = !numElem.hidden;
+      if (numElem.hidden) {
+        numElem.value = 0;
+      } else {
+        numElem.value = 1;
+      }
+    });
+  }
+});
+
 const addToOrderButton = document.querySelector("input.submit");
 addToOrderButton.addEventListener("click", async () => {
   const name = document.getElementById("name").textContent;
   const price = document.getElementById("price").textContent.match(/(\d+)/)[0];
-  const flavors = document.querySelectorAll("input#flavors");
-  const checkedFlavors = [];
-  for (let i = 0; i < flavors.length; i++) {
-    if (flavors[i].checked) {
-      checkedFlavors.push(flavors[i].value);
+
+  const ingredients = [];
+  const ingredientCounts = [];
+
+  const otherIngredients = document.querySelectorAll("input#otherIngredients");
+  for (let i = 0; i < otherIngredients.length; i++) {
+    if (otherIngredients[i].checked) {
+      ingredients.push(otherIngredients[i].value);
+      let count = Number(
+        otherIngredients[i].parentElement.lastElementChild.value
+      );
+
+      if (count < 1 || count > 100) {
+        count = 1;
+      }
+
+      ingredientCounts.push(count);
     }
   }
-  const toppings = document.querySelectorAll("input#toppings");
-  const checkedToppings = [];
-  for (let i = 0; i < toppings.length; i++) {
-    if (toppings[i].checked) {
-      checkedToppings.push(toppings[i].value);
+
+  const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
+  for (let i = 0; i < drinkIngredients.length; i++) {
+    ingredients.push(drinkIngredients[i].value); // default ingredients are added to the list even if they are not checked so that the barista can explicitly see that the user wants none of this ingredient
+    let count = Number(
+      drinkIngredients[i].parentElement.lastElementChild.value
+    );
+
+    if (count < 1 || count > 100) {
+      count = 1;
     }
+
+    if (!drinkIngredients[i].checked) {
+      count = 0;
+    }
+
+    ingredientCounts.push(count);
   }
+
   const tempInput = document.querySelector("input.temps:checked");
   const temp = tempInput !== null ? tempInput.value : "Default";
 
@@ -44,8 +96,8 @@ addToOrderButton.addEventListener("click", async () => {
   const drink = {
     name,
     price,
-    checkedFlavors,
-    checkedToppings,
+    ingredients,
+    ingredientCounts,
     temp,
     caf: !isDecaf.checked,
     instructions,
