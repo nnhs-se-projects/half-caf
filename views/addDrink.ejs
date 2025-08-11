@@ -17,31 +17,19 @@
   <input type="text" id="name" placeholder="Name..." />
   <input type="text" id="description" placeholder="Description..." />
   <input type="text" id="price" placeholder="Price..." />
-  <!--accesses all the flavors and displays them in a list of checkboxes-->
-  <div id="flavorsList" class="dropdown-check-list">
-    <span class="anchor">Select Flavors</span>
+  <!--accesses all the ingredients and displays them in a list of checkboxes-->
+  <div id="ingredientsList" class="dropdown-check-list">
+    <span class="anchor">Select Default Ingredients</span>
     <ul class="items">
-      <% for (let flavor of flavors) {%>
+      <% for (let ingredient of ingredients) {%>
       <li>
-        <input id="flavors" type="checkbox" value="<%= flavor.id %>" /><%=
-        flavor.flavor %>
+        <input id="ingredients" type="checkbox" value="<%= ingredient.id %>" /><%=
+        ingredient.name %>
+        <input hidden type="number" value="0" min="0" />
       </li>
       <%}%>
     </ul>
   </div>
-  <!--accesses all the toppings and displays them in a list of checkboxes-->
-  <div id="pageRight">
-    <div id="toppings" class="dropdown-check-list">
-      <span class="anchor">Select Add-Ons</span>
-      <ul class="items">
-        <% for (let topping of toppings) {%>
-        <li>
-          <input id="toppings" type="checkbox" value="<%= topping.id %>" /><%=
-          topping.topping %>
-        </li>
-        <%}%>
-      </ul>
-    </div>
     <!--accesses all the temps from the json and displays them as checkboxes-->
     <span class="anchor">Select Temps</span>
     <div class="tempBox">
@@ -146,17 +134,6 @@
       gap: 1rem;
     }
   </style>
-
-  <!--
-  <style>
-    #pageRight {
-      float: right;
-    }
-    #flavorsList {
-      float: left;
-    }
-  </style>
--->
 
   <!-- /Main Site -->
 

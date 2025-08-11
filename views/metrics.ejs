@@ -9,15 +9,11 @@
   value="<%= JSON.stringify(ordersPerUser).replace("[", "").replace("]", "") %>"
   /> <input type="hidden" id="revenuePerUser" value="<%=
   JSON.stringify(revenuePerUser).replace("[", "").replace("]", "") %>" /> <input
-  type="hidden" id="toppingNames"
-  value="<%=JSON.stringify(toppingNames).replace("[", "").replace("]",
-  "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerTopping"
-  value="<%= JSON.stringify(ordersPerTopping).replace("[", "").replace("]", "")
-  %>" /> <input type="hidden" id="flavorNames"
-  value="<%=JSON.stringify(flavorNames).replace("[", "").replace("]",
-  "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerFlavor"
-  value="<%= JSON.stringify(ordersPerFlavor).replace("[", "").replace("]", "")
-  %>" /> <input type="hidden" id="ordersPerHour" value="<%=
+  type="hidden" id="ingredientNames"
+  value="<%=JSON.stringify(ingredientNames).replace("[", "").replace("]",
+  "").replaceAll('"',"")%>" /> <input type="hidden" id="ordersPerIngredient"
+  value="<%= JSON.stringify(ordersPerIngredient).replace("[", "").replace("]",
+  "") %>" /> <input type="hidden" id="ordersPerHour" value="<%=
   JSON.stringify(ordersPerHour).replace("[", "").replace("]", "") %>" /> <input
   type="hidden" id="revenuePerHour" value="<%=
   JSON.stringify(revenuePerHour).replace("[", "").replace("]", "") %>" /> <input
@@ -32,8 +28,7 @@
   <input type="submit" id="delete-all" value="DELETE ALL DATA" />
   <input type="submit" id="delete-dev" value="DELETE ALL DEV ORDERS" />
   <div class="charts">
-    <canvas id="toppingsChartCanvas" width="1980" height="800"></canvas>
-    <canvas id="flavorsChartCanvas" width="1980" height="800"></canvas>
+    <canvas id="ingredientsChartCanvas" width="1980" height="800"></canvas>
     <h6>Total orders per hour:</h6>
     <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
     <h6>Total revenue per hour:</h6>
@@ -240,14 +235,11 @@
     })
   );
 
-  const toppingNames = document.getElementById("toppingNames").value.split(",");
-  const ordersPerTopping = document
-    .getElementById("ordersPerTopping")
+  const ingredientNames = document
+    .getElementById("ingredientNames")
     .value.split(",");
-
-  const flavorNames = document.getElementById("flavorNames").value.split(",");
-  const ordersPerFlavor = document
-    .getElementById("ordersPerFlavor")
+  const ordersPerIngredient = document
+    .getElementById("ordersPerIngredient")
     .value.split(",");
 
   const hours = [
@@ -289,16 +281,18 @@
   const averageTimer = document.getElementById("averageTimer").value;
 
   document.addEventListener("DOMContentLoaded", () => {
-    const toppingsChartCanvas = document.getElementById("toppingsChartCanvas");
+    const ingredientsChartCanvas = document.getElementById(
+      "ingredientsChartCanvas"
+    );
 
-    let toppingsChart = new Chart(toppingsChartCanvas, {
+    let ingredientsChart = new Chart(ingredientsChartCanvas, {
       type: "bar",
       data: {
-        labels: toppingNames,
+        labels: ingredientNames,
         datasets: [
           {
-            label: "Orders Per Topping",
-            data: ordersPerTopping,
+            label: "Orders Per Ingredient",
+            data: ordersPerIngredient,
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
             borderWidth: 1,
@@ -307,29 +301,8 @@
       },
     });
 
-    toppingsChartCanvas.style.width = "100%";
-    toppingsChartCanvas.style.height = "800px";
-
-    const flavorsChartCanvas = document.getElementById("flavorsChartCanvas");
-
-    let flavorsChart = new Chart(flavorsChartCanvas, {
-      type: "bar",
-      data: {
-        labels: flavorNames,
-        datasets: [
-          {
-            label: "Orders Per Flavor",
-            data: ordersPerFlavor,
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-          },
-        ],
-      },
-    });
-
-    flavorsChartCanvas.style.width = "100%";
-    flavorsChartCanvas.style.height = "800px";
+    ingredientsChartCanvas.style.width = "100%";
+    ingredientsChartCanvas.style.height = "800px";
     const ordersPerHourCanvas = document.getElementById("ordersPerHourCanvas");
     let ordersPerHourChart = new Chart(ordersPerHourCanvas, {
       type: "bar",
