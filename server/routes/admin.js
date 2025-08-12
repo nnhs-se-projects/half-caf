@@ -151,75 +151,65 @@ route.post("/modifyUser/:id", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/addDrink", async (req, res) => {
-  const flavors = await Flavor.find();
-  const toppings = await Topping.find();
+function formatDrinkImageData(drink) {
+  if (drink && drink.imageData && drink.imageData.buffer) {
+    const buffer = drink.imageData.buffer;
+    // Try to decode as a string to check for the old format
+    const potentialDataUrl = buffer.toString("utf8");
 
-  const formattedFlavors = flavors.map((flavor) => {
-    return {
-      flavor: flavor.flavor,
-      id: flavor._id,
-    };
-  });
+    if (potentialDataUrl.startsWith("data:image")) {
+      // It's the old format, return the full data URL string
+      drink.imageData = potentialDataUrl;
+    } else {
+      // It's the new format (raw image data).
+      // Assume PNG and construct the data URL.
+      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
+    }
+  }
+  return drink;
+}
 
-  const formattedToppings = toppings.map((topping) => {
-    return {
-      topping: topping.topping,
-      id: topping._id,
-    };
-  });
-  res.render("addDrink", {
-    temps: TempJson,
-    toppings: formattedToppings,
-    flavors: formattedFlavors,
-  });
+// --- Drink Routes ---
+route.get("/drinks", async (req, res) => {
+  try {
+    const users = await User.find();
+    const toppings = await Topping.find();
+    const flavors = await Flavor.find();
+    let menuItems = await MenuItem.find().lean();
+
+    // Loop through all menu items and format their image data correctly
+    menuItems = menuItems.map(formatDrinkImageData);
+
+    res.render("drinks", {
+      users: users,
+      toppings: toppings,
+      flavors: flavors,
+      menuItems: menuItems,
+      temps: TempJson,
+    });
+  } catch (error) {
+    res.status(500).send({ message: "Error fetching data for drinks page" });
+  }
 });
 
+// API route to get a single menu item
 route.get("/api/menuItem/:id", async (req, res) => {
   try {
-    const menuItem = await MenuItem.findById(req.params.id);
-    res.json(menuItem);
+    let drink = await MenuItem.findById(req.params.id).lean();
+    if (!drink) return res.status(404).json({ error: "Not found" });
+
+    // Use the same helper to correctly format image data
+    drink = formatDrinkImageData(drink);
+
+    res.json(drink);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-route.get("/modifyDrink", async (req, res) => {
-  // get id of selected drink
-  const { id } = req.query;
-
-  const menuItems = await MenuItem.find();
-  const toppings = await Topping.find();
-  const flavors = await Flavor.find();
-
-  let selectedMenuItem;
-  // check if any drink has been selected
-  if (id != null) {
-    selectedMenuItem = await MenuItem.findById(id);
-  } else if (menuItems[0] !== null && menuItems[0] !== undefined) {
-    selectedMenuItem = menuItems[0];
-  } else {
-    selectedMenuItem = undefined;
-  }
-
-  const formattedMenuItems = menuItems.map((menuItem) => {
-    return {
-      name: menuItem.name,
-      id: menuItem._id,
-    };
-  });
-
-  res.render("modifyDrink", {
-    menuItems: formattedMenuItems,
-    selectedMenuItem,
-    toppings,
-    flavors,
-    temps: TempJson,
-  });
-});
 // updates database with new menu item
 route.post("/addDrink", async (req, res) => {
-  const drink = new MenuItem({
+  const drinkData = {
     name: req.body.name,
     description: req.body.description,
     price: req.body.price,
@@ -230,8 +220,18 @@ route.post("/addDrink", async (req, res) => {
     caffeination: req.body.caf,
     allowDecaf: req.body.allowDecaf,
     special: req.body.special,
-    imageData: req.body.imageData,
-  });
+  };
+
+  // Correctly parse and save image data
+  if (req.body.imageData && req.body.imageData.startsWith("data:image")) {
+    const base64Data = req.body.imageData.replace(
+      /^data:image\/\w+;base64,/,
+      ""
+    );
+    drinkData.imageData = Buffer.from(base64Data, "base64");
+  }
+
+  const drink = new MenuItem(drinkData);
   await drink.save();
   res.status(200).end();
 });
@@ -251,11 +251,19 @@ route.post("/modifyDrink/:id", async (req, res) => {
     menuItem.allowDecaf = req.body.allowDecaf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
-    menuItem.imageData = req.body.imageData
-      ? req.body.imageData
-      : menuItem.imageData;
+
+    // Correctly parse and save image data if a new image was provided
+    if (req.body.imageData && req.body.imageData.startsWith("data:image")) {
+      const base64Data = req.body.imageData.replace(
+        /^data:image\/\w+;base64,/,
+        ""
+      );
+      menuItem.imageData = Buffer.from(base64Data, "base64");
+    }
+    // If req.body.imageData is empty, we do nothing, preserving the old image.
+
     await menuItem.save();
-    res.status(200).json({ message: "Drink added successfully" });
+    res.status(200).json({ message: "Drink updated successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
