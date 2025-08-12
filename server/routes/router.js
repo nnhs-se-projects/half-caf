@@ -34,7 +34,9 @@ async function checkTime() {
     const currentWeekDay = await Weekday.findOne({
       day: currentTimeDate.getDay() - 1,
     });
-    currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+    if (currentWeekDay) {
+      currentSchedule = await Schedule.findById(currentWeekDay.schedule);
+    }
   } catch (error) {
     // console.log(error);
     return;
@@ -175,7 +177,7 @@ route.get("/redirectUser", async (req, res) => {
     if (role === "admin") {
       res.redirect("/admin/users");
     } else if (role === "barista") {
-      res.redirect("/barista");
+      res.redirect("/barista/orders");
     } else if (role === "teacher") {
       res.redirect("/teacher/popularDrinks");
     } else {

@@ -1,0 +1,254 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<div id="mainContent">
+  <div>
+    <h1 style="text-align: center">
+      All Time Expenses: $<%=(allTimeExpenses).toFixed(2)%>
+    </h1>
+    <h1 style="text-align: center">
+      All Time Revenue: $<%=(allTimeRevenue).toFixed(2)%>
+    </h1>
+    <h1 style="text-align: center">
+      All Time Profit: $<%=(allTimeRevenue - allTimeExpenses).toFixed(2)%>
+    </h1>
+
+    <h1>Ingredients:</h1>
+    <h6>*Red indicates the ingredient's quantity is too low</h6>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="ingredientsTable"><b>Ingredient</b></th>
+          <th id="sortNeither" class="ingredientsTable"><b>Quantity</b></th>
+          <th id="sortNeither" class="ingredientsTable">
+            <b>Daily Average Consumption (past 10 business days)</b>
+          </th>
+          <th id="sortNeither" class="ingredientsTable">
+            <b>Daily Average Cost</b>
+          </th>
+          <th id="sortNeither" class="ingredientsTable"><b>Unit</b></th>
+        </tr>
+      </thead>
+      <tbody id="ingredientsTable">
+        <% let i = 0; %> <% for(const ingredient of ingredients) { %>
+        <tr <% if(ingredient.orderThreshold>
+          ingredient.quantity) { %>style="background-color: #ffcccc;"<% } %>>
+          <td>
+            <a href="editIngredient?id=<%=ingredient.id%>"
+              ><%=ingredient.name%></a
+            >
+          </td>
+          <td><%=ingredient.quantity%></td>
+          <td><%=dailyConsumptionAvgs[i]%></td>
+          <td>$<%=(dailyConsumptionAvgs[i] * ingredient.price).toFixed(2)%></td>
+          <td><%=ingredient.unit%></td>
+        </tr>
+        <%i++;}%>
+      </tbody>
+    </table>
+
+    <h1>Menu Items:</h1>
+    <h6>*The expenses are for the menu item's default ingredients</h6>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="menuItemTable"><b>Menu Item</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Expense</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Revenue</b></th>
+          <th id="sortNeither" class="menuItemTable"><b>Profit</b></th>
+          <th id="sortNeither" class="menuItemTable">
+            <b>Profit Margin</b>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="menuItemTable">
+        <% i = 0; %> <% for(const menuItem of menuItems) { %>
+        <tr <% if((menuItem.price - menuItemExpenses[i])>
+          0) { %>style="background-color: #a7f989;"<% } %> <% if((menuItem.price
+          - menuItemExpenses[i]) < 0) { %>style="background-color: #ffcccc;"<% }
+          %>>
+          <td>
+            <a href="modifyDrink?id=<%=menuItem.id%>"><%=menuItem.name%></a>
+          </td>
+          <td>$<%=menuItemExpenses[i].toFixed(2)%></td>
+          <td>$<%=menuItem.price.toFixed(2)%></td>
+          <td>$<%=(menuItem.price - menuItemExpenses[i]).toFixed(2)%></td>
+          <td>
+            <%=((menuItem.price - menuItemExpenses[i]) / menuItem.price *
+            100).toFixed(2)%>%
+          </td>
+        </tr>
+        <%i++;}%>
+      </tbody>
+    </table>
+
+    <h1>Past orders:</h1>
+    <h6>
+      These are the last 50 drinks ordered, which may contain additional add-ons
+      that contribute to the expense.
+    </h6>
+    <table>
+      <thead>
+        <tr>
+          <th id="sortNeither" class="drinkTable">
+            <b>Drink</b>
+          </th>
+          <th id="sortNeither" class="drinkTable"><b>Expense</b></th>
+          <th id="sortNeither" class="drinkTable"><b>Revenue</b></th>
+          <th id="sortNeither" class="drinkTable"><b>Profit</b></th>
+          <th id="sortNeither" class="drinkTable">
+            <b>Profit Margin</b>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="drinkTable">
+        <% i = 0; %> <% for(const drink of drinks) { %>
+        <tr <% if((drink.price - drinkExpenses[i])>
+          0) { %>style="background-color: #a7f989;"<% } %> <% if((drink.price -
+          drinkExpenses[i]) < 0) { %>style="background-color: #ffcccc;"<% } %>>
+          <td><%=drink.name%></td>
+          <td>$<%=drinkExpenses[i].toFixed(2)%></td>
+          <td>$<%=drink.price.toFixed(2)%></td>
+          <td>$<%=(drink.price - drinkExpenses[i]).toFixed(2)%></td>
+          <td>
+            <%=((drink.price - drinkExpenses[i]) / drink.price *
+            100).toFixed(2)%>%
+          </td>
+        </tr>
+        <%i++;}%>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const getCellValue = (tr, idx) =>
+    tr.children[idx].innerText || tr.children[idx].textContent;
+
+  const comparer = (idx, asc) => (a, b) =>
+    ((v1, v2) =>
+      v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2)
+        ? v1 - v2
+        : v1[0] === "$"
+        ? Number(v1.substring(1)) - Number(v2.substring(1))
+        : v2.toString().localeCompare(v1))(
+      getCellValue(asc ? a : b, idx),
+      getCellValue(asc ? b : a, idx)
+    );
+  document.querySelectorAll("th.ingredientsTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.ingredientsTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("ingredientsTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+  document.querySelectorAll("th.menuItemTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.menuItemTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("menuItemTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+  document.querySelectorAll("th.drinkTable").forEach((th) =>
+    th.addEventListener("click", () => {
+      th.id =
+        th.id === "sortNeither"
+          ? "sortDown"
+          : th.id === "sortDown"
+          ? "sortUp"
+          : "sortDown";
+      document.querySelectorAll("th.drinkTable").forEach((th2) => {
+        if (th !== th2) {
+          th2.id = "sortNeither";
+        }
+      });
+      const table = document.getElementById("drinkTable");
+      Array.from(table.querySelectorAll("tr"))
+        .sort(
+          comparer(
+            Array.from(th.parentNode.children).indexOf(th),
+            (this.asc = th.id === "sortUp")
+          )
+        )
+        .forEach((tr) => table.appendChild(tr));
+    })
+  );
+</script>
+
+<style>
+  table td,
+  table th {
+    border: 1px solid silver;
+    color: #1a1a1a;
+  }
+  h6 {
+    color: #ff582c;
+  }
+  #sortNeither:after,
+  #sortDown:after,
+  #sortUp:after {
+    content: " ";
+    position: relative;
+    left: 2px;
+    border: 8px solid transparent;
+  }
+
+  #sortNeither:after,
+  #sortDown:after {
+    border-top-color: silver;
+  }
+
+  #sortNeither:after,
+  #sortUp:after {
+    border-bottom-color: silver;
+  }
+
+  #sortNeither,
+  #sortDown,
+  #sortUp {
+    padding-right: 10px;
+  }
+
+  .charts {
+    display: inline-block;
+  }
+</style>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

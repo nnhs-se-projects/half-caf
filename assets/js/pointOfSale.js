@@ -9,31 +9,40 @@ document.addEventListener("DOMContentLoaded", () => {
   const orderTotal = document.querySelector(".order-total");
 
   // Parse the JSON from the hidden inputs
-  const flavors = JSON.parse(document.querySelector("#flavors").value);
-  const toppings = JSON.parse(document.querySelector("#toppings").value);
+  const ingredients = JSON.parse(document.querySelector("#ingredients").value);
   const temps = JSON.parse(document.querySelector("#temps").value);
   const possibleModificationsMap = JSON.parse(
     document.querySelector("#possibleModifications").value
   );
   function saveDrinkModifications() {
     // Save the modifications to the current drink
-    const selectedFlavors = Array.from(
-      document.querySelectorAll(".flavor-checkbox:checked")
+    const selectedIngredients = Array.from(
+      document.querySelectorAll(".ingredient-checkbox:checked")
     ).map((checkbox) => checkbox.value);
-    const selectedToppings = Array.from(
-      document.querySelectorAll(".topping-checkbox:checked")
-    ).map((checkbox) => checkbox.value);
+
+    const ingredientCounts = [];
+    const ingredientCheckboxes = document.querySelectorAll(
+      ".ingredient-checkbox:checked"
+    );
+    for (const ingredient of ingredientCheckboxes) {
+      ingredientCounts.push(
+        Number(ingredient.parentElement.lastElementChild.value)
+      );
+    }
+
     const selectedTemp = document.querySelector(".temp-radio:checked")
       ? document.querySelector(".temp-radio:checked").value
       : null;
     const selectedCaffeination = document.querySelector(
       ".caffeination-checkbox"
     );
+
     if (selectedCaffeination) {
       currentDrink.caffeinated = !selectedCaffeination.checked;
     }
-    currentDrink.flavors = selectedFlavors;
-    currentDrink.toppings = selectedToppings;
+
+    currentDrink.ingredients = selectedIngredients;
+    currentDrink.ingredientCounts = ingredientCounts;
     currentDrink.temps = selectedTemp;
     const instructions = document.querySelector("#drink-instructions").value;
     currentDrink.instructions = instructions;
@@ -48,22 +57,26 @@ document.addEventListener("DOMContentLoaded", () => {
     isDrinkSelected = true;
     currentDrink = cart.find((item) => item.menuItemId === drink.menuItemId);
 
-    const possibleFlavors = [];
-    const possibleToppings = [];
+    const possibleIngredients = [];
     const possibleTemps = [];
     currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
-    for (const flavor of flavors) {
-      if (possibleModificationsMap[drink.menuItemId].indexOf(flavor._id) > -1) {
-        possibleFlavors.push(flavor);
+    for (const ingredient of ingredients) {
+      const indx = possibleModificationsMap[drink.menuItemId].indexOf(
+        ingredient._id
+      );
+      if (indx > -1) {
+        possibleIngredients.push({
+          ingredient,
+          count: possibleModificationsMap[drink.menuItemId][indx + 1],
+        });
+      } else if (ingredient.type === "customizable") {
+        possibleIngredients.push({
+          ingredient,
+          count: 0,
+        });
       }
     }
-    for (const topping of toppings) {
-      if (
-        possibleModificationsMap[drink.menuItemId].indexOf(topping._id) > -1
-      ) {
-        possibleToppings.push(topping);
-      }
-    }
+
     for (const temp of temps) {
       if (possibleModificationsMap[drink.menuItemId].indexOf(temp) > -1) {
         possibleTemps.push(temp);
@@ -72,53 +85,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let html = '<div class="customization-columns">';
 
-    // Column 1: Flavors
+    // Column 1: Ingredients
     html += '<div class="customization-column">';
-    html += "<h5>Flavors</h5>";
-    if (possibleFlavors.length > 0) {
-      possibleFlavors.forEach((flavor) => {
+    html += "<h5>Ingredients</h5>";
+    if (possibleIngredients.length > 0) {
+      possibleIngredients.forEach((ingredient) => {
         const isChecked =
-          currentDrink.flavors.indexOf(flavor._id) > -1 ? "checked" : "";
+          possibleModificationsMap[drink.menuItemId].indexOf(
+            ingredient.ingredient._id
+          ) > -1
+            ? "checked"
+            : "";
         html += `
-    <div class="flavor-container">
-      <input type="checkbox" id="flavor-${flavor._id}" class="flavor-checkbox" value="${flavor._id}" ${isChecked}/>
-      <label for="flavor-${flavor._id}">${flavor.flavor}</label>
+    <div ${
+      ingredient.ingredient.type === "uncustomizable" ? "hidden" : ""
+    } class="ingredient-container">
+      <input type="checkbox" id="ingredient-${
+        ingredient.ingredient._id
+      }" class="ingredient-checkbox" value="${
+          ingredient.ingredient._id
+        }" ${isChecked}/>
+      <label for="ingredient-${ingredient.ingredient._id}">${
+          ingredient.ingredient.name
+        }</label>
+      <input ${isChecked ? "" : "hidden"} type="number" value="${
+          ingredient.count
+        }" min="0" />
     </div>
     `;
       });
     } else {
-      html += "<p>No flavors available</p>";
+      html += "<p>No ingredients available</p>";
     }
-    html += "</div>";
 
-    // Column 2: Toppings
-    html += '<div class="customization-column">';
-    html += "<h5>Add-Ons</h5>";
-    if (possibleToppings.length > 0) {
-      possibleToppings.forEach((topping) => {
-        const isChecked =
-          currentDrink.toppings.indexOf(topping._id) > -1 ? "checked" : "";
-        html += `
-    <div class="topping-container">
-      <input type="checkbox" id="topping-${topping._id}" class="topping-checkbox" value="${topping._id}" ${isChecked}/>
-      <label for="topping-${topping._id}">${topping.topping}</label>
-    </div>
-    `;
-      });
-    } else {
-      html += "<p>No Add-Ons available</p>";
-    }
     html += "</div>";
-
     // Column 3: Temperature
     html += '<div class="customization-column">';
     html += "<h5>Temperature</h5>";
     if (possibleTemps.length > 0) {
       possibleTemps.forEach((temp) => {
-        const isChecked =
-          currentDrink.temps && currentDrink.temps.indexOf(temp) > -1
-            ? "checked"
-            : "";
         html += `
     <div class="temp-container">
       <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" checked="checked"/>
@@ -165,6 +170,22 @@ document.addEventListener("DOMContentLoaded", () => {
       '<div class="button-container"><button class="saveButton">Save Drink</button></div>';
 
     document.querySelector(".customization-grid").innerHTML = html;
+
+    const ingredientCheckBoxes = document.querySelectorAll(
+      ".ingredient-checkbox"
+    );
+    for (const ingredient of ingredientCheckBoxes) {
+      ingredient.addEventListener("click", () => {
+        const numElem = ingredient.parentElement.lastElementChild;
+        numElem.hidden = !numElem.hidden;
+        if (numElem.hidden) {
+          numElem.value = 0;
+        } else {
+          numElem.value = 1;
+        }
+      });
+    }
+
     // Add save button functionality
     const saveButton = document.querySelector(".saveButton");
     if (saveButton) {
@@ -230,8 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
         name: drinkName,
         price: drinkPrice,
         menuItemId: menuItemId,
-        flavors: [],
-        toppings: [],
+        ingredients: [],
+        ingredientCounts: [],
         temps: [],
         caffeinated:
           possibleModificationsMap[menuItemId].indexOf("Caffeine") > -1,
@@ -277,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
           total: Number(orderTotal.textContent),
         }),
       });
-      console.log(response);
+
       if (response.ok) {
         // Clear the cart
         cart = [];
@@ -287,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isDrinkSelected = false;
         document.querySelector(".customization-grid").innerHTML = "";
       } else {
-        console.log("error deleting flavor");
+        console.log("error");
       }
     });
   }

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-async function deleteTopping() {
+async function deleteIngredient() {
   const selectedId = document.querySelector("#toDelete").value;
-  const response = await fetch(`/admin/deleteTopping/${selectedId}`, {
+  const response = await fetch(`/admin/deleteIngredient/${selectedId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -9,8 +9,8 @@ async function deleteTopping() {
   });
 
   if (response.ok) {
-    window.location = "/admin/deleteTopping";
+    window.location = "/admin/deleteIngredient";
   } else {
-    console.log("error delete topping");
+    console.log("error delete ingredient");
   }
 }

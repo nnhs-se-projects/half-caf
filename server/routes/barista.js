@@ -1,8 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
-const Topping = require("../model/topping");
-const Flavor = require("../model/flavor");
+const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temps.json");
 const Drink = require("../model/drink");
@@ -34,12 +33,11 @@ async function getUserRoles(email) {
   }
 }
 
-route.get("/", async (req, res) => {
+route.get("/orders", async (req, res) => {
   const orders = await Order.find();
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
-  const flavors = await Flavor.find({});
-  const toppings = await Topping.find({});
+  const ingredients = await Ingredient.find();
 
   for (const order of orders) {
     if (order.drinks.length === 0) {
@@ -53,8 +51,7 @@ route.get("/", async (req, res) => {
     for (let n = 0; n < orders[i].drinks.length; n++) {
       const formattedDrink = {
         name: "",
-        flavors: [],
-        toppings: [],
+        ingredients: [],
         temp: "",
         caffeinated: false,
         instructions: "",
@@ -64,27 +61,20 @@ route.get("/", async (req, res) => {
         break;
       }
       formattedDrink.caffeinated = drink.caffeinated;
-      if (drink.flavors.length === 0) {
-        formattedDrink.flavors.push("None");
+      if (drink.ingredients.length === 0) {
+        formattedDrink.ingredients.push("None");
       } else {
-        for (let x = 0; x < drink.flavors.length; x++) {
-          const tempFlavor = flavors.find((f) =>
-            f._id.equals(drink.flavors[x])
+        for (let x = 0; x < drink.ingredients.length; x++) {
+          const tempIngredient = ingredients.find((f) =>
+            f._id.equals(drink.ingredients[x])
           );
-          if (tempFlavor !== null && tempFlavor !== undefined) {
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
-          }
-        }
-      }
-      if (drink.toppings.length === 0) {
-        formattedDrink.toppings.push("None");
-      } else {
-        for (let x = 0; x < drink.toppings.length; x++) {
-          const tempTopping = toppings.find((t) =>
-            t._id.equals(drink.toppings[x])
-          );
-          if (tempTopping !== null && tempTopping !== undefined) {
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+          if (tempIngredient !== null && tempIngredient !== undefined) {
+            const ingredientCount = drink.ingredientCounts[x];
+            const ingredientCountStr =
+              ingredientCount === 0 ? "No " : ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name
+            );
           }
         }
       }
@@ -105,27 +95,46 @@ route.get("/", async (req, res) => {
   });
 });
 
-route.delete("/:id", async (req, res) => {
+route.delete("/orders/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("drinks");
     const email = order.email;
 
-    const orderItems = order.drinks.map((drink) => ({
-      name: drink.name,
-      temp: drink.temps,
-      flavors: drink.flavors.length > 0 ? drink.flavors.join(", ") : "None",
-      toppings: drink.toppings.length > 0 ? drink.toppings.join(", ") : "None",
-      instructions: drink.instructions,
-    }));
+    const orderItems = [];
+    for (const drink of order.drinks) {
+      let ingredientsStr = "";
+      let i = 0;
+      for (const ingredientId of drink.ingredients) {
+        const ingredient = await Ingredient.findById(ingredientId);
+
+        if (ingredient.type === "customizable") {
+          ingredientsStr +=
+            drink.ingredientCounts[i] === 0
+              ? "No "
+              : drink.ingredientCounts[i] + " ";
+          ingredientsStr += ingredient.name + ", ";
+        }
+
+        i++;
+      }
+      ingredientsStr = ingredientsStr.substring(0, ingredientsStr.length - 2);
+      const item = {
+        name: drink.name,
+        temp: drink.temps,
+        ingredients: ingredientsStr.length > 0 ? ingredientsStr : "None",
+        instructions: drink.instructions,
+      };
+      orderItems.push(item);
+    }
 
     order.cancelled = true;
     await order.save();
 
     emitOrderCancelled({
       cancelMessage: req.body.message,
-      email: email,
+      email,
       orderId: order._id,
-      orderItems: orderItems,
+      orderItems,
     });
 
     const user = await User.findOne({ email: order.email });
@@ -157,7 +166,7 @@ route.delete("/:id", async (req, res) => {
   }
 });
 
-route.post("/:id", async (req, res) => {
+route.post("/orders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = true;
   order.timer = req.body.t;
@@ -169,6 +178,12 @@ route.post("/:id", async (req, res) => {
     const drink = await Drink.findById(drinkId);
     drink.completed = true;
     await drink.save();
+
+    for (let i = 0; i < drink.ingredients.length; i++) {
+      const ingredient = await Ingredient.findById(drink.ingredients[i]);
+      ingredient.quantity -= drink.ingredientCounts[i];
+      await ingredient.save();
+    }
   }
 
   const user = await User.findOne({ email: order.email });
@@ -194,18 +209,17 @@ route.post("/:id", async (req, res) => {
 
 route.get("/pointOfSale", async (req, res) => {
   const menuItems = await MenuItem.find();
-  const flavors = await Flavor.find();
-  const toppings = await Topping.find();
+  const ingredients = await Ingredient.find();
   const temps = TempJson;
   const orders = await Order.find();
   const possibleModificationsMap = new Map();
   for (const item of menuItems) {
     const modifications = [];
-    for (const topping of item.toppings) {
-      modifications.push(topping);
-    }
-    for (const flavor of item.flavors) {
-      modifications.push(flavor);
+    let i = 0;
+    for (const ingredient of item.ingredients) {
+      modifications.push(ingredient);
+      modifications.push(item.ingredientCounts[i]);
+      i++;
     }
     for (const temp of item.temps) {
       modifications.push(temp);
@@ -225,8 +239,7 @@ route.get("/pointOfSale", async (req, res) => {
     role,
     orders,
     menuItems,
-    flavors,
-    toppings,
+    ingredients,
     temps,
     possibleModificationsMap,
   });
@@ -239,8 +252,8 @@ route.post("/pointOfSale", async (req, res) => {
       name: drink.name,
       price: drink.price,
       temps: drink.temps,
-      flavors: drink.flavors,
-      toppings: drink.toppings,
+      ingredients: drink.ingredients,
+      ingredientCounts: drink.ingredientCounts,
       instructions: drink.instructions,
       completed: false,
       caffeinated: drink.caffeinated,
@@ -268,37 +281,30 @@ route.post("/pointOfSale", async (req, res) => {
   });
   await order.save();
   const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
-  const flavors = await Flavor.find({});
-  const toppings = await Topping.find({});
+  const ingredients = await Ingredient.find({});
   const drinkArray = [];
   for (let n = 0; n < order.drinks.length; n++) {
     const formattedDrink = {
       name: "",
-      flavors: [],
-      toppings: [],
+      ingredients: [],
       temp: "",
       instructions: "",
     };
     const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
-    if (drink.flavors.length === 0) {
-      formattedDrink.flavors.push("None");
+    if (drink.ingredients.length === 0) {
+      formattedDrink.ingredients.push("None");
     } else {
-      for (let x = 0; x < drink.flavors.length; x++) {
-        const tempFlavor = flavors.find((f) => f._id.equals(drink.flavors[x]));
-        if (tempFlavor !== null && tempFlavor !== undefined) {
-          formattedDrink.flavors.push(" " + tempFlavor.flavor);
-        }
-      }
-    }
-    if (drink.toppings.length === 0) {
-      formattedDrink.toppings.push("None");
-    } else {
-      for (let x = 0; x < drink.toppings.length; x++) {
-        const tempTopping = toppings.find((t) =>
-          t._id.equals(drink.toppings[x])
+      for (let x = 0; x < drink.ingredients.length; x++) {
+        const tempIngredient = ingredients.find((f) =>
+          f._id.equals(drink.ingredients[x])
         );
-        if (tempTopping !== null && tempTopping !== undefined) {
-          formattedDrink.toppings.push(" " + tempTopping.topping);
+        if (tempIngredient !== null && tempIngredient !== undefined) {
+          const ingredientCount = drink.ingredientCounts[x];
+          const ingredientCountStr =
+            ingredientCount === 0 ? "No " : ingredientCount + " ";
+          formattedDrink.ingredients.push(
+            " " + ingredientCountStr + tempIngredient.name
+          );
         }
       }
     }
@@ -316,12 +322,11 @@ route.post("/pointOfSale", async (req, res) => {
 });
 
 // completed orders page of barista that displays all completed orders
-route.get("/completed", async (req, res) => {
+route.get("/completedOrders", async (req, res) => {
   const orders = await Order.find({ complete: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
-  const flavors = await Flavor.find({});
-  const toppings = await Topping.find({});
+  const ingredients = await Ingredient.find({});
 
   orders.reverse();
 
@@ -336,35 +341,27 @@ route.get("/completed", async (req, res) => {
 
       const formattedDrink = {
         name: "",
-        flavors: [],
-        toppings: [],
+        ingredients: [],
         temp: "",
         caffeinated: false,
         instructions: "",
       };
 
       formattedDrink.caffeinated = drink.caffeinated;
-      if (drink.flavors.length === 0) {
-        formattedDrink.flavors.push("None");
+      if (drink.ingredients.length === 0) {
+        formattedDrink.ingredients.push("None");
       } else {
-        for (let x = 0; x < drink.flavors.length; x++) {
-          const tempFlavor = flavors.find((f) =>
-            f._id.equals(drink.flavors[x])
+        for (let x = 0; x < drink.ingredients.length; x++) {
+          const tempIngredient = ingredients.find((f) =>
+            f._id.equals(drink.ingredients[x])
           );
-          if (tempFlavor !== null && tempFlavor !== undefined) {
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
-          }
-        }
-      }
-      if (drink.toppings.length === 0) {
-        formattedDrink.toppings.push("None");
-      } else {
-        for (let x = 0; x < drink.toppings.length; x++) {
-          const tempTopping = toppings.find((t) =>
-            t._id.equals(drink.toppings[x])
-          );
-          if (tempTopping !== null && tempTopping !== undefined) {
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+          if (tempIngredient !== null && tempIngredient !== undefined) {
+            const ingredientCount = drink.ingredientCounts[x];
+            const ingredientCountStr =
+              ingredientCount === 0 ? "No " : ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name
+            );
           }
         }
       }
@@ -378,14 +375,14 @@ route.get("/completed", async (req, res) => {
 
   const role = await getUserRoles(req.session.email);
 
-  res.render("completed", {
+  res.render("completedOrders", {
     orders,
     drinkMap,
     role,
   });
 });
 
-route.post("/completed/:id", async (req, res) => {
+route.post("/completedOrders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = false;
   await order.save();
@@ -394,6 +391,12 @@ route.post("/completed/:id", async (req, res) => {
     const drink = await Drink.findById(drinkId);
     drink.completed = false;
     await drink.save();
+
+    for (let i = 0; i < drink.ingredients.length; i++) {
+      const ingredient = await Ingredient.findById(drink.ingredients[i]);
+      ingredient.quantity += drink.ingredientCounts[i];
+      await ingredient.save();
+    }
   }
 
   res.status(201).end();
@@ -403,8 +406,7 @@ route.get("/cancelledOrders", async (req, res) => {
   const orders = await Order.find({ cancelled: true });
   const drinkIds = orders.flatMap((order) => order.drinks);
   const drinks = await Drink.find({ _id: { $in: drinkIds } });
-  const flavors = await Flavor.find({});
-  const toppings = await Topping.find({});
+  const ingredients = await Ingredient.find({});
 
   orders.reverse();
 
@@ -414,8 +416,7 @@ route.get("/cancelledOrders", async (req, res) => {
     for (let n = 0; n < orders[i].drinks.length; n++) {
       const formattedDrink = {
         name: "",
-        flavors: [],
-        toppings: [],
+        ingredients: [],
         temp: "",
         caffeinated: false,
         instructions: "",
@@ -425,27 +426,20 @@ route.get("/cancelledOrders", async (req, res) => {
         break;
       }
       formattedDrink.caffeinated = drink.caffeinated;
-      if (drink.flavors.length === 0) {
-        formattedDrink.flavors.push("None");
+      if (drink.ingredients.length === 0) {
+        formattedDrink.ingredients.push("None");
       } else {
-        for (let x = 0; x < drink.flavors.length; x++) {
-          const tempFlavor = flavors.find((f) =>
-            f._id.equals(drink.flavors[x])
+        for (let x = 0; x < drink.ingredients.length; x++) {
+          const tempIngredient = ingredients.find((f) =>
+            f._id.equals(drink.ingredients[x])
           );
-          if (tempFlavor !== null && tempFlavor !== undefined) {
-            formattedDrink.flavors.push(" " + tempFlavor.flavor);
-          }
-        }
-      }
-      if (drink.toppings.length === 0) {
-        formattedDrink.toppings.push("None");
-      } else {
-        for (let x = 0; x < drink.toppings.length; x++) {
-          const tempTopping = toppings.find((t) =>
-            t._id.equals(drink.toppings[x])
-          );
-          if (tempTopping !== null && tempTopping !== undefined) {
-            formattedDrink.toppings.push(" " + tempTopping.topping);
+          if (tempIngredient !== null && tempIngredient !== undefined) {
+            const ingredientCount = drink.ingredientCounts[x];
+            const ingredientCountStr =
+              ingredientCount === 0 ? "No " : ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name
+            );
           }
         }
       }

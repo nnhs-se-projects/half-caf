@@ -3,7 +3,7 @@
 <div id="mainContent">
   <div class="barista-header">
     <h1 class="page-title">Cancelled Orders</h1>
-    <a href="/barista/completed"
+    <a href="/barista/completedOrders"
       ><input type="submit" value="View Completed Orders"
     /></a>
   </div>
@@ -16,8 +16,7 @@
           <th>Teacher</th>
           <th>Drink</th>
           <th>Temp</th>
-          <th>Flavors</th>
-          <th>Toppings</th>
+          <th>Ingredients</th>
           <th>Decaf</th>
           <th>Special Instructions</th>
           <th>Time</th>
@@ -46,8 +45,7 @@
               ><%=tempDrink.temp%></span
             >
           </td>
-          <td><%=tempDrink.flavors%></td>
-          <td><%=tempDrink.toppings%></td>
+          <td><%=tempDrink.ingredients%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
           <td><%=tempDrink.instructions%></td>
           <% } %>

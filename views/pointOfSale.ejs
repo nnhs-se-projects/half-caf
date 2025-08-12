@@ -1,7 +1,10 @@
 <%- include('include/_baristaHeader') %>
 <div id="mainContent">
-  <input type="hidden" id="flavors" value="<%=JSON.stringify(flavors) %>" />
-  <input type="hidden" id="toppings" value="<%=JSON.stringify(toppings) %>" />
+  <input
+    type="hidden"
+    id="ingredients"
+    value="<%=JSON.stringify(ingredients) %>"
+  />
   <input type="hidden" id="temps" value="<%=JSON.stringify(temps) %>" />
   <input
     type="hidden"
@@ -109,16 +112,14 @@
     border-bottom: 1px solid #ddd;
   }
 
-  .flavor-container,
-  .topping-container,
+  .ingredient-container,
   .temp-container {
     margin: 8px 0;
     display: flex;
     align-items: center;
   }
 
-  .flavor-checkbox,
-  .topping-checkbox,
+  .ingredient-checkbox,
   .temp-radio {
     margin-right: 8px;
     cursor: pointer;
@@ -243,16 +244,14 @@
     width: 100%;
     table-layout: fixed;
   }
-  .flavor-container,
-  .topping-container,
+  .ingredient-container,
   .temp-container {
     margin: 8px 0;
     padding: 5px;
     display: flex;
     align-items: center;
   }
-  .flavor-checkbox,
-  .topping-checkbox,
+  .ingredient-checkbox,
   .temp-radio {
     margin-right: 8px;
     cursor: pointer;

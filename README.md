@@ -66,9 +66,10 @@ Chart.js - Renders charts in the metrics page
 
 The image above shows the dependencies of the different classes in the dat structure. All of the models are written in js except temps.json (you can find the data model under assets/server/model). Download MongoDB Compass to easily access the database with the same URI written in your ejs file. You can look through Compass to see what the dependencies look like in the actual app.
 
-To explain the image more, each arrow shows a different dependency. The beginning of the arrow starts at the property that needs information from a different class, which is where the head of the arrow points to. The dotted line and arrow that goes from menuItem to drink is because every time the user clicks on a drink from the menu page, a new instance of drink is created. Drink is supposed to be a customized version of menuItem. The dotted arrow shows that drink is not directly dependent on menuItem in the database, but pulls from its properties when a new drink is created. That's because menuItems don't reference all of the toppings or flavors so no one can order a blue raspberry coffee, so only certain flavors, toppings, and temperatures are available for each menuItem and drink.
+To explain the image more, each arrow shows a different dependency. The beginning of the arrow starts at the property that needs information from a different class, which is where the head of the arrow points.
 
-Enabled is on it's own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side.
+Enabled is on its own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side. ** Enabled is mainly controlled by the scheduler. **
+
 
 ## Google Authentication Implementation
 
@@ -82,7 +83,7 @@ This is the core of the application's backend. It includes middleware that check
 
 ### `auth.js` (Google Authentication Routes)
 
-The auth.js file handles the actual authentication process:\
+The auth.js file handles the actual authentication process:
 
 - It defines routes that the frontend can communicate with to perform authentication tasks.
 - When the frontend sends the ID token (received from Google after a user logs in), auth.js verifies this token using Google's libraries.
@@ -90,7 +91,7 @@ The auth.js file handles the actual authentication process:\
 
 ### `auth2.js` (Client-Side Authentication Logic)
 
-The auth2.js script runs in the user's browser and handles:\
+The auth2.js script runs in the user's browser and handles:
 
 - The receipt of the authentication response from Google (which includes the ID token).
 - It sends this token to the server (/auth route) via a POST request.
@@ -98,7 +99,7 @@ The auth2.js script runs in the user's browser and handles:\
 
 ### `router.js` (Role-Based Redirection)
 
-After authentication, router.js takes over:\
+After authentication, router.js takes over:
 
 - It defines a route /redirectUser which checks the user's role based on the email stored in the session.
 - Depending on the role fetched from the database (admin, barista, teacher), it redirects the user to the appropriate route.
@@ -113,7 +114,7 @@ The `auth.ejs` file is the front-end component where users interact with Google'
 
 This file is crucial for initiating the authentication flow from the client's browser.
 
-### Mobile Overview
+## Mobile Overview
 
 The app works as a mobile app as well as on the computer website. To get the app on phone, go to nnhshalfcaf.com on a browser(may have to be Safari if on iPhone) and follow the page instructions to add to home screen. Mobile works by converting the app into a PWA(progressive web app) which includes:
 
@@ -126,7 +127,15 @@ All of these files are within the 'public' folder -- needed for mobile setup to 
 
 Mobile Notifications are implemented with the service worker, and the subscription endpoints(the place where notifications are sent to) for every user are stored in the MongoDB database under user. When adding visual changes, check changes it causes on both mobile and computer screens.
 
-### Flow of Control:
+## Inventory System
+
+The inventory system is used to track all ingredients that go into each drink ordered. Each ingredient has two types: customizable and uncustomizable.
+If an ingredient is customizable, it means that a user can choose to add it (or remove it) from any drink they want to order. For each menu item, there
+is a list of ingredients and an amount of those ingredients. These are the default ingredients, meaning that they are automatically checked when a
+user goes to order (however they can be unchecked if the ingredient is customizable). Adding additional ingredient to a drink does not change the
+price of the drink for the user, although the increased expense will be noted in the inventory manager.
+
+## Flow of Control:
 
 1. User Visits the Site: They attempt to access a protected route.
 2. Middleware Check: server.js checks if the user is authenticated.
