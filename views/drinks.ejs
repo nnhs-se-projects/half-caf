@@ -75,20 +75,19 @@
           <input type="text" id="addPrice" placeholder="Price..." required />
         </div>
         <div class="form-group">
-          <span class="anchor">Select Flavors</span>
-          <ul class="items">
-            <% for (let flavor of flavors) {%>
-            <li><input class="add-flavors" type="checkbox" value="<%= flavor.id %>" /> <%= flavor.flavor %></li>
-            <%}%>
-          </ul>
-        </div>
-        <div class="form-group">
-          <span class="anchor">Select Add-Ons</span>
-          <ul class="items">
-            <% for (let topping of toppings) {%>
-            <li><input class="add-toppings" type="checkbox" value="<%= topping.id %>" /> <%= topping.topping %></li>
-            <%}%>
-          </ul>
+          <span class="anchor">Select Default Ingredients</span>
+          <div class="ingredients-list" id="addIngredientsList">
+            <% for(let ingredient of ingredients) { %>
+              <div class="ingredient-item">
+                <label>
+                  <input type="checkbox" class="add-ingredients" name="ingredients" value="<%= ingredient._id %>" />
+                  <%= ingredient.name %>
+                  <span class="ingredient-unit" style="margin-left: 8px; font-size: 0.9em; color: #666;">(<%= ingredient.unit %>)</span>
+                </label>
+                <input type="number" class="ingredient-count" placeholder="Count" style="display: none;" min="1" max="999" value="1" />
+              </div>
+            <% } %>
+          </div>
         </div>
         <div class="form-group">
           <span class="anchor">Select Temps</span>
@@ -145,20 +144,19 @@
           <input type="text" id="editPrice" placeholder="Price..." required />
         </div>
         <div class="form-group">
-          <span class="anchor">Select Flavors</span>
-          <ul class="items" id="editFlavors">
-            <% for (let flavor of flavors) {%>
-            <li><input class="edit-flavors" type="checkbox" value="<%= flavor.id %>" /> <%= flavor.flavor %></li>
-            <%}%>
-          </ul>
-        </div>
-        <div class="form-group">
-          <span class="anchor">Select Add-Ons</span>
-          <ul class="items" id="editToppings">
-            <% for (let topping of toppings) {%>
-            <li><input class="edit-toppings" type="checkbox" value="<%= topping.id %>" /> <%= topping.topping %></li>
-            <%}%>
-          </ul>
+          <span class="anchor">Select Default Ingredients</span>
+          <div class="ingredients-list" id="editIngredientsList">
+            <% for(let ingredient of ingredients) { %>
+              <div class="ingredient-item">
+                <label>
+                  <input type="checkbox" class="edit-ingredients" name="ingredients" value="<%= ingredient._id %>" />
+                  <%= ingredient.name %>
+                  <span class="ingredient-unit" style="margin-left: 8px; font-size: 0.9em; color: #666;">(<%= ingredient.unit %>)</span>
+                </label>
+                <input type="number" class="ingredient-count" placeholder="Count" style="display: none;" min="1" max="999" value="1" />
+             </div>
+            <% } %>
+          </div>
         </div>
         <div class="form-group">
           <span class="anchor">Select Temps</span>
@@ -206,6 +204,47 @@
 </div>
 
 <style>
+    .ingredients-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+  .ingredient-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+  }
+  .ingredient-item label {
+    flex-grow: 1;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+  }
+  .ingredient-count {
+    width: 4ch !important;
+    height: 1.5rem !important;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right; 
+    box-sizing: border-box;
+  }
+  /* Hide the spin buttons in number inputs */
+  /* For Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* For Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
   .drinkHdr {
     margin-bottom: 30px;
   }

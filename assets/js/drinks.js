@@ -25,6 +25,15 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  function handleIngredientCheckboxChange(checkbox) {
+    const countInput = checkbox
+      .closest(".ingredient-item")
+      .querySelector(".ingredient-count");
+    if (countInput) {
+      countInput.style.display = checkbox.checked ? "block" : "none";
+    }
+  }
+
   // --- Add Drink Modal ---
   const addDrinkBtn = document.getElementById("addDrinkBtn");
   if (addDrinkBtn) {
@@ -96,6 +105,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  document
+    .querySelectorAll("#addIngredientsList .add-ingredients")
+    .forEach((checkbox) => {
+      checkbox.addEventListener("change", () =>
+        handleIngredientCheckboxChange(checkbox)
+      );
+    });
   const addDrinkForm = document.getElementById("addDrinkForm");
   if (addDrinkForm) {
     addDrinkForm.addEventListener("submit", async function (e) {
@@ -124,21 +140,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const popular = document.getElementById("addPopular").checked;
       const special = document.getElementById("addSpecial").checked;
-      const checkedFlavors = Array.from(
-        document.querySelectorAll(".add-flavors:checked")
-      ).map((cb) => cb.value);
-      const checkedToppings = Array.from(
-        document.querySelectorAll(".add-toppings:checked")
-      ).map((cb) => cb.value);
-
+      const checkedIngredients = [];
+      const ingredientCounts = [];
+      document
+        .querySelectorAll("#addIngredientsList .add-ingredients:checked")
+        .forEach((cb) => {
+          const item = cb.closest(".ingredient-item");
+          const countInput = item.querySelector(".ingredient-count");
+          checkedIngredients.push(cb.value);
+          ingredientCounts.push(parseInt(countInput.value, 10) || 1);
+        });
       const menuItem = {
         name,
         description,
         price,
         popular,
         special,
-        checkedFlavors,
-        checkedToppings,
+        checkedIngredients,
+        ingredientCounts,
         checkedTemps,
         caf: document.getElementById("addCaffeinated").checked,
         allowDecaf: document.getElementById("addAllowDecaf").checked,
@@ -213,22 +232,33 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("editDescription").value =
           drink.description || "";
         document.getElementById("editPrice").value = drink.price || "";
-
-        // Populate checkboxes
-        document.querySelectorAll(".edit-flavors").forEach((checkbox) => {
-          checkbox.checked =
-            drink.flavors &&
-            Array.isArray(drink.flavors) &&
-            drink.flavors.includes(checkbox.value);
+        // Populate ingredients
+        const allEditCheckboxes = document.querySelectorAll(
+          "#editIngredientsList .edit-ingredients"
+        );
+        allEditCheckboxes.forEach((cb) => {
+          const item = cb.closest(".ingredient-item");
+          const countInput = item.querySelector(".ingredient-count");
+          cb.checked = false;
+          countInput.style.display = "none";
+          countInput.value = "1";
         });
 
-        document.querySelectorAll(".edit-toppings").forEach((checkbox) => {
-          checkbox.checked =
-            drink.toppings &&
-            Array.isArray(drink.toppings) &&
-            drink.toppings.includes(checkbox.value);
-        });
-
+        if (drink.ingredients && Array.isArray(drink.ingredients)) {
+          drink.ingredients.forEach((ingredientId, index) => {
+            const checkbox = document.querySelector(
+              `#editIngredientsList .edit-ingredients[value="${ingredientId}"]`
+            );
+            if (checkbox) {
+              checkbox.checked = true;
+              const item = checkbox.closest(".ingredient-item");
+              const countInput = item.querySelector(".ingredient-count");
+              countInput.style.display = "block";
+              countInput.value = drink.ingredientCounts[index] || 1;
+            }
+          });
+        }
+        // Populate temps
         document.querySelectorAll(".edit-temps").forEach((checkbox) => {
           checkbox.checked =
             drink.temps &&
@@ -317,7 +347,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-
+  document
+    .querySelectorAll("#editIngredientsList .edit-ingredients")
+    .forEach((checkbox) => {
+      checkbox.addEventListener("change", () =>
+        handleIngredientCheckboxChange(checkbox)
+      );
+    });
   // Handle edit form submission
   const editDrinkForm = document.getElementById("editDrinkForm");
   if (editDrinkForm) {
@@ -349,21 +385,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const popular = document.getElementById("editPopular").checked;
       const special = document.getElementById("editSpecial").checked;
-      const checkedFlavors = Array.from(
-        document.querySelectorAll(".edit-flavors:checked")
-      ).map((cb) => cb.value);
-      const checkedToppings = Array.from(
-        document.querySelectorAll(".edit-toppings:checked")
-      ).map((cb) => cb.value);
-
+      const checkedIngredients = [];
+      const ingredientCounts = [];
+      document
+        .querySelectorAll("#editIngredientsList .edit-ingredients:checked")
+        .forEach((cb) => {
+          const item = cb.closest(".ingredient-item");
+          const countInput = item.querySelector(".ingredient-count");
+          checkedIngredients.push(cb.value);
+          ingredientCounts.push(parseInt(countInput.value, 10) || 1);
+        });
       const drink = {
         name,
         description,
         price,
         popular,
         special,
-        checkedFlavors,
-        checkedToppings,
+        checkedIngredients,
+        ingredientCounts,
         checkedTemps,
         caf: document.getElementById("editCaffeinated").checked,
         allowDecaf: document.getElementById("editAllowDecaf").checked,
