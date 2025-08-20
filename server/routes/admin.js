@@ -747,8 +747,27 @@ route.delete("/wipeDevOrders", async (req, res) => {
   res.status(200).send("Deleted all dev orders");
 });
 
-route.get("/addIngredient", async (req, res) => {
-  res.render("addIngredient");
+route.get("/ingredients", async (req, res) => {
+  try {
+    const ingredients = await Ingredient.find();
+    res.render("ingredients", { ingredients: ingredients });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: "Error fetching data for ingredients page" });
+  }
+});
+
+route.get("/api/ingredient/:id", async (req, res) => {
+  try {
+    const ingredient = await Ingredient.findById(req.params.id);
+    if (!ingredient) {
+      return res.status(404).json({ error: "Ingredient not found" });
+    }
+    res.json(ingredient);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 route.post("/addIngredient", async (req, res) => {
@@ -764,21 +783,6 @@ route.post("/addIngredient", async (req, res) => {
   res.status(201).end();
 });
 
-route.get("/editIngredient", async (req, res) => {
-  const ingredients = await Ingredient.find();
-  // Determine the selected ingredient if an id query parameter is provided
-  const { id } = req.query;
-  let selectedIngredient = null;
-  if (id != null) {
-    selectedIngredient = await Ingredient.findById(id);
-  } else if (ingredients[0] !== null && ingredients[0] !== undefined) {
-    selectedIngredient = ingredients[0];
-  } else {
-    selectedIngredient = undefined;
-  }
-  res.render("editIngredient", { ingredients, selectedIngredient });
-});
-
 route.post("/editIngredient/:id", async (req, res) => {
   const ingredient = await Ingredient.findById(req.params.id);
   ingredient.name = req.body.name;
@@ -789,11 +793,6 @@ route.post("/editIngredient/:id", async (req, res) => {
   ingredient.type = req.body.type;
   await ingredient.save();
   res.status(201).end();
-});
-
-route.get("/deleteIngredient", async (req, res) => {
-  const ingredients = await Ingredient.find();
-  res.render("deleteIngredient", { ingredients });
 });
 
 route.delete("/deleteIngredient/:id", async (req, res) => {

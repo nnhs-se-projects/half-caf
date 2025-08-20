@@ -1,0 +1,609 @@
+<!-- include header -->
+<%- include('include/_adminHeader') %>
+<!-- /include header -->
+
+<div class="ingredientHdr">Ingredients</div>
+
+<div class="ingredients-container">
+  <div class="ingredients-header">
+    <div class="search-container">
+      <input
+        type="text"
+        id="nameSearch"
+        placeholder="Search by name..."
+        class="search-input"
+      />
+    </div>
+    <button class="action-button add-ingredient" id="addIngredientBtn">
+      <span class="plus-icon">+</span> Add Ingredient
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="ingredients-table" id="ingredientsTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Price</th>
+          <th>Customizable?</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let ingredient of ingredients) { %>
+        <tr
+          data-ingredient-id="<%= ingredient._id %>"
+          data-name="<%= ingredient.name.toLowerCase() %>"
+        >
+          <td><%= ingredient.name %></td>
+          <td><%= ingredient.quantity %></td>
+          <td><%= ingredient.unit %></td>
+          <td>$<%= ingredient.price %></td>
+          <td>
+            <span
+              ><% if (ingredient.type === 'customizable') { %>Yes<% } else {
+              %>No<% } %></span
+            >
+          </td>
+          <td class="actions-cell">
+            <button
+              class="action-button edit"
+              data-ingredient-id="<%= ingredient._id %>"
+            >
+              Edit
+            </button>
+            <button
+              class="action-button delete"
+              data-ingredient-id="<%= ingredient._id %>"
+              data-ingredient-name="<%= ingredient.name %>"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <div id="noResults" class="no-results" style="display: none">
+      <p>No ingredients found matching your search.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add Ingredient Modal -->
+<div id="addIngredientModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New Ingredient</h2>
+      <span class="close" data-modal="addIngredientModal">&times;</span>
+    </div>
+    <form id="addIngredientForm">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="addName">Name:</label>
+          <input
+            type="text"
+            id="addName"
+            placeholder="e.g., Caramel Syrup"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="addQuantity">Quantity:</label>
+          <input
+            type="number"
+            id="addQuantity"
+            placeholder="e.g., 1000"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="addOrderThreshold">Order Threshold:</label>
+          <input
+            type="number"
+            id="addOrderThreshold"
+            placeholder="e.g., 200"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="addUnit">Unit:</label>
+          <input
+            type="text"
+            id="addUnit"
+            placeholder="e.g., ml, g, pumps"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="addPrice">Price:</label>
+          <input
+            type="number"
+            step="any"
+            id="addPrice"
+            placeholder="e.g., 10.99"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <div>
+            <input type="checkbox" id="addType" />
+            <label for="addType">Customizable by user?</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn-cancel"
+          data-modal="addIngredientModal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn-submit">Add Ingredient</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Ingredient Modal -->
+<div id="editIngredientModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit Ingredient</h2>
+      <span class="close" data-modal="editIngredientModal">&times;</span>
+    </div>
+    <form id="editIngredientForm">
+      <div class="modal-body">
+        <input type="hidden" id="editIngredientId" />
+        <div class="form-group">
+          <label for="editName">Name:</label>
+          <input type="text" id="editName" required />
+        </div>
+        <div class="form-group">
+          <label for="editQuantity">Quantity:</label>
+          <input type="number" id="editQuantity" required />
+        </div>
+        <div class="form-group">
+          <label for="editOrderThreshold">Order Threshold:</label>
+          <input type="number" id="editOrderThreshold" required />
+        </div>
+        <div class="form-group">
+          <label for="editUnit">Unit:</label>
+          <input type="text" id="editUnit" required />
+        </div>
+        <div class="form-group">
+          <label for="editPrice">Price:</label>
+          <input type="number" step="any" min="0" id="editPrice" required />
+        </div>
+        <div class="form-group">
+          <div>
+            <input type="checkbox" id="editType" />
+            <label for="editType">Customizable by user?</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn-cancel"
+          data-modal="editIngredientModal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn-submit">Update Ingredient</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Ingredient Modal -->
+<div id="deleteIngredientModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Delete Ingredient</h2>
+      <span class="close" data-modal="deleteIngredientModal">&times;</span>
+    </div>
+    <form id="deleteIngredientForm">
+      <div class="modal-body">
+        <p>Are you sure you want to delete this ingredient?</p>
+        <p class="item-to-delete" id="deleteIngredientName"></p>
+        <p class="warning">This action cannot be undone.</p>
+        <input type="hidden" id="deleteIngredientId" />
+      </div>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn-cancel"
+          data-modal="deleteIngredientModal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn-delete">Delete Ingredient</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .ingredientHdr {
+    margin-bottom: 30px;
+  }
+  .search-container {
+    position: relative;
+    flex: 3;
+    max-width: none;
+    min-width: 250px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 2px 8px rgba(60, 42, 33, 0.1);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent, #f5ae43);
+    box-shadow: 0 4px 12px rgba(245, 174, 67, 0.2);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .no-results p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .ingredients-container {
+    width: 100%;
+    margin: 0;
+    padding: 2rem;
+  }
+
+  .ingredients-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(60, 42, 33, 0.1);
+    overflow: hidden;
+  }
+
+  .ingredients-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .ingredients-table thead {
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+  }
+
+  .ingredients-table th,
+  .ingredients-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .ingredients-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333333;
+    font-weight: 500;
+  }
+
+  .ingredients-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .ingredients-table tbody tr {
+    transition: background-color 0.2s ease;
+  }
+
+  .ingredients-table tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  .ingredients-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .actions-cell {
+    white-space: nowrap;
+  }
+
+  .action-button {
+    background: var(--accent, #f5ae43);
+    color: var(--coffee-dark, #3c2a21);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .action-button:hover {
+    background: var(--coffee-medium, #8b4513);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .action-button.add-ingredient {
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    flex: 1;
+  }
+
+  .action-button.add-ingredient:hover {
+    background: var(--accent, #f5ae43);
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .action-button.edit,
+  .action-button.delete {
+    display: inline-block;
+    width: auto;
+    margin: 0 0.25rem;
+  }
+  .action-button.edit {
+    background: #2196f3;
+    color: white;
+  }
+
+  .action-button.edit:hover {
+    background: #1976d2;
+  }
+
+  .action-button.delete {
+    background: #f44336;
+    color: white;
+  }
+  .action-button.delete:hover {
+    background: #d32f2f;
+  }
+
+  .plus-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+  }
+
+  .close {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .close:hover {
+    color: var(--accent, #f5ae43);
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent, #f5ae43);
+  }
+  .form-group input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-right: 8px;
+    border: none;
+    appearance: checkbox;
+    -webkit-appearance: checkbox;
+    -moz-appearance: checkbox;
+    position: relative;
+    border-radius: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .form-group input[type="checkbox"] + label {
+    display: inline;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .form-group div:has(> input[type="checkbox"]) {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .btn-cancel,
+  .btn-submit,
+  .btn-delete {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-cancel {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-cancel:hover {
+    background: #5a6268;
+  }
+
+  .btn-submit {
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+  }
+
+  .btn-submit:hover {
+    background: var(--accent, #f5ae43);
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background: #c82333;
+  }
+
+  .item-to-delete {
+    font-weight: bold;
+    color: var(--coffee-dark, #3c2a21);
+    font-size: 1.1rem;
+    margin: 1rem 0;
+  }
+
+  .warning {
+    color: #dc3545;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script src="/js/ingredients.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
