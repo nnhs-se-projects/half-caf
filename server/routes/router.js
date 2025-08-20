@@ -175,7 +175,7 @@ route.get("/redirectUser", async (req, res) => {
   try {
     const role = await getUserRoles(req.session.email);
     if (role === "admin") {
-      res.redirect("/admin/addUser");
+      res.redirect("/admin/users");
     } else if (role === "barista") {
       res.redirect("/barista/orders");
     } else if (role === "teacher") {
