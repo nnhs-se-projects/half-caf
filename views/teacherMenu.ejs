@@ -147,7 +147,12 @@
           <div class="card">
             <div class="container">
               <h4><b><%=drink.name%></h4>
-              <img src="<%=drink.imageData%>" alt="<%=drink.name%>" style="width:100%">
+              <%try {
+                const imgData = decodeURIComponent(drink.imageData);%> 
+                <img src="<%=imgData%>" alt="<%=drink.name%>" style="width:100%">
+              <%} catch (e) {
+                %><h5>Failed to load image</h5><%
+              }%>
               <h5>$<%=drink.price%></h5>
               <%if(drink.description.length > 40) { %>
               <p><%=drink.description.slice(0,40) + "..."%></p>
