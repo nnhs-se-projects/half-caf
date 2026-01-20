@@ -134,13 +134,7 @@ function isMobile(userAgent) {
 
 route.get("/", (req, res) => {
   if (isMobile(req.headers["user-agent"])) {
-    const currentFilePath = __filename;
-    const parentDirectory = path.dirname(path.dirname(currentFilePath));
-    const addToHomePath = parentDirectory.substring(
-      0,
-      parentDirectory.lastIndexOf("/")
-    );
-    res.sendFile(path.join(addToHomePath, "public/add-to-home.html"));
+    res.sendFile(path.join(__dirname, "../../public/add-to-home.html"));
   } else {
     res.redirect("/auth");
   }

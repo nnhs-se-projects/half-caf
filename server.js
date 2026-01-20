@@ -103,8 +103,11 @@ app.all("*", (req, res) => {
 });
 
 // start the server on port PORT_NUM from .env file
-server.listen(process.env.PORT_NUM, () => {
+server.listen(process.env.PORT_NUM, async () => {
   console.log(
     "server is listening on http://localhost:" + process.env.PORT_NUM
   );
+  // Automatically open the browser to localhost:PORT_NUM/auth
+  const open = (await import("open")).default;
+  open(`http://localhost:${process.env.PORT_NUM}/auth`);
 });
