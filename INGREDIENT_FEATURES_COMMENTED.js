@@ -1,6 +1,6 @@
 /**
  * INGREDIENT MANAGEMENT FEATURE CHECKLIST
- * 
+ *
  * This document provides a detailed analysis of requested ingredient management features
  * and their current implementation status with code references.
  */
@@ -9,7 +9,7 @@
 // FEATURE 1: List all ingredients that are tracked (LE)
 // ============================================================================
 // STATUS: ✓ ALREADY IMPLEMENTED
-// 
+//
 // CURRENT IMPLEMENTATION:
 // - Tracked ingredients are stored with type='customizable' in the database
 // - Non-tracked ingredients have type='uncustomizable' or other values
@@ -35,7 +35,6 @@
 // - Navigate to /admin/ingredients page
 // - View the "Customizable by user" column (Yes/No)
 // - Edit ingredient to toggle customizable status
-
 
 // ============================================================================
 // FEATURE 2: Export ingredient list
@@ -90,7 +89,6 @@
 //    document.getElementById("exportCsvBtn").addEventListener("click", () => {
 //      window.location.href = "/admin/api/ingredients/export/csv";
 //    });
-
 
 // ============================================================================
 // FEATURE 3: Group by category
@@ -154,7 +152,7 @@
 //    });
 //
 // D. Update view: views/ingredients.ejs (add category column and dropdown):
-//    
+//
 //    Add to table header (line 27):
 //    <th>Category</th>
 //
@@ -189,7 +187,6 @@
 //      category: document.getElementById("addCategory").value  // ← ADD THIS
 //    };
 
-
 // ============================================================================
 // FEATURE 4: Confirm naming consistency
 // ============================================================================
@@ -212,18 +209,18 @@
 //    function isSimilarName(name1, name2) {
 //      const n1 = name1.toLowerCase().trim();
 //      const n2 = name2.toLowerCase().trim();
-//      
+//
 //      // Check for exact match
 //      if (n1 === n2) return true;
-//      
+//
 //      // Check for substring match
 //      if (n1.includes(n2) || n2.includes(n1)) return true;
-//      
+//
 //      // Check for word overlap (e.g., "Vanilla Syrup" vs "Vanilla Extract")
 //      const words1 = n1.split(/\s+/);
 //      const words2 = n2.split(/\s+/);
 //      const commonWords = words1.filter(w => words2.includes(w));
-//      
+//
 //      return commonWords.length > 0;
 //    }
 //
@@ -232,12 +229,12 @@
 //    document.getElementById("addIngredientForm").addEventListener("submit", async function (e) {
 //      e.preventDefault();
 //      const newName = document.getElementById("addName").value;
-//      
+//
 //      // Check for similar names
 //      const rows = document.querySelectorAll("#ingredientsTable tbody tr");
 //      let hasSimilar = false;
 //      const similarNames = [];
-//      
+//
 //      rows.forEach(row => {
 //        const existingName = row.querySelector("td:first-child").textContent;
 //        if (isSimilarName(existingName, newName)) {
@@ -245,17 +242,16 @@
 //          similarNames.push(existingName);
 //        }
 //      });
-//      
+//
 //      if (hasSimilar) {
 //        const message = `Warning: Similar ingredients found:\n${similarNames.join('\n')}\n\nContinue anyway?`;
 //        if (!confirm(message)) {
 //          return;
 //        }
 //      }
-//      
+//
 //      // Continue with form submission...
 //    });
-
 
 // ============================================================================
 // FEATURE 5: Flag duplicates or aliases
@@ -275,14 +271,14 @@
 //    route.get("/api/ingredients/check-duplicates/:name", async (req, res) => {
 //      const name = req.params.name;
 //      const ingredients = await Ingredient.find();
-//      
+//
 //      const duplicates = [];
 //      const aliases = [];
-//      
+//
 //      ingredients.forEach(ing => {
 //        const ingName = ing.name.toLowerCase();
 //        const checkName = name.toLowerCase();
-//        
+//
 //        // Exact duplicates
 //        if (ingName === checkName) {
 //          duplicates.push(ing);
@@ -292,7 +288,7 @@
 //          aliases.push(ing);
 //        }
 //      });
-//      
+//
 //      res.json({ duplicates, aliases });
 //    });
 //
@@ -302,12 +298,12 @@
 //    addNameInput.addEventListener("blur", async function() {
 //      const name = this.value;
 //      if (!name) return;
-//      
+//
 //      const response = await fetch(`/admin/api/ingredients/check-duplicates/${encodeURIComponent(name)}`);
 //      const { duplicates, aliases } = await response.json();
-//      
+//
 //      const warningDiv = document.getElementById("duplicateWarning");
-//      
+//
 //      if (duplicates.length > 0) {
 //        warningDiv.innerHTML = `
 //          ⚠️ <strong>DUPLICATE FOUND!</strong><br/>
@@ -343,11 +339,10 @@
 //      color: #856404;
 //    }
 
-
 // ============================================================================
 // SUMMARY TABLE
 // ============================================================================
-// 
+//
 // Feature                          Status              Implementation Time
 // ────────────────────────────────────────────────────────────────────────
 // 1. List tracked ingredients      ✓ IMPLEMENTED       Already Done
@@ -358,11 +353,10 @@
 //
 // TOTAL ESTIMATED IMPLEMENTATION TIME: ~8-11 hours
 
-
 // ============================================================================
 // FILES TO MODIFY
 // ============================================================================
-// 
+//
 // Priority: HIGH
 // - server/model/ingredient.js (add category field)
 // - server/routes/admin.js (add export & duplicate endpoints)

@@ -3,14 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
   function isSimilarName(name1, name2) {
     const n1 = name1.toLowerCase().trim();
     const n2 = name2.toLowerCase().trim();
-    
+
     if (n1 === n2) return true;
     if (n1.includes(n2) || n2.includes(n1)) return true;
-    
+
     const words1 = n1.split(/\s+/);
     const words2 = n2.split(/\s+/);
-    const commonWords = words1.filter(w => words2.includes(w));
-    
+    const commonWords = words1.filter((w) => words2.includes(w));
+
     return commonWords.length > 0;
   }
 
@@ -48,25 +48,27 @@ document.addEventListener("DOMContentLoaded", function () {
   // Check for duplicates on name input blur
   const addNameInput = document.getElementById("addName");
   if (addNameInput) {
-    addNameInput.addEventListener("blur", async function() {
+    addNameInput.addEventListener("blur", async function () {
       const name = this.value;
       if (!name) {
         document.getElementById("duplicateWarning").style.display = "none";
         return;
       }
-      
+
       try {
-        const response = await fetch(`/admin/api/ingredients/check-duplicates/${encodeURIComponent(name)}`);
+        const response = await fetch(
+          `/admin/api/ingredients/check-duplicates/${encodeURIComponent(name)}`,
+        );
         const { duplicates, aliases } = await response.json();
-        
+
         const warningDiv = document.getElementById("duplicateWarning");
         if (!warningDiv) return;
-        
+
         if (duplicates.length > 0) {
           warningDiv.innerHTML = `<strong style="color: #d32f2f;">⚠️ DUPLICATE FOUND!</strong><br/>Ingredient "${duplicates[0].name}" already exists.`;
           warningDiv.style.display = "block";
         } else if (aliases.length > 0) {
-          warningDiv.innerHTML = `<strong style="color: #f57c00;">⚠️ Similar ingredients found:</strong><br/>${aliases.map(a => a.name).join(', ')}<br/><small>Did you mean one of these?</small>`;
+          warningDiv.innerHTML = `<strong style="color: #f57c00;">⚠️ Similar ingredients found:</strong><br/>${aliases.map((a) => a.name).join(", ")}<br/><small>Did you mean one of these?</small>`;
           warningDiv.style.display = "block";
         } else {
           warningDiv.style.display = "none";
@@ -126,7 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
           ingredient.orderThreshold;
         document.getElementById("editUnit").value = ingredient.unit;
         document.getElementById("editPrice").value = ingredient.price;
-        document.getElementById("editCategory").value = ingredient.category || 'other';
+        document.getElementById("editCategory").value =
+          ingredient.category || "other";
         document.getElementById("editType").checked =
           ingredient.type === "customizable";
 

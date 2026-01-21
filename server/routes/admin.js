@@ -24,7 +24,7 @@ const devEmails = [
 webPush.setVapidDetails(
   "mailto:admin@example.com",
   process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
+  process.env.VAPID_PRIVATE_KEY,
 );
 
 route.get("/addSchedule", async (req, res) => {
@@ -223,7 +223,7 @@ route.post("/addDrink", async (req, res) => {
   if (req.body.imageData && req.body.imageData.startsWith("data:image")) {
     const base64Data = req.body.imageData.replace(
       /^data:image\/\w+;base64,/,
-      ""
+      "",
     );
     drinkData.imageData = Buffer.from(base64Data, "base64");
   }
@@ -253,7 +253,7 @@ route.post("/modifyDrink/:id", async (req, res) => {
     if (req.body.imageData && req.body.imageData.startsWith("data:image")) {
       const base64Data = req.body.imageData.replace(
         /^data:image\/\w+;base64,/,
-        ""
+        "",
       );
       menuItem.imageData = Buffer.from(base64Data, "base64");
     }
@@ -293,7 +293,7 @@ route.get("/inventoryManager", async (req, res) => {
     for (const order of orders) {
       const orderDateStr = order.timestamp.substring(
         0,
-        order.timestamp.indexOf(" ") // only get the year, day, and month
+        order.timestamp.indexOf(" "), // only get the year, day, and month
       );
       const orderDate = new Date(orderDateStr);
       const orderTime = orderDate.getTime();
@@ -311,7 +311,7 @@ route.get("/inventoryManager", async (req, res) => {
       }
     }
     dailyConsumptionAvgs.push(
-      totalConsumption / 10 // Average over the last 10 business days (assuming no orders are placed on weekends)
+      totalConsumption / 10, // Average over the last 10 business days (assuming no orders are placed on weekends)
     );
   }
 
@@ -778,7 +778,7 @@ route.post("/addIngredient", async (req, res) => {
     unit: req.body.unit,
     price: req.body.price,
     type: req.body.type,
-    category: req.body.category || 'other',
+    category: req.body.category || "other",
   });
   await ingredient.save();
   res.status(201).end();
@@ -792,7 +792,7 @@ route.post("/editIngredient/:id", async (req, res) => {
   ingredient.unit = req.body.unit;
   ingredient.price = req.body.price;
   ingredient.type = req.body.type;
-  ingredient.category = req.body.category || 'other';
+  ingredient.category = req.body.category || "other";
   await ingredient.save();
   res.status(201).end();
 });
@@ -807,8 +807,11 @@ route.delete("/deleteIngredient/:id", async (req, res) => {
 route.get("/api/ingredients/export/json", async (req, res) => {
   try {
     const ingredients = await Ingredient.find();
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', 'attachment; filename="ingredients.json"');
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="ingredients.json"',
+    );
     res.json(ingredients);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -819,13 +822,16 @@ route.get("/api/ingredients/export/json", async (req, res) => {
 route.get("/api/ingredients/export/csv", async (req, res) => {
   try {
     const ingredients = await Ingredient.find();
-    let csv = 'Name,Quantity,Unit,Price,Category,Tracked,OrderThreshold\n';
-    ingredients.forEach(ing => {
-      csv += `"${ing.name.replace(/"/g, '""')}",${ing.quantity},"${ing.unit}",${ing.price},"${ing.category || 'other'}",`;
-      csv += `${ing.type === 'customizable' ? 'Yes' : 'No'},${ing.orderThreshold}\n`;
+    let csv = "Name,Quantity,Unit,Price,Category,Tracked,OrderThreshold\n";
+    ingredients.forEach((ing) => {
+      csv += `"${ing.name.replace(/"/g, '""')}",${ing.quantity},"${ing.unit}",${ing.price},"${ing.category || "other"}",`;
+      csv += `${ing.type === "customizable" ? "Yes" : "No"},${ing.orderThreshold}\n`;
     });
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="ingredients.csv"');
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="ingredients.csv"',
+    );
     res.send(csv);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -837,14 +843,14 @@ route.get("/api/ingredients/check-duplicates/:name", async (req, res) => {
   try {
     const name = req.params.name;
     const ingredients = await Ingredient.find();
-    
+
     const duplicates = [];
     const aliases = [];
-    
-    ingredients.forEach(ing => {
+
+    ingredients.forEach((ing) => {
       const ingName = ing.name.toLowerCase();
       const checkName = name.toLowerCase();
-      
+
       // Exact duplicates
       if (ingName === checkName) {
         duplicates.push(ing);
@@ -854,7 +860,7 @@ route.get("/api/ingredients/check-duplicates/:name", async (req, res) => {
         aliases.push(ing);
       }
     });
-    
+
     res.json({ duplicates, aliases });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -906,7 +912,7 @@ route.post("/sendAnnouncement", async (req, res) => {
             console.error(
               "Push notification failed for user:",
               user.email,
-              error
+              error,
             );
           }
         }

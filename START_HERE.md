@@ -46,16 +46,16 @@ What's Needed: Duplicate detection endpoint + UI warnings
 
 ## 📈 QUICK STATS
 
-| Metric | Value |
-|--------|-------|
-| Features Analyzed | 5 |
-| Already Implemented | 1 (20%) |
-| Partially Done | 1 (20%) |
-| Need Implementation | 3 (60%) |
-| Total Effort | 6-10 hours |
-| Easy Features | 2 |
-| Medium Features | 2 |
-| Hard Features | 0 |
+| Metric              | Value      |
+| ------------------- | ---------- |
+| Features Analyzed   | 5          |
+| Already Implemented | 1 (20%)    |
+| Partially Done      | 1 (20%)    |
+| Need Implementation | 3 (60%)    |
+| Total Effort        | 6-10 hours |
+| Easy Features       | 2          |
+| Medium Features     | 2          |
+| Hard Features       | 0          |
 
 ---
 
@@ -98,10 +98,11 @@ All files are in the project root directory:
 ### ✓ What Already Works
 
 The ingredient tracking system (Feature 1) is fully implemented:
+
 ```javascript
 // Type field distinguishes tracked vs non-tracked
-type: 'customizable'    // Tracked (LE)
-type: 'uncustomizable'  // Not tracked
+type: "customizable"; // Tracked (LE)
+type: "uncustomizable"; // Not tracked
 ```
 
 - Admin page at `/admin/ingredients` shows all ingredients
@@ -112,18 +113,21 @@ type: 'uncustomizable'  // Not tracked
 ### ✗ What's Missing
 
 **Export Functionality (Feature 2):**
+
 - Need JSON export endpoint
 - Need CSV export endpoint
 - Need export buttons in UI
 - Effort: 1-2 hours (Easy)
 
 **Category System (Feature 3):**
+
 - **Schema lacks category field** ← Main issue
 - Need category dropdown in modals
 - Need category column in table
 - Effort: 2-3 hours (Medium)
 
 **Validation (Features 4-5):**
+
 - Need duplicate checking function
 - Need warning messages
 - Need UI display for warnings
@@ -134,6 +138,7 @@ type: 'uncustomizable'  // Not tracked
 ## 🚀 IMPLEMENTATION ROADMAP
 
 ### Priority 1: Add Category Support (2-3 hours)
+
 ```javascript
 // 1. Update schema (server/model/ingredient.js)
 category: {
@@ -148,6 +153,7 @@ category: {
 ```
 
 ### Priority 2: Add Export Functionality (1-2 hours)
+
 ```javascript
 // 1. Add endpoints (server/routes/admin.js)
 GET /admin/api/ingredients/export/json
@@ -158,6 +164,7 @@ GET /admin/api/ingredients/export/csv
 ```
 
 ### Priority 3: Add Validation (2-3 hours)
+
 ```javascript
 // 1. Add duplicate check endpoint (server/routes/admin.js)
 // 2. Add validation on form submit (assets/js/ingredients.js)
@@ -169,13 +176,13 @@ GET /admin/api/ingredients/export/csv
 
 ## 📋 FILES TO MODIFY
 
-| File | Changes | Impact | Difficulty |
-|------|---------|--------|-----------|
-| server/model/ingredient.js | Add category field | Database | ⚡ Easy |
-| server/routes/admin.js | Add 3 endpoints | API layer | ⚡ Easy |
-| views/ingredients.ejs | Add UI controls | Interface | ⚡ Easy |
-| assets/js/ingredients.js | Add handlers | Interactivity | 🔥 Medium |
-| assets/css/styles.css | Add warning styles | Styling | ⚡ Easy |
+| File                       | Changes            | Impact        | Difficulty |
+| -------------------------- | ------------------ | ------------- | ---------- |
+| server/model/ingredient.js | Add category field | Database      | ⚡ Easy    |
+| server/routes/admin.js     | Add 3 endpoints    | API layer     | ⚡ Easy    |
+| views/ingredients.ejs      | Add UI controls    | Interface     | ⚡ Easy    |
+| assets/js/ingredients.js   | Add handlers       | Interactivity | 🔥 Medium  |
+| assets/css/styles.css      | Add warning styles | Styling       | ⚡ Easy    |
 
 ---
 
@@ -205,17 +212,20 @@ GET /admin/api/ingredients/export/csv
 ## ✨ RECOMMENDED QUICK WINS
 
 ### If you have 1 hour: Add Export
+
 - Add 2 endpoints for JSON/CSV export
 - Add 2 buttons to UI
 - Add 2 event handlers
 - Simple and immediate value
 
 ### If you have 2-3 hours: Add Category Support
+
 - Foundation for future enhancements
 - Enables better organization
 - Medium complexity but good value
 
 ### If you have 4+ hours: Add Everything
+
 - Complete all missing features
 - Full-featured ingredient management
 - Takes advantage of existing infrastructure
@@ -225,6 +235,7 @@ GET /admin/api/ingredients/export/csv
 ## 🧪 VALIDATION CHECKLIST
 
 After implementation, verify:
+
 - [ ] Can view tracked ingredients (should already work)
 - [ ] Can add ingredient with category
 - [ ] Can edit ingredient category
@@ -269,26 +280,31 @@ Need implementation help?
 ## 🎓 HOW TO USE THIS ANALYSIS
 
 **Step 1: Read Overview**
+
 - Start with README_INGREDIENT_FEATURES.md
 - Takes ~5 minutes
 - Understand the scope
 
 **Step 2: Pick Features**
+
 - Decide which to implement
 - Use time estimates to plan
 - Priority matrix provided
 
 **Step 3: Get Implementation Guide**
+
 - Open INGREDIENT_FEATURES_COMMENTED.js
 - Copy code snippets
 - Follow step-by-step instructions
 
 **Step 4: Reference Current Code**
+
 - Use INGREDIENT_CODE_REVIEW.js
 - See what's already there
 - Understand existing patterns
 
 **Step 5: Start Coding**
+
 - Modify identified files
 - Use test checklist
 - Verify functionality
@@ -297,14 +313,14 @@ Need implementation help?
 
 ## 📊 SUMMARY TABLE
 
-| Aspect | Status | Notes |
-|--------|--------|-------|
-| Analysis | ✅ Complete | All features reviewed |
-| Documentation | ✅ Complete | 6 detailed documents created |
-| Code Snippets | ✅ Ready | Copy-paste ready code |
-| Roadmap | ✅ Created | Phase-by-phase plan |
-| Time Estimates | ✅ Provided | 6-10 hours total |
-| Implementation | ❓ Pending | Ready to start |
+| Aspect         | Status      | Notes                        |
+| -------------- | ----------- | ---------------------------- |
+| Analysis       | ✅ Complete | All features reviewed        |
+| Documentation  | ✅ Complete | 6 detailed documents created |
+| Code Snippets  | ✅ Ready    | Copy-paste ready code        |
+| Roadmap        | ✅ Created  | Phase-by-phase plan          |
+| Time Estimates | ✅ Provided | 6-10 hours total             |
+| Implementation | ❓ Pending  | Ready to start               |
 
 ---
 
@@ -313,4 +329,3 @@ Need implementation help?
 The ingredient management system has a solid foundation with one feature already implemented. The remaining features are well-defined with clear implementation paths. All necessary documentation has been created to support implementation.
 
 **Ready to start building? Check README_INGREDIENT_FEATURES.md next!**
-

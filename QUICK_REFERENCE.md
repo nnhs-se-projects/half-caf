@@ -7,29 +7,34 @@
 ## 📦 WHAT WAS BUILT
 
 ### Feature 1: List Tracked Ingredients ✓ (Already Implemented)
+
 - View ingredients marked as customizable (LE)
 - Located at `/admin/ingredients`
 - Shows "Customizable by user: Yes/No" column
 
 ### Feature 2: Export Ingredients ✓ (NEW)
+
 - Export as JSON: Click "📥 Export JSON" button
 - Export as CSV: Click "📥 Export CSV" button
 - Includes: name, quantity, unit, price, category, tracked status, threshold
 - Downloads directly to your computer
 
 ### Feature 3: Group by Category ✓ (NEW)
+
 - Category field added to schema with 9 options
 - Categories: milk, syrups, powders, sauces, coffee, toppings, ice, water, other
 - Visible in table as new column
 - Selectable when adding/editing ingredients
 
 ### Feature 4: Naming Consistency ✓ (NEW)
+
 - Similarity checking automatically enabled
 - Warning shows when entering similar ingredient name
 - Non-blocking (can proceed if needed)
 - Yellow warning box with ingredient suggestions
 
 ### Feature 5: Flag Duplicates ✓ (NEW)
+
 - Real-time duplicate detection
 - Checks as you type ingredient name
 - Red warning for exact duplicates
@@ -40,13 +45,13 @@
 
 ## 🗂️ FILES CHANGED
 
-| File | Changes | Lines |
-|------|---------|-------|
-| server/model/ingredient.js | Added category field to schema | 5 |
-| server/routes/admin.js | Added 3 endpoints, updated 2 routes | 80+ |
-| views/ingredients.ejs | Added UI components | 50+ |
-| assets/js/ingredients.js | Added handlers & logic | 100+ |
-| assets/css/styles.css | Added styling | 50+ |
+| File                       | Changes                             | Lines |
+| -------------------------- | ----------------------------------- | ----- |
+| server/model/ingredient.js | Added category field to schema      | 5     |
+| server/routes/admin.js     | Added 3 endpoints, updated 2 routes | 80+   |
+| views/ingredients.ejs      | Added UI components                 | 50+   |
+| assets/js/ingredients.js   | Added handlers & logic              | 100+  |
+| assets/css/styles.css      | Added styling                       | 50+   |
 
 **Total: ~300 lines of code added**
 
@@ -55,6 +60,7 @@
 ## 🚀 HOW TO USE
 
 ### Export Ingredients
+
 ```
 1. Go to /admin/ingredients
 2. Click "📥 Export JSON" or "📥 Export CSV"
@@ -63,6 +69,7 @@
 ```
 
 ### Add Ingredient with Category
+
 ```
 1. Click "+ Add Ingredient"
 2. Fill in name, quantity, unit, price
@@ -73,6 +80,7 @@
 ```
 
 ### See Duplicate Warnings
+
 ```
 1. Click "+ Add Ingredient"
 2. Enter an ingredient name
@@ -82,6 +90,7 @@
 ```
 
 ### Edit Category
+
 ```
 1. Find ingredient in table
 2. Click "Edit" button
@@ -95,18 +104,21 @@
 ## 📊 NEW ENDPOINTS
 
 ### Export JSON
+
 ```
 GET /admin/api/ingredients/export/json
 Returns: JSON file of all ingredients
 ```
 
-### Export CSV  
+### Export CSV
+
 ```
 GET /admin/api/ingredients/export/csv
 Returns: CSV file of all ingredients
 ```
 
 ### Check Duplicates
+
 ```
 GET /admin/api/ingredients/check-duplicates/:name
 Returns: { duplicates: [], aliases: [] }
@@ -117,16 +129,19 @@ Returns: { duplicates: [], aliases: [] }
 ## 🎨 NEW UI ELEMENTS
 
 ### Export Buttons
+
 - Green buttons at top of ingredients page
 - "📥 Export JSON" - download as JSON
 - "📥 Export CSV" - download as CSV
 
 ### Category Dropdown
+
 - Add Ingredient modal: Category selector
 - Edit Ingredient modal: Category selector
 - Table: Category column shows selection
 
 ### Warning Box
+
 - Yellow background with border
 - Shows in add ingredient modal
 - Displays duplicate/similarity warnings
@@ -137,7 +152,9 @@ Returns: { duplicates: [], aliases: [] }
 ## 💾 DATABASE CHANGES
 
 ### Schema Update
+
 Added to ingredient collection:
+
 ```javascript
 category: {
   type: String,
@@ -147,6 +164,7 @@ category: {
 ```
 
 ### Migration Impact
+
 - Existing ingredients: category = 'other' (default)
 - No data loss
 - Fully backward compatible
@@ -156,13 +174,13 @@ category: {
 
 ## ✨ KEY FEATURES
 
-| Feature | Benefit |
-|---------|---------|
-| Export Data | Backup, analysis, integration with other tools |
-| Categories | Better organization, future grouping |
-| Duplicate Warning | Prevent naming confusion, consistency |
-| Similarity Check | Catch aliases before they happen |
-| Real-time Detection | Warnings as user types |
+| Feature             | Benefit                                        |
+| ------------------- | ---------------------------------------------- |
+| Export Data         | Backup, analysis, integration with other tools |
+| Categories          | Better organization, future grouping           |
+| Duplicate Warning   | Prevent naming confusion, consistency          |
+| Similarity Check    | Catch aliases before they happen               |
+| Real-time Detection | Warnings as user types                         |
 
 ---
 
@@ -171,17 +189,20 @@ category: {
 All features ready to test:
 
 ### Test Export
+
 1. Click export buttons
 2. Verify files download
 3. Open in text editor or spreadsheet
 
 ### Test Categories
+
 1. Add new ingredient
 2. Select different categories
 3. Verify category displays in table
 4. Edit and change category
 
 ### Test Duplicates
+
 1. Add ingredient "Caramel"
 2. Try adding "Caramel Syrup"
 3. Should see similarity warning
@@ -193,6 +214,7 @@ All features ready to test:
 ## 🔄 PROCESS FLOW
 
 ### Adding Ingredient with New Features
+
 ```
 User Clicks "+ Add Ingredient"
     ↓
@@ -219,17 +241,17 @@ Page Refreshes, New Ingredient Visible in Table
 
 ## 📝 CATEGORIES EXPLAINED
 
-| Category | Examples |
-|----------|----------|
-| **milk** | Whole milk, 2%, almond, oat, soy, coconut |
-| **syrups** | Vanilla, caramel, hazelnut, mocha, chocolate |
-| **powders** | Matcha, cocoa, protein, instant coffee |
-| **sauces** | Caramel sauce, chocolate sauce |
-| **coffee** | Espresso shots, cold brew |
-| **toppings** | Whipped cream, cinnamon, sprinkles |
-| **ice** | Ice, crushed ice |
-| **water** | Hot water, cold water |
-| **other** | Miscellaneous (default) |
+| Category     | Examples                                     |
+| ------------ | -------------------------------------------- |
+| **milk**     | Whole milk, 2%, almond, oat, soy, coconut    |
+| **syrups**   | Vanilla, caramel, hazelnut, mocha, chocolate |
+| **powders**  | Matcha, cocoa, protein, instant coffee       |
+| **sauces**   | Caramel sauce, chocolate sauce               |
+| **coffee**   | Espresso shots, cold brew                    |
+| **toppings** | Whipped cream, cinnamon, sprinkles           |
+| **ice**      | Ice, crushed ice                             |
+| **water**    | Hot water, cold water                        |
+| **other**    | Miscellaneous (default)                      |
 
 ---
 
@@ -249,20 +271,24 @@ Page Refreshes, New Ingredient Visible in Table
 ## 📍 LOCATIONS
 
 ### Admin Page
+
 ```
 URL: http://localhost:3000/admin/ingredients
 ```
 
 ### Export Functions
+
 - JSON: Click "📥 Export JSON" button
 - CSV: Click "📥 Export CSV" button
 
 ### Duplicate Warnings
+
 - Shows when adding ingredient
 - Appears after name field blur
 - Yellow warning box with suggestions
 
 ### Category Selection
+
 - Add/Edit modals have dropdown
 - Default: "Other"
 - Visible in table column
@@ -272,16 +298,19 @@ URL: http://localhost:3000/admin/ingredients
 ## 🆘 TROUBLESHOOTING
 
 ### Export button not working
+
 - Ensure server is running
 - Check browser console for errors
 - Verify /admin path is accessible
 
 ### Category not showing
+
 - Refresh page
 - Ensure ingredient was saved with category
 - Check browser console
 
 ### No duplicate warning
+
 - Try entering exact duplicate name
 - Try similar name (shared words)
 - Check blur event (click outside field)
@@ -291,6 +320,7 @@ URL: http://localhost:3000/admin/ingredients
 ## ✅ READY TO DEPLOY
 
 All features are:
+
 - ✓ Implemented
 - ✓ Tested
 - ✓ Production-ready
@@ -304,6 +334,7 @@ No additional configuration needed!
 ## 📞 SUPPORT
 
 All code includes:
+
 - Error handling (try-catch)
 - Input validation
 - User feedback (warnings)
@@ -317,4 +348,3 @@ All code includes:
 **Ready to Use:** YES
 
 Start using at: http://localhost:3000/admin/ingredients
-

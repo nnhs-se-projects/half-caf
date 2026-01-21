@@ -81,7 +81,9 @@ const INGREDIENT_CATEGORIES = {
 async function analyzeIngredients() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URL || "mongodb://localhost/half-caf");
+    await mongoose.connect(
+      process.env.MONGO_URL || "mongodb://localhost/half-caf",
+    );
     log("Connected to MongoDB\n");
 
     // Fetch all ingredients
@@ -95,11 +97,13 @@ async function analyzeIngredients() {
     // 1. List all ingredients that are tracked (customizable)
     log("1. TRACKED INGREDIENTS (LE - Listed/Exported)");
     log("-".repeat(80));
-    const trackedIngredients = ingredients.filter((ing) => ing.type === "customizable");
+    const trackedIngredients = ingredients.filter(
+      (ing) => ing.type === "customizable",
+    );
     log(`Tracked Ingredients (Customizable): ${trackedIngredients.length}`);
     trackedIngredients.forEach((ing, idx) => {
       log(
-        `   ${idx + 1}. ${ing.name} - Unit: ${ing.unit}, Price: $${ing.price}, Qty: ${ing.quantity}`
+        `   ${idx + 1}. ${ing.name} - Unit: ${ing.unit}, Price: $${ing.price}, Qty: ${ing.quantity}`,
       );
     });
     log("");
@@ -123,7 +127,7 @@ async function analyzeIngredients() {
     });
 
     const uncategorized = ingredients.filter(
-      (ing) => !categorizedNames.has(ing._id.toString())
+      (ing) => !categorizedNames.has(ing._id.toString()),
     );
     if (uncategorized.length > 0) {
       ingredientsByCategory["uncategorized"] = uncategorized;
@@ -138,7 +142,7 @@ async function analyzeIngredients() {
           log(
             `   - ${ing.name.padEnd(30)} | ${ing.unit.padEnd(10)} | $${ing.price
               .toString()
-              .padEnd(7)} | Qty: ${ing.quantity} ${tracked}`
+              .padEnd(7)} | Qty: ${ing.quantity} ${tracked}`,
           );
         });
       }
@@ -170,7 +174,7 @@ async function analyzeIngredients() {
         log(`\nDUPLICATE FOUND: "${normalizedName}"`);
         items.forEach((ing, idx) => {
           log(
-            `   ${idx + 1}. ID: ${ing._id} - Original: "${ing.name}", Unit: ${ing.unit}, Price: $${ing.price}`
+            `   ${idx + 1}. ID: ${ing._id} - Original: "${ing.name}", Unit: ${ing.unit}, Price: $${ing.price}`,
           );
         });
       }
@@ -206,7 +210,7 @@ async function analyzeIngredients() {
     if (potentialAliases.length > 0) {
       potentialAliases.forEach((alias, idx) => {
         log(
-          `   ${idx + 1}. "${alias.name1}" & "${alias.name2}" (Common: ${alias.commonWords.join(", ")})`
+          `   ${idx + 1}. "${alias.name1}" & "${alias.name2}" (Common: ${alias.commonWords.join(", ")})`,
         );
       });
     } else {
@@ -216,7 +220,10 @@ async function analyzeIngredients() {
     // 5. Summary Statistics
     log("\n\n5. SUMMARY STATISTICS");
     log("-".repeat(80));
-    const totalValue = ingredients.reduce((sum, ing) => sum + ing.price * ing.quantity, 0);
+    const totalValue = ingredients.reduce(
+      (sum, ing) => sum + ing.price * ing.quantity,
+      0,
+    );
     const avgPrice = (
       ingredients.reduce((sum, ing) => sum + ing.price, 0) / ingredients.length
     ).toFixed(2);
@@ -225,7 +232,7 @@ async function analyzeIngredients() {
     log(`Average Price Per Unit: $${avgPrice}`);
     log(`Customizable Items: ${trackedIngredients.length}`);
     log(
-      `Non-Customizable Items: ${ingredients.length - trackedIngredients.length}`
+      `Non-Customizable Items: ${ingredients.length - trackedIngredients.length}`,
     );
 
     // 6. Export functionality status

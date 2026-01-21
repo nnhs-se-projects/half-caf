@@ -5,55 +5,59 @@ This directory contains comprehensive analysis of the ingredient management feat
 ## 📋 DOCUMENTS INCLUDED
 
 ### 1. **INGREDIENT_FEATURES_SUMMARY.md** (START HERE)
-   - Quick reference with status overview table
-   - Clear implementation status for each feature
-   - Code snippets showing what to implement
-   - Time estimates for each feature
-   - Testing checklist
-   
-   **Best for:** Quick overview and implementation planning
+
+- Quick reference with status overview table
+- Clear implementation status for each feature
+- Code snippets showing what to implement
+- Time estimates for each feature
+- Testing checklist
+
+**Best for:** Quick overview and implementation planning
 
 ---
 
-### 2. **INGREDIENT_FEATURES_ANALYSIS.md** 
-   - Detailed analysis of each feature
-   - Implementation roadmap
-   - Files affected by changes
-   - Code references with links
-   
-   **Best for:** Understanding the full scope
+### 2. **INGREDIENT_FEATURES_ANALYSIS.md**
+
+- Detailed analysis of each feature
+- Implementation roadmap
+- Files affected by changes
+- Code references with links
+
+**Best for:** Understanding the full scope
 
 ---
 
 ### 3. **INGREDIENT_CODE_REVIEW.js**
-   - Current code with inline comments
-   - Shows exactly what's implemented vs. what's missing
-   - Commented-out code showing what needs to be added
-   - Direct code location references
-   
-   **Best for:** Developers implementing the features
+
+- Current code with inline comments
+- Shows exactly what's implemented vs. what's missing
+- Commented-out code showing what needs to be added
+- Direct code location references
+
+**Best for:** Developers implementing the features
 
 ---
 
 ### 4. **INGREDIENT_FEATURES_COMMENTED.js**
-   - Detailed implementation guide in comment format
-   - Complete code snippets ready to implement
-   - Step-by-step instructions for each feature
-   - Best practices and patterns
-   
-   **Best for:** Implementation reference guide
+
+- Detailed implementation guide in comment format
+- Complete code snippets ready to implement
+- Step-by-step instructions for each feature
+- Best practices and patterns
+
+**Best for:** Implementation reference guide
 
 ---
 
 ## 🎯 QUICK SUMMARY
 
-| Feature | Status | Effort | Priority |
-|---------|--------|--------|----------|
-| List tracked ingredients (LE) | ✅ **DONE** | Already Done | - |
-| Export ingredient list | ❌ TODO | 1-2 hrs | HIGH |
-| Group by category | ❌ TODO | 2-3 hrs | HIGH |
-| Naming consistency | ⚠️ PARTIAL | 1-2 hrs | MEDIUM |
-| Flag duplicates | ❌ TODO | 2-3 hrs | MEDIUM |
+| Feature                       | Status      | Effort       | Priority |
+| ----------------------------- | ----------- | ------------ | -------- |
+| List tracked ingredients (LE) | ✅ **DONE** | Already Done | -        |
+| Export ingredient list        | ❌ TODO     | 1-2 hrs      | HIGH     |
+| Group by category             | ❌ TODO     | 2-3 hrs      | HIGH     |
+| Naming consistency            | ⚠️ PARTIAL  | 1-2 hrs      | MEDIUM   |
+| Flag duplicates               | ❌ TODO     | 2-3 hrs      | MEDIUM   |
 
 **Total Implementation Time:** 6-10 hours
 
@@ -93,10 +97,12 @@ Half Caf Project/
 **Status:** ✓ ALREADY IMPLEMENTED
 
 The application already tracks ingredients using the `type` field:
+
 - `type='customizable'` = Tracked (Listed/Exported)
 - `type='uncustomizable'` = Not tracked
 
 **Code Evidence:**
+
 ```javascript
 // In ingredient schema: type field exists
 // In view: Shows "Customizable by user" column
@@ -112,30 +118,38 @@ No implementation needed - feature is complete!
 **Status:** NOT IMPLEMENTED
 
 **Implementation Steps:**
+
 1. Add JSON/CSV export endpoints to `server/routes/admin.js`
 2. Add export buttons to `views/ingredients.ejs`
 3. Add click handlers to `assets/js/ingredients.js`
 
 **Quick Start:**
+
 ```javascript
 // Add these endpoints to server/routes/admin.js around line 805:
 
 route.get("/api/ingredients/export/json", async (req, res) => {
   const ingredients = await Ingredient.find();
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Disposition', 'attachment; filename="ingredients.json"');
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="ingredients.json"',
+  );
   res.json(ingredients);
 });
 
 route.get("/api/ingredients/export/csv", async (req, res) => {
   const ingredients = await Ingredient.find();
-  let csv = 'Name,Quantity,Unit,Price,Tracked\n';
-  ingredients.forEach(ing => {
+  let csv = "Name,Quantity,Unit,Price,Tracked\n";
+  ingredients.forEach((ing) => {
     csv += `"${ing.name}",${ing.quantity},"${ing.unit}",${ing.price},`;
-    csv += `${ing.type === 'customizable' ? 'Yes' : 'No'}\n`;
+    csv += `${ing.type === "customizable" ? "Yes" : "No"}\n`;
   });
-  res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename="ingredients.csv"');
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="ingredients.csv"',
+  );
   res.send(csv);
 });
 ```
@@ -150,6 +164,7 @@ route.get("/api/ingredients/export/csv", async (req, res) => {
 The `Ingredient` model does NOT have a `category` field.
 
 **Current Schema:** `server/model/ingredient.js`
+
 ```javascript
 {
   name: String,
@@ -163,12 +178,14 @@ The `Ingredient` model does NOT have a `category` field.
 ```
 
 **Implementation Steps:**
+
 1. Update schema to add `category` field with enum values
 2. Update routes to handle category in add/edit
 3. Update modals to include category selector
 4. Update table to show category column
 
 **Suggested Categories:**
+
 - milk, syrups, powders, sauces, coffee, toppings, ice, water, other
 
 ---
@@ -178,9 +195,11 @@ The `Ingredient` model does NOT have a `category` field.
 **Status:** PARTIALLY IMPLEMENTED
 
 **What Works:**
+
 - Live search filter on ingredients page
 
 **What's Missing:**
+
 - No validation when adding/editing
 - No warnings for duplicate names
 - No similarity checking
@@ -195,6 +214,7 @@ Add validation function to check for similar names before submitting form.
 **Status:** NOT IMPLEMENTED
 
 **What's Needed:**
+
 1. Backend endpoint to check for duplicates
 2. Frontend function to call endpoint
 3. UI warnings for near-duplicates
@@ -204,9 +224,10 @@ Add validation function to check for similar names before submitting form.
 ## 🔍 ACCESSING THE FEATURES
 
 ### Current Ingredients Management:
+
 - **URL:** `/admin/ingredients`
 - **Requires:** Admin login
-- **Can Do:** 
+- **Can Do:**
   - ✓ View all ingredients with tracked status
   - ✓ Add new ingredients
   - ✓ Edit ingredients
@@ -221,6 +242,7 @@ Add validation function to check for similar names before submitting form.
 ## 💾 DATABASE CONSIDERATIONS
 
 When adding the `category` field:
+
 1. Existing ingredients will default to `'other'`
 2. May want to pre-categorize common ingredients
 3. Consider migration script to auto-categorize based on name patterns
@@ -245,6 +267,7 @@ When adding the `category` field:
 ## ❓ QUESTIONS?
 
 Refer to the specific implementation documents:
+
 - **Quick ref:** INGREDIENT_FEATURES_SUMMARY.md
 - **Full details:** INGREDIENT_FEATURES_ANALYSIS.md
 - **Code snippets:** INGREDIENT_FEATURES_COMMENTED.js
@@ -255,6 +278,7 @@ Refer to the specific implementation documents:
 ## 📊 Implementation Timeline
 
 **Recommended Order:**
+
 1. **Phase 1 (2-3 hours):** Add category field to schema
 2. **Phase 2 (1-2 hours):** Add export functionality
 3. **Phase 3 (1-2 hours):** Add naming consistency checks
@@ -265,4 +289,3 @@ Refer to the specific implementation documents:
 ---
 
 **Last Updated:** January 21, 2026
-

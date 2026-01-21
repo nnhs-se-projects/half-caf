@@ -32,8 +32,18 @@ const schema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['milk', 'syrups', 'powders', 'sauces', 'coffee', 'toppings', 'ice', 'water', 'other'],
-    default: 'other',
+    enum: [
+      "milk",
+      "syrups",
+      "powders",
+      "sauces",
+      "coffee",
+      "toppings",
+      "ice",
+      "water",
+      "other",
+    ],
+    default: "other",
   },
 });
 
