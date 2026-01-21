@@ -17,6 +17,12 @@
     <button class="action-button add-ingredient" id="addIngredientBtn">
       <span class="plus-icon">+</span> Add Ingredient
     </button>
+    <button class="action-button export" id="exportJsonBtn">
+      📥 Export JSON
+    </button>
+    <button class="action-button export" id="exportCsvBtn">
+      📥 Export CSV
+    </button>
   </div>
 
   <div class="table-container">
@@ -27,6 +33,7 @@
           <th>Quantity</th>
           <th>Unit</th>
           <th>Price</th>
+          <th>Category</th>
           <th>Customizable by user</th>
           <th>Actions</th>
         </tr>
@@ -41,6 +48,7 @@
           <td><%= ingredient.quantity %></td>
           <td><%= ingredient.unit %></td>
           <td>$<%= ingredient.price %></td>
+          <td><%= ingredient.category || 'other' %></td>
           <td>
             <span
               ><% if (ingredient.type === 'customizable') { %>Yes<% } else {
@@ -128,11 +136,26 @@
           />
         </div>
         <div class="form-group">
+          <label for="addCategory">Category:</label>
+          <select id="addCategory" required>
+            <option value="milk">Milk</option>
+            <option value="syrups">Syrups</option>
+            <option value="powders">Powders</option>
+            <option value="sauces">Sauces</option>
+            <option value="coffee">Coffee</option>
+            <option value="toppings">Toppings</option>
+            <option value="ice">Ice</option>
+            <option value="water">Water</option>
+            <option value="other" selected>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
           <div>
             <input type="checkbox" id="addType" />
             <label for="addType">Customizable by user</label>
           </div>
         </div>
+        <div id="duplicateWarning" class="warning-box" style="display: none;"></div>
       </div>
       <div class="modal-actions">
         <button
@@ -177,6 +200,20 @@
         <div class="form-group">
           <label for="editPrice">Price:</label>
           <input type="number" step="any" min="0" id="editPrice" required />
+        </div>
+        <div class="form-group">
+          <label for="editCategory">Category:</label>
+          <select id="editCategory" required>
+            <option value="milk">Milk</option>
+            <option value="syrups">Syrups</option>
+            <option value="powders">Powders</option>
+            <option value="sauces">Sauces</option>
+            <option value="coffee">Coffee</option>
+            <option value="toppings">Toppings</option>
+            <option value="ice">Ice</option>
+            <option value="water">Water</option>
+            <option value="other">Other</option>
+          </select>
         </div>
         <div class="form-group">
           <div>

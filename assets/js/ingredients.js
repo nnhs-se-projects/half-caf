@@ -1,4 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // --- Utility Functions ---
+  function isSimilarName(name1, name2) {
+    const n1 = name1.toLowerCase().trim();
+    const n2 = name2.toLowerCase().trim();
+    
+    if (n1 === n2) return true;
+    if (n1.includes(n2) || n2.includes(n1)) return true;
+    
+    const words1 = n1.split(/\s+/);
+    const words2 = n2.split(/\s+/);
+    const commonWords = words1.filter(w => words2.includes(w));
+    
+    return commonWords.length > 0;
+  }
+
   // --- Generic Modal Control ---
   function openModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -30,6 +45,38 @@ document.addEventListener("DOMContentLoaded", function () {
     openModal("addIngredientModal");
   });
 
+  // Check for duplicates on name input blur
+  const addNameInput = document.getElementById("addName");
+  if (addNameInput) {
+    addNameInput.addEventListener("blur", async function() {
+      const name = this.value;
+      if (!name) {
+        document.getElementById("duplicateWarning").style.display = "none";
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/admin/api/ingredients/check-duplicates/${encodeURIComponent(name)}`);
+        const { duplicates, aliases } = await response.json();
+        
+        const warningDiv = document.getElementById("duplicateWarning");
+        if (!warningDiv) return;
+        
+        if (duplicates.length > 0) {
+          warningDiv.innerHTML = `<strong style="color: #d32f2f;">⚠️ DUPLICATE FOUND!</strong><br/>Ingredient "${duplicates[0].name}" already exists.`;
+          warningDiv.style.display = "block";
+        } else if (aliases.length > 0) {
+          warningDiv.innerHTML = `<strong style="color: #f57c00;">⚠️ Similar ingredients found:</strong><br/>${aliases.map(a => a.name).join(', ')}<br/><small>Did you mean one of these?</small>`;
+          warningDiv.style.display = "block";
+        } else {
+          warningDiv.style.display = "none";
+        }
+      } catch (error) {
+        console.error("Error checking duplicates:", error);
+      }
+    });
+  }
+
   document
     .getElementById("addIngredientForm")
     .addEventListener("submit", async function (e) {
@@ -43,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
         type: document.getElementById("addType").checked
           ? "customizable"
           : "uncustomizable",
+        category: document.getElementById("addCategory").value,
       };
 
       try {
@@ -78,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
           ingredient.orderThreshold;
         document.getElementById("editUnit").value = ingredient.unit;
         document.getElementById("editPrice").value = ingredient.price;
+        document.getElementById("editCategory").value = ingredient.category || 'other';
         document.getElementById("editType").checked =
           ingredient.type === "customizable";
 
@@ -103,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         type: document.getElementById("editType").checked
           ? "customizable"
           : "uncustomizable",
+        category: document.getElementById("editCategory").value,
       };
 
       try {
@@ -150,6 +200,15 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Error:", error);
       }
     });
+
+  // --- Export Handlers ---
+  document.getElementById("exportJsonBtn").addEventListener("click", () => {
+    window.location.href = "/admin/api/ingredients/export/json";
+  });
+
+  document.getElementById("exportCsvBtn").addEventListener("click", () => {
+    window.location.href = "/admin/api/ingredients/export/csv";
+  });
 
   // --- Live Search ---
   const nameSearch = document.getElementById("nameSearch");

@@ -778,6 +778,7 @@ route.post("/addIngredient", async (req, res) => {
     unit: req.body.unit,
     price: req.body.price,
     type: req.body.type,
+    category: req.body.category || 'other',
   });
   await ingredient.save();
   res.status(201).end();
@@ -791,6 +792,7 @@ route.post("/editIngredient/:id", async (req, res) => {
   ingredient.unit = req.body.unit;
   ingredient.price = req.body.price;
   ingredient.type = req.body.type;
+  ingredient.category = req.body.category || 'other';
   await ingredient.save();
   res.status(201).end();
 });
@@ -799,6 +801,64 @@ route.delete("/deleteIngredient/:id", async (req, res) => {
   const ingredientId = req.params.id;
   await Ingredient.findByIdAndRemove(ingredientId);
   res.end();
+});
+
+// Export ingredients as JSON
+route.get("/api/ingredients/export/json", async (req, res) => {
+  try {
+    const ingredients = await Ingredient.find();
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="ingredients.json"');
+    res.json(ingredients);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Export ingredients as CSV
+route.get("/api/ingredients/export/csv", async (req, res) => {
+  try {
+    const ingredients = await Ingredient.find();
+    let csv = 'Name,Quantity,Unit,Price,Category,Tracked,OrderThreshold\n';
+    ingredients.forEach(ing => {
+      csv += `"${ing.name.replace(/"/g, '""')}",${ing.quantity},"${ing.unit}",${ing.price},"${ing.category || 'other'}",`;
+      csv += `${ing.type === 'customizable' ? 'Yes' : 'No'},${ing.orderThreshold}\n`;
+    });
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="ingredients.csv"');
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Check for duplicate/similar ingredients
+route.get("/api/ingredients/check-duplicates/:name", async (req, res) => {
+  try {
+    const name = req.params.name;
+    const ingredients = await Ingredient.find();
+    
+    const duplicates = [];
+    const aliases = [];
+    
+    ingredients.forEach(ing => {
+      const ingName = ing.name.toLowerCase();
+      const checkName = name.toLowerCase();
+      
+      // Exact duplicates
+      if (ingName === checkName) {
+        duplicates.push(ing);
+      }
+      // Similar names (aliases)
+      else if (ingName.includes(checkName) || checkName.includes(ingName)) {
+        aliases.push(ing);
+      }
+    });
+    
+    res.json({ duplicates, aliases });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 route.get("/deliveryPersonManager", async (req, res) => {
