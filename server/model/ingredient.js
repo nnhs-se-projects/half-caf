@@ -30,6 +30,21 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    enum: [
+      "milk",
+      "syrups",
+      "powders",
+      "sauces",
+      "coffee",
+      "toppings",
+      "ice",
+      "water",
+      "other",
+    ],
+    default: "other",
+  },
 });
 
 const Ingredient = mongoose.model("Ingredient", schema);
