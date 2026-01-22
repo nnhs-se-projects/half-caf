@@ -1,6 +1,5 @@
 const staticNNHSCoffe = "nnhs-coffee-site-v1";
 const assets = [
-  "/",
   "/add-to-home.html",
   "/manifest.json",
   "/test-icon.png",
@@ -12,7 +11,7 @@ self.addEventListener("install", (installEvent) => {
   installEvent.waitUntil(
     caches.open(staticNNHSCoffe).then((cache) => {
       cache.addAll(assets);
-    })
+    }),
   );
   self.skipWaiting(); // Ensure the newest service worker activates immediately.
 });
@@ -29,7 +28,7 @@ self.addEventListener("activate", (activateEvent) => {
               return caches.delete(cacheName);
             }
             return Promise.resolve();
-          })
+          }),
         );
       })
       .then(() => self.clients.claim())
@@ -39,10 +38,10 @@ self.addEventListener("activate", (activateEvent) => {
           .matchAll({ type: "window", includeUncontrolled: true })
           .then((clients) => {
             clients.forEach((client) =>
-              client.postMessage({ type: "NEW_VERSION_AVAILABLE" })
+              client.postMessage({ type: "NEW_VERSION_AVAILABLE" }),
             );
           });
-      })
+      }),
   );
 });
 
@@ -55,7 +54,7 @@ self.addEventListener("fetch", (fetchEvent) => {
   fetchEvent.respondWith(
     caches
       .match(fetchEvent.request)
-      .then((res) => res || fetch(fetchEvent.request))
+      .then((res) => res || fetch(fetchEvent.request)),
   );
 });
 
@@ -85,6 +84,6 @@ self.addEventListener("notificationclick", function (event) {
         return clientList[0].focus();
       }
       return clients.openWindow("/");
-    })
+    }),
   );
 });
