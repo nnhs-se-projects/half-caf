@@ -50,10 +50,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // Enforce 2 unit max total across all add-ons
+      // Enforce 2 unit max total across all add-on flavors
       if (totalCount > 2) {
-        value = 2 - (totalCount - value);
-        if (value < 0) value = 0;
+        value = Math.max(0, 2 - (totalCount - value));
       }
 
       // Also enforce individual min/max
