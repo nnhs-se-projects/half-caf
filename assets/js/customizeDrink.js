@@ -96,7 +96,7 @@ addToOrderButton.addEventListener("click", async () => {
         otherIngredients[i].parentElement.lastElementChild.value,
       );
 
-      if (count < 1 || count > 2) {
+      if (count < 0 || count > 2) {
         count = 1;
       }
 
