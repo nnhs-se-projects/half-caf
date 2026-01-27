@@ -70,11 +70,12 @@ route.get("/orders", async (req, res) => {
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
-            const ingredientCountStr =
-              ingredientCount === 0 ? "No " : ingredientCount + " ";
-            formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name,
-            );
+            if (ingredientCount !== 0) {
+              const ingredientCountStr = ingredientCount + " ";
+              formattedDrink.ingredients.push(
+                " " + ingredientCountStr + tempIngredient.name,
+              );
+            }
           }
         }
       }
@@ -303,11 +304,12 @@ route.post("/pointOfSale", async (req, res) => {
         );
         if (tempIngredient !== null && tempIngredient !== undefined) {
           const ingredientCount = drink.ingredientCounts[x];
-          const ingredientCountStr =
-            ingredientCount === 0 ? "No " : ingredientCount + " ";
-          formattedDrink.ingredients.push(
-            " " + ingredientCountStr + tempIngredient.name,
-          );
+          if (ingredientCount !== 0) {
+            const ingredientCountStr = ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name,
+            );
+          }
         }
       }
     }
@@ -360,11 +362,12 @@ route.get("/completedOrders", async (req, res) => {
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
-            const ingredientCountStr =
-              ingredientCount === 0 ? "No " : ingredientCount + " ";
-            formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name,
-            );
+            if (ingredientCount !== 0) {
+              const ingredientCountStr = ingredientCount + " ";
+              formattedDrink.ingredients.push(
+                " " + ingredientCountStr + tempIngredient.name,
+              );
+            }
           }
         }
       }
@@ -438,11 +441,12 @@ route.get("/cancelledOrders", async (req, res) => {
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
-            const ingredientCountStr =
-              ingredientCount === 0 ? "No " : ingredientCount + " ";
-            formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name,
-            );
+            if (ingredientCount !== 0) {
+              const ingredientCountStr = ingredientCount + " ";
+              formattedDrink.ingredients.push(
+                " " + ingredientCountStr + tempIngredient.name,
+              );
+            }
           }
         }
       }

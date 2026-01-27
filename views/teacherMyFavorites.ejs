@@ -20,9 +20,9 @@
         allIngredients=""%> <%for (let i=0; i <
         favoriteDrinksIngredients[drinkIndex].length; i++){%> <% if(
         favoriteDrinksIngredients[drinkIndex][i].type === "uncustomizable")
-        {continue;} %> <%if(drink.ingredientCounts[i] === 0) {allIngredients +=
-        "No ";}else{ allIngredients += (drink.ingredientCounts[i] + " "); }%>
+        {continue;} %> <%if(drink.ingredientCounts[i] !== 0) {allIngredients += (drink.ingredientCounts[i] + " ");%>
         <%allIngredients += favoriteDrinksIngredients[drinkIndex][i].name+", "%>
+        <%}%>
         <%}%>
         <div class="drink-detail">
           <span class="label">Ingredients:</span>

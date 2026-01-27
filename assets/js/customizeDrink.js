@@ -24,6 +24,45 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         numElem.value = 1;
       }
+      // Trigger input event to validate
+      numElem.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    // Clamp input value to min/max while typing
+    const numElem = otherIngredient.parentElement.lastElementChild;
+    numElem.addEventListener("input", () => {
+      const min = Number(numElem.getAttribute("min"));
+      const max = Number(numElem.getAttribute("max"));
+      let value = Number(numElem.value);
+
+      // Calculate total count of all other checked ingredients
+      const allOtherIngredients = document.querySelectorAll(
+        "input#otherIngredients",
+      );
+      let totalCount = 0;
+      for (const ingredient of allOtherIngredients) {
+        if (ingredient.checked) {
+          const count = Number(ingredient.parentElement.lastElementChild.value);
+          if (ingredient === otherIngredient) {
+            totalCount += value; // Use the new value being typed
+          } else {
+            totalCount += count;
+          }
+        }
+      }
+
+      // Enforce 2 unit max total across all add-on flavors
+      if (totalCount > 2) {
+        value = Math.max(0, 2 - (totalCount - value));
+      }
+
+      // Also enforce individual min/max
+      if (!isNaN(min) && value < min && value !== 0) {
+        value = min;
+      } else if (!isNaN(max) && value > max) {
+        value = max;
+      }
+
+      numElem.value = value;
     });
   }
 
@@ -54,10 +93,10 @@ addToOrderButton.addEventListener("click", async () => {
     if (otherIngredients[i].checked) {
       ingredients.push(otherIngredients[i].value);
       let count = Number(
-        otherIngredients[i].parentElement.lastElementChild.value
+        otherIngredients[i].parentElement.lastElementChild.value,
       );
 
-      if (count < 1 || count > 100) {
+      if (count < 0 || count > 2) {
         count = 1;
       }
 
@@ -69,7 +108,7 @@ addToOrderButton.addEventListener("click", async () => {
   for (let i = 0; i < drinkIngredients.length; i++) {
     ingredients.push(drinkIngredients[i].value); // default ingredients are added to the list even if they are not checked so that the barista can explicitly see that the user wants none of this ingredient
     let count = Number(
-      drinkIngredients[i].parentElement.lastElementChild.value
+      drinkIngredients[i].parentElement.lastElementChild.value,
     );
 
     if (count < 1 || count > 100) {
@@ -115,7 +154,7 @@ addToOrderButton.addEventListener("click", async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(drink),
-    }
+    },
   );
 
   if (response.ok) {
