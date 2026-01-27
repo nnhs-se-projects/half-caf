@@ -12,8 +12,8 @@
         <h5>$<%=drink.price%></h5>
         <ul>
           <%for (let i = 0; i < customizationDict[drink._id].ingredients.length; i++) {%>
-            <% if (customizationDict[drink._id].ingredients[i].type === "customizable") {%>
-            <li><%=(drink.ingredientCounts[i] == 0 ? "No " : drink.ingredientCounts[i] + " ") + customizationDict[drink._id].ingredients[i].name%></li>
+            <% if (customizationDict[drink._id].ingredients[i].type === "customizable" && drink.ingredientCounts[i] !== 0) {%>
+            <li><%=drink.ingredientCounts[i] + " " + customizationDict[drink._id].ingredients[i].name%></li>
           <%}}%>
 
           <li><%=drink.temps%></li>

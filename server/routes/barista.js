@@ -11,7 +11,7 @@ const webPush = require("web-push");
 webPush.setVapidDetails(
   "mailto:admin@example.com",
   process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
+  process.env.VAPID_PRIVATE_KEY,
 );
 
 const {
@@ -66,15 +66,16 @@ route.get("/orders", async (req, res) => {
       } else {
         for (let x = 0; x < drink.ingredients.length; x++) {
           const tempIngredient = ingredients.find((f) =>
-            f._id.equals(drink.ingredients[x])
+            f._id.equals(drink.ingredients[x]),
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
-            const ingredientCountStr =
-              ingredientCount === 0 ? "No " : ingredientCount + " ";
-            formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name
-            );
+            if (ingredientCount !== 0) {
+              const ingredientCountStr = ingredientCount + " ";
+              formattedDrink.ingredients.push(
+                " " + ingredientCountStr + tempIngredient.name,
+              );
+            }
           }
         }
       }
@@ -153,7 +154,7 @@ route.delete("/orders/:id", async (req, res) => {
           console.error(
             "Push notification failed for user:",
             user.email,
-            error
+            error,
           );
         }
       }
@@ -296,15 +297,16 @@ route.post("/pointOfSale", async (req, res) => {
     } else {
       for (let x = 0; x < drink.ingredients.length; x++) {
         const tempIngredient = ingredients.find((f) =>
-          f._id.equals(drink.ingredients[x])
+          f._id.equals(drink.ingredients[x]),
         );
         if (tempIngredient !== null && tempIngredient !== undefined) {
           const ingredientCount = drink.ingredientCounts[x];
-          const ingredientCountStr =
-            ingredientCount === 0 ? "No " : ingredientCount + " ";
-          formattedDrink.ingredients.push(
-            " " + ingredientCountStr + tempIngredient.name
-          );
+          if (ingredientCount !== 0) {
+            const ingredientCountStr = ingredientCount + " ";
+            formattedDrink.ingredients.push(
+              " " + ingredientCountStr + tempIngredient.name,
+            );
+          }
         }
       }
     }
@@ -353,15 +355,16 @@ route.get("/completedOrders", async (req, res) => {
       } else {
         for (let x = 0; x < drink.ingredients.length; x++) {
           const tempIngredient = ingredients.find((f) =>
-            f._id.equals(drink.ingredients[x])
+            f._id.equals(drink.ingredients[x]),
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
-            const ingredientCountStr =
-              ingredientCount === 0 ? "No " : ingredientCount + " ";
-            formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name
-            );
+            if (ingredientCount !== 0) {
+              const ingredientCountStr = ingredientCount + " ";
+              formattedDrink.ingredients.push(
+                " " + ingredientCountStr + tempIngredient.name,
+              );
+            }
           }
         }
       }
@@ -431,15 +434,16 @@ route.get("/cancelledOrders", async (req, res) => {
       } else {
         for (let x = 0; x < drink.ingredients.length; x++) {
           const tempIngredient = ingredients.find((f) =>
-            f._id.equals(drink.ingredients[x])
+            f._id.equals(drink.ingredients[x]),
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
-            const ingredientCountStr =
-              ingredientCount === 0 ? "No " : ingredientCount + " ";
-            formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name
-            );
+            if (ingredientCount !== 0) {
+              const ingredientCountStr = ingredientCount + " ";
+              formattedDrink.ingredients.push(
+                " " + ingredientCountStr + tempIngredient.name,
+              );
+            }
           }
         }
       }
