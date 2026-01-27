@@ -626,3 +626,58 @@ a {
     transform: translateX(0);
   }
 }
+
+/* Warning box styling for ingredient duplicates */
+.warning-box {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  color: #856404;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.warning-box strong {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.warning-box small {
+  display: block;
+  font-size: 12px;
+  margin-top: 5px;
+  opacity: 0.9;
+}
+
+/* Export button styling */
+.action-button.export {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.action-button.export:hover {
+  background-color: #45a049;
+}
+
+/* Ingredients header adjustments for export buttons */
+.ingredients-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  flex-grow: 1;
+  min-width: 200px;
+}

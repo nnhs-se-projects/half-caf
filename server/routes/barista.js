@@ -182,7 +182,10 @@ route.post("/orders/:id", async (req, res) => {
 
     for (let i = 0; i < drink.ingredients.length; i++) {
       const ingredient = await Ingredient.findById(drink.ingredients[i]);
-      ingredient.quantity -= drink.ingredientCounts[i];
+      // Subtract the used amount and round up fractional quantities
+      const newQty = ingredient.quantity - drink.ingredientCounts[i];
+      // Round up to the nearest integer and prevent negative quantities
+      ingredient.quantity = Math.max(0, Math.ceil(newQty));
       await ingredient.save();
     }
   }
