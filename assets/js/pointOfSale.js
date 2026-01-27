@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }</label>
       <input ${isChecked ? "" : "hidden"} type="number" value="${
           ingredient.count
-        }" min="0" />
+        }" min="0" max="2" />
     </div>
     `;
       });
