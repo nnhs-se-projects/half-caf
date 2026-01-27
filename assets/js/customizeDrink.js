@@ -46,8 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
       let totalCount = 0;
       for (const ingredient of allOtherIngredients) {
         if (ingredient.checked) {
-          const ingredientCounterDiv = ingredient.parentElement.lastElementChild;
-          const ingredientNumElem = ingredientCounterDiv.querySelector("input[type='number']");
+          const ingredientCounterDiv =
+            ingredient.parentElement.lastElementChild;
+          const ingredientNumElem = ingredientCounterDiv.querySelector(
+            "input[type='number']",
+          );
           const count = Number(ingredientNumElem.value);
           if (ingredient === otherIngredient) {
             totalCount += value; // Use the new value being typed
@@ -85,8 +88,11 @@ document.addEventListener("DOMContentLoaded", function () {
       let totalCount = 0;
       for (const ingredient of allOtherIngredients) {
         if (ingredient.checked) {
-          const ingredientCounterDiv = ingredient.parentElement.lastElementChild;
-          const ingredientNumElem = ingredientCounterDiv.querySelector("input[type='number']");
+          const ingredientCounterDiv =
+            ingredient.parentElement.lastElementChild;
+          const ingredientNumElem = ingredientCounterDiv.querySelector(
+            "input[type='number']",
+          );
           totalCount += Number(ingredientNumElem.value);
         }
       }
@@ -114,7 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
   for (const drinkIngredient of drinkIngredients) {
     drinkIngredient.addEventListener("click", () => {
-      const numElem = drinkIngredient.parentElement.lastElementChild.querySelector("input[type='number']");
+      const numElem =
+        drinkIngredient.parentElement.lastElementChild.querySelector(
+          "input[type='number']",
+        );
       if (numElem) {
         numElem.hidden = !numElem.hidden;
         if (numElem.hidden) {
