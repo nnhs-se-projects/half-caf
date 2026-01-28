@@ -23,10 +23,10 @@ async function getUserRoles(email) {
   }
 }
 
-const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
+const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
   );
   const currentTimeMs = Date.parse(currentTimeDate);
   let currentSchedule;
@@ -49,7 +49,7 @@ async function checkTime() {
 
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
     const periodEndMin = Number(
-      period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
+      period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3),
     );
     if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
       periodEndHr += 12;
@@ -62,17 +62,17 @@ async function checkTime() {
       currentTimeDate.getMonth(),
       currentTimeDate.getDate(),
       periodEndHr,
-      periodEndMin
+      periodEndMin,
     );
 
     let periodStartHr = Number(
-      period.start.substring(0, period.start.indexOf(":"))
+      period.start.substring(0, period.start.indexOf(":")),
     );
     const periodStartMin = Number(
       period.start.substring(
         period.start.indexOf(":") + 1,
-        period.start.length - 3
-      )
+        period.start.length - 3,
+      ),
     );
     if (period.start.indexOf("PM") > -1 && periodStartHr !== 12) {
       periodStartHr += 12;
@@ -85,7 +85,7 @@ async function checkTime() {
       currentTimeDate.getMonth(),
       currentTimeDate.getDate(),
       periodStartHr,
-      periodStartMin
+      periodStartMin,
     );
     const startDateMs = Date.parse(startDate);
     const endDateMs = Date.parse(endDate);
@@ -138,7 +138,7 @@ route.get("/", (req, res) => {
     const parentDirectory = path.dirname(path.dirname(currentFilePath));
     const addToHomePath = parentDirectory.substring(
       0,
-      parentDirectory.lastIndexOf("/")
+      parentDirectory.lastIndexOf("/"),
     );
     res.sendFile(path.join(addToHomePath, "public/add-to-home.html"));
   } else {
@@ -219,7 +219,7 @@ route.post("/subscribe", async (req, res) => {
   // now push sub into array.
   if (
     !user.subscription.find(
-      (sub) => JSON.stringify(sub) === JSON.stringify(subscription)
+      (sub) => JSON.stringify(sub) === JSON.stringify(subscription),
     )
   ) {
     user.subscription.push(subscription);
@@ -227,6 +227,101 @@ route.post("/subscribe", async (req, res) => {
   await user.save();
   // TODO: Store the subscription information in your database for later use with web-push
   res.status(201).json({ message: "Subscription received" });
+});
+
+// API endpoint to get current period information
+route.get("/api/current-period", async (req, res) => {
+  try {
+    const currentTimeDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
+    );
+    const currentTimeMs = Date.parse(currentTimeDate);
+
+    const currentWeekDay = await Weekday.findOne({
+      day: currentTimeDate.getDay() - 1,
+    });
+
+    if (!currentWeekDay) {
+      return res.json({ period: null });
+    }
+
+    const currentSchedule = await Schedule.findById(
+      currentWeekDay.schedule,
+    ).populate("periods");
+
+    if (!currentSchedule) {
+      return res.json({ period: null });
+    }
+
+    // Find the current period
+    for (const period of currentSchedule.periods) {
+      let periodEndHr = Number(
+        period.end.substring(0, period.end.indexOf(":")),
+      );
+      const periodEndMin = Number(
+        period.end.substring(
+          period.end.indexOf(":") + 1,
+          period.end.length - 3,
+        ),
+      );
+      if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
+        periodEndHr += 12;
+      }
+      if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
+        periodEndHr = 0;
+      }
+      const endDate = new Date(
+        currentTimeDate.getFullYear(),
+        currentTimeDate.getMonth(),
+        currentTimeDate.getDate(),
+        periodEndHr,
+        periodEndMin,
+      );
+
+      let periodStartHr = Number(
+        period.start.substring(0, period.start.indexOf(":")),
+      );
+      const periodStartMin = Number(
+        period.start.substring(
+          period.start.indexOf(":") + 1,
+          period.start.length - 3,
+        ),
+      );
+      if (period.start.indexOf("PM") > -1 && periodStartHr !== 12) {
+        periodStartHr += 12;
+      }
+      if (period.start.indexOf("AM") > -1 && periodStartHr === 12) {
+        periodStartHr = 0;
+      }
+      const startDate = new Date(
+        currentTimeDate.getFullYear(),
+        currentTimeDate.getMonth(),
+        currentTimeDate.getDate(),
+        periodStartHr,
+        periodStartMin,
+      );
+
+      const startDateMs = Date.parse(startDate);
+      const endDateMs = Date.parse(endDate);
+
+      // If during period
+      if (currentTimeMs > startDateMs && currentTimeMs < endDateMs) {
+        return res.json({
+          period: {
+            name: period.name,
+            start: period.start,
+            end: period.end,
+          },
+        });
+      }
+    }
+
+    // No active period found
+    res.json({ period: null });
+  } catch (error) {
+    console.error("Error fetching current period:", error);
+    res.status(500).json({ error: "Failed to fetch current period" });
+  }
 });
 
 route.use("/auth", require("./auth"));
