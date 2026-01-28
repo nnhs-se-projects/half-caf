@@ -36,7 +36,11 @@
         <li <%= ingredient.type === "uncustomizable" ? "hidden": ""  %>>
           <input checked id="drinkIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
           ingredient.name %>
-          <input type="number" value="<%=drink.ingredientCounts[i]%>" min="0" max="2">
+          <div class="flavor-counter">
+            <button type="button" class="minus-btn">−</button>
+            <input type="number" value="<%=drink.ingredientCounts[i]%>" min="0" max="2">
+            <button type="button" class="plus-btn">+</button>
+          </div>
         </li>
         <%i++;}}%>
 
@@ -47,7 +51,7 @@
             ingredient.name %>
             <div hidden class="flavor-counter">
               <button type="button" class="minus-btn">−</button>
-              <input hidden type="number" value="0" min="0" max="2">
+              <input type="number" value="0" min="0" max="2">
               <button type="button" class="plus-btn">+</button>
             </div>
           </li>

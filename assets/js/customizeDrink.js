@@ -119,20 +119,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
   for (const drinkIngredient of drinkIngredients) {
+    const counterDiv =
+      drinkIngredient.parentElement.querySelector(".flavor-counter");
+    if (!counterDiv) continue;
+
+    const numElem = counterDiv.querySelector("input[type='number']");
+    const minusBtn = counterDiv.querySelector(".minus-btn");
+    const plusBtn = counterDiv.querySelector(".plus-btn");
+
     drinkIngredient.addEventListener("click", () => {
-      const numElem =
-        drinkIngredient.parentElement.lastElementChild.querySelector(
-          "input[type='number']",
-        );
       if (numElem) {
-        numElem.hidden = !numElem.hidden;
-        if (numElem.hidden) {
+        if (!drinkIngredient.checked) {
           numElem.value = 0;
         } else {
           numElem.value = 1;
         }
       }
     });
+
+    // Plus button handler for drink ingredients
+    if (plusBtn) {
+      plusBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        let value = Number(numElem.value);
+        const max = Number(numElem.getAttribute("max"));
+        if (value < max) {
+          value++;
+        }
+        numElem.value = value;
+        numElem.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    }
+
+    // Minus button handler for drink ingredients
+    if (minusBtn) {
+      minusBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        let value = Number(numElem.value);
+        const min = Number(numElem.getAttribute("min"));
+        if (value > min) {
+          value--;
+        }
+        numElem.value = value;
+        numElem.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    }
   }
 });
 
@@ -163,9 +194,10 @@ addToOrderButton.addEventListener("click", async () => {
   const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
   for (let i = 0; i < drinkIngredients.length; i++) {
     ingredients.push(drinkIngredients[i].value); // default ingredients are added to the list even if they are not checked so that the barista can explicitly see that the user wants none of this ingredient
-    let count = Number(
-      drinkIngredients[i].parentElement.lastElementChild.value,
-    );
+    const counterDiv =
+      drinkIngredients[i].parentElement.querySelector(".flavor-counter");
+    const numElem = counterDiv.querySelector("input[type='number']");
+    let count = Number(numElem.value);
 
     if (count < 1 || count > 2) {
       count = 1;
