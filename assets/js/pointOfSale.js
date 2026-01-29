@@ -12,21 +12,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const ingredients = JSON.parse(document.querySelector("#ingredients").value);
   const temps = JSON.parse(document.querySelector("#temps").value);
   const possibleModificationsMap = JSON.parse(
-    document.querySelector("#possibleModifications").value,
+    document.querySelector("#possibleModifications").value
   );
   function saveDrinkModifications() {
     // Save the modifications to the current drink
     const selectedIngredients = Array.from(
-      document.querySelectorAll(".ingredient-checkbox:checked"),
+      document.querySelectorAll(".ingredient-checkbox:checked")
     ).map((checkbox) => checkbox.value);
 
     const ingredientCounts = [];
     const ingredientCheckboxes = document.querySelectorAll(
-      ".ingredient-checkbox:checked",
+      ".ingredient-checkbox:checked"
     );
     for (const ingredient of ingredientCheckboxes) {
       ingredientCounts.push(
-        Number(ingredient.parentElement.lastElementChild.value),
+        Number(ingredient.parentElement.lastElementChild.value)
       );
     }
 
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? document.querySelector(".temp-radio:checked").value
       : null;
     const selectedCaffeination = document.querySelector(
-      ".caffeination-checkbox",
+      ".caffeination-checkbox"
     );
 
     if (selectedCaffeination) {
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
     for (const ingredient of ingredients) {
       const indx = possibleModificationsMap[drink.menuItemId].indexOf(
-        ingredient._id,
+        ingredient._id
       );
       if (indx > -1) {
         possibleIngredients.push({
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       possibleIngredients.forEach((ingredient) => {
         const isChecked =
           possibleModificationsMap[drink.menuItemId].indexOf(
-            ingredient.ingredient._id,
+            ingredient.ingredient._id
           ) > -1
             ? "checked"
             : "";
@@ -103,14 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
       <input type="checkbox" id="ingredient-${
         ingredient.ingredient._id
       }" class="ingredient-checkbox" value="${
-        ingredient.ingredient._id
-      }" ${isChecked}/>
+          ingredient.ingredient._id
+        }" ${isChecked}/>
       <label for="ingredient-${ingredient.ingredient._id}">${
-        ingredient.ingredient.name
-      }</label>
+          ingredient.ingredient.name
+        }</label>
       <input ${isChecked ? "" : "hidden"} type="number" value="${
-        ingredient.count
-      }" min="0" max="2" />
+          ingredient.count
+        }" min="0" />
     </div>
     `;
       });
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".customization-grid").innerHTML = html;
 
     const ingredientCheckBoxes = document.querySelectorAll(
-      ".ingredient-checkbox",
+      ".ingredient-checkbox"
     );
     for (const ingredient of ingredientCheckBoxes) {
       ingredient.addEventListener("click", () => {
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Add Order Paid button functionality
   const orderPaidButton = document.querySelector(
-    ".order-total-container input[type='submit']",
+    ".order-total-container input[type='submit']"
   );
   if (orderPaidButton) {
     orderPaidButton.addEventListener("click", async () => {

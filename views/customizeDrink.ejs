@@ -36,11 +36,7 @@
         <li <%= ingredient.type === "uncustomizable" ? "hidden": ""  %>>
           <input checked id="drinkIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
           ingredient.name %>
-          <div class="flavor-counter">
-            <button type="button" class="minus-btn">−</button>
-            <input type="number" value="<%=drink.ingredientCounts[i]%>" min="0" max="2">
-            <button type="button" class="plus-btn">+</button>
-          </div>
+          <input type="number" value="<%=drink.ingredientCounts[i]%>">
         </li>
         <%i++;}}%>
 
@@ -49,11 +45,7 @@
           <li>
             <input id="otherIngredients" type="checkbox" value="<%= ingredient.id %>" /><%=
             ingredient.name %>
-            <div hidden class="flavor-counter">
-              <button type="button" class="minus-btn">−</button>
-              <input type="number" value="0" min="0" max="2">
-              <button type="button" class="plus-btn">+</button>
-            </div>
+            <input hidden type="number" value="0" min="1" max="2">
           </li>
           <%}}%>
       </ul>
@@ -299,50 +291,6 @@
   textarea:focus {
     outline: none;
     box-shadow: 0 0 0 2px var(--accent);
-  }
-
-  /* Flavor counter styling */
-  .flavor-counter {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-left: auto;
-  }
-
-  .minus-btn,
-  .plus-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    width: 32px;
-    height: 32px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .minus-btn:hover,
-  .plus-btn:hover {
-    background: var(--coffee-dark);
-    transform: scale(1.1);
-  }
-
-  .minus-btn:active,
-  .plus-btn:active {
-    transform: scale(0.95);
-  }
-
-  .flavor-counter input[type="number"] {
-    width: 3rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 0.4rem;
   }
 
   /* Add these media queries at the end of the style block */

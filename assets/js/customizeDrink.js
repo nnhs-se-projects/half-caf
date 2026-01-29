@@ -17,10 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const otherIngredients = document.querySelectorAll("input#otherIngredients");
   for (const otherIngredient of otherIngredients) {
     otherIngredient.addEventListener("click", () => {
-      const counterDiv = otherIngredient.parentElement.lastElementChild;
-      const numElem = counterDiv.querySelector("input[type='number']");
-      counterDiv.hidden = !counterDiv.hidden;
-      if (counterDiv.hidden) {
+      const numElem = otherIngredient.parentElement.lastElementChild;
+      numElem.hidden = !numElem.hidden;
+      if (numElem.hidden) {
         numElem.value = 0;
       } else {
         numElem.value = 1;
@@ -29,11 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
       numElem.dispatchEvent(new Event("input", { bubbles: true }));
     });
     // Clamp input value to min/max while typing
-    const counterDiv = otherIngredient.parentElement.lastElementChild;
-    const numElem = counterDiv.querySelector("input[type='number']");
-    const minusBtn = counterDiv.querySelector(".minus-btn");
-    const plusBtn = counterDiv.querySelector(".plus-btn");
-
+    const numElem = otherIngredient.parentElement.lastElementChild;
     numElem.addEventListener("input", () => {
       const min = Number(numElem.getAttribute("min"));
       const max = Number(numElem.getAttribute("max"));
@@ -46,12 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let totalCount = 0;
       for (const ingredient of allOtherIngredients) {
         if (ingredient.checked) {
-          const ingredientCounterDiv =
-            ingredient.parentElement.lastElementChild;
-          const ingredientNumElem = ingredientCounterDiv.querySelector(
-            "input[type='number']",
-          );
-          const count = Number(ingredientNumElem.value);
+          const count = Number(ingredient.parentElement.lastElementChild.value);
           if (ingredient === otherIngredient) {
             totalCount += value; // Use the new value being typed
           } else {
@@ -74,96 +64,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       numElem.value = value;
     });
-
-    // Plus button handler
-    plusBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      let value = Number(numElem.value);
-      const max = Number(numElem.getAttribute("max"));
-
-      // Calculate total count of all other checked ingredients
-      const allOtherIngredients = document.querySelectorAll(
-        "input#otherIngredients",
-      );
-      let totalCount = 0;
-      for (const ingredient of allOtherIngredients) {
-        if (ingredient.checked) {
-          const ingredientCounterDiv =
-            ingredient.parentElement.lastElementChild;
-          const ingredientNumElem = ingredientCounterDiv.querySelector(
-            "input[type='number']",
-          );
-          totalCount += Number(ingredientNumElem.value);
-        }
-      }
-
-      if (value < max && totalCount < 2) {
-        value++;
-      }
-      numElem.value = value;
-      numElem.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-
-    // Minus button handler
-    minusBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      let value = Number(numElem.value);
-      const min = Number(numElem.getAttribute("min"));
-      if (value > min) {
-        value--;
-      }
-      numElem.value = value;
-      numElem.dispatchEvent(new Event("input", { bubbles: true }));
-    });
   }
 
   const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
   for (const drinkIngredient of drinkIngredients) {
-    const counterDiv =
-      drinkIngredient.parentElement.querySelector(".flavor-counter");
-    if (!counterDiv) continue;
-
-    const numElem = counterDiv.querySelector("input[type='number']");
-    const minusBtn = counterDiv.querySelector(".minus-btn");
-    const plusBtn = counterDiv.querySelector(".plus-btn");
-
     drinkIngredient.addEventListener("click", () => {
-      if (numElem) {
-        if (!drinkIngredient.checked) {
-          numElem.value = 0;
-        } else {
-          numElem.value = 1;
-        }
+      const numElem = drinkIngredient.parentElement.lastElementChild;
+      numElem.hidden = !numElem.hidden;
+      if (numElem.hidden) {
+        numElem.value = 0;
+      } else {
+        numElem.value = 1;
       }
     });
-
-    // Plus button handler for drink ingredients
-    if (plusBtn) {
-      plusBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        let value = Number(numElem.value);
-        const max = Number(numElem.getAttribute("max"));
-        if (value < max) {
-          value++;
-        }
-        numElem.value = value;
-        numElem.dispatchEvent(new Event("input", { bubbles: true }));
-      });
-    }
-
-    // Minus button handler for drink ingredients
-    if (minusBtn) {
-      minusBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        let value = Number(numElem.value);
-        const min = Number(numElem.getAttribute("min"));
-        if (value > min) {
-          value--;
-        }
-        numElem.value = value;
-        numElem.dispatchEvent(new Event("input", { bubbles: true }));
-      });
-    }
   }
 });
 
@@ -179,9 +92,9 @@ addToOrderButton.addEventListener("click", async () => {
   for (let i = 0; i < otherIngredients.length; i++) {
     if (otherIngredients[i].checked) {
       ingredients.push(otherIngredients[i].value);
-      const counterDiv = otherIngredients[i].parentElement.lastElementChild;
-      const numElem = counterDiv.querySelector("input[type='number']");
-      let count = Number(numElem.value);
+      let count = Number(
+        otherIngredients[i].parentElement.lastElementChild.value,
+      );
 
       if (count < 0 || count > 2) {
         count = 1;
@@ -194,12 +107,11 @@ addToOrderButton.addEventListener("click", async () => {
   const drinkIngredients = document.querySelectorAll("input#drinkIngredients");
   for (let i = 0; i < drinkIngredients.length; i++) {
     ingredients.push(drinkIngredients[i].value); // default ingredients are added to the list even if they are not checked so that the barista can explicitly see that the user wants none of this ingredient
-    const counterDiv =
-      drinkIngredients[i].parentElement.querySelector(".flavor-counter");
-    const numElem = counterDiv.querySelector("input[type='number']");
-    let count = Number(numElem.value);
+    let count = Number(
+      drinkIngredients[i].parentElement.lastElementChild.value,
+    );
 
-    if (count < 1 || count > 2) {
+    if (count < 1 || count > 100) {
       count = 1;
     }
 
