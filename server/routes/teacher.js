@@ -5,6 +5,7 @@ const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const { computeRequiredFromCart, checkInventory } = require("../utils/inventory");
 
 const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
 
@@ -204,6 +205,17 @@ route.post("/myCart", async (req, res) => {
     total += drink.price;
   }
   try {
+    // --- Inventory validation using helper ---
+    const required = await computeRequiredFromCart(req.session.cart);
+    const insufficient = await checkInventory(required);
+    if (insufficient.length > 0) {
+      return res.status(409).json({
+        error: "insufficient_inventory",
+        message: "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.",
+        details: insufficient,
+      });
+    }
+    // --- end inventory validation ---
     const order = new Order({
       email: req.session.email,
       room: req.body.rm,
@@ -261,6 +273,18 @@ route.post("/myCart", async (req, res) => {
     }
 
     req.session.cart = [];
+
+    // --- decrement inventory for the ingredients used in this order ---
+    try {
+      const entries = Object.entries(required || {});
+      for (const [ingId, qty] of entries) {
+        const dec = parseInt(qty) || 0;
+        if (dec <= 0) continue;
+        await Ingredient.findByIdAndUpdate(ingId, { $inc: { quantity: -dec } });
+      }
+    } catch (deErr) {
+      console.error("Error decrementing inventory after order:", deErr);
+    }
 
     emitNewOrderPlaced({
       order,
