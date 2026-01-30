@@ -30,11 +30,11 @@ if (placeOrderButton !== null) {
     }
 
     placeOrderButton.disabled = true; // ensure the user can't click this button multiple times while the page is loading the confirmation page
-      const errorEl = document.getElementById("order-error");
-      if (errorEl) {
-        errorEl.style.display = "none";
-        errorEl.textContent = "";
-      }
+    const errorEl = document.getElementById("order-error");
+    if (errorEl) {
+      errorEl.style.display = "none";
+      errorEl.textContent = "";
+    }
 
     // formatting time
     const year = time.getFullYear();
@@ -61,7 +61,10 @@ if (placeOrderButton !== null) {
       // Friendly inventory error from server
       try {
         const data = await response.json();
-        const msg = data && data.message ? data.message : "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.";
+        const msg =
+          data && data.message
+            ? data.message
+            : "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.";
         if (errorEl) {
           errorEl.style.display = "block";
           errorEl.textContent = msg;
@@ -83,15 +86,19 @@ if (placeOrderButton !== null) {
       } catch (e) {
         if (errorEl) {
           errorEl.style.display = "block";
-          errorEl.textContent = "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.";
+          errorEl.textContent =
+            "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.";
         } else {
-          alert("Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.");
+          alert(
+            "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.",
+          );
         }
       }
       placeOrderButton.disabled = false;
     } else {
       // Generic error
-      const generic = "There was a problem placing your order. Please try again.";
+      const generic =
+        "There was a problem placing your order. Please try again.";
       if (errorEl) {
         errorEl.style.display = "block";
         errorEl.textContent = generic;

@@ -5,7 +5,10 @@ const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
-const { computeRequiredFromCart, checkInventory } = require("../utils/inventory");
+const {
+  computeRequiredFromCart,
+  checkInventory,
+} = require("../utils/inventory");
 
 const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
 
@@ -211,7 +214,8 @@ route.post("/myCart", async (req, res) => {
     if (insufficient.length > 0) {
       return res.status(409).json({
         error: "insufficient_inventory",
-        message: "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.",
+        message:
+          "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.",
         details: insufficient,
       });
     }
@@ -254,14 +258,14 @@ route.post("/myCart", async (req, res) => {
       } else {
         for (let x = 0; x < drink.ingredients.length; x++) {
           const tempIngredient = ingredients.find((f) =>
-            f._id.equals(drink.ingredients[x])
+            f._id.equals(drink.ingredients[x]),
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
             const ingredientCountStr =
               ingredientCount === 0 ? "No " : ingredientCount + " ";
             formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name
+              " " + ingredientCountStr + tempIngredient.name,
             );
           }
         }
@@ -345,8 +349,8 @@ route.get("/myFavorites", async (req, res) => {
 
   const favoriteDrinksIngredients = favoriteDrinks.map((drink) =>
     drink.ingredients.map((ingredientId) =>
-      ingredients.find((ingredient) => ingredient._id.equals(ingredientId))
-    )
+      ingredients.find((ingredient) => ingredient._id.equals(ingredientId)),
+    ),
   );
 
   const role = await getUserRoles(req.session.email);
@@ -434,7 +438,7 @@ const dogCoffeeJokes = [
 
 route.get("/orderConfirmation", async (req, res) => {
   const dogApiResponse = await fetch(
-    "https://dog.ceo/api/breed/husky/images/random"
+    "https://dog.ceo/api/breed/husky/images/random",
   );
   const dogApiData = await dogApiResponse.json();
   const dogImageUrl = dogApiData.message;

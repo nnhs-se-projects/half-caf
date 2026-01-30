@@ -1,4 +1,4 @@
-const Ingredient = require('../model/ingredient');
+const Ingredient = require("../model/ingredient");
 
 async function computeRequiredFromCart(cart) {
   const required = {};
@@ -24,14 +24,24 @@ async function checkInventory(required) {
   const foundIds = new Set(inventory.map((i) => String(i._id)));
   for (const reqId of requiredIds) {
     if (!foundIds.has(reqId)) {
-      insufficient.push({ id: reqId, name: 'Unknown ingredient', required: required[reqId], available: 0 });
+      insufficient.push({
+        id: reqId,
+        name: "Unknown ingredient",
+        required: required[reqId],
+        available: 0,
+      });
     }
   }
 
   for (const item of inventory) {
     const need = required[String(item._id)] || 0;
     if (need > item.quantity) {
-      insufficient.push({ id: item._id, name: item.name, required: need, available: item.quantity });
+      insufficient.push({
+        id: item._id,
+        name: item.name,
+        required: need,
+        available: item.quantity,
+      });
     }
   }
 
