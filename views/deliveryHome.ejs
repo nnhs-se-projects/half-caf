@@ -18,9 +18,8 @@
         </tr>
       </thead>
       <tbody>
-        <% for (let order of orders){ %> <%if(order.complete === true &&
-        order.cancelled === false && order.delivered === false && order.claimed
-        === false ){ %>
+        <% for (let order of orders) { %>
+          <% if (order.complete === true && order.cancelled === false && order.delivered === false && order.claimed === false) { %>
         <tr class="order-row 'first-drink'">
           <td><%=order.room%></td>
 
@@ -42,7 +41,8 @@
             </button>
           </td>
         </tr>
-        <% }} %>
+        <% } %>
+        <% } %>
       </tbody>
     </table>
   </div>

@@ -50,10 +50,13 @@
           <td>$<%= ingredient.price %></td>
           <td><%= ingredient.category || 'other' %></td>
           <td>
-            <span
-              ><% if (ingredient.type === 'customizable') { %>Yes<% } else {
-              %>No<% } %></span
-            >
+            <span>
+              <% if (ingredient.type === 'customizable') { %>
+                Yes
+              <% } else { %>
+                No
+              <% } %>
+            </span>
           </td>
           <td class="actions-cell">
             <button

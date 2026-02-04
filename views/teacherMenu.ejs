@@ -141,28 +141,27 @@
         });
       </script>
   
-      <% for (let drink of menuItems){%>
+      <% for (let drink of menuItems) { %>
         <% let link = "/teacher/customizeDrink/" + drink.name; %>
-        <a href = "<%=link%>">
+        <a href="<%= link %>">
           <div class="card">
             <div class="container">
-              <h4><b><%=drink.name%></h4>
-              <%try {
-                const imgData = decodeURIComponent(drink.imageData);%> 
-                <img src="<%=imgData%>" alt="<%=drink.name%>" style="width:100%">
-              <%} catch (e) {
-                %><h5>Failed to load image</h5><%
-              }%>
-              <h5>$<%=drink.price%></h5>
-              <%if(drink.description.length > 40) { %>
-              <p><%=drink.description.slice(0,40) + "..."%></p>
+              <h4><b><%= drink.name %></b></h4>
+              <% try { %>
+                <img src="<%= drink.imageData %>" alt="<%= drink.name %>" style="width:100%">
+              <% } catch (e) { %>
+                <h5>Failed to load image</h5>
+              <% } %>
+              <h5>$<%= drink.price %></h5>
+              <% if (drink.description && drink.description.length > 40) { %>
+                <p><%= drink.description.slice(0, 40) + "..." %></p>
               <% } else { %>
-                <p><%=drink.description%></p>
+                <p><%= drink.description %></p>
               <% } %>
             </div>
           </div>
         </a>
-      <%}%>
+      <% } %>
   </body>
   </div>
  

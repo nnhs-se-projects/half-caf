@@ -24,10 +24,12 @@
         </tr>
       </thead>
       <tbody>
-        <% let count = 0; %> <% for (let order of orders){ %> <%
-        if(order.cancelled === true){ %> <% let showButtons = true; %> <%
-        for(let i = 0; i < order.drinks.length; i++){ %> <% let tempDrink =
-        drinkMap.get(count)[i]; %>
+        <% let count = 0; %>
+        <% for (let order of orders) { %>
+          <% if (order.cancelled === true) { %>
+            <% let showButtons = true; %>
+            <% for (let i = 0; i < order.drinks.length; i++) { %>
+              <% let tempDrink = drinkMap.get(count)[i]; %>
         <tr
           class="order-row <%= i === 0 ? 'first-drink' : 'additional-drink' %>"
         >

@@ -10,6 +10,49 @@ const Weekday = require("../model/weekdays");
 
 const { emitToggleChange } = require("../socket/socket");
 
+// Helper: convert an image Buffer to a data URL (tries to detect mime type)
+function bufferToDataUrl(buffer) {
+  if (!buffer) return null;
+  // buffer may be a Mongoose Buffer object
+  const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+  // Detect common image signatures
+  if (
+    buf
+      .slice(0, 8)
+      .equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  ) {
+    return `data:image/png;base64,${buf.toString("base64")}`;
+  }
+  if (buf.slice(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff]))) {
+    return `data:image/jpeg;base64,${buf.toString("base64")}`;
+  }
+  if (buf.slice(0, 4).toString() === "GIF8") {
+    return `data:image/gif;base64,${buf.toString("base64")}`;
+  }
+  // Fallback to png
+  return `data:image/png;base64,${buf.toString("base64")}`;
+}
+
+function convertMenuItemsImageData(menuItems) {
+  if (!menuItems) return menuItems;
+  for (let i = 0; i < menuItems.length; i++) {
+    const item = menuItems[i];
+    if (item && item.imageData) {
+      try {
+        item.imageData = bufferToDataUrl(item.imageData);
+      } catch (err) {
+        console.error(
+          "Failed to convert imageData for menu item",
+          item._id || item.id,
+          err,
+        );
+        item.imageData = null;
+      }
+    }
+  }
+  return menuItems;
+}
+
 async function getUserRoles(email) {
   try {
     const user = await User.findOne({ email }, "userType");
@@ -26,7 +69,7 @@ async function getUserRoles(email) {
 const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+    new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
   );
   const currentTimeMs = Date.parse(currentTimeDate);
   let currentSchedule;
@@ -49,7 +92,7 @@ async function checkTime() {
 
     let periodEndHr = Number(period.end.substring(0, period.end.indexOf(":")));
     const periodEndMin = Number(
-      period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3)
+      period.end.substring(period.end.indexOf(":") + 1, period.end.length - 3),
     );
     if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
       periodEndHr += 12;
@@ -62,17 +105,17 @@ async function checkTime() {
       currentTimeDate.getMonth(),
       currentTimeDate.getDate(),
       periodEndHr,
-      periodEndMin
+      periodEndMin,
     );
 
     let periodStartHr = Number(
-      period.start.substring(0, period.start.indexOf(":"))
+      period.start.substring(0, period.start.indexOf(":")),
     );
     const periodStartMin = Number(
       period.start.substring(
         period.start.indexOf(":") + 1,
-        period.start.length - 3
-      )
+        period.start.length - 3,
+      ),
     );
     if (period.start.indexOf("PM") > -1 && periodStartHr !== 12) {
       periodStartHr += 12;
@@ -85,7 +128,7 @@ async function checkTime() {
       currentTimeDate.getMonth(),
       currentTimeDate.getDate(),
       periodStartHr,
-      periodStartMin
+      periodStartMin,
     );
     const startDateMs = Date.parse(startDate);
     const endDateMs = Date.parse(endDate);
@@ -138,7 +181,7 @@ route.get("/", (req, res) => {
     const parentDirectory = path.dirname(path.dirname(currentFilePath));
     const addToHomePath = parentDirectory.substring(
       0,
-      parentDirectory.lastIndexOf("/")
+      parentDirectory.lastIndexOf("/"),
     );
     res.sendFile(path.join(addToHomePath, "public/add-to-home.html"));
   } else {
@@ -199,16 +242,14 @@ route.get("/homePopularDrinks", async (req, res) => {
     }
   }
 
-  res.render("homePopularDrinks", {
-    menuItems: popularMenu,
-  });
+  convertMenuItemsImageData(popularMenu);
+  res.render("homePopularDrinks", { menuItems: popularMenu });
 });
 
 route.get("/homeMenu", async (req, res) => {
   const menu = await MenuItem.find();
-  res.render("homeMenu", {
-    menuItems: menu,
-  });
+  convertMenuItemsImageData(menu);
+  res.render("homeMenu", { menuItems: menu });
 });
 
 // Add route to handle push subscriptions for mobile web notifications
@@ -219,7 +260,7 @@ route.post("/subscribe", async (req, res) => {
   // now push sub into array.
   if (
     !user.subscription.find(
-      (sub) => JSON.stringify(sub) === JSON.stringify(subscription)
+      (sub) => JSON.stringify(sub) === JSON.stringify(subscription),
     )
   ) {
     user.subscription.push(subscription);

@@ -74,46 +74,52 @@
 
       <a href="/auth/logout">Logout</a>
 
-      <% let numOfNewOrders = 0; %> <% for (let order of orders){%> <%
-      if(order.complete === false && order.cancelled === false){%><%
-      numOfNewOrders++; }}%>
+      <% let numOfNewOrders = 0; %>
+      <% for (let order of orders) { %>
+        <% if (order.complete === false && order.cancelled === false) { %>
+          <% numOfNewOrders++; %>
+        <% } %>
+      <% } %>
 
       <a class="notification">
-        <%if(numOfNewOrders > 0) { %>
-        <span class="badge"><%=numOfNewOrders%></span>
-        <%}%>
+        <% if (numOfNewOrders > 0) { %>
+          <span class="badge"><%= numOfNewOrders %></span>
+        <% } %>
         <select class="dropdown" id="orders">
-          <%if(numOfNewOrders > 0) { %>
-          <option id="notificationDropdownLabel">New Orders</option>
-          <%} else { %>
-          <option id="notificationDropdownLabel">No New Orders</option>
-          <%}%> <% for (let order of orders){%> <%if(order.complete === false &&
-          order.cancelled === false){%>
-          <option disabled>order from room <%=order.room%></option>
-          <%}}%>
+          <% if (numOfNewOrders > 0) { %>
+            <option id="notificationDropdownLabel">New Orders</option>
+          <% } else { %>
+            <option id="notificationDropdownLabel">No New Orders</option>
+          <% } %>
+          <% for (let order of orders) { %>
+            <% if (order.complete === false && order.cancelled === false) { %>
+              <option disabled>order from room <%= order.room %></option>
+            <% } %>
+          <% } %>
         </select>
       </a>
 
       <a>
         <label class="on-off">
-          <% if(headerData.enabled === false) { %>
-          <input class="toggle" type="checkbox" id="myCheckbox" />
-          <span class="dis-en"></span>
-          <% if(headerData.reason) { %>
-          <h4 style="padding-top: 10px; font-size: 0.75rem">
-            Orders Disabled (<%=headerData.reason%>)
-          </h4>
-          <%} else { %>
-          <h4 style="padding-top: 10px">Orders Disabled</h4>
-          <% } %> <% } else { %>
-          <input
-            class="toggle"
-            type="checkbox"
-            id="myCheckbox"
-            checked="checked"
-          />
-          <span class="dis-en"></span>
-          <h4 style="padding-top: 10px">Orders Enabled</h4>
+          <% if (headerData.enabled === false) { %>
+            <input class="toggle" type="checkbox" id="myCheckbox" />
+            <span class="dis-en"></span>
+            <% if (headerData.reason) { %>
+              <h4 style="padding-top: 10px; font-size: 0.75rem">
+                Orders Disabled (<%= headerData.reason %>)
+              </h4>
+            <% } else { %>
+              <h4 style="padding-top: 10px">Orders Disabled</h4>
+            <% } %>
+          <% } else { %>
+            <input
+              class="toggle"
+              type="checkbox"
+              id="myCheckbox"
+              checked="checked"
+            />
+            <span class="dis-en"></span>
+            <h4 style="padding-top: 10px">Orders Enabled</h4>
           <% } %>
         </label>
       </a>
