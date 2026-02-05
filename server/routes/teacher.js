@@ -39,8 +39,23 @@ async function findIngredientById(id) {
   }
 }
 
+function formatDrinkImageData(drink) {
+  if (drink && drink.imageData && drink.imageData.buffer) {
+    const buffer = drink.imageData.buffer;
+    const potentialDataUrl = buffer.toString("utf8");
+
+    if (potentialDataUrl.startsWith("data:image")) {
+      drink.imageData = potentialDataUrl;
+    } else {
+      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
+    }
+  }
+  return drink;
+}
+
 route.get("/menu", async (req, res) => {
-  const menu = await MenuItem.find();
+  let menu = await MenuItem.find().lean();
+  menu = menu.map(formatDrinkImageData);
   const role = await getUserRoles(req.session.email);
   res.render("teacherMenu", {
     menuItems: menu,
