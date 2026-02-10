@@ -97,6 +97,47 @@ input[type="submit"]:hover,
   height: 100px;
 }
 
+.login-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 6px 20px rgba(60, 42, 33, 0.12);
+  max-width: 420px;
+}
+
+.login-toast {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  background: #3c2a21;
+  color: #f2eae2;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(60, 42, 33, 0.25);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+  z-index: 1100;
+  max-width: 320px;
+}
+
+.login-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 768px) {
+  .login-toast {
+    top: 80px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+  }
+}
+
 .indexTopBar {
   display: flex;
   flex-direction: row;

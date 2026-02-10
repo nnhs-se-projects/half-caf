@@ -39,8 +39,24 @@ async function findIngredientById(id) {
   }
 }
 
+function formatMenuImageData(drink) {
+  if (drink && drink.imageData && drink.imageData.buffer) {
+    const buffer = drink.imageData.buffer;
+    const potentialDataUrl = buffer.toString("utf8");
+
+    if (potentialDataUrl.startsWith("data:image")) {
+      drink.imageData = potentialDataUrl;
+    } else {
+      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
+    }
+  }
+
+  return drink;
+}
+
 route.get("/menu", async (req, res) => {
-  const menu = await MenuItem.find();
+  let menu = await MenuItem.find().lean();
+  menu = menu.map(formatMenuImageData);
   const role = await getUserRoles(req.session.email);
   res.render("teacherMenu", {
     menuItems: menu,
@@ -242,14 +258,14 @@ route.post("/myCart", async (req, res) => {
       } else {
         for (let x = 0; x < drink.ingredients.length; x++) {
           const tempIngredient = ingredients.find((f) =>
-            f._id.equals(drink.ingredients[x])
+            f._id.equals(drink.ingredients[x]),
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
             const ingredientCountStr =
               ingredientCount === 0 ? "No " : ingredientCount + " ";
             formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name
+              " " + ingredientCountStr + tempIngredient.name,
             );
           }
         }
@@ -321,8 +337,8 @@ route.get("/myFavorites", async (req, res) => {
 
   const favoriteDrinksIngredients = favoriteDrinks.map((drink) =>
     drink.ingredients.map((ingredientId) =>
-      ingredients.find((ingredient) => ingredient._id.equals(ingredientId))
-    )
+      ingredients.find((ingredient) => ingredient._id.equals(ingredientId)),
+    ),
   );
 
   const role = await getUserRoles(req.session.email);
@@ -410,7 +426,7 @@ const dogCoffeeJokes = [
 
 route.get("/orderConfirmation", async (req, res) => {
   const dogApiResponse = await fetch(
-    "https://dog.ceo/api/breed/husky/images/random"
+    "https://dog.ceo/api/breed/husky/images/random",
   );
   const dogApiData = await dogApiResponse.json();
   const dogImageUrl = dogApiData.message;
