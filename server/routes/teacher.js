@@ -310,7 +310,8 @@ route.get("/reorder/:id", async (req, res) => {
 });
 
 route.get("/popularDrinks", async (req, res) => {
-  const menuItems = await MenuItem.find();
+  let menuItems = await MenuItem.find().lean();
+  menuItems = menuItems.map(formatMenuImageData);
   const popularMenu = [];
   for (let i = 0; i < menuItems.length; i++) {
     if (menuItems[i].popular === true) {
