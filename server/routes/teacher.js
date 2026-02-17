@@ -257,14 +257,14 @@ route.post("/myCart", async (req, res) => {
       } else {
         for (let x = 0; x < drink.ingredients.length; x++) {
           const tempIngredient = ingredients.find((f) =>
-            f._id.equals(drink.ingredients[x])
+            f._id.equals(drink.ingredients[x]),
           );
           if (tempIngredient !== null && tempIngredient !== undefined) {
             const ingredientCount = drink.ingredientCounts[x];
             const ingredientCountStr =
               ingredientCount === 0 ? "No " : ingredientCount + " ";
             formattedDrink.ingredients.push(
-              " " + ingredientCountStr + tempIngredient.name
+              " " + ingredientCountStr + tempIngredient.name,
             );
           }
         }
@@ -309,7 +309,8 @@ route.get("/reorder/:id", async (req, res) => {
 });
 
 route.get("/popularDrinks", async (req, res) => {
-  const menuItems = await MenuItem.find();
+  let menuItems = await MenuItem.find().lean();
+  menuItems = menuItems.map(formatMenuImageData);
   const popularMenu = [];
   for (let i = 0; i < menuItems.length; i++) {
     if (menuItems[i].popular === true) {
@@ -336,8 +337,8 @@ route.get("/myFavorites", async (req, res) => {
 
   const favoriteDrinksIngredients = favoriteDrinks.map((drink) =>
     drink.ingredients.map((ingredientId) =>
-      ingredients.find((ingredient) => ingredient._id.equals(ingredientId))
-    )
+      ingredients.find((ingredient) => ingredient._id.equals(ingredientId)),
+    ),
   );
 
   const role = await getUserRoles(req.session.email);
@@ -425,7 +426,7 @@ const dogCoffeeJokes = [
 
 route.get("/orderConfirmation", async (req, res) => {
   const dogApiResponse = await fetch(
-    "https://dog.ceo/api/breed/husky/images/random"
+    "https://dog.ceo/api/breed/husky/images/random",
   );
   const dogApiData = await dogApiResponse.json();
   const dogImageUrl = dogApiData.message;

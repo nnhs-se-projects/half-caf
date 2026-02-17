@@ -1,4 +1,4 @@
-const staticNNHSCoffe = "nnhs-coffee-site-v1";
+const staticNNHSCoffe = "nnhs-coffee-site-v2";
 const assets = [
   "/add-to-home.html",
   "/manifest.json",
