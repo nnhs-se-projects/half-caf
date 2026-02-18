@@ -23,22 +23,7 @@ async function getUserRoles(email) {
   }
 }
 
-function formatMenuImageData(drink) {
-  if (drink && drink.imageData && drink.imageData.buffer) {
-    const buffer = drink.imageData.buffer;
-    const potentialDataUrl = buffer.toString("utf8");
-
-    if (potentialDataUrl.startsWith("data:image")) {
-      drink.imageData = potentialDataUrl;
-    } else {
-      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
-    }
-  }
-
-  return drink;
-}
-
-const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
+const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),

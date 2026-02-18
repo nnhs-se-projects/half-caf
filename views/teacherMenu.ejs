@@ -147,10 +147,10 @@
           <div class="card">
             <div class="container">
               <h4><b><%=drink.name%></h4>
-              <% if (drink.imageData) { %>
-                <img src="<%=drink.imageData%>" alt="<%=drink.name%>" style="width:100%">
+              <% if (drink.imageData && typeof drink.imageData === 'string') { %>
+                <img src="<%= drink.imageData %>" alt="<%= drink.name %>" style="width:100%">
               <% } else { %>
-                <h5>No image available</h5>
+                <h5>Failed to load image</h5>
               <% } %>
               <h5>$<%=drink.price%></h5>
               <%if(drink.description.length > 40) { %>
