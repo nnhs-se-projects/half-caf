@@ -43,8 +43,23 @@ async function findIngredientById(id) {
   }
 }
 
+function formatDrinkImageData(drink) {
+  if (drink && drink.imageData && drink.imageData.buffer) {
+    const buffer = drink.imageData.buffer;
+    const potentialDataUrl = buffer.toString("utf8");
+
+    if (potentialDataUrl.startsWith("data:image")) {
+      drink.imageData = potentialDataUrl;
+    } else {
+      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
+    }
+  }
+  return drink;
+}
+
 route.get("/menu", async (req, res) => {
-  const menu = await MenuItem.find();
+  let menu = await MenuItem.find().lean();
+  menu = menu.map(formatDrinkImageData);
   const role = await getUserRoles(req.session.email);
   res.render("teacherMenu", {
     menuItems: menu,
@@ -322,7 +337,9 @@ route.get("/reorder/:id", async (req, res) => {
 });
 
 route.get("/popularDrinks", async (req, res) => {
-  const menuItems = await MenuItem.find();
+  console.log("Route /teacher/popularDrinks hit");
+  let menuItems = await MenuItem.find().lean();
+  menuItems = menuItems.map(formatDrinkImageData);
   const popularMenu = [];
   for (let i = 0; i < menuItems.length; i++) {
     if (menuItems[i].popular === true) {

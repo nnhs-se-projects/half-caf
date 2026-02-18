@@ -13,7 +13,7 @@ route.get("/login", async (req, res) => {
 route.post("/login", async (req, res) => {
   const attemptedPerson = await DeliveryPerson.findById(req.body.id);
   const attemptedPin = req.body.pin;
-  if (attemptedPerson.pin === attemptedPin) {
+  if (attemptedPerson && attemptedPerson.pin === attemptedPin) {
     req.session.currentDelivererId = req.body.id;
     if (
       attemptedPerson.currentOrder !== null &&
@@ -25,7 +25,7 @@ route.post("/login", async (req, res) => {
     }
   } else {
     req.session.currentDelivererId = null;
-    res.redirect("/delivery/login");
+    res.status(401).json({ error: "Invalid delivery login" });
   }
 });
 
@@ -54,7 +54,7 @@ route.post("/progress/:id", async (req, res) => {
     req.session.currentDelivererId !== undefined
   ) {
     const currentDeliverer = await DeliveryPerson.findById(
-      req.session.currentDelivererId
+      req.session.currentDelivererId,
     );
 
     const currentOrder = await Order.findById(req.params.id);
@@ -65,7 +65,7 @@ route.post("/progress/:id", async (req, res) => {
     emitOrderClaimed({ email: currentOrder.email });
 
     const currentTimeDate = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
     );
     const currentTimeMs = Date.parse(currentTimeDate);
     currentOrder.claimTime = currentTimeMs;
@@ -82,7 +82,7 @@ route.get("/progress/:id", async (req, res) => {
     req.session.currentDelivererId !== undefined
   ) {
     const currentDeliverer = await DeliveryPerson.findById(
-      req.session.currentDelivererId
+      req.session.currentDelivererId,
     );
     const currentOrder = await Order.findById(req.params.id);
     if (
@@ -105,14 +105,14 @@ route.post("/finish", async (req, res) => {
     req.session.currentDelivererId !== undefined
   ) {
     const currentDeliverer = await DeliveryPerson.findById(
-      req.session.currentDelivererId
+      req.session.currentDelivererId,
     );
     const currentOrder = await Order.findById(currentDeliverer.currentOrder);
     currentOrder.delivered = true;
     currentOrder.claimed = false;
     currentDeliverer.currentOrder = null;
     const currentTimeDate = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
     );
     const currentTimeMs = Date.parse(currentTimeDate);
     const duration = currentTimeMs - currentOrder.claimTime;

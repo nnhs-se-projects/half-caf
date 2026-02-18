@@ -191,21 +191,29 @@ route.get("/redirectUser", async (req, res) => {
 });
 
 route.get("/homePopularDrinks", async (req, res) => {
-  const menuItems = await MenuItem.find();
-  const popularMenu = [];
-  for (let i = 0; i < menuItems.length; i++) {
-    if (menuItems[i].popular === true) {
-      popularMenu.push(menuItems[i]);
+  console.log("Route /homePopularDrinks hit");
+  try {
+    let menuItems = await MenuItem.find().lean();
+    menuItems = menuItems.map(formatMenuImageData);
+    const popularMenu = [];
+    for (let i = 0; i < menuItems.length; i++) {
+      if (menuItems[i].popular === true) {
+        popularMenu.push(menuItems[i]);
+      }
     }
-  }
 
-  res.render("homePopularDrinks", {
-    menuItems: popularMenu,
-  });
+    res.render("homePopularDrinks", {
+      menuItems: popularMenu,
+    });
+  } catch (error) {
+    console.error("Error in /homePopularDrinks:", error);
+    res.status(500).send("Server error");
+  }
 });
 
 route.get("/homeMenu", async (req, res) => {
-  const menu = await MenuItem.find();
+  let menu = await MenuItem.find().lean();
+  menu = menu.map(formatMenuImageData);
   res.render("homeMenu", {
     menuItems: menu,
   });
