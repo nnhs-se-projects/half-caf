@@ -23,7 +23,7 @@ async function getUserRoles(email) {
   }
 }
 
-const timeBeforeEnd = 5; // 5 minutes before end of period, ordering will be automatically disabled
+const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   const currentTimeDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
