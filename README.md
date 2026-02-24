@@ -70,7 +70,6 @@ To explain the image more, each arrow shows a different dependency. The beginnin
 
 Enabled is on its own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side. ** Enabled is mainly controlled by the scheduler. **
 
-
 ## Google Authentication Implementation
 
 ### Overview
@@ -145,3 +144,13 @@ price of the drink for the user, although the increased expense will be noted in
 6. Token Verification: auth2.js sends this token to the server via the route defined in auth.js.
 7. Session Update: Upon successful token verification, the user’s email is stored in the session.
 8. Role-Based Redirection: The user is then redirected to /redirectUser, where router.js checks the user's role and redirects them accordingly.
+
+## Questions:
+
+Christian Hill:
+
+Stability: What is our protocol if the app crashes or a bug prevents a teacher from placing an order during the pilot?
+
+Scope: Are there any features we initially planned that we need to cut or delay to ensure this initial rollout is stable?
+
+Success metrics: What defines a "successful" test run with this group of teachers?
