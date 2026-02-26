@@ -7,6 +7,7 @@ const TempJson = require("../model/temps.json");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
 const webPush = require("web-push");
+const { sendOutOfStockEmail } = require("../utils/emailService");
 
 webPush.setVapidDetails(
   "mailto:admin@example.com",
@@ -195,6 +196,7 @@ route.post("/orders/:id", async (req, res) => {
     drink.completed = true;
     await drink.save();
 
+    const outOfStockIngredients = [];
     for (let i = 0; i < drink.ingredients.length; i++) {
       const ingredient = await Ingredient.findById(drink.ingredients[i]);
       // Subtract the used amount and round up fractional quantities
@@ -202,6 +204,17 @@ route.post("/orders/:id", async (req, res) => {
       // Round up to the nearest integer and prevent negative quantities
       ingredient.quantity = Math.max(0, Math.ceil(newQty));
       await ingredient.save();
+      // Check if ingredient went below zero before clamping
+      if (newQty < 0) {
+        outOfStockIngredients.push({
+          name: ingredient.name,
+          newQuantity: ingredient.quantity,
+        });
+      }
+    }
+    // Send email notification if any ingredients went out of stock
+    if (outOfStockIngredients.length > 0) {
+      sendOutOfStockEmail(outOfStockIngredients);
     }
   }
 

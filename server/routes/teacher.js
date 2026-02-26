@@ -9,6 +9,7 @@ const {
   computeRequiredFromCart,
   checkInventory,
 } = require("../utils/inventory");
+const { sendOutOfStockEmail } = require("../utils/emailService");
 
 const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
 
@@ -296,10 +297,26 @@ route.post("/myCart", async (req, res) => {
     // --- decrement inventory for the ingredients used in this order ---
     try {
       const entries = Object.entries(required || {});
+      const outOfStockIngredients = [];
       for (const [ingId, qty] of entries) {
         const dec = parseInt(qty) || 0;
         if (dec <= 0) continue;
-        await Ingredient.findByIdAndUpdate(ingId, { $inc: { quantity: -dec } });
+        const updatedIngredient = await Ingredient.findByIdAndUpdate(
+          ingId,
+          { $inc: { quantity: -dec } },
+          { new: true },
+        );
+        // Check if ingredient went below zero
+        if (updatedIngredient && updatedIngredient.quantity < 0) {
+          outOfStockIngredients.push({
+            name: updatedIngredient.name,
+            newQuantity: updatedIngredient.quantity,
+          });
+        }
+      }
+      // Send email notification if any ingredients went out of stock
+      if (outOfStockIngredients.length > 0) {
+        sendOutOfStockEmail(outOfStockIngredients);
       }
     } catch (deErr) {
       console.error("Error decrementing inventory after order:", deErr);
