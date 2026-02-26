@@ -10,7 +10,11 @@ const {
   checkInventory,
 } = require("../utils/inventory");
 
-const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
+const {
+  emitNewOrderPlaced,
+  emitRoomUpdated,
+  emitOrderCancelled,
+} = require("../socket/socket");
 
 async function getUserRoles(email) {
   try {
@@ -249,6 +253,7 @@ route.post("/myCart", async (req, res) => {
       timer: "uncompleted",
       name: req.session.name,
       isAdmin: role === "admin",
+      confirmedAt: new Date(),
     });
     await order.save();
     const user = await User.findOne({ email: req.session.email });
@@ -482,6 +487,97 @@ route.post("/updateRoom", async (req, res) => {
     } else {
       res.status(403).json({ error: "Unauthorized or order not found" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+route.delete("/cancelOrder/:id", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate("drinks");
+
+    // Verify the order belongs to the current user
+    if (order.email !== req.session.email) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    // Check if order is within 30 seconds of confirmation
+    const confirmedAt = new Date(order.confirmedAt);
+    const now = new Date();
+    const secondsElapsed = (now - confirmedAt) / 1000;
+
+    if (secondsElapsed > 30) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Order can no longer be cancelled (30 second window has passed)",
+        });
+    }
+
+    if (order.claimed) {
+      return res
+        .status(400)
+        .json({ error: "Order cannot be cancelled once claimed by barista" });
+    }
+
+    if (order.cancelled) {
+      return res.status(400).json({ error: "Order is already cancelled" });
+    }
+
+    const orderItems = [];
+    for (const drink of order.drinks) {
+      let ingredientsStr = "";
+      let i = 0;
+      for (const ingredientId of drink.ingredients) {
+        const ingredient = await Ingredient.findById(ingredientId);
+
+        if (ingredient.type === "customizable") {
+          ingredientsStr +=
+            drink.ingredientCounts[i] === 0
+              ? "No "
+              : drink.ingredientCounts[i] + " ";
+          ingredientsStr += ingredient.name + ", ";
+        }
+
+        i++;
+      }
+      ingredientsStr = ingredientsStr.substring(0, ingredientsStr.length - 2);
+      const item = {
+        name: drink.name,
+        temp: drink.temps,
+        ingredients: ingredientsStr.length > 0 ? ingredientsStr : "None",
+        instructions: drink.instructions,
+      };
+      orderItems.push(item);
+    }
+
+    // Restore inventory
+    try {
+      const { computeRequiredFromCart } = require("../utils/inventory");
+      const required = await computeRequiredFromCart(order.drinks);
+      const entries = Object.entries(required || {});
+      for (const [ingId, qty] of entries) {
+        const inc = parseInt(qty) || 0;
+        if (inc <= 0) continue;
+        await Ingredient.findByIdAndUpdate(ingId, { $inc: { quantity: inc } });
+      }
+    } catch (invErr) {
+      console.error("Error restoring inventory after cancellation:", invErr);
+    }
+
+    order.cancelled = true;
+    await order.save();
+
+    emitOrderCancelled({
+      cancelMessage: "Order cancelled by customer",
+      email: order.email,
+      orderId: order._id,
+      orderItems,
+    });
+
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });

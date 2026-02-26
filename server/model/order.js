@@ -62,6 +62,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  confirmedAt: {
+    type: Date,
+    required: false,
+  },
 });
 
 const Order = mongoose.model("Order", schema);
