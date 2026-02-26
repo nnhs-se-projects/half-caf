@@ -6,6 +6,7 @@ const MenuItem = require("../model/menuItem");
 const TempJson = require("../model/temps.json");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const CashCount = require("../model/cashCount");
 const webPush = require("web-push");
 
 webPush.setVapidDetails(
@@ -232,7 +233,7 @@ route.get("/pointOfSale", async (req, res) => {
   const ingredients = await Ingredient.find();
   const temps = TempJson;
   const orders = await Order.find();
-  const possibleModificationsMap = new Map();
+  const possibleModificationsMap = {};
   for (const item of menuItems) {
     const modifications = [];
     let i = 0;
@@ -267,13 +268,85 @@ route.get("/pointOfSale", async (req, res) => {
 
 route.post("/pointOfSale", async (req, res) => {
   const drinkIdCart = [];
-  for (const drink of req.body.order) {
+  const orderItems = Array.isArray(req.body.order) ? req.body.order : [];
+  if (orderItems.length === 0) {
+    return res.status(400).json({ message: "No order items provided." });
+  }
+
+  for (const drink of orderItems) {
+    const menuItemId = drink.menuItemId;
+    let ingredients = Array.isArray(drink.ingredients) ? drink.ingredients : [];
+    let ingredientCounts = Array.isArray(drink.ingredientCounts)
+      ? drink.ingredientCounts
+      : [];
+    let temps = drink.temps;
+
+    if (
+      (!ingredients.length ||
+        ingredients.length !== ingredientCounts.length ||
+        !temps) &&
+      menuItemId
+    ) {
+      const menuItem = await MenuItem.findById(menuItemId);
+      if (!menuItem) {
+        return res.status(400).json({ message: "Invalid menu item in order." });
+      }
+
+      if (
+        !ingredients.length ||
+        ingredients.length !== ingredientCounts.length
+      ) {
+        ingredients = menuItem.ingredients.map((id) => id.toString());
+        ingredientCounts =
+          menuItem.ingredientCounts &&
+          menuItem.ingredientCounts.length === menuItem.ingredients.length
+            ? menuItem.ingredientCounts
+            : menuItem.ingredients.map(() => 1);
+      }
+
+      if (!temps || (Array.isArray(temps) && temps.length === 0)) {
+        temps = menuItem.temps[0] || "";
+      }
+    }
+
+    if (Array.isArray(temps)) {
+      temps = temps[0] || "";
+    }
+
+    if (!temps) {
+      return res
+        .status(400)
+        .json({ message: "Missing temperature for a drink." });
+    }
+
+    if (!ingredients.length) {
+      return res
+        .status(400)
+        .json({ message: "Missing ingredients for a drink." });
+    }
+
+    if (ingredients.length !== ingredientCounts.length) {
+      return res
+        .status(400)
+        .json({ message: "Ingredient counts do not match ingredients." });
+    }
+
+    const ingredientDocs = await Ingredient.find({
+      _id: { $in: ingredients },
+    });
+    if (ingredientDocs.length !== ingredients.length) {
+      return res.status(400).json({ message: "Unknown ingredient in order." });
+    }
+
+    const normalizedCounts = ingredientCounts.map(
+      (count) => Number(count) || 0,
+    );
     const newDrink = new Drink({
       name: drink.name,
-      price: drink.price,
-      temps: drink.temps,
-      ingredients: drink.ingredients,
-      ingredientCounts: drink.ingredientCounts,
+      price: Number(drink.price),
+      temps,
+      ingredients,
+      ingredientCounts: normalizedCounts,
       instructions: drink.instructions,
       completed: false,
       caffeinated: drink.caffeinated,
@@ -340,6 +413,29 @@ route.post("/pointOfSale", async (req, res) => {
     drinks: drinkArray,
   });
   res.status(201).end();
+});
+
+route.post("/pointOfSale/cash-count", async (req, res) => {
+  const totalCounted = Number(req.body.totalCounted);
+  const expectedTotal = Number(req.body.expectedTotal);
+
+  if (!Number.isFinite(totalCounted) || !Number.isFinite(expectedTotal)) {
+    return res
+      .status(400)
+      .json({ message: "Cash count totals must be valid numbers." });
+  }
+
+  const difference = Math.round((totalCounted - expectedTotal) * 100) / 100;
+  const cashCount = new CashCount({
+    totalCounted,
+    expectedTotal,
+    difference,
+    email: req.session.email,
+    name: req.session.name,
+  });
+  await cashCount.save();
+
+  return res.status(201).json({ difference });
 });
 
 // completed orders page of barista that displays all completed orders

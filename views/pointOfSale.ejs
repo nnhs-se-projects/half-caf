@@ -21,7 +21,7 @@
       <% for (let drink of menuItems){ %>
       <div class="pos-card">
         <div class="pos-container">
-          <input type="hidden" class="menuItem-id" value="<%=drink.id%>" />
+          <input type="hidden" class="menuItem-id" value="<%=drink._id%>" />
           <input type="hidden" class="drink-price" value="<%=drink.price%>" />
           <input type="hidden" class="drink-name" value="<%=drink.name%>" />
           <h4><b><%=drink.name%></b></h4>
@@ -49,7 +49,142 @@
       </table>
       <div class="order-total-container">
         <h4>Total: $<span class="order-total">0.00</span></h4>
-        <input type="submit" class="" value="Order Paid" />
+        <button type="button" id="order-paid">Order Paid</button>
+      </div>
+      <div class="cash-counter">
+        <h4>Money Counter</h4>
+        <div class="cash-grid">
+          <div class="cash-row">
+            <label for="cash-100">$100</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-100"
+              class="cash-count"
+              data-value="100"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-50">$50</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-50"
+              class="cash-count"
+              data-value="50"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-20">$20</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-20"
+              class="cash-count"
+              data-value="20"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-10">$10</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-10"
+              class="cash-count"
+              data-value="10"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-5">$5</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-5"
+              class="cash-count"
+              data-value="5"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-1">$1</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-1"
+              class="cash-count"
+              data-value="1"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-25">$0.25</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-25"
+              class="cash-count"
+              data-value="0.25"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-10c">$0.10</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-10c"
+              class="cash-count"
+              data-value="0.10"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-5c">$0.05</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-5c"
+              class="cash-count"
+              data-value="0.05"
+            />
+          </div>
+          <div class="cash-row">
+            <label for="cash-1c">$0.01</label>
+            <input
+              type="number"
+              min="0"
+              value="0"
+              id="cash-1c"
+              class="cash-count"
+              data-value="0.01"
+            />
+          </div>
+        </div>
+        <div class="cash-summary">
+          <label for="expected-cash">Expected Cash</label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value="0.00"
+            id="expected-cash"
+          />
+        </div>
+        <div class="cash-summary">
+          <span>Counted Total</span>
+          <span id="counted-total">$0.00</span>
+        </div>
+        <div class="cash-summary">
+          <span>Difference</span>
+          <span id="cash-diff">$0.00</span>
+        </div>
+        <button type="button" id="save-cash-count">Save Cash Count</button>
+        <p id="cash-save-status" class="cash-status" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -243,6 +378,60 @@
     display: table;
     width: 100%;
     table-layout: fixed;
+  }
+  .cash-counter {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 16px;
+    background-color: #f8f8f8;
+  }
+
+  .cash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+
+  .cash-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .cash-row input {
+    width: 70px;
+  }
+
+  .cash-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 6px 0;
+  }
+
+  #save-cash-count {
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #2e7d32;
+    color: white;
+    cursor: pointer;
+  }
+
+  #save-cash-count:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+  }
+
+  .cash-status {
+    margin-top: 8px;
+    min-height: 18px;
+    font-size: 0.9rem;
   }
   .ingredient-container,
   .temp-container {
