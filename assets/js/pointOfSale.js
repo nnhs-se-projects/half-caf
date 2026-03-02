@@ -1,6 +1,7 @@
 let currentDrink;
 let cart = [];
 let isDrinkSelected = false;
+let cartIdCounter = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   // Fix selectors to match HTML
@@ -14,7 +15,158 @@ document.addEventListener("DOMContentLoaded", () => {
   const possibleModificationsMap = JSON.parse(
     document.querySelector("#possibleModifications").value,
   );
+
+  const ingredientIdSet = new Set(
+    ingredients.map((ingredient) => String(ingredient._id)),
+  );
+
+  function roundCurrency(value) {
+    return Math.round(value * 100) / 100;
+  }
+
+  function getSelectedIngredientTotal() {
+    let total = 0;
+    const selected = document.querySelectorAll(".ingredient-checkbox:checked");
+    selected.forEach((checkbox) => {
+      const container = checkbox.closest(".ingredient-container");
+      if (container && container.hidden) {
+        return;
+      }
+      const countInput = container?.querySelector("input[type='number']");
+      total += Number(countInput?.value || 0);
+    });
+    return total;
+  }
+
+  function enforceIngredientLimit(changedElement) {
+    const total = getSelectedIngredientTotal();
+    if (total <= 2) {
+      return;
+    }
+
+    if (changedElement.classList.contains("ingredient-checkbox")) {
+      const container = changedElement.closest(".ingredient-container");
+      const countInput = container?.querySelector("input[type='number']");
+      changedElement.checked = false;
+      if (countInput) {
+        countInput.value = 0;
+        countInput.hidden = true;
+      }
+      return;
+    }
+
+    if (changedElement.type === "number") {
+      const overflow = total - 2;
+      const currentValue = Number(changedElement.value || 0);
+      const adjustedValue = Math.max(0, currentValue - overflow);
+      changedElement.value = adjustedValue;
+      if (adjustedValue === 0) {
+        const container = changedElement.closest(".ingredient-container");
+        const checkbox = container?.querySelector(".ingredient-checkbox");
+        if (checkbox) {
+          checkbox.checked = false;
+          changedElement.hidden = true;
+        }
+      }
+    }
+  }
+
+  function getMenuDefaults(menuItemId) {
+    const defaults = {
+      ingredients: [],
+      ingredientCounts: [],
+      temps: [],
+    };
+    const modifications = possibleModificationsMap[menuItemId] || [];
+    for (let i = 0; i < modifications.length; i++) {
+      const entry = modifications[i];
+      if (ingredientIdSet.has(String(entry))) {
+        defaults.ingredients.push(entry);
+        defaults.ingredientCounts.push(Number(modifications[i + 1]) || 0);
+        i += 1;
+      }
+    }
+
+    for (const entry of modifications) {
+      const isIngredientId = ingredientIdSet.has(String(entry));
+      if (!isIngredientId && entry !== "Caffeine" && entry !== "Decaf") {
+        defaults.temps.push(entry);
+      }
+    }
+
+    return defaults;
+  }
+
+  function ensureDrinkDefaults(drink) {
+    if (!drink.ingredients || drink.ingredients.length === 0) {
+      const defaults = getMenuDefaults(drink.menuItemId);
+      drink.ingredients = defaults.ingredients;
+      drink.ingredientCounts = defaults.ingredientCounts;
+      if (!drink.temps || drink.temps.length === 0) {
+        drink.temps = defaults.temps[0] || "";
+      }
+    }
+
+    if (Array.isArray(drink.temps)) {
+      drink.temps = drink.temps[0] || "";
+    }
+
+    if (!drink.temps) {
+      const defaults = getMenuDefaults(drink.menuItemId);
+      drink.temps = defaults.temps[0] || "";
+    }
+
+    if (
+      !Array.isArray(drink.ingredientCounts) ||
+      drink.ingredientCounts.length !== drink.ingredients.length
+    ) {
+      drink.ingredientCounts = drink.ingredients.map(
+        (_, index) => Number(drink.ingredientCounts?.[index]) || 0,
+      );
+    }
+  }
+
+  function getCashCountedTotal() {
+    const cashInputs = document.querySelectorAll(".cash-count");
+    let total = 0;
+    cashInputs.forEach((input) => {
+      const count = Number(input.value || 0);
+      const denom = Number(input.dataset.value || 0);
+      total += count * denom;
+    });
+    return roundCurrency(total);
+  }
+
+  function updateCashTotals() {
+    const expectedCashInput = document.querySelector("#expected-cash");
+    const countedTotalEl = document.querySelector("#counted-total");
+    const cashDiffEl = document.querySelector("#cash-diff");
+    if (!expectedCashInput || !countedTotalEl || !cashDiffEl) {
+      return;
+    }
+
+    const countedTotal = getCashCountedTotal();
+    const expectedTotal = Number(expectedCashInput.value || 0);
+    const difference = roundCurrency(countedTotal - expectedTotal);
+    countedTotalEl.textContent = `$${countedTotal.toFixed(2)}`;
+    cashDiffEl.textContent = `$${difference.toFixed(2)}`;
+  }
+
+  function syncExpectedCashToOrderTotal() {
+    const expectedCashInput = document.querySelector("#expected-cash");
+    if (!expectedCashInput || !orderTotal) {
+      return;
+    }
+
+    expectedCashInput.value = Number(orderTotal.textContent || 0).toFixed(2);
+    updateCashTotals();
+  }
+
   function saveDrinkModifications() {
+    if (!currentDrink) {
+      return;
+    }
+
     // Save the modifications to the current drink
     const selectedIngredients = Array.from(
       document.querySelectorAll(".ingredient-checkbox:checked"),
@@ -46,28 +198,41 @@ document.addEventListener("DOMContentLoaded", () => {
     currentDrink.temps = selectedTemp;
     const instructions = document.querySelector("#drink-instructions").value;
     currentDrink.instructions = instructions;
-    console.log(currentDrink);
   }
-  function selectDrink(drink) {
-    console.log("You selected a drink");
-    if (isDrinkSelected) {
+
+  function closeDrinkCustomization() {
+    currentDrink = null;
+    isDrinkSelected = false;
+    currentDrinkText.textContent = "Current Drink: None";
+    document.querySelector(".customization-grid").innerHTML = "";
+  }
+
+  function selectDrink(drink, skipSave = false) {
+    if (isDrinkSelected && !skipSave) {
       saveDrinkModifications();
     }
 
     isDrinkSelected = true;
-    currentDrink = cart.find((item) => item.menuItemId === drink.menuItemId);
+    currentDrink = cart.find((item) => item.cartId === drink.cartId);
+    if (!currentDrink) {
+      currentDrink = cart.find((item) => item.menuItemId === drink.menuItemId);
+    }
+
+    if (!currentDrink) {
+      return;
+    }
+
+    const modifications = possibleModificationsMap[drink.menuItemId] || [];
 
     const possibleIngredients = [];
     const possibleTemps = [];
     currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
     for (const ingredient of ingredients) {
-      const indx = possibleModificationsMap[drink.menuItemId].indexOf(
-        ingredient._id,
-      );
+      const indx = modifications.indexOf(ingredient._id);
       if (indx > -1) {
         possibleIngredients.push({
           ingredient,
-          count: possibleModificationsMap[drink.menuItemId][indx + 1],
+          count: modifications[indx + 1],
         });
       } else if (ingredient.type === "customizable") {
         possibleIngredients.push({
@@ -78,10 +243,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (const temp of temps) {
-      if (possibleModificationsMap[drink.menuItemId].indexOf(temp) > -1) {
+      if (modifications.indexOf(temp) > -1) {
         possibleTemps.push(temp);
       }
     }
+
+    const selectedTemp =
+      currentDrink.temps || (possibleTemps.length > 0 ? possibleTemps[0] : "");
 
     let html = '<div class="customization-columns">';
 
@@ -90,12 +258,17 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "<h5>Ingredients</h5>";
     if (possibleIngredients.length > 0) {
       possibleIngredients.forEach((ingredient) => {
-        const isChecked =
-          possibleModificationsMap[drink.menuItemId].indexOf(
-            ingredient.ingredient._id,
-          ) > -1
-            ? "checked"
-            : "";
+        const ingredientStringId = String(ingredient.ingredient._id);
+        const ingredientIndex = currentDrink.ingredients
+          ? currentDrink.ingredients.findIndex(
+              (id) => String(id) === ingredientStringId,
+            )
+          : -1;
+        const isCurrentlySelected = ingredientIndex > -1;
+        const isChecked = isCurrentlySelected ? "checked" : "";
+        const ingredientCountValue = isCurrentlySelected
+          ? currentDrink.ingredientCounts[ingredientIndex]
+          : ingredient.count;
         html += `
     <div ${
       ingredient.ingredient.type === "uncustomizable" ? "hidden" : ""
@@ -109,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ingredient.ingredient.name
       }</label>
       <input ${isChecked ? "" : "hidden"} type="number" value="${
-        ingredient.count
+        ingredientCountValue
       }" min="0" max="2" />
     </div>
     `;
@@ -124,9 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "<h5>Temperature</h5>";
     if (possibleTemps.length > 0) {
       possibleTemps.forEach((temp) => {
+        const isTempSelected = temp === selectedTemp ? "checked" : "";
         html += `
     <div class="temp-container">
-      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" checked="checked"/>
+      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" ${isTempSelected}/>
       <label for="temp-${temp}">${temp}</label>
     </div>
     `;
@@ -148,14 +322,15 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
     html += "</div>";
 
-    if (possibleModificationsMap[drink.menuItemId].indexOf("Decaf") > -1) {
+    if (modifications.indexOf("Decaf") > -1) {
       // Create column for decaf or caffeine
-      const isChecked = currentDrink.caffeinated ? "" : "checked";
+      const isDecafChecked =
+        currentDrink.caffeinated === false ? "checked" : "";
       html += '<div class="customization-column">';
       html += "<h5>Caffeination</h5>";
       html += `
       <div class="caffeination-container">
-        <input type="checkbox" id="caffeination" class="caffeination-checkbox" ${isChecked} />
+        <input type="checkbox" id="caffeination" class="caffeination-checkbox" ${isDecafChecked} />
         <label for="caffeination">Decaf</label>
       </div>
     `;
@@ -167,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Add save button
     html +=
-      '<div class="button-container"><button class="saveButton">Save Drink</button></div>';
+      '<div class="button-container"><button type="button" class="saveButton">Save Drink</button></div>';
 
     document.querySelector(".customization-grid").innerHTML = html;
 
@@ -175,15 +350,23 @@ document.addEventListener("DOMContentLoaded", () => {
       ".ingredient-checkbox",
     );
     for (const ingredient of ingredientCheckBoxes) {
-      ingredient.addEventListener("click", () => {
+      ingredient.addEventListener("change", () => {
         const numElem = ingredient.parentElement.lastElementChild;
         numElem.hidden = !numElem.hidden;
         if (numElem.hidden) {
           numElem.value = 0;
-        } else {
+        } else if (Number(numElem.value || 0) === 0) {
           numElem.value = 1;
         }
+        enforceIngredientLimit(ingredient);
       });
+
+      const numElem = ingredient.parentElement.lastElementChild;
+      if (numElem) {
+        numElem.addEventListener("input", () => {
+          enforceIngredientLimit(numElem);
+        });
+      }
     }
 
     // Add save button functionality
@@ -191,11 +374,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (saveButton) {
       saveButton.addEventListener("click", () => {
         saveDrinkModifications();
+        closeDrinkCustomization();
       });
     }
   }
 
   function addDrinkToOrder(drink) {
+    cartIdCounter += 1;
+    drink.cartId = cartIdCounter;
+
+    // Ensure drink has defaults before adding to cart
+    ensureDrinkDefaults(drink);
+
     cart.push(drink);
 
     const drinkElement = document.createElement("tr");
@@ -204,38 +394,42 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>$${drink.price}</td>
       <td>1</td>
       <td>
-        <input type="submit" value="❌" class="cancelButton" />
+        <button type="button" class="cancelButton">❌</button>
       </td>
       <td>
-        <input type="submit" value="✏️" class="editButton" />
+        <button type="button" class="editButton">✏️</button>
     `;
 
     // Store drink data for retrieval
-    drinkElement.dataset.drink = JSON.stringify(drink);
+    drinkElement.dataset.cartId = String(drink.cartId);
 
     orderTable.getElementsByTagName("tbody")[0].appendChild(drinkElement);
     orderTotal.textContent = (
       Number(orderTotal.textContent) + Number(drink.price)
     ).toFixed(2);
+    syncExpectedCashToOrderTotal();
 
     const cancelButton = drinkElement.querySelector(".cancelButton");
-    cancelButton.addEventListener("click", () => {
+    cancelButton.addEventListener("click", (event) => {
+      event.preventDefault();
       if (currentDrink === drink) {
-        currentDrink = null;
-        isDrinkSelected = false;
-        currentDrinkText.textContent = "Current Drink: None";
-        document.querySelector(".customization-grid").innerHTML = "";
+        closeDrinkCustomization();
       }
       orderTotal.textContent = (
         Number(orderTotal.textContent) - Number(drink.price)
       ).toFixed(2);
+      syncExpectedCashToOrderTotal();
       drinkElement.remove();
       cart.splice(cart.indexOf(drink), 1);
     });
     const editButton = drinkElement.querySelector(".editButton");
-    editButton.addEventListener("click", () => {
-      const clickedDrink = JSON.parse(drinkElement.dataset.drink);
-      selectDrink(clickedDrink);
+    editButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      const cartId = Number(drinkElement.dataset.cartId);
+      const clickedDrink = cart.find((item) => item.cartId === cartId);
+      if (clickedDrink) {
+        selectDrink(clickedDrink);
+      }
     });
     selectDrink(drink);
   }
@@ -243,7 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Attach event listeners to drink cards
   const drinkCards = document.querySelectorAll(".pos-card");
   drinkCards.forEach((card) => {
-    card.addEventListener("click", () => {
+    card.addEventListener("click", (event) => {
       const drinkName = card.querySelector(".drink-name").value;
       const drinkPrice = card.querySelector(".drink-price").value;
       const menuItemId = card.querySelector(".menuItem-id").value;
@@ -255,25 +449,68 @@ document.addEventListener("DOMContentLoaded", () => {
         ingredientCounts: [],
         temps: [],
         caffeinated:
-          possibleModificationsMap[menuItemId].indexOf("Caffeine") > -1,
+          (possibleModificationsMap[menuItemId] || []).indexOf("Caffeine") > -1,
         instructions: "",
         favorite: false,
         completed: false,
       };
+
+      if (isDrinkSelected && currentDrink) {
+        const currentCartId = currentDrink.cartId;
+        const currentIndex = cart.findIndex(
+          (item) => item.cartId === currentCartId,
+        );
+        if (currentIndex > -1) {
+          const oldPrice = Number(currentDrink.price);
+          drink.cartId = currentCartId;
+          ensureDrinkDefaults(drink);
+          cart[currentIndex] = drink;
+
+          // Update order total: subtract old price, add new price
+          orderTotal.textContent = (
+            Number(orderTotal.textContent) -
+            oldPrice +
+            Number(drink.price)
+          ).toFixed(2);
+          syncExpectedCashToOrderTotal();
+
+          const rowToReplace = orderTable
+            .getElementsByTagName("tbody")[0]
+            .querySelector(`tr[data-cart-id="${currentCartId}"]`);
+          if (rowToReplace) {
+            rowToReplace.cells[0].textContent = drink.name;
+            rowToReplace.cells[1].textContent = `$${drink.price}`;
+          }
+
+          selectDrink(drink, true);
+          return;
+        }
+      }
+
       addDrinkToOrder(drink);
     });
   });
 
   // Add Order Paid button functionality
-  const orderPaidButton = document.querySelector(
-    ".order-total-container input[type='submit']",
-  );
+  const orderPaidButton = document.querySelector("#order-paid");
   if (orderPaidButton) {
     orderPaidButton.addEventListener("click", async () => {
       if (cart.length === 0) {
         alert("No items in order");
         return;
       }
+
+      if (isDrinkSelected && currentDrink) {
+        saveDrinkModifications();
+      }
+
+      cart.forEach((drink) => ensureDrinkDefaults(drink));
+
+      if (cart.some((drink) => !drink.temps)) {
+        alert("Each drink must have a temperature selected.");
+        return;
+      }
+
       const time = new Date();
       const year = time.getFullYear();
       const month = (time.getMonth() + 1).toString().padStart(2, "0");
@@ -303,12 +540,104 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear the cart
         cart = [];
         orderTotal.textContent = "0.00";
+        syncExpectedCashToOrderTotal();
         orderTable.getElementsByTagName("tbody")[0].innerHTML = "";
         currentDrinkText.textContent = "Current Drink: None";
         isDrinkSelected = false;
         document.querySelector(".customization-grid").innerHTML = "";
+
+        // Reset all cash denomination inputs
+        document.querySelectorAll(".cash-count").forEach((input) => {
+          input.value = 0;
+        });
+        updateCashTotals();
+
+        // Redirect to barista orders page
+        window.location.href = "/barista/orders";
       } else {
         console.log("error");
+      }
+    });
+  }
+
+  const cashInputs = document.querySelectorAll(".cash-count");
+  const cashSteppers = document.querySelectorAll(".cash-stepper");
+  const expectedCashInput = document.querySelector("#expected-cash");
+  const saveCashButton = document.querySelector("#save-cash-count");
+  const cashStatusEl = document.querySelector("#cash-save-status");
+
+  if (cashInputs.length && expectedCashInput) {
+    cashInputs.forEach((input) => {
+      input.addEventListener("input", updateCashTotals);
+    });
+    expectedCashInput.addEventListener("input", updateCashTotals);
+    syncExpectedCashToOrderTotal();
+  }
+
+  if (cashSteppers.length) {
+    cashSteppers.forEach((button) => {
+      button.addEventListener("click", () => {
+        const targetId = button.dataset.target;
+        const step = Number(button.dataset.step || 0);
+        const targetInput = document.querySelector(`#${targetId}`);
+        if (!targetInput) {
+          return;
+        }
+
+        const currentValue = Number(targetInput.value || 0);
+        const nextValue = Math.max(0, currentValue + step);
+        targetInput.value = String(nextValue);
+        updateCashTotals();
+      });
+    });
+  }
+
+  if (saveCashButton) {
+    saveCashButton.addEventListener("click", async () => {
+      const expectedTotal = Number(expectedCashInput?.value || 0);
+      const totalCounted = getCashCountedTotal();
+      const difference = roundCurrency(totalCounted - expectedTotal);
+
+      if (!Number.isFinite(expectedTotal)) {
+        if (cashStatusEl) {
+          cashStatusEl.textContent = "Expected cash must be a valid number.";
+        }
+        return;
+      }
+
+      saveCashButton.disabled = true;
+      if (cashStatusEl) {
+        cashStatusEl.textContent = "Saving cash count...";
+      }
+
+      try {
+        const response = await fetch("/barista/pointOfSale/cash-count", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            totalCounted,
+            expectedTotal,
+            difference,
+          }),
+        });
+
+        if (response.ok) {
+          if (cashStatusEl) {
+            cashStatusEl.textContent = "Cash count saved.";
+          }
+        } else {
+          if (cashStatusEl) {
+            cashStatusEl.textContent = "Unable to save cash count.";
+          }
+        }
+      } catch (error) {
+        if (cashStatusEl) {
+          cashStatusEl.textContent = "Unable to save cash count.";
+        }
+      } finally {
+        saveCashButton.disabled = false;
       }
     });
   }
