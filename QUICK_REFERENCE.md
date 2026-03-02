@@ -22,7 +22,7 @@
 ### Feature 3: Group by Category ✓ (NEW)
 
 - Category field added to schema with 9 options
-- Categories: milk, syrups, powders, sauces, coffee, toppings, ice, water, other
+- Categories: milk, syrups, powders, sauces, espresso_shots, toppings, ice, water, other
 - Visible in table as new column
 - Selectable when adding/editing ingredients
 
@@ -158,7 +158,7 @@ Added to ingredient collection:
 ```javascript
 category: {
   type: String,
-  enum: ['milk', 'syrups', 'powders', 'sauces', 'coffee', 'toppings', 'ice', 'water', 'other'],
+  enum: ['milk', 'syrups', 'powders', 'sauces', 'espresso_shots', 'toppings', 'ice', 'water', 'other'],
   default: 'other'
 }
 ```
@@ -241,17 +241,17 @@ Page Refreshes, New Ingredient Visible in Table
 
 ## 📝 CATEGORIES EXPLAINED
 
-| Category     | Examples                                     |
-| ------------ | -------------------------------------------- |
-| **milk**     | Whole milk, 2%, almond, oat, soy, coconut    |
-| **syrups**   | Vanilla, caramel, hazelnut, mocha, chocolate |
-| **powders**  | Matcha, cocoa, protein, instant coffee       |
-| **sauces**   | Caramel sauce, chocolate sauce               |
-| **coffee**   | Espresso shots, cold brew                    |
-| **toppings** | Whipped cream, cinnamon, sprinkles           |
-| **ice**      | Ice, crushed ice                             |
-| **water**    | Hot water, cold water                        |
-| **other**    | Miscellaneous (default)                      |
+| Category           | Examples                                     |
+| ------------------ | -------------------------------------------- |
+| **milk**           | Whole milk, 2%, almond, oat, soy, coconut    |
+| **syrups**         | Vanilla, caramel, hazelnut, mocha, chocolate |
+| **powders**        | Matcha, cocoa, protein, instant coffee       |
+| **sauces**         | Caramel sauce, chocolate sauce               |
+| **espresso_shots** | Espresso shots, cold brew                    |
+| **toppings**       | Whipped cream, cinnamon, sprinkles           |
+| **ice**            | Ice, crushed ice                             |
+| **water**          | Hot water, cold water                        |
+| **other**          | Miscellaneous (default)                      |
 
 ---
 
