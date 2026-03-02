@@ -120,8 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
       !Array.isArray(drink.ingredientCounts) ||
       drink.ingredientCounts.length !== drink.ingredients.length
     ) {
-      drink.ingredientCounts = drink.ingredients.map((_, index) =>
-        Number(drink.ingredientCounts?.[index]) || 0,
+      drink.ingredientCounts = drink.ingredients.map(
+        (_, index) => Number(drink.ingredientCounts?.[index]) || 0,
       );
     }
   }
@@ -228,9 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const possibleTemps = [];
     currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
     for (const ingredient of ingredients) {
-      const indx = modifications.indexOf(
-        ingredient._id,
-      );
+      const indx = modifications.indexOf(ingredient._id);
       if (indx > -1) {
         possibleIngredients.push({
           ingredient,
@@ -250,7 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const selectedTemp = currentDrink.temps || (possibleTemps.length > 0 ? possibleTemps[0] : "");
+    const selectedTemp =
+      currentDrink.temps || (possibleTemps.length > 0 ? possibleTemps[0] : "");
 
     let html = '<div class="customization-columns">';
 
@@ -325,7 +324,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (modifications.indexOf("Decaf") > -1) {
       // Create column for decaf or caffeine
-      const isDecafChecked = currentDrink.caffeinated === false ? "checked" : "";
+      const isDecafChecked =
+        currentDrink.caffeinated === false ? "checked" : "";
       html += '<div class="customization-column">';
       html += "<h5>Caffeination</h5>";
       html += `
@@ -382,10 +382,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function addDrinkToOrder(drink) {
     cartIdCounter += 1;
     drink.cartId = cartIdCounter;
-    
+
     // Ensure drink has defaults before adding to cart
     ensureDrinkDefaults(drink);
-    
+
     cart.push(drink);
 
     const drinkElement = document.createElement("tr");
@@ -468,7 +468,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Update order total: subtract old price, add new price
           orderTotal.textContent = (
-            Number(orderTotal.textContent) - oldPrice + Number(drink.price)
+            Number(orderTotal.textContent) -
+            oldPrice +
+            Number(drink.price)
           ).toFixed(2);
           syncExpectedCashToOrderTotal();
 
@@ -543,13 +545,13 @@ document.addEventListener("DOMContentLoaded", () => {
         currentDrinkText.textContent = "Current Drink: None";
         isDrinkSelected = false;
         document.querySelector(".customization-grid").innerHTML = "";
-        
+
         // Reset all cash denomination inputs
         document.querySelectorAll(".cash-count").forEach((input) => {
           input.value = 0;
         });
         updateCashTotals();
-        
+
         // Redirect to barista orders page
         window.location.href = "/barista/orders";
       } else {
