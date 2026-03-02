@@ -151,7 +151,22 @@ document.addEventListener("DOMContentLoaded", () => {
     countedTotalEl.textContent = `$${countedTotal.toFixed(2)}`;
     cashDiffEl.textContent = `$${difference.toFixed(2)}`;
   }
+
+  function syncExpectedCashToOrderTotal() {
+    const expectedCashInput = document.querySelector("#expected-cash");
+    if (!expectedCashInput || !orderTotal) {
+      return;
+    }
+
+    expectedCashInput.value = Number(orderTotal.textContent || 0).toFixed(2);
+    updateCashTotals();
+  }
+
   function saveDrinkModifications() {
+    if (!currentDrink) {
+      return;
+    }
+
     // Save the modifications to the current drink
     const selectedIngredients = Array.from(
       document.querySelectorAll(".ingredient-checkbox:checked"),
@@ -183,11 +198,17 @@ document.addEventListener("DOMContentLoaded", () => {
     currentDrink.temps = selectedTemp;
     const instructions = document.querySelector("#drink-instructions").value;
     currentDrink.instructions = instructions;
-    console.log(currentDrink);
   }
-  function selectDrink(drink) {
-    console.log("You selected a drink");
-    if (isDrinkSelected) {
+
+  function closeDrinkCustomization() {
+    currentDrink = null;
+    isDrinkSelected = false;
+    currentDrinkText.textContent = "Current Drink: None";
+    document.querySelector(".customization-grid").innerHTML = "";
+  }
+
+  function selectDrink(drink, skipSave = false) {
+    if (isDrinkSelected && !skipSave) {
       saveDrinkModifications();
     }
 
@@ -275,12 +296,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Column 3: Temperature
     html += '<div class="customization-column">';
     html += "<h5>Temperature</h5>";
-    if (const isTempSelected = temp === selectedTemp ? "checked" : "";
+    if (possibleTemps.length > 0) {
+      possibleTemps.forEach((temp) => {
+        const isTempSelected = temp === selectedTemp ? "checked" : "";
         html += `
     <div class="temp-container">
-      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" ${isTempSelected}
-    <div class="temp-container">
-      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" checked="checked"/>
+      <input type="radio" name="temp" id="temp-${temp}" class="temp-radio" value="${temp}" ${isTempSelected}/>
       <label for="temp-${temp}">${temp}</label>
     </div>
     `;
@@ -303,13 +324,13 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "</div>";
 
     if (modifications.indexOf("Decaf") > -1) {
-      // CreatDecafChecked = currentDrink.caffeinated === false ? "checked" : "";
+      // Create column for decaf or caffeine
+      const isDecafChecked = currentDrink.caffeinated === false ? "checked" : "";
       html += '<div class="customization-column">';
       html += "<h5>Caffeination</h5>";
       html += `
       <div class="caffeination-container">
-        <input type="checkbox" id="caffeination" class="caffeination-checkbox" ${isDecaf
-        <input type="checkbox" id="caffeination" class="caffeination-checkbox" ${isChecked} />
+        <input type="checkbox" id="caffeination" class="caffeination-checkbox" ${isDecafChecked} />
         <label for="caffeination">Decaf</label>
       </div>
     `;
@@ -353,6 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (saveButton) {
       saveButton.addEventListener("click", () => {
         saveDrinkModifications();
+        closeDrinkCustomization();
       });
     }
   }
@@ -360,6 +382,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function addDrinkToOrder(drink) {
     cartIdCounter += 1;
     drink.cartId = cartIdCounter;
+    
+    // Ensure drink has defaults before adding to cart
+    ensureDrinkDefaults(drink);
+    
     cart.push(drink);
 
     const drinkElement = document.createElement("tr");
@@ -381,19 +407,18 @@ document.addEventListener("DOMContentLoaded", () => {
     orderTotal.textContent = (
       Number(orderTotal.textContent) + Number(drink.price)
     ).toFixed(2);
+    syncExpectedCashToOrderTotal();
 
     const cancelButton = drinkElement.querySelector(".cancelButton");
     cancelButton.addEventListener("click", (event) => {
       event.preventDefault();
       if (currentDrink === drink) {
-        currentDrink = null;
-        isDrinkSelected = false;
-        currentDrinkText.textContent = "Current Drink: None";
-        document.querySelector(".customization-grid").innerHTML = "";
+        closeDrinkCustomization();
       }
       orderTotal.textContent = (
         Number(orderTotal.textContent) - Number(drink.price)
       ).toFixed(2);
+      syncExpectedCashToOrderTotal();
       drinkElement.remove();
       cart.splice(cart.indexOf(drink), 1);
     });
@@ -413,7 +438,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const drinkCards = document.querySelectorAll(".pos-card");
   drinkCards.forEach((card) => {
     card.addEventListener("click", (event) => {
-      event.preventDefault();
       const drinkName = card.querySelector(".drink-name").value;
       const drinkPrice = card.querySelector(".drink-price").value;
       const menuItemId = card.querySelector(".menuItem-id").value;
@@ -430,6 +454,37 @@ document.addEventListener("DOMContentLoaded", () => {
         favorite: false,
         completed: false,
       };
+
+      if (isDrinkSelected && currentDrink) {
+        const currentCartId = currentDrink.cartId;
+        const currentIndex = cart.findIndex(
+          (item) => item.cartId === currentCartId,
+        );
+        if (currentIndex > -1) {
+          const oldPrice = Number(currentDrink.price);
+          drink.cartId = currentCartId;
+          ensureDrinkDefaults(drink);
+          cart[currentIndex] = drink;
+
+          // Update order total: subtract old price, add new price
+          orderTotal.textContent = (
+            Number(orderTotal.textContent) - oldPrice + Number(drink.price)
+          ).toFixed(2);
+          syncExpectedCashToOrderTotal();
+
+          const rowToReplace = orderTable
+            .getElementsByTagName("tbody")[0]
+            .querySelector(`tr[data-cart-id="${currentCartId}"]`);
+          if (rowToReplace) {
+            rowToReplace.cells[0].textContent = drink.name;
+            rowToReplace.cells[1].textContent = `$${drink.price}`;
+          }
+
+          selectDrink(drink, true);
+          return;
+        }
+      }
+
       addDrinkToOrder(drink);
     });
   });
@@ -483,10 +538,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear the cart
         cart = [];
         orderTotal.textContent = "0.00";
+        syncExpectedCashToOrderTotal();
         orderTable.getElementsByTagName("tbody")[0].innerHTML = "";
         currentDrinkText.textContent = "Current Drink: None";
         isDrinkSelected = false;
         document.querySelector(".customization-grid").innerHTML = "";
+        
+        // Reset all cash denomination inputs
+        document.querySelectorAll(".cash-count").forEach((input) => {
+          input.value = 0;
+        });
+        updateCashTotals();
+        
+        // Redirect to barista orders page
+        window.location.href = "/barista/orders";
       } else {
         console.log("error");
       }
@@ -494,6 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const cashInputs = document.querySelectorAll(".cash-count");
+  const cashSteppers = document.querySelectorAll(".cash-stepper");
   const expectedCashInput = document.querySelector("#expected-cash");
   const saveCashButton = document.querySelector("#save-cash-count");
   const cashStatusEl = document.querySelector("#cash-save-status");
@@ -503,7 +569,25 @@ document.addEventListener("DOMContentLoaded", () => {
       input.addEventListener("input", updateCashTotals);
     });
     expectedCashInput.addEventListener("input", updateCashTotals);
-    updateCashTotals();
+    syncExpectedCashToOrderTotal();
+  }
+
+  if (cashSteppers.length) {
+    cashSteppers.forEach((button) => {
+      button.addEventListener("click", () => {
+        const targetId = button.dataset.target;
+        const step = Number(button.dataset.step || 0);
+        const targetInput = document.querySelector(`#${targetId}`);
+        if (!targetInput) {
+          return;
+        }
+
+        const currentValue = Number(targetInput.value || 0);
+        const nextValue = Math.max(0, currentValue + step);
+        targetInput.value = String(nextValue);
+        updateCashTotals();
+      });
+    });
   }
 
   if (saveCashButton) {
