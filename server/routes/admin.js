@@ -95,16 +95,30 @@ route.get("/scheduler", async (req, res) => {
     }
   }
 
+  // determine user role so we can hide checkboxes if not barista
+  const role = await getUserRoles(req.session.email);
+
   res.render("scheduler", {
     activeSchedule,
     selectedSchedule,
     schedules,
     selectedPeriods,
+    role,
   });
 });
 
 route.post("/updatePeriod", async (req, res) => {
   const { periodId, orderingDisabled } = req.body;
+  // only baristas or admins are allowed to modify period flags via scheduler
+  const role = await getUserRoles(req.session.email);
+  if (role !== "barista" && role !== "admin") {
+    return res
+      .status(403)
+      .json({
+        message: "Forbidden: only baristas or admins may change periods",
+      });
+  }
+
   try {
     const period = await Period.findById(periodId);
 

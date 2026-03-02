@@ -25,10 +25,30 @@ async function getUserRoles(email) {
 
 const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
+  // time calculations must always use Chicago zone to match front-end schedule
   const currentTimeDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
   );
   const currentTimeMs = Date.parse(currentTimeDate);
+
+  // reset global toggle once per day if it was disabled by an admin/barista
+  try {
+    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+    if (toggle && !toggle.enabled) {
+      const last = toggle.lastResetDate ? new Date(toggle.lastResetDate) : null;
+      if (!last || last.toDateString() !== currentTimeDate.toDateString()) {
+        // a new day has begun, clear the kill switch
+        toggle.enabled = true;
+        toggle.reason = null;
+        toggle.lastResetDate = currentTimeDate;
+        await toggle.save();
+        emitToggleChange();
+      }
+    }
+  } catch (err) {
+    console.error("Error resetting global toggle:", err);
+  }
+
   let currentSchedule;
   try {
     const currentWeekDay = await Weekday.findOne({
@@ -44,6 +64,8 @@ async function checkTime() {
   if (!currentSchedule) {
     return;
   }
+  // track whether any active period currently has orderingDisabled set
+  let activeDisabledPeriod = false;
   for (const periodId of currentSchedule.periods) {
     const period = await Period.findById(periodId);
 
@@ -94,13 +116,18 @@ async function checkTime() {
     if (currentTimeMs > startDateMs && currentTimeMs < endDateMs) {
       const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
 
+      // track whether any active period has orderingDisabled
+      if (period.orderingDisabled) {
+        activeDisabledPeriod = true;
+      }
+
       // Check if period was manually disabled in the scheduler
       if (period.orderingDisabled) {
         if (toggle.enabled) {
           toggle.enabled = false;
           await toggle.save();
           emitToggleChange();
-          return;
+          // don't break; still evaluate subsequent periods (shouldn't be others active)
         }
       }
 
@@ -122,6 +149,30 @@ async function checkTime() {
         emitToggleChange();
       }
     }
+    // After period has passed, clear any manual disable so it won't persist
+    if (currentTimeMs >= endDateMs && period.orderingDisabled) {
+      period.orderingDisabled = false;
+      await period.save();
+    }
+  }
+
+  // if we finished iterating and there are no active disabled periods but
+  // the global toggle is off for "Period" reason, turn it back on
+  try {
+    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+    if (
+      toggle &&
+      !toggle.enabled &&
+      toggle.reason === "Period" &&
+      !activeDisabledPeriod
+    ) {
+      toggle.enabled = true;
+      toggle.reason = null;
+      await toggle.save();
+      emitToggleChange();
+    }
+  } catch (err) {
+    console.error("Error resetting period-related global toggle:", err);
   }
 }
 
@@ -153,19 +204,163 @@ route.get("/toggle", async (req, res) => {
 
 // updating toggleEnabled
 route.post("/toggle", async (req, res) => {
+  // only admins may flip global on/off
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
   toggle.enabled = req.body.enabled;
-  toggle.reason = "Admin/Barista";
+  toggle.reason = "Admin";
+  // if enabling, update lastResetDate to today so the daily reset doesn't immediately flip it back
+  if (toggle.enabled) {
+    toggle.lastResetDate = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
+    );
+  }
   await toggle.save();
   emitToggleChange();
+});
+
+// period toggle route used by headers and admin UI
+route.post("/togglePeriod", async (req, res) => {
+  const { periodId, orderingDisabled } = req.body;
+  if (!periodId) {
+    return res.status(400).json({ message: "Missing periodId" });
+  }
+
+  // only barista or admin may flip this toggle; scheduler update will still be restricted separately
+  const role = await getUserRoles(req.session.email);
+  if (role !== "barista" && role !== "admin") {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  try {
+    const period = await Period.findById(periodId);
+    if (!period) {
+      return res.status(404).json({ message: "Period not found" });
+    }
+    period.orderingDisabled = orderingDisabled;
+    await period.save();
+
+    // if we're toggling the current period, adjust the global toggle instantly
+    const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
+    if (toggle) {
+      if (orderingDisabled && toggle.enabled) {
+        toggle.enabled = false;
+        toggle.reason = "Period";
+        await toggle.save();
+        emitToggleChange();
+      } else if (
+        !orderingDisabled &&
+        !toggle.enabled &&
+        toggle.reason === "Period"
+      ) {
+        toggle.enabled = true;
+        toggle.reason = null;
+        await toggle.save();
+        emitToggleChange();
+      }
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal error" });
+  }
 });
 
 route.use(async (req, res, next) => {
   const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
 
+  // compute current period so header can display a second switch
+  let currentPeriodId = null;
+  let currentPeriodDisabled = false;
+  try {
+    const now = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
+    );
+    const currentWeekDay = await Weekday.findOne({ day: now.getDay() - 1 });
+    if (currentWeekDay) {
+      const sched = await Schedule.findById(currentWeekDay.schedule);
+      if (sched) {
+        for (const pid of sched.periods) {
+          const period = await Period.findById(pid);
+          if (!period) continue;
+          // build same start/end logic as checkTime
+          let periodEndHr = Number(
+            period.end.substring(0, period.end.indexOf(":")),
+          );
+          const periodEndMin = Number(
+            period.end.substring(
+              period.end.indexOf(":") + 1,
+              period.end.length - 3,
+            ),
+          );
+          if (period.end.indexOf("PM") > -1 && periodEndHr !== 12) {
+            periodEndHr += 12;
+          }
+          if (period.end.indexOf("AM") > -1 && periodEndHr === 12) {
+            periodEndHr = 0;
+          }
+          const endDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            periodEndHr,
+            periodEndMin,
+          );
+
+          let periodStartHr = Number(
+            period.start.substring(0, period.start.indexOf(":")),
+          );
+          const periodStartMin = Number(
+            period.start.substring(
+              period.start.indexOf(":") + 1,
+              period.start.length - 3,
+            ),
+          );
+          if (period.start.indexOf("PM") > -1 && periodStartHr !== 12) {
+            periodStartHr += 12;
+          }
+          if (period.start.indexOf("AM") > -1 && periodStartHr === 12) {
+            periodStartHr = 0;
+          }
+          const startDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            periodStartHr,
+            periodStartMin,
+          );
+
+          const startDateMs = Date.parse(startDate);
+          const endDateMs = Date.parse(endDate);
+          if (now.getTime() > startDateMs && now.getTime() < endDateMs) {
+            currentPeriodId = pid;
+            currentPeriodDisabled = period.orderingDisabled;
+            break;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // ignore errors silently
+  }
+
+  // also expose current user's role so headers can hide controls
+  res.locals.role = await getUserRoles(req.session.email);
+
   res.locals.headerData = {
     enabled: toggle.enabled,
     reason: toggle.reason,
+    period: currentPeriodId
+      ? {
+          id: currentPeriodId,
+          disabled: currentPeriodDisabled,
+        }
+      : null,
   };
 
   next();

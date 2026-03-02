@@ -95,6 +95,7 @@
         </select>
       </a>
 
+      <% if(role === 'admin') { %>
       <a>
         <label class="on-off">
           <% if(headerData.enabled === false) { %>
@@ -118,6 +119,27 @@
           <% } %>
         </label>
       </a>
+      <% } %>
+      <% if(role !== 'admin' && headerData.enabled === false) { %>
+      <div style="color: #f5ae43; padding: 0.5rem; font-weight: bold;">
+        Global ordering disabled
+      </div>
+      <% } %>
+      <% if(headerData.period) { %>
+      <a>
+        <label class="on-off">
+          <% if(headerData.period.disabled) { %>
+          <input class="toggle period" type="checkbox" id="periodCheckbox" data-period-id="<%=headerData.period.id%>" />
+          <span class="dis-en"></span>
+          <h4 style="padding-top: 10px">Period Disabled</h4>
+          <% } else { %>
+          <input class="toggle period" type="checkbox" id="periodCheckbox" data-period-id="<%=headerData.period.id%>" checked="checked" />
+          <span class="dis-en"></span>
+          <h4 style="padding-top: 10px">Period Enabled</h4>
+          <% } %>
+        </label>
+      </a>
+      <% } %>
     </div>
     <div id="leftTrigger"><span>&rarr;</span></div>
     <style>
@@ -144,6 +166,7 @@
     <script src="/js/notifications.js"></script>
     <script src="/js/refreshOrderingToggle.js"></script>
     <script src="/js/toggleEnabled.js"></script>
+    <script src="/js/togglePeriod.js"></script>
     <!-- Add sw-update to listen for updates -->
     <script src="/js/sw-update.js"></script>
   </body>
