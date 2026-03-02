@@ -99,7 +99,7 @@
                       <%= allIngredients.substring(0, allIngredients.length-2)
                       %>
                     </div>
-                    <% } %> <% if (drink.instructions) { %>
+                    <% } %> %> <% if (drink.instructions) { %>
                     <div class="drink-instructions">
                       "<%= drink.instructions %>"
                     </div>
@@ -155,303 +155,267 @@
     .header-section {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       margin-bottom: 2rem;
-      padding: 1rem 0;
-      margin-top: 50px;
     }
 
     .header-section h2 {
-      font-family: "Fredoka", sans-serif;
       color: var(--coffee-dark);
       font-size: 2rem;
       margin: 0;
+      margin-right: 1rem;
     }
 
     .coffee-decoration {
       font-size: 2rem;
-      color: var(--coffee-medium);
-      animation: steam 3s infinite ease-in-out;
+      animation: steam 2s ease-in-out infinite;
     }
 
-    .orders-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
+    @keyframes steam {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
     }
 
     .empty-orders {
       text-align: center;
-      padding: 4rem 2rem;
-      background: var(--cream);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(60, 42, 33, 0.1);
+      padding: 3rem 1rem;
     }
 
-    .empty-orders .coffee-icon {
+    .coffee-icon {
       font-size: 3rem;
       margin-bottom: 1rem;
-      animation: bounce 2s infinite;
     }
 
     .empty-orders p {
-      font-size: 1.2rem;
       color: var(--coffee-medium);
+      font-size: 1.1rem;
       margin-bottom: 2rem;
     }
 
     .browse-menu-btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
-      background-color: var(--accent);
-      color: var(--coffee-dark);
+      background: var(--accent);
+      color: white;
       text-decoration: none;
-      font-weight: 600;
       border-radius: 8px;
-      transition: all 0.3s ease;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
 
     .browse-menu-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(245, 174, 67, 0.3);
+    }
+
+    .orders-container {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 12px rgba(60, 42, 33, 0.1);
     }
 
     .order-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
+      gap: 1.5rem;
     }
 
     .order-card {
-      background: var(--cream);
+      border: 2px solid #e0e0e0;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(60, 42, 33, 0.1);
-      overflow: hidden;
-      position: relative;
-      transition: all 0.3s ease;
-      padding-top: 8px; /* Add some padding at the top */
+      padding: 1.5rem;
+      background: white;
+      transition: all 0.2s ease;
     }
 
     .order-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 24px rgba(60, 42, 33, 0.15);
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(245, 174, 67, 0.15);
     }
 
     .room-badge {
-      position: absolute;
-      top: 0;
-      left: 0;
-      background: var(--coffee-medium);
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.4rem 1rem;
-      border-bottom-right-radius: 8px;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* Edit button styling - enhanced for visibility */
-    .edit-room {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 4px;
-      color: white;
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 0.3rem;
-      margin-left: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
+      display: inline-block;
+      background: var(--coffee-light);
+      color: var(--coffee-dark);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-bottom: 1rem;
       position: relative;
     }
 
-    .edit-room::after {
-      content: "Edit";
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
+    .room-display {
+      font-weight: bold;
+      margin: 0 0.25rem;
+    }
+
+    .edit-room {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 0.5rem;
       color: var(--coffee-dark);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    .edit-room:hover {
-      background: var(--accent);
-      transform: scale(1.1);
-    }
-
-    .edit-room:hover::after {
-      opacity: 1;
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
     }
 
     .edit-icon {
-      width: 18px; /* Increased from 14px */
-      height: 18px; /* Increased from 14px */
-      stroke-width: 2.5; /* Make the lines thicker */
+      width: 100%;
+      height: 100%;
+      stroke-width: 2;
     }
 
-    /* Add a visual cue that room number is editable */
-    .room-display {
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
-      padding-bottom: 2px;
+    .edit-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
     }
 
-    /* Room input styling */
     .room-input {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 0.5rem;
+      border: 1px solid var(--coffee-medium);
       border-radius: 4px;
-      color: white;
       font-size: 1rem;
-      padding: 0.2rem 0.4rem;
-      width: 60px;
-      margin-right: 0.25rem;
     }
 
-    .room-input:focus {
-      outline: none;
-      background: rgba(255, 255, 255, 0.3);
-      border-color: var(--accent);
-    }
-
-    /* Save button styling */
     .save-room {
+      padding: 0.5rem 1rem;
       background: var(--accent);
+      color: white;
       border: none;
       border-radius: 4px;
-      color: var(--coffee-dark);
       cursor: pointer;
-      font-size: 0.75rem;
       font-weight: 600;
-      padding: 0.2rem 0.5rem;
-      transition: all 0.2s ease;
     }
 
-    .save-room:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    .order-status {
+      margin-bottom: 1rem;
     }
 
-    /* Ensure the order header has enough spacing for the room badge */
-    .order-header {
-      background: var(--coffee-dark);
-      color: var(--cream);
-      padding: 1.5rem;
-      padding-top: 2.5rem; /* Increased to make room for the badge */
-      position: relative;
-    }
-
-    .order-header h3 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.5rem;
-    }
-
-    .order-time {
+    .status-badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
       font-size: 0.9rem;
-      opacity: 0.8;
+      font-weight: 600;
     }
 
-    .order-price {
+    .order-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 1.5rem;
-      border-bottom: 1px dashed var(--coffee-light);
-      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 1rem;
+    }
+
+    .order-header h3 {
+      margin: 0;
+      color: var(--coffee-dark);
+      font-size: 1.2rem;
+    }
+
+    .order-time {
+      color: var(--coffee-medium);
+      font-size: 0.9rem;
+    }
+
+    .order-price {
+      background: var(--cream);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .price-label {
+      color: var(--coffee-dark);
+      font-weight: 600;
     }
 
     .price-value {
-      font-weight: 700;
-      color: var(--coffee-dark);
-    }
-
-    .drinks-container {
-      padding: 1.5rem;
+      font-size: 1.5rem;
+      color: var(--accent);
+      font-weight: bold;
     }
 
     .drinks-container h4 {
-      margin: 0 0 1rem 0;
-      color: var(--coffee-medium);
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      color: var(--coffee-dark);
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
     }
 
     .drinks-list {
       list-style: none;
       padding: 0;
       margin: 0;
+      display: grid;
+      gap: 1rem;
     }
 
     .drink-item {
-      background: white;
+      border: 1px solid #f0f0f0;
       border-radius: 8px;
       padding: 1rem;
-      margin-bottom: 0.8rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      transition: all 0.2s ease;
-    }
-
-    .drink-item:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #fafafa;
     }
 
     .drink-name {
-      font-weight: 700;
-      margin-bottom: 0.5rem;
+      font-weight: 600;
       color: var(--coffee-dark);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
     }
 
     .drink-details {
-      font-size: 0.9rem;
-      color: var(--coffee-medium);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .temp-badge,
+    .caffeination-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
     }
 
     .temp-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
+      background: #e3f2fd;
+      color: #1565c0;
     }
 
     .temp-badge.hot {
-      background: #ff6b6b;
-      color: white;
+      background: #ffebee;
+      color: #c62828;
     }
 
     .temp-badge.iced {
-      background: #74c0fc;
-      color: white;
+      background: #f3e5f5;
+      color: #6a1b9a;
     }
 
     .temp-badge.blended {
-      background: #9c6ade;
-      color: white;
+      background: #e0f2f1;
+      color: #00695c;
     }
 
     .caffeination-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
       background: #fff3e0;
       color: #e65100;
     }
@@ -462,120 +426,101 @@
     }
 
     .drink-ingredients {
-      margin: 0.5rem 0;
-      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--coffee-medium);
+      flex: 1;
     }
 
     .drink-instructions {
-      margin-top: 0.5rem;
+      font-size: 0.9rem;
       font-style: italic;
-      color: var(--coffee-dark);
-      font-size: 0.85rem;
-    }
-
-    @keyframes steam {
-      0% {
-        transform: translateY(0) rotate(0);
-      }
-      50% {
-        transform: translateY(-5px) rotate(5deg);
-      }
-      100% {
-        transform: translateY(0) rotate(0);
-      }
-    }
-
-    @keyframes bounce {
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    /* Add a pulse animation to draw attention to the edit button */
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(245, 174, 67, 0.7);
-      }
-      70% {
-        box-shadow: 0 0 0 6px rgba(245, 174, 67, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(245, 174, 67, 0);
-      }
-    }
-
-    /* Apply the animation on page load */
-    .edit-room {
-      animation: pulse 2s ease-out 1s 3;
-    }
-
-    /* Responsive adjustments */
-    @media screen and (max-width: 768px) {
-      .order-list {
-        grid-template-columns: 1fr;
-      }
-
-      .header-section {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-top: 3rem;
-      }
-
-      .coffee-decoration {
-        margin-top: 0.5rem;
-      }
+      color: #666;
+      width: 100%;
+      padding-top: 0.5rem;
+      border-top: 1px solid #eee;
     }
 
     .order-actions {
-      padding: 1rem;
-      border-top: 1px solid rgba(60, 42, 33, 0.1);
       display: flex;
-      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f0f0f0;
     }
 
     .cancel-order-btn {
-      background-color: #d9534f;
+      background: #ff6b6b;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
       border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      font-weight: 600;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .cancel-order-btn:hover:not(:disabled) {
-      background-color: #c9302c;
+    .cancel-order-btn:hover {
+      background: #ff5252;
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
     }
 
-    .cancel-order-btn:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-      opacity: 0.6;
+    .cancel-text {
+      flex: 1;
     }
 
     .cancel-timer {
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-size: 0.8rem;
+      opacity: 0.9;
     }
 
-    .cancel-timer.expired {
-      display: none;
-    }
+    @media screen and (max-width: 768px) {
+      #mainContent {
+        padding: 0.5rem;
+      }
 
-    .cancel-timer.warning {
-      color: #fff;
-      font-weight: bold;
+      .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .header-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .orders-container {
+        padding: 1rem;
+      }
+
+      .order-card {
+        padding: 1rem;
+      }
+
+      .drink-details {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-time {
+        margin-top: 0.5rem;
+      }
+
+      .cancel-order-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
+
+    <script src="/js/outgoingOrders.js"></script>
 </html>

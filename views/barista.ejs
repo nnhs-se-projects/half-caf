@@ -48,7 +48,7 @@
             >
           </td>
           <td><%=tempDrink.ingredients%></td>
-          <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
+          <td><%= tempDrink.caffeinated === false ? "Decaf" : "Caffeinated" %></td>
           <td><%=tempDrink.instructions%></td>
           <td><%=order.timestamp.split('/')[0]%></td>
           <td>
