@@ -231,6 +231,7 @@ route.post("/addDrink", async (req, res) => {
     caffeination: req.body.caf,
     allowDecaf: req.body.allowDecaf,
     special: req.body.special,
+    allowedIngredientCategories: req.body.allowedIngredientCategories || [],
   };
 
   // Correctly parse and save image data
@@ -262,6 +263,8 @@ route.post("/modifyDrink/:id", async (req, res) => {
     menuItem.allowDecaf = req.body.allowDecaf;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
+    menuItem.allowedIngredientCategories =
+      req.body.allowedIngredientCategories || [];
 
     // Correctly parse and save image data if a new image was provided
     if (req.body.imageData && req.body.imageData.startsWith("data:image")) {

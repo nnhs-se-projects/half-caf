@@ -233,6 +233,7 @@ route.get("/pointOfSale", async (req, res) => {
   const temps = TempJson;
   const orders = await Order.find();
   const possibleModificationsMap = new Map();
+  const allowedCategoriesMap = {};
   for (const item of menuItems) {
     const modifications = [];
     let i = 0;
@@ -245,6 +246,12 @@ route.get("/pointOfSale", async (req, res) => {
       modifications.push(temp);
     }
     possibleModificationsMap[item._id] = modifications;
+    // Store allowed ingredient categories for this drink
+    allowedCategoriesMap[item._id] =
+      item.allowedIngredientCategories &&
+      item.allowedIngredientCategories.length > 0
+        ? item.allowedIngredientCategories
+        : ["milk", "syrups", "powders", "sauces", "toppings"];
     if (item.caffeination) {
       possibleModificationsMap[item._id].push("Caffeine");
     }
@@ -262,6 +269,7 @@ route.get("/pointOfSale", async (req, res) => {
     ingredients,
     temps,
     possibleModificationsMap,
+    allowedCategoriesMap,
   });
 });
 
