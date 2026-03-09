@@ -268,8 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ingredients: [],
         ingredientCounts: [],
         temps: [],
-        caffeinated:
-          possibleModificationsMap[menuItemId].indexOf("Caffeine") > -1,
+        caffeinated: true,
         instructions: "",
         favorite: false,
         completed: false,

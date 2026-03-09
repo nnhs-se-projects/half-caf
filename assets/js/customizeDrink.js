@@ -220,13 +220,20 @@ addToOrderButton.addEventListener("click", async () => {
     quantity = 1;
   }
 
+  const caffeineBadge = document.getElementById("caffeine-badge");
+  const isCaffeinated =
+    isDecaf !== null
+      ? !isDecaf.checked
+      : caffeineBadge !== null &&
+        caffeineBadge.classList.contains("caffeinated");
+
   const drink = {
     name,
     price,
     ingredients,
     ingredientCounts,
     temp,
-    caf: !isDecaf.checked,
+    caf: isCaffeinated,
     instructions,
     favorite,
     quantity,
