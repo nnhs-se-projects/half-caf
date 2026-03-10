@@ -234,6 +234,7 @@ route.get("/pointOfSale", async (req, res) => {
   const temps = TempJson;
   const orders = await Order.find();
   const possibleModificationsMap = {};
+  const allowedCategoriesMap = {};
   for (const item of menuItems) {
     const modifications = [];
     let i = 0;
