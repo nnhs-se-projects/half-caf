@@ -14,6 +14,12 @@ const schema = new mongoose.Schema({
     required: false,
     default: null,
   },
+  // track when the toggle was last automatically reset (for daily resets)
+  lastResetDate: {
+    type: Date,
+    required: false,
+    default: null,
+  },
 });
 
 const Enabled = mongoose.model("Enabled", schema);

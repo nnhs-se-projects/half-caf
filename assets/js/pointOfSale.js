@@ -227,6 +227,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const possibleIngredients = [];
     const possibleTemps = [];
     currentDrinkText.textContent = "Current Drink: " + currentDrink.name;
+    // Get allowed categories for this drink
+    const allowedCategories = allowedCategoriesMap[drink.menuItemId] || [
+      "milk",
+      "syrups",
+      "powders",
+      "sauces",
+      "toppings",
+    ];
     for (const ingredient of ingredients) {
       const indx = modifications.indexOf(ingredient._id);
       if (indx > -1) {
@@ -234,7 +242,10 @@ document.addEventListener("DOMContentLoaded", () => {
           ingredient,
           count: modifications[indx + 1],
         });
-      } else if (ingredient.type === "customizable") {
+      } else if (
+        ingredient.type === "customizable" &&
+        allowedCategories.includes(ingredient.category)
+      ) {
         possibleIngredients.push({
           ingredient,
           count: 0,

@@ -5,8 +5,16 @@ const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const {
+  computeRequiredFromCart,
+  checkInventory,
+} = require("../utils/inventory");
 
-const { emitNewOrderPlaced, emitRoomUpdated } = require("../socket/socket");
+const {
+  emitNewOrderPlaced,
+  emitRoomUpdated,
+  emitOrderCancelled,
+} = require("../socket/socket");
 
 async function getUserRoles(email) {
   try {
@@ -76,10 +84,20 @@ route.get("/customizeDrink/:name", async (req, res) => {
       drinkIngredients[i] = await findIngredientById(drink.ingredients[i]);
     }
 
-    // all other ingredients that are customizable but not part of the drink by default
+    // Get the allowed ingredient categories for this drink
+    // Default to common categories if not specified
+    const allowedCategories =
+      drink.allowedIngredientCategories &&
+      drink.allowedIngredientCategories.length > 0
+        ? drink.allowedIngredientCategories
+        : ["milk", "syrups", "powders", "sauces", "toppings"];
+
+    // all other ingredients that are customizable, not part of the drink by default,
+    // and belong to an allowed category for this drink
     const otherIngredients = await Ingredient.find({
       type: "customizable",
       _id: { $nin: drink.ingredients },
+      category: { $in: allowedCategories },
     });
 
     if (drink) {
@@ -219,6 +237,18 @@ route.post("/myCart", async (req, res) => {
     total += drink.price;
   }
   try {
+    // --- Inventory validation using helper ---
+    const required = await computeRequiredFromCart(req.session.cart);
+    const insufficient = await checkInventory(required);
+    if (insufficient.length > 0) {
+      return res.status(409).json({
+        error: "insufficient_inventory",
+        message:
+          "Sorry — a few ingredients for your order are running low. Please adjust your cart or try again in a bit.",
+        details: insufficient,
+      });
+    }
+    // --- end inventory validation ---
     const order = new Order({
       email: req.session.email,
       room: req.body.rm,
@@ -233,6 +263,7 @@ route.post("/myCart", async (req, res) => {
       timer: "uncompleted",
       name: req.session.name,
       isAdmin: role === "admin",
+      confirmedAt: new Date(),
     });
     await order.save();
     const user = await User.findOne({ email: req.session.email });
@@ -276,6 +307,18 @@ route.post("/myCart", async (req, res) => {
     }
 
     req.session.cart = [];
+
+    // --- decrement inventory for the ingredients used in this order ---
+    try {
+      const entries = Object.entries(required || {});
+      for (const [ingId, qty] of entries) {
+        const dec = parseInt(qty) || 0;
+        if (dec <= 0) continue;
+        await Ingredient.findByIdAndUpdate(ingId, { $inc: { quantity: -dec } });
+      }
+    } catch (deErr) {
+      console.error("Error decrementing inventory after order:", deErr);
+    }
 
     emitNewOrderPlaced({
       order,
@@ -454,6 +497,94 @@ route.post("/updateRoom", async (req, res) => {
     } else {
       res.status(403).json({ error: "Unauthorized or order not found" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+route.delete("/cancelOrder/:id", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate("drinks");
+
+    // Verify the order belongs to the current user
+    if (order.email !== req.session.email) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    // Check if order is within 30 seconds of confirmation
+    const confirmedAt = new Date(order.confirmedAt);
+    const now = new Date();
+    const secondsElapsed = (now - confirmedAt) / 1000;
+
+    if (secondsElapsed > 30) {
+      return res.status(400).json({
+        error: "Order can no longer be cancelled (30 second window has passed)",
+      });
+    }
+
+    if (order.claimed) {
+      return res
+        .status(400)
+        .json({ error: "Order cannot be cancelled once claimed by barista" });
+    }
+
+    if (order.cancelled) {
+      return res.status(400).json({ error: "Order is already cancelled" });
+    }
+
+    const orderItems = [];
+    for (const drink of order.drinks) {
+      let ingredientsStr = "";
+      let i = 0;
+      for (const ingredientId of drink.ingredients) {
+        const ingredient = await Ingredient.findById(ingredientId);
+
+        if (ingredient.type === "customizable") {
+          ingredientsStr +=
+            drink.ingredientCounts[i] === 0
+              ? "No "
+              : drink.ingredientCounts[i] + " ";
+          ingredientsStr += ingredient.name + ", ";
+        }
+
+        i++;
+      }
+      ingredientsStr = ingredientsStr.substring(0, ingredientsStr.length - 2);
+      const item = {
+        name: drink.name,
+        temp: drink.temps,
+        ingredients: ingredientsStr.length > 0 ? ingredientsStr : "None",
+        instructions: drink.instructions,
+      };
+      orderItems.push(item);
+    }
+
+    // Restore inventory
+    try {
+      const { computeRequiredFromCart } = require("../utils/inventory");
+      const required = await computeRequiredFromCart(order.drinks);
+      const entries = Object.entries(required || {});
+      for (const [ingId, qty] of entries) {
+        const inc = parseInt(qty) || 0;
+        if (inc <= 0) continue;
+        await Ingredient.findByIdAndUpdate(ingId, { $inc: { quantity: inc } });
+      }
+    } catch (invErr) {
+      console.error("Error restoring inventory after cancellation:", invErr);
+    }
+
+    order.cancelled = true;
+    await order.save();
+
+    emitOrderCancelled({
+      cancelMessage: "Order cancelled by customer",
+      email: order.email,
+      orderId: order._id,
+      orderItems,
+    });
+
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });

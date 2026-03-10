@@ -117,9 +117,9 @@ class PeriodCountdown {
     const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     this.countdownElement.textContent = formattedTime;
 
-    // Change color if less than 5 minutes remaining
+    // Change color if less than 10 minutes remaining
     const container = this.countdownElement.parentElement;
-    if (minutes < 5) {
+    if (minutes < 10) {
       container.style.background =
         "linear-gradient(135deg, #D64545 0%, #E56B6B 100%)";
     } else {

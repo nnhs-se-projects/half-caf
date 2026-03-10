@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
           orderingDisabled: checkbox.checked,
         };
 
-        const response = await fetch("/admin/updatePeriod", {
+        // use unified toggle API so admins/baristas both work and toggle is immediate
+        const response = await fetch("/togglePeriod", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!response.ok) {
           // Handle non-2xx responses without attempting to parse as JSON
           throw new Error(
-            `Server error: ${response.status} ${response.statusText}`
+            `Server error: ${response.status} ${response.statusText}`,
           );
         } else {
           alert("Period updated successfully");

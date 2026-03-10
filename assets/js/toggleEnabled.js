@@ -13,11 +13,18 @@ toggleEnabled.addEventListener("change", async () => {
     body: JSON.stringify(isEnabled),
   });
 
+  if (!response.ok) {
+    if (response.status === 403) {
+      alert("Only admins may perform this action");
+    } else {
+      console.log("error toggling global state", response.status);
+    }
+  }
+
+  // reload UI in any case so header stays in sync
   window.location = "/toggle";
 
   if (response.ok) {
     console.log("success");
-  } else {
-    console.log("error");
   }
 });
