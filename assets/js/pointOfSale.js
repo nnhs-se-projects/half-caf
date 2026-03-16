@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const possibleModificationsMap = JSON.parse(
     document.querySelector("#possibleModifications").value,
   );
+  const allowedCategoriesMap = JSON.parse(
+    document.querySelector("#allowedCategories").value,
+  );
 
   const ingredientIdSet = new Set(
     ingredients.map((ingredient) => String(ingredient._id)),
