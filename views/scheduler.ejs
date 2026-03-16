@@ -4,14 +4,17 @@
 
 <!-- Main Site -->
 
+<% const selectedScheduleId = selectedSchedule ? selectedSchedule.id : ''; %>
+<% const activeScheduleId = activeSchedule ? activeSchedule.id : ''; %>
+
 <div id="mainContent">
   <div class="scheduler-header">
     <h1 class="page-title">Schedule Manager</h1>
   </div>
 
   <div class="scheduler-container">
-    <input type="hidden" id="selectedScheduleId" value="<%=selectedSchedule.id%>" />
-    <input type="hidden" id="activeScheduleId" value="<%=activeSchedule.id%>" />
+    <input type="hidden" id="selectedScheduleId" value="<%=selectedScheduleId%>" />
+    <input type="hidden" id="activeScheduleId" value="<%=activeScheduleId%>" />
     
     <div class="schedule-controls">
       <button class="action-button create" onclick="window.location.href='/admin/addSchedule'">
@@ -21,7 +24,7 @@
       
       <div class="active-schedule">
         <span class="label">Active Schedule:</span>
-        <span class="value"><%=activeSchedule.name%></span>
+        <span class="value"><%=activeSchedule ? activeSchedule.name : 'No active schedule configured'%></span>
       </div>
 
       <div class="schedule-selector">
@@ -29,7 +32,7 @@
         <div class="select-wrapper">
           <select class="fancy-select" id="schedules">
             <% for (let schedule of schedules) { %>
-              <option value="<%=schedule._id%>" <%= schedule.id === selectedSchedule.id ? 'selected' : '' %>>
+              <option value="<%=schedule._id%>" <%= schedule.id === selectedScheduleId ? 'selected' : '' %>>
                 <%=schedule.name%>
               </option>
             <% } %>
@@ -41,38 +44,43 @@
 
     <div class="periods-section">
       <h2 class="section-title">Periods</h2>
-      <div class="periods-grid">
-        <% for (let period of selectedPeriods) { %>
-          <div class="period-card">
-            <h3 class="period-name"><%=period.name%></h3>
-            <% if(role === 'barista' || role === 'admin') { %>
-        <div class="disable-ordering-checkbox">
-              <label for="period-<%=period._id%>" class="checkbox-label">
-                Disable Ordering
-              <input 
-                type="checkbox" 
-                class="period-checkbox"
-                id="period-<%=period._id%>"
-                data-period-id="<%=period._id%>"
-                <%= period.orderingDisabled ? 'checked' : '' %>
-              />
-              </label>
-        </div>
-        <% } %>
-            <div class="time-details">
-              <div class="time-item">
-                <span class="time-label">Start:</span>
-                <span class="time-value"><%=period.start%></span>
+      <% if (selectedPeriods.length > 0) { %>
+        <div class="periods-grid">
+          <% for (let period of selectedPeriods) { %>
+            <div class="period-card">
+              <h3 class="period-name"><%=period.name%></h3>
+              <% if(role === 'barista' || role === 'admin') { %>
+          <div class="disable-ordering-checkbox">
+                <label for="period-<%=period._id%>" class="checkbox-label">
+                  Disable Ordering
+                <input 
+                  type="checkbox" 
+                  class="period-checkbox"
+                  id="period-<%=period._id%>"
+                  data-period-id="<%=period._id%>"
+                  <%= period.orderingDisabled ? 'checked' : '' %>
+                />
+                </label>
               </div>
-              <div class="time-item">
-                <span class="time-label">End:</span>
-                <span class="time-value"><%=period.end%></span>
-              </div>
+          <% } %>
+              <div class="time-details">
+                <div class="time-item">
+                  <span class="time-label">Start:</span>
+                  <span class="time-value"><%=period.start%></span>
+                </div>
+                <div class="time-item">
+                  <span class="time-label">End:</span>
+                  <span class="time-value"><%=period.end%></span>
+                </div>
             </div>
           </div>
-        <% } %>
-      </div>
-    </div>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="period-card empty-state">
+          No schedule periods are available yet. Create a schedule to use the scheduler.
+        </div>
+      <% } %>
   </div>
 </div>
 
@@ -229,6 +237,11 @@
   .period-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 32px rgba(60, 42, 33, 0.15);
+  }
+
+  .empty-state {
+    color: var(--coffee-medium);
+    text-align: center;
   }
 
   .period-name {

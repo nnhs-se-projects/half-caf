@@ -13,6 +13,25 @@ const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
 const webPush = require("web-push");
 
+async function getUserRoles(email) {
+  try {
+    const user = await User.findOne({ email }, "userType");
+    if (user === null) {
+      return null;
+    }
+
+    return user.userType;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+function getScheduleDayValue(date) {
+  const jsDay = date.getDay();
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+
 const devEmails = [
   "bfjesso@stu.naperville203.org",
   "rekrzyzanowski@stu.naperville203.org",
@@ -71,27 +90,34 @@ route.get("/scheduler", async (req, res) => {
   const selectedPeriods = [];
 
   const { id } = req.query;
-  let selectedSchedule;
-  let activeSchedule;
+  let selectedSchedule = null;
+  let activeSchedule = schedules[0] || null;
   try {
     const currentTime = new Date();
     const currentWeekDay = await Weekday.findOne({
-      day: currentTime.getDay() - 1,
+      day: getScheduleDayValue(currentTime),
     });
-    activeSchedule = await Schedule.findById(currentWeekDay.schedule);
+    if (currentWeekDay && currentWeekDay.schedule) {
+      activeSchedule = await Schedule.findById(currentWeekDay.schedule);
+    }
   } catch {
-    activeSchedule = schedules[0];
+    activeSchedule = schedules[0] || null;
   }
 
   if (id != null) {
     selectedSchedule = await Schedule.findById(id);
-  } else {
+  }
+
+  if (!selectedSchedule) {
     selectedSchedule = activeSchedule;
   }
+
   if (selectedSchedule) {
     for (const period of selectedSchedule.periods) {
       const periodData = await Period.findById(period);
-      selectedPeriods.push(periodData);
+      if (periodData) {
+        selectedPeriods.push(periodData);
+      }
     }
   }
 
@@ -112,11 +138,9 @@ route.post("/updatePeriod", async (req, res) => {
   // only baristas or admins are allowed to modify period flags via scheduler
   const role = await getUserRoles(req.session.email);
   if (role !== "barista" && role !== "admin") {
-    return res
-      .status(403)
-      .json({
-        message: "Forbidden: only baristas or admins may change periods",
-      });
+    return res.status(403).json({
+      message: "Forbidden: only baristas or admins may change periods",
+    });
   }
 
   try {
