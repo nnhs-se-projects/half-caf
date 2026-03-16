@@ -21,8 +21,8 @@ toggleEnabled.addEventListener("change", async () => {
     }
   }
 
-  // reload UI in any case so header stays in sync
-  window.location = "/toggle";
+  // reload current page in any case so header stays in sync
+  window.location.reload();
 
   if (response.ok) {
     console.log("success");

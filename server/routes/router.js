@@ -23,6 +23,11 @@ async function getUserRoles(email) {
   }
 }
 
+function getScheduleDayValue(date) {
+  const jsDay = date.getDay();
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+
 const timeBeforeEnd = 10; // 10 minutes before end of period, ordering will be automatically disabled
 async function checkTime() {
   // time calculations must always use Chicago zone to match front-end schedule
@@ -52,7 +57,7 @@ async function checkTime() {
   let currentSchedule;
   try {
     const currentWeekDay = await Weekday.findOne({
-      day: currentTimeDate.getDay() - 1,
+      day: getScheduleDayValue(currentTimeDate),
     });
     if (currentWeekDay) {
       currentSchedule = await Schedule.findById(currentWeekDay.schedule);
@@ -185,21 +190,14 @@ function isMobile(userAgent) {
 
 route.get("/", (req, res) => {
   if (isMobile(req.headers["user-agent"])) {
-    const currentFilePath = __filename;
-    const parentDirectory = path.dirname(path.dirname(currentFilePath));
-    const addToHomePath = parentDirectory.substring(
-      0,
-      parentDirectory.lastIndexOf("/"),
-    );
-    res.sendFile(path.join(addToHomePath, "public/add-to-home.html"));
+    res.sendFile(path.join(__dirname, "..", "..", "public", "add-to-home.html"));
   } else {
     res.redirect("/auth");
   }
 });
 
 route.get("/toggle", async (req, res) => {
-  const toggle = await Enabled.findById("660f6230ff092e4bb15122da");
-  res.render("_adminHeader", { enabled: toggle });
+  res.redirect("/redirectUser");
 });
 
 // updating toggleEnabled
@@ -221,6 +219,7 @@ route.post("/toggle", async (req, res) => {
   }
   await toggle.save();
   emitToggleChange();
+  res.json({ success: true, enabled: toggle.enabled, reason: toggle.reason });
 });
 
 // period toggle route used by headers and admin UI
@@ -281,7 +280,9 @@ route.use(async (req, res, next) => {
     const now = new Date(
       new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }),
     );
-    const currentWeekDay = await Weekday.findOne({ day: now.getDay() - 1 });
+    const currentWeekDay = await Weekday.findOne({
+      day: getScheduleDayValue(now),
+    });
     if (currentWeekDay) {
       const sched = await Schedule.findById(currentWeekDay.schedule);
       if (sched) {
@@ -441,7 +442,7 @@ route.get("/api/current-period", async (req, res) => {
     const currentTimeMs = Date.parse(currentTimeDate);
 
     const currentWeekDay = await Weekday.findOne({
-      day: currentTimeDate.getDay() - 1,
+      day: getScheduleDayValue(currentTimeDate),
     });
 
     if (!currentWeekDay) {

@@ -58,6 +58,10 @@ route.post("/progress/:id", async (req, res) => {
     );
 
     const currentOrder = await Order.findById(req.params.id);
+    if (!currentDeliverer || !currentOrder) {
+      return res.redirect("/delivery/home");
+    }
+
     currentDeliverer.currentOrder = currentOrder;
     await currentDeliverer.save();
     currentOrder.claimed = true;
@@ -86,6 +90,8 @@ route.get("/progress/:id", async (req, res) => {
     );
     const currentOrder = await Order.findById(req.params.id);
     if (
+      currentDeliverer !== null &&
+      currentDeliverer !== undefined &&
       currentOrder !== null &&
       currentOrder !== undefined &&
       currentOrder.delivered === false
@@ -107,7 +113,17 @@ route.post("/finish", async (req, res) => {
     const currentDeliverer = await DeliveryPerson.findById(
       req.session.currentDelivererId,
     );
+    if (!currentDeliverer || !currentDeliverer.currentOrder) {
+      return res.redirect("/delivery/home");
+    }
+
     const currentOrder = await Order.findById(currentDeliverer.currentOrder);
+    if (!currentOrder) {
+      currentDeliverer.currentOrder = null;
+      await currentDeliverer.save();
+      return res.redirect("/delivery/home");
+    }
+
     currentOrder.delivered = true;
     currentOrder.claimed = false;
     currentDeliverer.currentOrder = null;

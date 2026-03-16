@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   const checkboxes = document.querySelectorAll(".period-checkbox");
   console.log("Found checkboxes:", checkboxes.length);
+  const scheduleSelect = document.getElementById("schedules");
+  const deleteButton = document.getElementById("deleteBtn");
+  const selectedScheduleIdInput = document.getElementById("selectedScheduleId");
+  const activeScheduleIdInput = document.getElementById("activeScheduleId");
 
   for (const checkbox of checkboxes) {
     // Store initial state
@@ -48,42 +52,61 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-});
 
-document.getElementById("schedules").addEventListener("change", () => {
-  const selectedValue = document.getElementById("schedules").value;
-  const urlParams = new URLSearchParams(window.location.search);
-  urlParams.set("id", selectedValue);
+  if (scheduleSelect) {
+    scheduleSelect.addEventListener("change", () => {
+      const selectedValue = scheduleSelect.value;
+      if (!selectedValue) {
+        return;
+      }
 
-  // Create the updated URL with the new query parameter
-  const updatedURL = `${window.location.origin}${
-    window.location.pathname
-  }?${urlParams.toString()}`;
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set("id", selectedValue);
 
-  // redirect window
-  window.location = updatedURL;
-});
+      // Create the updated URL with the new query parameter
+      const updatedURL = `${window.location.origin}${
+        window.location.pathname
+      }?${urlParams.toString()}`;
 
-document.getElementById("deleteBtn").addEventListener("click", async () => {
-  const id = document.getElementById("selectedScheduleId").value;
-  if (id === document.getElementById("activeScheduleId").value) {
-    alert("Cannot delete the active schedule");
-    return;
+      // redirect window
+      window.location = updatedURL;
+    });
   }
 
-  try {
-    const response = await fetch(`/admin/deleteSchedule`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-    });
-
-    if (response.ok) {
-      window.location = `/admin/scheduler`;
+  if (deleteButton) {
+    if (!selectedScheduleIdInput || !selectedScheduleIdInput.value) {
+      deleteButton.disabled = true;
     }
-  } catch (error) {
-    console.error("Error deleting schedule: ", error);
+
+    deleteButton.addEventListener("click", async () => {
+      const id = selectedScheduleIdInput ? selectedScheduleIdInput.value : "";
+      const activeId = activeScheduleIdInput ? activeScheduleIdInput.value : "";
+
+      if (!id) {
+        alert("No schedule selected");
+        return;
+      }
+
+      if (id === activeId) {
+        alert("Cannot delete the active schedule");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/deleteSchedule`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
+
+        if (response.ok) {
+          window.location = `/admin/scheduler`;
+        }
+      } catch (error) {
+        console.error("Error deleting schedule: ", error);
+      }
+    });
   }
 });
