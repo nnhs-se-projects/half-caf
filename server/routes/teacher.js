@@ -200,6 +200,7 @@ route.get("/outgoingOrders", async (req, res) => {
         ingredientCounts: [],
         temps: [],
         instructions: "",
+        caffeinated: drink.caffeinated,
       };
       drinkObject.name = drink.name;
       drinkObject.temps = drink.temps;
@@ -280,6 +281,7 @@ route.post("/myCart", async (req, res) => {
         name: "",
         ingredients: [],
         temp: "",
+        caffeinated: false,
         instructions: "",
       };
       const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
@@ -302,6 +304,7 @@ route.post("/myCart", async (req, res) => {
       }
       formattedDrink.name = drink.name;
       formattedDrink.temp = drink.temps;
+      formattedDrink.caffeinated = drink.caffeinated;
       formattedDrink.instructions = drink.instructions;
       drinkArray.push(formattedDrink);
     }

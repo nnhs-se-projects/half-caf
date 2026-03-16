@@ -49,7 +49,7 @@ function addListenerToFinishButtons() {
       const orderId = finishButton.value;
 
       const counter = document.querySelector(
-        `.time-counter[data-order-id="${orderId}"]`
+        `.time-counter[data-order-id="${orderId}"]`,
       );
 
       let timerVal = counter.textContent;
@@ -131,7 +131,7 @@ window.io().on("New order placed", (data) => {
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.ingredients}</td>
-          <td>${drink.caffeinated ? "No" : "Yes"}</td>
+          <td>${drink.caffeinated === false ? "Decaf" : "Caffeinated"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>
@@ -163,6 +163,7 @@ window.io().on("New order placed", (data) => {
           <td>${drink.name}</td>
           <td>${tempBadge}</td>
           <td>${drink.ingredients}</td>
+          <td>${drink.caffeinated === false ? "Decaf" : "Caffeinated"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>
@@ -210,7 +211,7 @@ window.io().on("New order placed", (data) => {
 
 window.io().on("Order completed", (data) => {
   const drinkRows = document.querySelectorAll(
-    `.time-counter[data-order-id="${data.orderId}"]`
+    `.time-counter[data-order-id="${data.orderId}"]`,
   );
   for (const drink of drinkRows) {
     drink.parentNode.parentNode.remove();
@@ -219,7 +220,7 @@ window.io().on("Order completed", (data) => {
 
 window.io().on("Order cancelled", (data) => {
   const drinkRows = document.querySelectorAll(
-    `.time-counter[data-order-id="${data.orderId}"]`
+    `.time-counter[data-order-id="${data.orderId}"]`,
   );
   for (const drink of drinkRows) {
     drink.parentNode.parentNode.remove();
@@ -228,7 +229,7 @@ window.io().on("Order cancelled", (data) => {
 
 window.io().on("Room updated", (data) => {
   const drinkRows = document.querySelectorAll(
-    `.time-counter[data-order-id="${data.orderId}"]`
+    `.time-counter[data-order-id="${data.orderId}"]`,
   );
   for (const drink of drinkRows) {
     const roomElement = drink.parentElement.parentElement.firstElementChild;
@@ -283,8 +284,8 @@ function parseCustomTimestamp(timestamp) {
   return new Date(
     `${datePart}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(
       2,
-      "0"
-    )}:${String(seconds).padStart(2, "0")}`
+      "0",
+    )}:${String(seconds).padStart(2, "0")}`,
   );
 }
 
