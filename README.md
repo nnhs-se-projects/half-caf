@@ -10,6 +10,8 @@ Group Members (2023-2024): Tavneet, Abby, Delilah, Eric
 
 Group Members (2024-2025): Bennett, Emran, Jack, Ryan
 
+Group Members (2026-2027): Nathan, Abhi, Christian, Alex
+
 ## Insights (Previous Group)
 
 - Copilot is a great tool for solving problems and building features. However, it is important that you fully understand the code before you implement it. Blindly "vibe coding" will lead to bad code and a larger mess which will take even more time to resolve.

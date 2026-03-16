@@ -37,7 +37,7 @@ const schema = new mongoose.Schema({
       "syrups",
       "powders",
       "sauces",
-      "coffee",
+      "espresso_shots",
       "toppings",
       "ice",
       "water",

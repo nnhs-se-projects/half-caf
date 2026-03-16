@@ -84,10 +84,20 @@ route.get("/customizeDrink/:name", async (req, res) => {
       drinkIngredients[i] = await findIngredientById(drink.ingredients[i]);
     }
 
-    // all other ingredients that are customizable but not part of the drink by default
+    // Get the allowed ingredient categories for this drink
+    // Default to common categories if not specified
+    const allowedCategories =
+      drink.allowedIngredientCategories &&
+      drink.allowedIngredientCategories.length > 0
+        ? drink.allowedIngredientCategories
+        : ["milk", "syrups", "powders", "sauces", "toppings"];
+
+    // all other ingredients that are customizable, not part of the drink by default,
+    // and belong to an allowed category for this drink
     const otherIngredients = await Ingredient.find({
       type: "customizable",
       _id: { $nin: drink.ingredients },
+      category: { $in: allowedCategories },
     });
 
     if (drink) {

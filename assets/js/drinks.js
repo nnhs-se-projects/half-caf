@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!goodType) {
           alert(
-            "Please select a valid image type (jpg, jpeg, png, webp, heic, heif)"
+            "Please select a valid image type (jpg, jpeg, png, webp, heic, heif)",
           );
           addImageInput.value = ""; // Reset the file input
           imageElement.src = "";
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelectorAll("#addIngredientsList .add-ingredients")
     .forEach((checkbox) => {
       checkbox.addEventListener("change", () =>
-        handleIngredientCheckboxChange(checkbox)
+        handleIngredientCheckboxChange(checkbox),
       );
     });
   const addDrinkForm = document.getElementById("addDrinkForm");
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const checkedTemps = Array.from(
-        document.querySelectorAll(".add-temps:checked")
+        document.querySelectorAll(".add-temps:checked"),
       ).map((cb) => cb.value);
       if (checkedTemps.length === 0) {
         alert("Please select at least one temperature");
@@ -162,6 +162,9 @@ document.addEventListener("DOMContentLoaded", function () {
         caf: document.getElementById("addCaffeinated").checked,
         allowDecaf: document.getElementById("addAllowDecaf").checked,
         imageData: addSrcData,
+        allowedIngredientCategories: Array.from(
+          document.querySelectorAll(".add-allowed-category:checked"),
+        ).map((cb) => cb.value),
       };
 
       try {
@@ -234,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("editPrice").value = drink.price || "";
         // Populate ingredients
         const allEditCheckboxes = document.querySelectorAll(
-          "#editIngredientsList .edit-ingredients"
+          "#editIngredientsList .edit-ingredients",
         );
         allEditCheckboxes.forEach((cb) => {
           const item = cb.closest(".ingredient-item");
@@ -247,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (drink.ingredients && Array.isArray(drink.ingredients)) {
           drink.ingredients.forEach((ingredientId, index) => {
             const checkbox = document.querySelector(
-              `#editIngredientsList .edit-ingredients[value="${ingredientId}"]`
+              `#editIngredientsList .edit-ingredients[value="${ingredientId}"]`,
             );
             if (checkbox) {
               checkbox.checked = true;
@@ -279,8 +282,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         document.getElementById("editAllowDecaf").checked = Boolean(
-          drink.allowDecaf
+          drink.allowDecaf,
         );
+
+        // Populate allowed ingredient categories
+        document
+          .querySelectorAll(".edit-allowed-category")
+          .forEach((checkbox) => {
+            checkbox.checked =
+              drink.allowedIngredientCategories &&
+              Array.isArray(drink.allowedIngredientCategories) &&
+              drink.allowedIngredientCategories.includes(checkbox.value);
+          });
       } catch (error) {
         console.error("Error:", error);
         alert("Failed to load drink data for editing.");
@@ -318,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!goodType) {
           alert(
-            "Please select a valid image type (jpg, jpeg, png, webp, heic, heif)"
+            "Please select a valid image type (jpg, jpeg, png, webp, heic, heif)",
           );
           editImageInput.value = ""; // Reset the file input
           return;
@@ -351,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelectorAll("#editIngredientsList .edit-ingredients")
     .forEach((checkbox) => {
       checkbox.addEventListener("change", () =>
-        handleIngredientCheckboxChange(checkbox)
+        handleIngredientCheckboxChange(checkbox),
       );
     });
   // Handle edit form submission
@@ -375,7 +388,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const checkedTemps = Array.from(
-        document.querySelectorAll(".edit-temps:checked")
+        document.querySelectorAll(".edit-temps:checked"),
       ).map((cb) => cb.value);
 
       if (checkedTemps.length === 0) {
@@ -407,6 +420,9 @@ document.addEventListener("DOMContentLoaded", function () {
         caf: document.getElementById("editCaffeinated").checked,
         allowDecaf: document.getElementById("editAllowDecaf").checked,
         imageData: editSrcData,
+        allowedIngredientCategories: Array.from(
+          document.querySelectorAll(".edit-allowed-category:checked"),
+        ).map((cb) => cb.value),
       };
 
       try {

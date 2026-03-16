@@ -49,6 +49,21 @@ const schema = new mongoose.Schema({
     type: Buffer,
     required: false,
   },
+  allowedIngredientCategories: {
+    type: [String],
+    enum: [
+      "milk",
+      "syrups",
+      "powders",
+      "sauces",
+      "espresso_shots",
+      "toppings",
+      "ice",
+      "water",
+      "other",
+    ],
+    default: ["milk", "syrups", "powders", "sauces", "toppings"],
+  },
 });
 
 const MenuItem = mongoose.model("MenuItem", schema);
