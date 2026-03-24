@@ -190,7 +190,9 @@ function isMobile(userAgent) {
 
 route.get("/", (req, res) => {
   if (isMobile(req.headers["user-agent"])) {
-    res.sendFile(path.join(__dirname, "..", "..", "public", "add-to-home.html"));
+    res.sendFile(
+      path.join(__dirname, "..", "..", "public", "add-to-home.html"),
+    );
   } else {
     res.redirect("/auth");
   }

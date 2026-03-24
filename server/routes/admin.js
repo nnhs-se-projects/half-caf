@@ -971,7 +971,9 @@ route.post("/sendAnnouncement", async (req, res) => {
       }
 
       if (user.subscription && user.subscription.length) {
-        const validSubscriptions = normalizePushSubscriptions(user.subscription);
+        const validSubscriptions = normalizePushSubscriptions(
+          user.subscription,
+        );
 
         if (validSubscriptions.length !== user.subscription.length) {
           user.subscription = validSubscriptions;

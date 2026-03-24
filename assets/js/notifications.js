@@ -234,7 +234,12 @@ socket?.on("connect_error", (err) => {
 });
 
 socket?.on("Announcement created", (data) => {
-  if (data && data.senderSocketId && socket && data.senderSocketId === socket.id) {
+  if (
+    data &&
+    data.senderSocketId &&
+    socket &&
+    data.senderSocketId === socket.id
+  ) {
     return;
   }
 
@@ -369,7 +374,7 @@ function showOrderCancelledPopup(data) {
                   : ""
               }
             </li>
-          `
+          `,
             )
             .join("")}
         </ul>
@@ -664,7 +669,7 @@ function makeDraggable(element, handle) {
       // Save the element position
       localStorage.setItem(
         "popupPos_" + element.id,
-        JSON.stringify({ left: element.style.left, top: element.style.top })
+        JSON.stringify({ left: element.style.left, top: element.style.top }),
       );
     }
   });
@@ -672,7 +677,7 @@ function makeDraggable(element, handle) {
 
 function removePendingOrderCancelled(cancelId) {
   let pending = JSON.parse(
-    localStorage.getItem("pendingOrderCancelled") || "[]"
+    localStorage.getItem("pendingOrderCancelled") || "[]",
   );
   pending = pending.filter((item) => item.id !== cancelId);
   localStorage.setItem("pendingOrderCancelled", JSON.stringify(pending));
@@ -680,7 +685,7 @@ function removePendingOrderCancelled(cancelId) {
 
 function savePendingOrderCancelled(data) {
   let pending = JSON.parse(
-    localStorage.getItem("pendingOrderCancelled") || "[]"
+    localStorage.getItem("pendingOrderCancelled") || "[]",
   );
   pending.push(data);
   localStorage.setItem("pendingOrderCancelled", JSON.stringify(pending));
@@ -689,7 +694,7 @@ function savePendingOrderCancelled(data) {
 // In showPendingOrderCancelled, do not clear the pending cancellations so they persist
 function showPendingOrderCancelled() {
   let pending = JSON.parse(
-    localStorage.getItem("pendingOrderCancelled") || "[]"
+    localStorage.getItem("pendingOrderCancelled") || "[]",
   );
   pending.forEach((data) => {
     showOrderCancelledPopup(data);
@@ -720,7 +725,7 @@ function enableNotifications() {
       } else if (permission === "denied") {
         alert(
           "Notification permission is still denied. " +
-            'Please go to Settings, search for "Half Caf" in apps, and turn on notifications.'
+            'Please go to Settings, search for "Half Caf" in apps, and turn on notifications.',
         );
       } else {
         alert("Notification permission: " + permission);
