@@ -419,7 +419,22 @@ route.get("/homeMenu", async (req, res) => {
 route.post("/subscribe", async (req, res) => {
   const subscription = req.body;
   console.log("Received push subscription:", subscription);
+
+  if (
+    !subscription ||
+    typeof subscription !== "object" ||
+    typeof subscription.endpoint !== "string" ||
+    subscription.endpoint.length === 0
+  ) {
+    return res.status(400).json({ message: "Invalid push subscription" });
+  }
+
   const user = await User.findOne({ email: req.session.email });
+
+  if (!user) {
+    return res.status(401).json({ message: "User not found" });
+  }
+
   // now push sub into array.
   if (
     !user.subscription.find(
