@@ -28,6 +28,72 @@
         <span class="mobile-title">Half Caf Delivery</span>
       </h1>
     </div>
+
+    <!-- Sidebar navigation for all devices -->
+    <div id="sidebar">
+      <a href="/delivery/home">Delivery Home</a>
+      <a href="/delivery/login">Switch User</a>
+      <a href="/auth/logout">Logout</a>
+    </div>
+    <div id="leftTrigger"><span>&rarr;</span></div>
+
+    <script>
+      // Make arrow trigger open sidebar on hover (desktop only)
+      if (window.innerWidth > 768) {
+        const leftTrigger = document.getElementById("leftTrigger");
+        const sidebar = document.getElementById("sidebar");
+        let autoCloseTimer;
+        if (leftTrigger && sidebar) {
+          const collapsedLeft = "20px";
+          const expandedLeft = "200px";
+          const setTriggerCollapsed = function () {
+            leftTrigger.style.left = collapsedLeft;
+          };
+          const setTriggerExpanded = function () {
+            leftTrigger.style.left = expandedLeft;
+          };
+          const openSidebar = function () {
+            sidebar.style.setProperty(
+              "transform",
+              "translateX(0)",
+              "important",
+            );
+            setTriggerExpanded();
+          };
+          const scheduleClose = function () {
+            clearTimeout(autoCloseTimer);
+            autoCloseTimer = setTimeout(function () {
+              if (
+                !sidebar.matches(":hover") &&
+                !leftTrigger.matches(":hover")
+              ) {
+                sidebar.style.removeProperty("transform");
+                setTriggerCollapsed();
+              }
+            }, 5);
+          };
+          leftTrigger.addEventListener("mouseenter", function () {
+            clearTimeout(autoCloseTimer);
+            openSidebar();
+          });
+          leftTrigger.addEventListener("mouseleave", function () {
+            scheduleClose();
+          });
+          sidebar.addEventListener("mouseenter", function () {
+            clearTimeout(autoCloseTimer);
+            setTriggerExpanded();
+          });
+          sidebar.addEventListener("mouseleave", function () {
+            scheduleClose();
+          });
+          leftTrigger.addEventListener("click", function () {
+            openSidebar();
+            scheduleClose();
+          });
+          setTriggerCollapsed();
+        }
+      }
+    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/notifications.js"></script>
     <!-- Add sw-update to listen for updates -->

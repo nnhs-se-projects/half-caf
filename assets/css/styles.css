@@ -16,6 +16,8 @@ body {
   background-color: var(--background);
   color: var(--coffee-dark);
   font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .warning h1 {
@@ -35,7 +37,9 @@ h5 {
 body {
   background-color: var(--background); /* Set a light background color */
   color: var(--coffee-dark); /* Set a dark text color */
+  overflow-x: hidden;
 }
+
 b {
   color: black;
 }
@@ -629,8 +633,7 @@ a {
 }
 
 /* Show mobile-only elements and style the theme button on mobile */
-@media (max-width: 768px) and (hover: none),
-  (max-width: 768px) and (pointer: coarse) {
+@media (max-width: 768px) {
   .mobile-only {
     display: block;
   }
@@ -651,9 +654,8 @@ a {
 }
 
 /* Mobile specific styles */
-@media (max-width: 768px) and (hover: none),
-  (max-width: 768px) and (pointer: coarse) {
-  /* Only apply mobile styles on touch devices or actual mobile devices */
+@media (max-width: 768px) {
+  /* Show hamburger menu on all mobile devices */
   .hamburger-menu {
     display: block;
   }
