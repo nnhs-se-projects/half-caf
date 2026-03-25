@@ -47,6 +47,31 @@
         }
         /* Arrow position is controlled by JS to avoid stale position */
       }
+      .header-announcement-section {
+        position: fixed;
+        top: calc(75px + env(safe-area-inset-top, 0));
+        left: 0;
+        width: 100%;
+        padding: 0.4rem 1rem;
+        background: rgba(255, 247, 235, 0.95);
+        border-top: 1px solid rgba(60, 42, 33, 0.12);
+        border-bottom: 1px solid rgba(60, 42, 33, 0.12);
+        font-size: 0.85rem;
+        line-height: 1.2;
+        color: #3c2a21;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        z-index: 999;
+      }
+      .header-announcement-item {
+        margin-right: 0.35rem;
+      }
+      @media screen and (max-width: 768px) {
+        .header-announcement-section {
+          font-size: 0.75rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -56,6 +81,16 @@
         <span class="full-title">NNHS Half Caf</span>
         <span class="mobile-title">Half Caf</span>
       </h1>
+      <% if (activeAnnouncements && activeAnnouncements.length > 0) { %>
+      <div class="header-announcement-section">
+        <strong>Announcements:</strong>
+        <% activeAnnouncements.forEach((announcement, index) => { %>
+        <span class="header-announcement-item">
+          <%= announcement.subject %>: <%= announcement.message %><%= index < activeAnnouncements.length - 1 ? ' •' : '' %>
+        </span>
+        <% }) %>
+      </div>
+      <% } %>
     </div>
     <!-- Reorder: Place sidebar first, then arrow trigger -->
     <div id="sidebar">

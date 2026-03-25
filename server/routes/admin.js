@@ -962,6 +962,30 @@ route.post("/sendAnnouncement", async (req, res) => {
     const senderEmail = req.session.email;
     const senderSocketId = req.body.senderSocketId || null;
 
+    const visibleFrom = req.body.visibleFrom
+      ? new Date(req.body.visibleFrom)
+      : new Date();
+    const visibleUntil = req.body.visibleUntil
+      ? new Date(req.body.visibleUntil)
+      : null;
+
+    if (!visibleUntil) {
+      return res.status(400).send("Visible until time is required.");
+    }
+
+    if (
+      Number.isNaN(visibleFrom.getTime()) ||
+      Number.isNaN(visibleUntil.getTime())
+    ) {
+      return res.status(400).send("Invalid visibility date/time.");
+    }
+
+    if (visibleUntil <= visibleFrom) {
+      return res
+        .status(400)
+        .send("Visible until must be after visible from time.");
+    }
+
     const users = await User.find({
       subscription: { $exists: true, $ne: null },
     });
@@ -1007,6 +1031,8 @@ route.post("/sendAnnouncement", async (req, res) => {
     const announcement = new Announcement({
       subject: req.body.subject,
       message: req.body.message,
+      visibleFrom,
+      visibleUntil,
       date: new Date(),
     });
     await announcement.save();
@@ -1014,6 +1040,8 @@ route.post("/sendAnnouncement", async (req, res) => {
     emitAnnouncementCreated({
       subject: announcement.subject,
       message: announcement.message,
+      visibleFrom: announcement.visibleFrom,
+      visibleUntil: announcement.visibleUntil,
       date: announcement.date || new Date(),
       senderEmail,
       senderSocketId,
@@ -1023,6 +1051,30 @@ route.post("/sendAnnouncement", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Error sending notifications.");
+  }
+});
+
+route.delete("/deleteAnnouncement", async (req, res) => {
+  try {
+    const role = await getUserRoles(req.session.email);
+    if (role !== "admin") {
+      return res.status(403).send("Forbidden");
+    }
+
+    const { id } = req.body;
+    if (!id) {
+      return res.status(400).send("Announcement id is required.");
+    }
+
+    const deletedAnnouncement = await Announcement.findByIdAndDelete(id);
+    if (!deletedAnnouncement) {
+      return res.status(404).send("Announcement not found.");
+    }
+
+    res.status(200).send("Announcement deleted.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error deleting announcement.");
   }
 });
 

@@ -7,6 +7,7 @@
 const express = require("express");
 const path = require("path");
 const User = require("./server/model/user");
+const Announcement = require("./server/model/announcement");
 
 // invoke the express function to create an Express
 const app = express();
@@ -26,7 +27,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 // add middleware to handle JSON in HTTP request bodies (used with POST commands)
@@ -36,7 +37,7 @@ app.use(
     limit: "50mb",
     extended: true,
     parameterLimit: 50000,
-  })
+  }),
 );
 
 // set the template engine to EJS, which generates HTML with embedded JavaScript
@@ -88,6 +89,39 @@ app.use(async (req, res, next) => {
   res.redirect("/redirectUser");
 });
 
+app.use(async (req, res, next) => {
+  try {
+    const now = new Date();
+    const activeAnnouncements = await Announcement.find({
+      $and: [
+        {
+          $or: [
+            { visibleFrom: { $exists: false } },
+            { visibleFrom: null },
+            { visibleFrom: { $lte: now } },
+          ],
+        },
+        {
+          $or: [
+            { visibleUntil: { $exists: false } },
+            { visibleUntil: null },
+            { visibleUntil: { $gte: now } },
+          ],
+        },
+      ],
+    })
+      .sort({ visibleFrom: -1, date: -1 })
+      .lean();
+
+    res.locals.activeAnnouncements = activeAnnouncements;
+  } catch (error) {
+    console.error("Error loading active announcements:", error);
+    res.locals.activeAnnouncements = [];
+  }
+
+  next();
+});
+
 // import the http module, which provides an HTTP server
 const http = require("http");
 const server = http.createServer(app);
@@ -105,6 +139,6 @@ app.all("*", (req, res) => {
 // start the server on port PORT_NUM from .env file
 server.listen(process.env.PORT_NUM, () => {
   console.log(
-    "server is listening on http://localhost:" + process.env.PORT_NUM
+    "server is listening on http://localhost:" + process.env.PORT_NUM,
   );
 });
