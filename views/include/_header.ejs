@@ -53,15 +53,17 @@
     /* Adjust content positioning for mobile */
     @media (max-width: 768px) {
       body {
-        padding-top: calc(env(safe-area-inset-top, 0));
+        padding-top: calc(75px + env(safe-area-inset-top, 0));
       }
       
       .indexTopBar {
         padding-left: 0 !important;
+        height: calc(75px + env(safe-area-inset-top, 0)) !important;
+        padding-top: env(safe-area-inset-top, 0) !important;
       }
       
       #sidebar {
-        top: calc(env(safe-area-inset-top, 0)) !important; 
+        top: calc(75px + env(safe-area-inset-top, 0)) !important; 
       }
     }
   </style>

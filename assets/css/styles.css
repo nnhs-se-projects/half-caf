@@ -657,7 +657,23 @@ a {
 @media (max-width: 768px) {
   /* Show hamburger menu on all mobile devices */
   .hamburger-menu {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    top: calc(15px + env(safe-area-inset-top, 0));
+    left: 15px;
+    z-index: 1004;
+    padding: 10px;
+  }
+
+  .hamburger-icon {
+    width: 26px;
+    height: 3px;
+    background-color: var(--cream);
+    border-radius: 2px;
   }
 
   .indexTopBar {
