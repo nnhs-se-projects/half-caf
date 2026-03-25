@@ -26,15 +26,18 @@
       <h2>Previous Announcements</h2>
       <ul id="announcementItems">
         <% announcements.forEach(a => { %>
-        <li>
-          <div>
+        <li data-announcement-id="<%= a._id %>">
+          <div class="announcement-main">
             <strong><%= a.subject %></strong>: <%= a.message %>
             <div class="announcement-window">
               Visible: <%= a.visibleFrom ? new Date(a.visibleFrom).toLocaleString() : "Immediately" %> -
               <%= a.visibleUntil ? new Date(a.visibleUntil).toLocaleString() : "No end" %>
             </div>
           </div>
-          <span class="announcement-date"><%= new Date(a.date).toLocaleString() %></span>
+          <div class="announcement-actions">
+            <span class="announcement-date"><%= new Date(a.date).toLocaleString() %></span>
+            <button type="button" class="delete-announcement-btn" data-id="<%= a._id %>">Delete</button>
+          </div>
         </li>
         <% }) %>
       </ul>
@@ -99,6 +102,47 @@
         alert(errorText || "Failed to send announcement.");
       }
     });
+
+    document
+      .getElementById("announcementItems")
+      .addEventListener("click", async (event) => {
+        const button = event.target.closest(".delete-announcement-btn");
+        if (!button) {
+          return;
+        }
+
+        const id = button.dataset.id;
+        if (!id) {
+          alert("Unable to delete announcement: missing id.");
+          return;
+        }
+
+        const confirmed = window.confirm(
+          "Delete this announcement? This cannot be undone.",
+        );
+        if (!confirmed) {
+          return;
+        }
+
+        const response = await fetch("/admin/deleteAnnouncement", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          alert(errorText || "Failed to delete announcement.");
+          return;
+        }
+
+        const announcementItem = button.closest("li[data-announcement-id]");
+        if (announcementItem) {
+          announcementItem.remove();
+        }
+      });
   </script>
   <style>
     /* reset list */
@@ -120,6 +164,16 @@
       align-items: center;
       transition: transform 0.1s ease;
     }
+    #announcementItems li .announcement-main {
+      flex: 1;
+      padding-right: 0.75rem;
+    }
+    #announcementItems li .announcement-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
     #announcementItems li:hover {
       transform: translateY(-2px);
     }
@@ -140,6 +194,13 @@
       margin-top: 0.35rem;
       font-size: 0.8rem;
       color: #666;
+    }
+    #announcementItems li .delete-announcement-btn {
+      margin: 0;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.8rem;
+      line-height: 1.1;
+      border-radius: 8px;
     }
     .announcement-flex-container {
       display: flex;

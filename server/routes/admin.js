@@ -1054,4 +1054,28 @@ route.post("/sendAnnouncement", async (req, res) => {
   }
 });
 
+route.delete("/deleteAnnouncement", async (req, res) => {
+  try {
+    const role = await getUserRoles(req.session.email);
+    if (role !== "admin") {
+      return res.status(403).send("Forbidden");
+    }
+
+    const { id } = req.body;
+    if (!id) {
+      return res.status(400).send("Announcement id is required.");
+    }
+
+    const deletedAnnouncement = await Announcement.findByIdAndDelete(id);
+    if (!deletedAnnouncement) {
+      return res.status(404).send("Announcement not found.");
+    }
+
+    res.status(200).send("Announcement deleted.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error deleting announcement.");
+  }
+});
+
 module.exports = route;
