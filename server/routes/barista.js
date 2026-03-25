@@ -15,6 +15,20 @@ webPush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY,
 );
 
+function normalizePushSubscriptions(subscriptions) {
+  if (!Array.isArray(subscriptions)) {
+    return [];
+  }
+
+  return subscriptions.filter(
+    (sub) =>
+      sub &&
+      typeof sub === "object" &&
+      typeof sub.endpoint === "string" &&
+      sub.endpoint.length > 0,
+  );
+}
+
 const {
   emitOrderCompleted,
   emitOrderCancelled,
@@ -156,6 +170,17 @@ route.delete("/orders/:id", async (req, res) => {
 
     const user = await User.findOne({ email: order.email });
     if (user && user.subscription && user.subscription.length) {
+      const validSubscriptions = normalizePushSubscriptions(user.subscription);
+
+      if (validSubscriptions.length !== user.subscription.length) {
+        user.subscription = validSubscriptions;
+        await user.save();
+      }
+
+      if (validSubscriptions.length === 0) {
+        return res.status(201).end();
+      }
+
       const payload = JSON.stringify({
         title: "Order cancelled",
         options: {
@@ -163,7 +188,7 @@ route.delete("/orders/:id", async (req, res) => {
           icon: "../img/Half_Caf_Logo_(1).png",
         },
       });
-      for (const sub of user.subscription) {
+      for (const sub of validSubscriptions) {
         try {
           await webPush.sendNotification(sub, payload);
         } catch (error) {
@@ -208,6 +233,17 @@ route.post("/orders/:id", async (req, res) => {
 
   const user = await User.findOne({ email: order.email });
   if (user && user.subscription && user.subscription.length) {
+    const validSubscriptions = normalizePushSubscriptions(user.subscription);
+
+    if (validSubscriptions.length !== user.subscription.length) {
+      user.subscription = validSubscriptions;
+      await user.save();
+    }
+
+    if (validSubscriptions.length === 0) {
+      return res.status(201).end();
+    }
+
     const payload = JSON.stringify({
       title: "Order in delivery",
       options: {
@@ -215,7 +251,7 @@ route.post("/orders/:id", async (req, res) => {
         icon: "../img/Half_Caf_Logo_(1).png",
       },
     });
-    for (const sub of user.subscription) {
+    for (const sub of validSubscriptions) {
       try {
         await webPush.sendNotification(sub, payload);
       } catch (error) {

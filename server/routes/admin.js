@@ -12,6 +12,7 @@ const Announcement = require("../model/announcement");
 const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
 const webPush = require("web-push");
+const { emitAnnouncementCreated } = require("../socket/socket");
 
 async function getUserRoles(email) {
   try {
@@ -45,6 +46,20 @@ webPush.setVapidDetails(
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY,
 );
+
+function normalizePushSubscriptions(subscriptions) {
+  if (!Array.isArray(subscriptions)) {
+    return [];
+  }
+
+  return subscriptions.filter(
+    (sub) =>
+      sub &&
+      typeof sub === "object" &&
+      typeof sub.endpoint === "string" &&
+      sub.endpoint.length > 0,
+  );
+}
 
 route.get("/addSchedule", async (req, res) => {
   res.render("addSchedule");
@@ -928,17 +943,47 @@ route.delete("/deleteDeliveryPerson", async (req, res) => {
 });
 
 route.get("/sendAnnouncement", async (req, res) => {
-  const announcements = await Announcement.find().sort({ Date: -1 });
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    return res.status(403).send("Forbidden");
+  }
+
+  const announcements = await Announcement.find().sort({ date: -1 });
   res.render("sendAnnouncement", { announcements });
 });
 
 route.post("/sendAnnouncement", async (req, res) => {
   try {
+    const role = await getUserRoles(req.session.email);
+    if (role !== "admin") {
+      return res.status(403).send("Forbidden");
+    }
+
+    const senderEmail = req.session.email;
+    const senderSocketId = req.body.senderSocketId || null;
+
     const users = await User.find({
       subscription: { $exists: true, $ne: null },
     });
     for (const user of users) {
+      if (senderEmail && user.email === senderEmail) {
+        continue;
+      }
+
       if (user.subscription && user.subscription.length) {
+        const validSubscriptions = normalizePushSubscriptions(
+          user.subscription,
+        );
+
+        if (validSubscriptions.length !== user.subscription.length) {
+          user.subscription = validSubscriptions;
+          await user.save();
+        }
+
+        if (validSubscriptions.length === 0) {
+          continue;
+        }
+
         const payload = JSON.stringify({
           title: req.body.subject,
           options: {
@@ -946,7 +991,7 @@ route.post("/sendAnnouncement", async (req, res) => {
             icon: "../img/Half_Caf_Logo_(1).png",
           },
         });
-        for (const sub of user.subscription) {
+        for (const sub of validSubscriptions) {
           try {
             await webPush.sendNotification(sub, payload);
           } catch (error) {
@@ -962,9 +1007,18 @@ route.post("/sendAnnouncement", async (req, res) => {
     const announcement = new Announcement({
       subject: req.body.subject,
       message: req.body.message,
-      Date: new Date(),
+      date: new Date(),
     });
     await announcement.save();
+
+    emitAnnouncementCreated({
+      subject: announcement.subject,
+      message: announcement.message,
+      date: announcement.date || new Date(),
+      senderEmail,
+      senderSocketId,
+    });
+
     res.status(200).send("Mobile notifications sent.");
   } catch (error) {
     console.error(error);

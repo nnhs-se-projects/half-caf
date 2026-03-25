@@ -29,8 +29,200 @@ function isMobile() {
 const emailInput = document.querySelector("input.emailInput");
 const currentEmail =
   window.loggedInEmail || (emailInput ? emailInput.value : null);
+const socket = typeof window.io === "function" ? window.io() : null;
 
-window.io().on("connect_error", (err) => {
+socket?.on("connect", () => {
+  window.halfCafSocketId = socket.id;
+});
+
+function showAnnouncementPopup(data) {
+  const escapeHtml = (value) =>
+    String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const safeSubject = escapeHtml(data.subject || "Announcement");
+  const safeMessage = escapeHtml(data.message || "");
+  const autoCloseMs = 12000;
+  const timeLabel = new Date().toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  const existing = document.getElementById("globalAnnouncementPopup");
+  if (existing) {
+    existing.remove();
+  }
+
+  const popup = document.createElement("div");
+  popup.id = "globalAnnouncementPopup";
+  popup.style.cssText = `
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    width: min(430px, calc(100vw - 24px));
+    background: linear-gradient(135deg, #ffffff 0%, #f3f8fd 100%);
+    border: 1px solid #d2e4f6;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(27, 52, 79, 0.22);
+    color: #1f2a37;
+    z-index: 11000;
+    overflow: hidden;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  `;
+
+  popup.innerHTML = `
+    <style>
+      #globalAnnouncementPopup .announcement-banner {
+        height: 5px;
+        background: linear-gradient(90deg, #3f93d8 0%, #5fa7e2 45%, #f5ae43 100%);
+      }
+
+      #globalAnnouncementPopup .announcement-shell {
+        padding: 12px 14px 0;
+      }
+
+      #globalAnnouncementPopup .announcement-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      #globalAnnouncementPopup .announcement-meta {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 6px;
+      }
+
+      #globalAnnouncementPopup .announcement-pill {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #256aa4;
+        font-weight: 700;
+        background: rgba(63, 147, 216, 0.12);
+        border: 1px solid rgba(63, 147, 216, 0.25);
+        border-radius: 999px;
+        padding: 3px 8px;
+      }
+
+      #globalAnnouncementPopup .announcement-time {
+        font-size: 0.75rem;
+        color: #607389;
+        font-weight: 500;
+      }
+
+      #globalAnnouncementPopup .announcement-subject {
+        font-size: 1.03rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #16324f;
+      }
+
+      #globalAnnouncementPopup .announcement-message {
+        margin-top: 8px;
+        font-size: 0.94rem;
+        line-height: 1.45;
+        color: #324a5f;
+        white-space: pre-wrap;
+        max-height: 150px;
+        overflow: auto;
+        padding-right: 4px;
+      }
+
+      #globalAnnouncementPopup .announcement-close {
+        border: none;
+        background: #e5eef7;
+        color: #284c70;
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.18s ease, transform 0.18s ease;
+      }
+
+      #globalAnnouncementPopup .announcement-close:hover {
+        background: #d6e6f5;
+        transform: scale(1.05);
+      }
+
+      #globalAnnouncementPopup .announcement-progress {
+        height: 4px;
+        background: rgba(63, 147, 216, 0.16);
+        margin-top: 12px;
+        overflow: hidden;
+      }
+
+      #globalAnnouncementPopup .announcement-progress > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #3f93d8 0%, #2f7cba 100%);
+        transform-origin: left;
+        animation: announcementCountdown ${autoCloseMs}ms linear forwards;
+      }
+
+      @keyframes announcementCountdown {
+        from { transform: scaleX(1); }
+        to { transform: scaleX(0); }
+      }
+    </style>
+
+    <div class="announcement-banner"></div>
+    <div class="announcement-shell">
+      <div class="announcement-top">
+        <div>
+          <div class="announcement-meta">
+            <div class="announcement-pill">New Announcement</div>
+            <div class="announcement-time">${timeLabel}</div>
+          </div>
+          <div class="announcement-subject">${safeSubject}</div>
+        </div>
+        <button class="announcement-close" aria-label="Dismiss announcement">&times;</button>
+      </div>
+      <div class="announcement-message">${safeMessage}</div>
+    </div>
+    <div class="announcement-progress"><span></span></div>
+  `;
+
+  document.body.appendChild(popup);
+  requestAnimationFrame(() => {
+    popup.style.opacity = "1";
+    popup.style.transform = "translateY(0) scale(1)";
+  });
+
+  const closePopup = () => {
+    popup.style.opacity = "0";
+    popup.style.transform = "translateY(-12px) scale(0.98)";
+    setTimeout(() => popup.remove(), 180);
+  };
+
+  const dismissButton = popup.querySelector(".announcement-close");
+  if (dismissButton) {
+    dismissButton.addEventListener("click", closePopup);
+  }
+
+  setTimeout(() => {
+    if (document.body.contains(popup)) {
+      closePopup();
+    }
+  }, autoCloseMs);
+}
+
+socket?.on("connect_error", (err) => {
   // the reason of the error, for example "xhr poll error"
   console.log(err.message);
 
@@ -41,7 +233,20 @@ window.io().on("connect_error", (err) => {
   console.log(err.context);
 });
 
-window.io().on("Order claimed", (data) => {
+socket?.on("Announcement created", (data) => {
+  if (
+    data &&
+    data.senderSocketId &&
+    socket &&
+    data.senderSocketId === socket.id
+  ) {
+    return;
+  }
+
+  showAnnouncementPopup(data || {});
+});
+
+socket?.on("Order claimed", (data) => {
   if (
     Notification?.permission === "granted" &&
     currentEmail &&
@@ -67,7 +272,7 @@ window.io().on("Order claimed", (data) => {
   }
 });
 
-window.io().on("Order cancelled", (data) => {
+socket?.on("Order cancelled", (data) => {
   // Only show cancellation popup for the user who placed the order
   if (data.email !== currentEmail) return;
 
@@ -169,7 +374,7 @@ function showOrderCancelledPopup(data) {
                   : ""
               }
             </li>
-          `
+          `,
             )
             .join("")}
         </ul>
@@ -464,7 +669,7 @@ function makeDraggable(element, handle) {
       // Save the element position
       localStorage.setItem(
         "popupPos_" + element.id,
-        JSON.stringify({ left: element.style.left, top: element.style.top })
+        JSON.stringify({ left: element.style.left, top: element.style.top }),
       );
     }
   });
@@ -472,7 +677,7 @@ function makeDraggable(element, handle) {
 
 function removePendingOrderCancelled(cancelId) {
   let pending = JSON.parse(
-    localStorage.getItem("pendingOrderCancelled") || "[]"
+    localStorage.getItem("pendingOrderCancelled") || "[]",
   );
   pending = pending.filter((item) => item.id !== cancelId);
   localStorage.setItem("pendingOrderCancelled", JSON.stringify(pending));
@@ -480,7 +685,7 @@ function removePendingOrderCancelled(cancelId) {
 
 function savePendingOrderCancelled(data) {
   let pending = JSON.parse(
-    localStorage.getItem("pendingOrderCancelled") || "[]"
+    localStorage.getItem("pendingOrderCancelled") || "[]",
   );
   pending.push(data);
   localStorage.setItem("pendingOrderCancelled", JSON.stringify(pending));
@@ -489,7 +694,7 @@ function savePendingOrderCancelled(data) {
 // In showPendingOrderCancelled, do not clear the pending cancellations so they persist
 function showPendingOrderCancelled() {
   let pending = JSON.parse(
-    localStorage.getItem("pendingOrderCancelled") || "[]"
+    localStorage.getItem("pendingOrderCancelled") || "[]",
   );
   pending.forEach((data) => {
     showOrderCancelledPopup(data);
@@ -520,7 +725,7 @@ function enableNotifications() {
       } else if (permission === "denied") {
         alert(
           "Notification permission is still denied. " +
-            'Please go to Settings, search for "Half Caf" in apps, and turn on notifications.'
+            'Please go to Settings, search for "Half Caf" in apps, and turn on notifications.',
         );
       } else {
         alert("Notification permission: " + permission);
