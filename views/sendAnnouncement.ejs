@@ -11,6 +11,15 @@
       <label for="message">Message:</label>
       <textarea id="message" name="message" required></textarea>
       <br />
+
+      <label for="visibleFrom">Visible From:</label>
+      <input type="datetime-local" id="visibleFrom" name="visibleFrom" />
+      <br />
+
+      <label for="visibleUntil">Visible Until:</label>
+      <input type="datetime-local" id="visibleUntil" name="visibleUntil" required />
+      <br />
+
       <input id="send" type="submit" value="Send Announcement" />
     </div>
     <div id="announcementList" class="announcement-pane">
@@ -18,8 +27,14 @@
       <ul id="announcementItems">
         <% announcements.forEach(a => { %>
         <li>
-          <div><strong><%= a.subject %></strong>: <%= a.message %></div>
-          <span class="announcement-date"><%= a.date %></span>
+          <div>
+            <strong><%= a.subject %></strong>: <%= a.message %>
+            <div class="announcement-window">
+              Visible: <%= a.visibleFrom ? new Date(a.visibleFrom).toLocaleString() : "Immediately" %> -
+              <%= a.visibleUntil ? new Date(a.visibleUntil).toLocaleString() : "No end" %>
+            </div>
+          </div>
+          <span class="announcement-date"><%= new Date(a.date).toLocaleString() %></span>
         </li>
         <% }) %>
       </ul>
@@ -27,12 +42,38 @@
   </div>
 
   <script>
+    (function setAnnouncementDefaults() {
+      const visibleFromInput = document.getElementById("visibleFrom");
+      const visibleUntilInput = document.getElementById("visibleUntil");
+      if (!visibleFromInput || !visibleUntilInput) {
+        return;
+      }
+
+      const now = new Date();
+      const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+
+      const toLocalDateTime = (date) => {
+        const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return local.toISOString().slice(0, 16);
+      };
+
+      visibleFromInput.value = toLocalDateTime(now);
+      visibleUntilInput.value = toLocalDateTime(oneHourFromNow);
+    })();
+
     document.getElementById("send").addEventListener("click", async () => {
       const subject = document.getElementById("subject").value.trim();
       const message = document.getElementById("message").value.trim();
+      const visibleFrom = document.getElementById("visibleFrom").value;
+      const visibleUntil = document.getElementById("visibleUntil").value;
 
-      if (!subject || !message) {
-        alert("Please enter both a subject and message.");
+      if (!subject || !message || !visibleUntil) {
+        alert("Please enter a subject, message, and visible until time.");
+        return;
+      }
+
+      if (visibleFrom && new Date(visibleUntil) <= new Date(visibleFrom)) {
+        alert("Visible until must be after visible from time.");
         return;
       }
 
@@ -44,6 +85,8 @@
         body: JSON.stringify({
           subject: subject,
           message: message,
+          visibleFrom: visibleFrom || null,
+          visibleUntil,
           senderSocketId: window.halfCafSocketId || null,
         }),
       });
@@ -52,7 +95,8 @@
         alert("Announcement sent successfully!");
         window.location.reload();
       } else {
-        alert("Failed to send announcement.");
+        const errorText = await response.text();
+        alert(errorText || "Failed to send announcement.");
       }
     });
   </script>
@@ -90,6 +134,11 @@
     /* date styling */
     #announcementItems li .announcement-date {
       font-size: 0.85rem;
+      color: #666;
+    }
+    #announcementItems li .announcement-window {
+      margin-top: 0.35rem;
+      font-size: 0.8rem;
       color: #666;
     }
     .announcement-flex-container {

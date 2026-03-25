@@ -12,6 +12,14 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  visibleFrom: {
+    type: Date,
+    default: Date.now,
+  },
+  visibleUntil: {
+    type: Date,
+    default: null,
+  },
   date: {
     type: Date,
     default: Date.now,
