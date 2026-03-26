@@ -962,29 +962,15 @@ route.post("/sendAnnouncement", async (req, res) => {
     const senderEmail = req.session.email;
     const senderSocketId = req.body.senderSocketId || null;
 
-    const visibleFrom = req.body.visibleFrom
-      ? new Date(req.body.visibleFrom)
-      : new Date();
-    const visibleUntil = req.body.visibleUntil
-      ? new Date(req.body.visibleUntil)
-      : null;
-
-    if (!visibleUntil) {
-      return res.status(400).send("Visible until time is required.");
+    const durationMinutes = Number(req.body.durationMinutes);
+    if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) {
+      return res.status(400).send("Duration must be greater than 0 minutes.");
     }
 
-    if (
-      Number.isNaN(visibleFrom.getTime()) ||
-      Number.isNaN(visibleUntil.getTime())
-    ) {
-      return res.status(400).send("Invalid visibility date/time.");
-    }
-
-    if (visibleUntil <= visibleFrom) {
-      return res
-        .status(400)
-        .send("Visible until must be after visible from time.");
-    }
+    const visibleFrom = new Date();
+    const visibleUntil = new Date(
+      visibleFrom.getTime() + durationMinutes * 60 * 1000,
+    );
 
     const users = await User.find({
       subscription: { $exists: true, $ne: null },

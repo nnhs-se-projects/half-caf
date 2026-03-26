@@ -92,26 +92,28 @@ app.use(async (req, res, next) => {
 app.use(async (req, res, next) => {
   try {
     const now = new Date();
-    const activeAnnouncements = await Announcement.find({
-      $and: [
-        {
-          $or: [
-            { visibleFrom: { $exists: false } },
-            { visibleFrom: null },
-            { visibleFrom: { $lte: now } },
-          ],
-        },
-        {
-          $or: [
-            { visibleUntil: { $exists: false } },
-            { visibleUntil: null },
-            { visibleUntil: { $gte: now } },
-          ],
-        },
-      ],
-    })
+    const allAnnouncements = await Announcement.find()
       .sort({ visibleFrom: -1, date: -1 })
       .lean();
+
+    const activeAnnouncements = allAnnouncements.filter((announcement) => {
+      const fromDate = announcement.visibleFrom
+        ? new Date(announcement.visibleFrom)
+        : new Date(0);
+      const untilDate = announcement.visibleUntil
+        ? new Date(announcement.visibleUntil)
+        : null;
+
+      if (Number.isNaN(fromDate.getTime())) {
+        return false;
+      }
+
+      if (untilDate && Number.isNaN(untilDate.getTime())) {
+        return false;
+      }
+
+      return fromDate <= now && (!untilDate || untilDate >= now);
+    });
 
     res.locals.activeAnnouncements = activeAnnouncements;
   } catch (error) {
