@@ -50,8 +50,8 @@
       padding-left: 20px; /* Desktop padding */
     }
     
-    /* Adjust content positioning for mobile */
-    @media (max-width: 768px) {
+    /* Adjust content positioning for mobile/touch */
+    @media (max-width: 768px), (hover: none) and (pointer: coarse) {
       body {
         padding-top: calc(75px + env(safe-area-inset-top, 0));
       }
