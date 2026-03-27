@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="shortcut icon" type="image/png" href="/img/logo.png" />
     <style>
-      @media screen and (max-width: 768px) {
+      @media screen and (max-width: 768px),
+        (hover: none) and (pointer: coarse) {
         .full-title {
           display: none;
         }
@@ -38,8 +39,11 @@
     <div id="leftTrigger"><span>&rarr;</span></div>
 
     <script>
-      // Make arrow trigger open sidebar on hover (desktop only)
-      if (window.innerWidth > 768) {
+      // Make arrow trigger open sidebar on hover (desktop pointer devices only)
+      const isDesktopPointer = window.matchMedia(
+        "(min-width: 769px) and (hover: hover) and (pointer: fine)",
+      ).matches;
+      if (isDesktopPointer) {
         const leftTrigger = document.getElementById("leftTrigger");
         const sidebar = document.getElementById("sidebar");
         let autoCloseTimer;

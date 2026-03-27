@@ -632,8 +632,8 @@ a {
   display: none;
 }
 
-/* Show mobile-only elements and style the theme button on mobile */
-@media (max-width: 768px) {
+/* Show mobile-only elements and style the theme button on mobile/touch */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
   .mobile-only {
     display: block;
   }
@@ -653,8 +653,8 @@ a {
   }
 }
 
-/* Mobile specific styles */
-@media (max-width: 768px) {
+/* Mobile/touch specific styles */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
   /* Show hamburger menu on all mobile devices */
   .hamburger-menu {
     display: flex;
@@ -725,6 +725,17 @@ a {
   }
 }
 
+/* Disable hover-driven sidebar reveal on touch devices. */
+@media (hover: none) and (pointer: coarse) {
+  #sidebar:hover {
+    transform: translateX(-100%);
+  }
+
+  #sidebar.active:hover {
+    transform: translateX(0);
+  }
+}
+
 /* Override mobile styles for desktop */
 @media (min-width: 769px) {
   .hamburger-menu {
@@ -747,8 +758,8 @@ a {
   }
 }
 
-/* Hide the sidebar hover behavior on mobile */
-@media screen and (max-width: 768px) {
+/* Hide the sidebar hover behavior on mobile/touch */
+@media screen and (max-width: 768px), (hover: none) and (pointer: coarse) {
   #sidebar:hover {
     transform: translateX(-100%);
   }
