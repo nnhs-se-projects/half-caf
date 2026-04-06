@@ -254,7 +254,7 @@ header.indexTopBar {
   align-items: center;
   justify-content: flex-start;
   background: transparent;
-  color: var(--accent);
+  color: #f8552c;
   font-family: "Fredoka", sans-serif;
   font-weight: 600;
   box-shadow: none;
