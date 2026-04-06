@@ -176,7 +176,7 @@ header.indexTopBar {
   padding: 0;
   background: linear-gradient(180deg, #ffffff 0%, var(--cream) 100%);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(60,42,33,0.08);
+  box-shadow: 0 10px 30px rgba(60, 42, 33, 0.08);
 }
 
 #mainContent .container {
@@ -201,7 +201,7 @@ header.indexTopBar {
   padding: 0.9rem 1.2rem;
   border-radius: 10px;
   font-weight: 700;
-  box-shadow: 0 6px 18px rgba(60,42,33,0.12);
+  box-shadow: 0 6px 18px rgba(60, 42, 33, 0.12);
   border: none;
 }
 
@@ -215,8 +215,12 @@ header.indexTopBar {
   margin: 1rem auto;
   padding: 0.75rem 1rem;
   border-radius: 10px;
-  background: linear-gradient(90deg, rgba(155,230,161,0.12), rgba(230,255,237,0.12));
-  border: 1px solid rgba(155,230,161,0.25);
+  background: linear-gradient(
+    90deg,
+    rgba(155, 230, 161, 0.12),
+    rgba(230, 255, 237, 0.12)
+  );
+  border: 1px solid rgba(155, 230, 161, 0.25);
   color: var(--coffee-dark);
 }
 
