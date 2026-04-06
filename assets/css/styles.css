@@ -142,7 +142,7 @@ input[type="submit"]:hover,
   }
 }
 
-.indexTopBar {
+header.indexTopBar {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -238,14 +238,33 @@ input[type="submit"]:hover,
     margin-left: 1rem;
   }
 }
+
+.topBarTitle {
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 120px;
+  right: 16px;
+  height: 75px;
+  margin: 0;
+  display: flex;
+  align-items: center;
   justify-content: flex-start;
+  background: transparent;
+  color: var(--accent);
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  box-shadow: none;
+  z-index: 1004;
+  pointer-events: none;
 }
 
-h1.indexTopBar {
-  margin-left: 200px;
-  box-shadow: none;
-  z-index: 1000;
-  margin-top: 0;
+@media screen and (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .topBarTitle {
+    left: 90px;
+    right: 10px;
+    height: 75px;
+    font-size: 1.2rem;
+  }
 }
 
 .adminPage {
@@ -676,7 +695,7 @@ a {
     border-radius: 2px;
   }
 
-  .indexTopBar {
+  header.indexTopBar {
     background-color: var(
       --coffee-medium
     ); /* Change background to coffee color on mobile */

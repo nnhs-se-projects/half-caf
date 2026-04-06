@@ -34,6 +34,24 @@
       color: var(--coffee-dark);
     }
 
+    .topBarTitle {
+      position: fixed;
+      top: env(safe-area-inset-top, 0);
+      left: 120px;
+      right: 16px;
+      height: 75px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      color: var(--accent);
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      z-index: 1004;
+      pointer-events: none;
+      background: transparent;
+    }
+
     .indexTopBar {
       display: flex;
       align-items: center;
@@ -60,6 +78,13 @@
         padding-left: 0 !important;
         height: calc(75px + env(safe-area-inset-top, 0)) !important;
         padding-top: env(safe-area-inset-top, 0) !important;
+      }
+
+      .topBarTitle {
+        left: 90px;
+        right: 10px;
+        height: 75px;
+        font-size: 1.2rem;
       }
       
       #sidebar {
