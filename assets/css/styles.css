@@ -142,7 +142,7 @@ input[type="submit"]:hover,
   }
 }
 
-.indexTopBar {
+header.indexTopBar {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -176,7 +176,7 @@ input[type="submit"]:hover,
   padding: 0;
   background: linear-gradient(180deg, #ffffff 0%, var(--cream) 100%);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(60,42,33,0.08);
+  box-shadow: 0 10px 30px rgba(60, 42, 33, 0.08);
 }
 
 #mainContent .container {
@@ -201,7 +201,7 @@ input[type="submit"]:hover,
   padding: 0.9rem 1.2rem;
   border-radius: 10px;
   font-weight: 700;
-  box-shadow: 0 6px 18px rgba(60,42,33,0.12);
+  box-shadow: 0 6px 18px rgba(60, 42, 33, 0.12);
   border: none;
 }
 
@@ -215,8 +215,12 @@ input[type="submit"]:hover,
   margin: 1rem auto;
   padding: 0.75rem 1rem;
   border-radius: 10px;
-  background: linear-gradient(90deg, rgba(155,230,161,0.12), rgba(230,255,237,0.12));
-  border: 1px solid rgba(155,230,161,0.25);
+  background: linear-gradient(
+    90deg,
+    rgba(155, 230, 161, 0.12),
+    rgba(230, 255, 237, 0.12)
+  );
+  border: 1px solid rgba(155, 230, 161, 0.25);
   color: var(--coffee-dark);
 }
 
@@ -238,14 +242,33 @@ input[type="submit"]:hover,
     margin-left: 1rem;
   }
 }
+
+.topBarTitle {
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 120px;
+  right: 16px;
+  height: 75px;
+  margin: 0;
+  display: flex;
+  align-items: center;
   justify-content: flex-start;
+  background: transparent;
+  color: #f8552c;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  box-shadow: none;
+  z-index: 1004;
+  pointer-events: none;
 }
 
-h1.indexTopBar {
-  margin-left: 200px;
-  box-shadow: none;
-  z-index: 1000;
-  margin-top: 0;
+@media screen and (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .topBarTitle {
+    left: 90px;
+    right: 10px;
+    height: 75px;
+    font-size: 1.2rem;
+  }
 }
 
 .adminPage {
@@ -676,7 +699,7 @@ a {
     border-radius: 2px;
   }
 
-  .indexTopBar {
+  header.indexTopBar {
     background-color: var(
       --coffee-medium
     ); /* Change background to coffee color on mobile */
