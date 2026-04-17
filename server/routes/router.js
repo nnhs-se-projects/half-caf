@@ -154,11 +154,6 @@ async function checkTime() {
         emitToggleChange();
       }
     }
-    // After period has passed, clear any manual disable so it won't persist
-    if (currentTimeMs >= endDateMs && period.orderingDisabled) {
-      period.orderingDisabled = false;
-      await period.save();
-    }
   }
 
   // if we finished iterating and there are no active disabled periods but
