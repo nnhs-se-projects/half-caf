@@ -211,7 +211,10 @@ route.delete("/orders/:id", async (req, res) => {
 route.post("/orders/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
   order.complete = true;
-  order.timer = req.body.t;
+  order.delivered = true;
+  order.claimed = false;
+  const timerSeconds = Number(req.body.t) || 0;
+  order.timer = Math.round(timerSeconds / 60).toString();
   await order.save();
 
   emitOrderCompleted({ orderId: order.id });
