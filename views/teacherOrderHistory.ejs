@@ -13,6 +13,12 @@
           <h3 class="timestamp"><%=order.timestamp.split("/")[0]%></h3>
           <span class="room-number">Room <%=order.room%></span>
         </div>
+        <div class="order-metrics">
+          <div class="order-metric">
+            <span class="label">Time to complete:</span>
+            <span class="value"><%= order.timer && order.timer !== 'uncompleted' ? order.timer + ' min' : 'N/A' %></span>
+          </div>
+        </div>
 
         <h3 class="drink-name"><%=drink.name%></h3>
 
@@ -109,6 +115,28 @@
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--cream);
+  }
+
+  .order-metrics {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .order-metric {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .order-metric .label {
+    font-weight: 700;
+    color: var(--coffee-medium);
+  }
+
+  .order-metric .value {
+    color: var(--coffee-dark);
   }
 
   .timestamp {

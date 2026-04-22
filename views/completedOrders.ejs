@@ -1,5 +1,22 @@
 <%- include('include/_baristaHeader') %>
 
+<% function getOrderTime(timestamp) {
+  if (!timestamp) return "";
+  const atMatch = timestamp.match(/ at ([^/]+)/);
+  if (atMatch && atMatch[1]) {
+    return atMatch[1];
+  }
+  const slashIndex = timestamp.indexOf("/");
+  if (slashIndex > -1) {
+    return timestamp.substring(0, slashIndex);
+  }
+  const timeMatch = timestamp.match(/(\d{1,2}:\d{2}\s*(?:am|pm))/i);
+  if (timeMatch) {
+    return timeMatch[1];
+  }
+  return timestamp;
+} %>
+
 <div id="mainContent">
   <div class="barista-header">
     <h1 class="page-title">Completed Orders</h1>
@@ -19,7 +36,10 @@
           <th>Ingredients</th>
           <th>Decaf</th>
           <th>Special Instructions</th>
-          <th>Time</th>
+          <th>Order Time</th>
+          <th>Duration</th>
+          <th>Cost to Make</th>
+          <th>Sale Price</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -47,7 +67,10 @@
           <td><%=tempDrink.ingredients%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
           <td><%=tempDrink.instructions%></td>
-          <td><%=order.timestamp.split('/')[0]%></td>
+          <td><%=getOrderTime(order.timestamp)%></td>
+          <td><%=order.timer && order.timer !== 'uncompleted' ? order.timer + ' min' : 'N/A'%></td>
+          <td>$<%=order.costToMake != null ? order.costToMake.toFixed(2) : '0.00'%></td>
+          <td>$<%=order.salePrice != null ? order.salePrice.toFixed(2) : '0.00'%></td>
           <% if(showButtons === true) { %>
           <td>
             <button
@@ -88,8 +111,10 @@
   /* Make certain columns stand out */
   .order-row td:nth-child(1), /* Room number */
   .order-row td:nth-child(3), /* Drink name */
-  .order-row td:nth-child(8) {
-    /* Timestamp */
+  .order-row td:nth-child(8), /* Order Time */
+  .order-row td:nth-child(9), /* Duration */
+  .order-row td:nth-child(10), /* Cost to Make */
+  .order-row td:nth-child(11) { /* Sale Price */
     font-weight: 600;
     color: #2c1810;
   }
