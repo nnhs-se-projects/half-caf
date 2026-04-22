@@ -497,6 +497,7 @@ route.get("/completedOrders", async (req, res) => {
   const drinkMap = new Map();
   for (let i = 0; i < orders.length; i++) {
     const drinkArray = [];
+    let orderCost = 0;
     for (let n = 0; n < orders[i].drinks.length; n++) {
       const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
       if (!drink) {
@@ -526,6 +527,7 @@ route.get("/completedOrders", async (req, res) => {
               formattedDrink.ingredients.push(
                 " " + ingredientCountStr + tempIngredient.name,
               );
+              orderCost += tempIngredient.price * ingredientCount;
             }
           }
         }
@@ -536,6 +538,8 @@ route.get("/completedOrders", async (req, res) => {
       drinkArray.push(formattedDrink);
     }
     drinkMap.set(i, drinkArray);
+    orders[i].costToMake = Math.round(orderCost * 100) / 100;
+    orders[i].salePrice = orders[i].totalPrice;
   }
 
   const role = await getUserRoles(req.session.email);

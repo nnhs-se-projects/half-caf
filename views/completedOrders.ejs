@@ -38,6 +38,8 @@
           <th>Special Instructions</th>
           <th>Order Time</th>
           <th>Duration</th>
+          <th>Cost to Make</th>
+          <th>Sale Price</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -67,6 +69,8 @@
           <td><%=tempDrink.instructions%></td>
           <td><%=getOrderTime(order.timestamp)%></td>
           <td><%=order.timer && order.timer !== 'uncompleted' ? order.timer + ' min' : 'N/A'%></td>
+          <td>$<%=order.costToMake != null ? order.costToMake.toFixed(2) : '0.00'%></td>
+          <td>$<%=order.salePrice != null ? order.salePrice.toFixed(2) : '0.00'%></td>
           <% if(showButtons === true) { %>
           <td>
             <button
@@ -108,7 +112,9 @@
   .order-row td:nth-child(1), /* Room number */
   .order-row td:nth-child(3), /* Drink name */
   .order-row td:nth-child(8), /* Order Time */
-  .order-row td:nth-child(9) { /* Duration */
+  .order-row td:nth-child(9), /* Duration */
+  .order-row td:nth-child(10), /* Cost to Make */
+  .order-row td:nth-child(11) { /* Sale Price */
     font-weight: 600;
     color: #2c1810;
   }
