@@ -480,11 +480,26 @@ route.get("/orderConfirmation", async (req, res) => {
 
   const role = await getUserRoles(req.session.email);
 
+  // Fetch the most recent order to display total price
+  let totalPrice = 0;
+  try {
+    const latestOrder = await Order.findOne({
+      email: req.session.email,
+      cancelled: false,
+    }).sort({ confirmedAt: -1 });
+    if (latestOrder) {
+      totalPrice = latestOrder.totalPrice;
+    }
+  } catch (err) {
+    console.error("Error fetching order total:", err);
+  }
+
   res.render("orderConfirmation", {
     email: req.session.email,
     role,
     image: dogImageUrl,
     joke: dogCoffeeJokes[Math.floor(Math.random() * dogCoffeeJokes.length)],
+    totalPrice,
   });
 });
 
