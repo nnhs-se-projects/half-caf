@@ -34,6 +34,15 @@
 
 
   <%if(index > 0) { %>
+  <div id="total-section">
+    <%
+      let cartTotal = 0;
+      for (let drink of cart) {
+        cartTotal += drink.price;
+      }
+    %>
+    <h3>Total: $<%= cartTotal.toFixed(2) %></h3>
+  </div>
   <div id="page-content">
     <input type="text" id="rm" placeholder="Enter Room Number" />
     <% if(headerData.enabled === true) {%>
@@ -95,6 +104,20 @@
   h4 {
     color: var(--coffee-dark);
     margin-bottom: 0.5rem;
+  }
+
+  #total-section {
+    background: #f5f5f5;
+    border-left: 4px solid var(--coffee-dark, #3c2a21);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+  }
+
+  #total-section h3 {
+    color: var(--coffee-dark);
+    margin: 0;
+    font-size: 1.5rem;
   }
 
   /* Add these media queries at the end of the style block */
