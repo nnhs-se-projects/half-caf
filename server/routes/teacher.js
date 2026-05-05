@@ -265,6 +265,7 @@ route.post("/myCart", async (req, res) => {
       name: req.session.name,
       isAdmin: role === "admin",
       confirmedAt: new Date(),
+      startTime: new Date(),
     });
     await order.save();
     const user = await User.findOne({ email: req.session.email });

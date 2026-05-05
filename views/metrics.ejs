@@ -33,7 +33,13 @@
     <canvas id="ordersPerHourCanvas" width="1980" height="800"></canvas>
     <h6>Total revenue per hour:</h6>
     <canvas id="revenuePerHourCanvas" width="1980" height="800"></canvas>
-    <h6>Average barista completion time: <%=Math.round(averageTimer)%>(s)</h6>
+     <% let avgSec = Math.round(averageTimer);
+       let avgHrs = Math.floor(avgSec / 3600);
+       let avgRem = avgSec % 3600;
+       let avgMin = Math.floor(avgRem / 60);
+       let avgSecOnly = avgRem % 60;
+     %>
+     <h6>Average barista completion time: <%=avgHrs%>:<%=avgMin.toString().padStart(2,'0')%>:<%=avgSecOnly.toString().padStart(2,'0')%> (h:mm:ss)</h6>
     <h6>Average barista completion time per hour:</h6>
     <canvas id="averageTimerPerHourCanvas" width="1980" height="800"></canvas>
   </div>
@@ -277,8 +283,11 @@
 
   const averageTimerPerHour = document
     .getElementById("averageTimerPerHour")
-    .value.split(",");
-  const averageTimer = document.getElementById("averageTimer").value;
+    .value.split(",")
+    .map((v) => Number(v) || 0);
+  const averageTimer = Number(
+    document.getElementById("averageTimer").value
+  ) || 0;
 
   document.addEventListener("DOMContentLoaded", () => {
     const ingredientsChartCanvas = document.getElementById(
@@ -304,19 +313,35 @@
     ingredientsChartCanvas.style.width = "100%";
     ingredientsChartCanvas.style.height = "800px";
     const ordersPerHourCanvas = document.getElementById("ordersPerHourCanvas");
+    // helper to format seconds as H:M:SS
+    const formatSeconds = (s) => {
+      const sec = Math.round(s || 0);
+      const h = Math.floor(sec / 3600);
+      const rem = sec % 3600;
+      const m = Math.floor(rem / 60);
+      const r = rem % 60;
+      return `${h}:${m.toString().padStart(2, "0")}:${r.toString().padStart(2, "0")}`;
+    };
+
     let ordersPerHourChart = new Chart(ordersPerHourCanvas, {
-      type: "bar",
+      type: "line",
       data: {
         labels: hours,
         datasets: [
           {
             label: "Total Orders Per Hour",
             data: ordersPerHour,
+            fill: false,
+            tension: 0,
             backgroundColor: "rgba(75, 192, 192, 0.2)",
             borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
+            borderWidth: 2,
+            pointRadius: 3,
           },
         ],
+      },
+      options: {
+        scales: { y: { beginAtZero: true } },
       },
     });
     ordersPerHourCanvas.style.width = "100%";
@@ -325,18 +350,24 @@
     let revenuePerHourChart = new Chart(
       document.getElementById("revenuePerHourCanvas"),
       {
-        type: "bar",
+        type: "line",
         data: {
           labels: hours,
           datasets: [
             {
               label: "Total Revenue Per Hour",
               data: revenuePerHour,
+              fill: false,
+              tension: 0,
               backgroundColor: "rgba(75, 192, 192, 0.2)",
               borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
+              borderWidth: 2,
+              pointRadius: 3,
             },
           ],
+        },
+        options: {
+          scales: { y: { beginAtZero: true } },
         },
       }
     );
@@ -346,18 +377,43 @@
     let averageTimerPerHourChart = new Chart(
       document.getElementById("averageTimerPerHourCanvas"),
       {
-        type: "bar",
+        type: "line",
         data: {
           labels: hours,
           datasets: [
             {
-              label: "Average Order Completion Time Per Hour (seconds)",
+              label: "Average Order Completion Time Per Hour",
               data: averageTimerPerHour,
+              fill: false,
+              tension: 0,
               backgroundColor: "rgba(75, 192, 192, 0.2)",
               borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
+              borderWidth: 2,
+              pointRadius: 3,
             },
           ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  return formatSeconds(value);
+                },
+              },
+            },
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const v = context.parsed.y;
+                  return formatSeconds(v);
+                },
+              },
+            },
+          },
         },
       }
     );

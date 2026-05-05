@@ -1,0 +1,25 @@
+<%- include('include/_adminHeader') %>
+<div id="mainContent">
+  <h1>Analytics - Order Timings</h1>
+  <div id="summaries">
+    <p><b>Average Completion Time:</b> <span id="avgTime">-</span></p>
+    <p><b>Peak Completion Time:</b> <span id="peakTime">-</span></p>
+    <input type="text" id="filterInput" placeholder="Filter by email or room" />
+  </div>
+
+  <table id="timingTable">
+    <thead>
+      <tr>
+        <th data-key="email">Email</th>
+        <th data-key="room">Room</th>
+        <th data-key="startTime">Start Time</th>
+        <th data-key="endTime">End Time</th>
+        <th data-key="durationSec">Duration (h:mm:ss)</th>
+        <th data-key="complete">Complete</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+<script src="/js/analytics.js"></script>
+<%- include('include/_footer') %>

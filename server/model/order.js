@@ -54,6 +54,14 @@ const schema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  startTime: {
+    type: Date,
+    required: false,
+  },
+  endTime: {
+    type: Date,
+    required: false,
+  },
   name: {
     type: String,
     required: false,
