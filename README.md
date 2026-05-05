@@ -10,7 +10,7 @@ Group Members (2023-2024): Tavneet, Abby, Delilah, Eric
 
 Group Members (2024-2025): Bennett, Emran, Jack, Ryan
 
-Group Members (2026-2027): Nathan, Abhi, Christian, Alex
+Group Members (2025-2026): Nathan, Abhi, Christian, Alex
 
 ## Insights (Previous Group)
 
