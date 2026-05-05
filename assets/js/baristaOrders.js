@@ -86,6 +86,279 @@ let orderTable = null;
 const orderSound = new Audio("../sounds/order-new.wav");
 orderSound.preload = "auto";
 
+const overdueThresholdSeconds = 10 * 60;
+const overdueStorageKey = "halfCafOverdueOrderPopups";
+const overdueOrderIds = new Set(loadOverdueOrderIds());
+
+function loadOverdueOrderIds() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(overdueStorageKey) || "[]");
+    return Array.isArray(stored) ? stored.filter(Boolean) : [];
+  } catch (error) {
+    console.warn("Unable to read overdue popup state:", error);
+    return [];
+  }
+}
+
+function persistOverdueOrderIds() {
+  try {
+    localStorage.setItem(
+      overdueStorageKey,
+      JSON.stringify(Array.from(overdueOrderIds)),
+    );
+  } catch (error) {
+    console.warn("Unable to save overdue popup state:", error);
+  }
+}
+
+function markOrderOverdueSeen(orderId) {
+  if (!orderId) {
+    return;
+  }
+
+  if (!overdueOrderIds.has(orderId)) {
+    overdueOrderIds.add(orderId);
+    persistOverdueOrderIds();
+  }
+}
+
+function clearOrderOverdueSeen(orderId) {
+  if (!orderId) {
+    return;
+  }
+
+  if (overdueOrderIds.delete(orderId)) {
+    persistOverdueOrderIds();
+  }
+
+  document.getElementById(`orderOverduePopup-${orderId}`)?.remove();
+}
+
+function ensureOverduePopupStyles() {
+  if (document.getElementById("orderOverduePopupStyles")) {
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.id = "orderOverduePopupStyles";
+  style.textContent = `
+    .order-overdue-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: min(420px, calc(100vw - 24px));
+      background: linear-gradient(135deg, #fff8ef 0%, #fff 100%);
+      border: 1px solid #e7c9a7;
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(111, 78, 55, 0.24);
+      color: #3a2618;
+      z-index: 12000;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-12px) scale(0.98);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .order-overdue-popup.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .order-overdue-popup__bar {
+      height: 6px;
+      background: linear-gradient(90deg, #ff8a3d 0%, #ffb26b 100%);
+    }
+
+    .order-overdue-popup__body {
+      padding: 14px 16px 16px;
+    }
+
+    .order-overdue-popup__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .order-overdue-popup__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b45a14;
+      background: rgba(255, 178, 107, 0.18);
+      border: 1px solid rgba(180, 90, 20, 0.16);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    .order-overdue-popup__title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #4a2c14;
+    }
+
+    .order-overdue-popup__message {
+      margin-top: 8px;
+      font-size: 0.94rem;
+      line-height: 1.45;
+      color: #5d4037;
+    }
+
+    .order-overdue-popup__details {
+      margin-top: 12px;
+      display: grid;
+      gap: 6px;
+      font-size: 0.92rem;
+      color: #4b3427;
+    }
+
+    .order-overdue-popup__details strong {
+      color: #2c1810;
+    }
+
+    .order-overdue-popup__close {
+      border: none;
+      background: #f6e3cf;
+      color: #6f4e37;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease, background-color 0.18s ease;
+      flex-shrink: 0;
+    }
+
+    .order-overdue-popup__close:hover {
+      background: #f2d7bd;
+      transform: scale(1.05);
+    }
+
+    .order-overdue-popup__progress {
+      height: 4px;
+      background: rgba(255, 178, 107, 0.2);
+      overflow: hidden;
+    }
+
+    .order-overdue-popup__progress > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #ff8a3d 0%, #ff6b6b 100%);
+      transform-origin: left;
+      animation: orderOverdueCountdown 12000ms linear forwards;
+    }
+
+    @keyframes orderOverdueCountdown {
+      from { transform: scaleX(1); }
+      to { transform: scaleX(0); }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function showOrderOverduePopup({ orderId, room, teacher, elapsedText }) {
+  if (!orderId) {
+    return;
+  }
+
+  const popupId = `orderOverduePopup-${orderId}`;
+  if (document.getElementById(popupId)) {
+    return;
+  }
+
+  ensureOverduePopupStyles();
+
+  const escapeHtml = (value) =>
+    String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const safeRoom = escapeHtml(room ? String(room).trim() : "Unknown room");
+  const safeTeacher = escapeHtml(
+    teacher ? String(teacher).trim() : "Unknown teacher",
+  );
+  const safeElapsed = escapeHtml(elapsedText || "10m");
+
+  const popup = document.createElement("div");
+  popup.id = popupId;
+  popup.className = "order-overdue-popup";
+  popup.innerHTML = `
+    <div class="order-overdue-popup__bar"></div>
+    <div class="order-overdue-popup__body">
+      <div class="order-overdue-popup__header">
+        <div>
+          <div class="order-overdue-popup__eyebrow">Overdue order</div>
+          <div class="order-overdue-popup__title">This order has been waiting too long</div>
+        </div>
+        <button class="order-overdue-popup__close" aria-label="Dismiss overdue order alert">&times;</button>
+      </div>
+      <div class="order-overdue-popup__message">
+        The timer has reached 10 minutes. Please check this order as soon as possible.
+      </div>
+      <div class="order-overdue-popup__details">
+        <div><strong>Room:</strong> ${safeRoom}</div>
+        <div><strong>Teacher:</strong> ${safeTeacher}</div>
+        <div><strong>Elapsed:</strong> ${safeElapsed}</div>
+      </div>
+    </div>
+    <div class="order-overdue-popup__progress"><span></span></div>
+  `;
+
+  document.body.appendChild(popup);
+
+  const closePopup = () => {
+    popup.classList.remove("visible");
+    window.setTimeout(() => popup.remove(), 220);
+  };
+
+  const closeButton = popup.querySelector(".order-overdue-popup__close");
+  closeButton?.addEventListener("click", closePopup);
+
+  window.setTimeout(closePopup, 12000);
+  window.requestAnimationFrame(() => popup.classList.add("visible"));
+}
+
+function calculateElapsedSeconds(timestamp) {
+  const orderTime = parseCustomTimestamp(timestamp);
+  if (isNaN(orderTime.getTime())) {
+    return null;
+  }
+
+  return Math.floor((new Date() - orderTime) / 1000);
+}
+
+function formatElapsedTime(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  let timeString = "";
+  if (hours > 0) {
+    timeString += `${hours}h `;
+  }
+  if (minutes > 0 || hours > 0) {
+    timeString += `${minutes}m `;
+  }
+  timeString += `${seconds}s`;
+
+  return timeString.trim();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   orderTable = document.getElementById("orderTable");
   lastDrinkColor = orderTable.rows[orderTable.rows.length - 1].id;
@@ -216,6 +489,8 @@ window.io().on("Order completed", (data) => {
   for (const drink of drinkRows) {
     drink.parentNode.parentNode.remove();
   }
+
+  clearOrderOverdueSeen(data.orderId);
 });
 
 window.io().on("Order cancelled", (data) => {
@@ -225,6 +500,8 @@ window.io().on("Order cancelled", (data) => {
   for (const drink of drinkRows) {
     drink.parentNode.parentNode.remove();
   }
+
+  clearOrderOverdueSeen(data.orderId);
 });
 
 window.io().on("Room updated", (data) => {
@@ -291,28 +568,13 @@ function parseCustomTimestamp(timestamp) {
 
 // time dif
 function calculateTimeDifference(timestamp) {
-  const orderTime = parseCustomTimestamp(timestamp);
-  if (isNaN(orderTime.getTime())) {
+  const diffInSeconds = calculateElapsedSeconds(timestamp);
+  if (diffInSeconds === null) {
     console.error(`Invalid timestamp: ${timestamp}`);
     return "Invalid time";
   }
-  const currentTime = new Date();
-  const diffInSeconds = Math.floor((currentTime - orderTime) / 1000);
 
-  const hours = Math.floor(diffInSeconds / 3600);
-  const minutes = Math.floor((diffInSeconds % 3600) / 60);
-  const seconds = diffInSeconds % 60;
-
-  let timeString = "";
-  if (hours > 0) {
-    timeString += `${hours}h `;
-  }
-  if (minutes > 0 || hours > 0) {
-    timeString += `${minutes}m `;
-  }
-  timeString += `${seconds}s`;
-
-  return timeString.trim();
+  return formatElapsedTime(diffInSeconds);
 }
 
 // update the timer
@@ -321,7 +583,29 @@ function updateCounters() {
   counters.forEach((counter) => {
     const timestamp = counter.getAttribute("data-timestamp");
     // console.log(`Updating counter for timestamp: ${timestamp}`);
-    counter.textContent = calculateTimeDifference(timestamp);
+    const elapsedSeconds = calculateElapsedSeconds(timestamp);
+    counter.textContent =
+      elapsedSeconds === null
+        ? "Invalid time"
+        : formatElapsedTime(elapsedSeconds);
+
+    if (elapsedSeconds !== null && elapsedSeconds >= overdueThresholdSeconds) {
+      const orderId = counter.getAttribute("data-order-id");
+      if (orderId && !overdueOrderIds.has(orderId)) {
+        const row = counter.closest("tr");
+        const cells = row ? row.querySelectorAll("td") : [];
+        const room = cells[0]?.textContent || "";
+        const teacher = cells[1]?.textContent || "";
+
+        showOrderOverduePopup({
+          orderId,
+          room,
+          teacher,
+          elapsedText: formatElapsedTime(elapsedSeconds),
+        });
+        markOrderOverdueSeen(orderId);
+      }
+    }
   });
 }
 
