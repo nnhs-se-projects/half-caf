@@ -20,6 +20,13 @@
 <div id="mainContent">
   <div class="barista-header">
     <h1 class="page-title">Completed Orders</h1>
+    <% let totalCompleted = 0; %>
+    <% for (let order of orders){ %>
+    <% if(order.complete === true){ %>
+    <% totalCompleted++; %>
+    <% } %>
+    <% } %>
+    <p class="total-count">Total Completed Orders: <%= totalCompleted %></p>
     <a href="/barista/cancelledOrders"
       ><input type="submit" value="View Cancelled Orders"
     /></a>
@@ -131,6 +138,13 @@
 
   .order-row:hover {
     opacity: 1;
+  }
+
+  .total-count {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--coffee-dark);
+    margin: 0.5rem 0;
   }
 </style>
 
