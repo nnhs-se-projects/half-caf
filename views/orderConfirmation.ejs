@@ -20,55 +20,57 @@
   <main>
     <div>
       <h1>Thanks for supporting the Half Caf!</h1>
-      <h1>
+      <div class="confirmation-actions">
         <a href="/teacher/outgoingOrders">
           <input type="submit" value="View Order" />
         </a>
+      </div>
+      <section class="feedback-section">
+        <h2>How was your order?</h2>
+        <% if (feedbackSuccess) { %>
+        <div class="feedback-success" role="status" aria-live="polite">
+          Thanks for the feedback!
+        </div>
+        <% } %>
+        <% if (!latestOrderId) { %>
+        <p class="feedback-muted">No recent order found to rate.</p>
+        <% } else if (feedbackSubmitted) { %>
+        <p class="feedback-muted">You already submitted feedback for this order.</p>
+        <% } else { %>
+        <form class="feedback-form" action="/teacher/feedback" method="POST">
+          <input type="hidden" name="orderId" value="<%= latestOrderId %>" />
+          <fieldset class="rating-group">
+            <legend>Rating</legend>
+            <div class="stars" role="radiogroup" aria-label="Rating from 1 to 5">
+              <input type="radio" id="star5" name="rating" value="5" required />
+              <label for="star5" aria-label="5 stars">&#9733;</label>
+              <input type="radio" id="star4" name="rating" value="4" />
+              <label for="star4" aria-label="4 stars">&#9733;</label>
+              <input type="radio" id="star3" name="rating" value="3" />
+              <label for="star3" aria-label="3 stars">&#9733;</label>
+              <input type="radio" id="star2" name="rating" value="2" />
+              <label for="star2" aria-label="2 stars">&#9733;</label>
+              <input type="radio" id="star1" name="rating" value="1" />
+              <label for="star1" aria-label="1 star">&#9733;</label>
+            </div>
+          </fieldset>
+          <label class="feedback-label" for="feedback-comment">Tell us more</label>
+          <textarea
+            id="feedback-comment"
+            name="comment"
+            rows="5"
+            placeholder="Share anything that went well or could be improved..."
+            required
+          ></textarea>
+          <button class="feedback-submit" type="submit">Send feedback</button>
+        </form>
+        <% } %>
+      </section>
+      <div class="confirmation-image">
         <img src="<%=image%>" id="image" size="500px" />
         <label for="image"><%=joke%></label>
-      </h1>
-    </div>
-    <section class="feedback-section">
-      <h2>How was your order?</h2>
-      <% if (feedbackSuccess) { %>
-      <div class="feedback-success" role="status" aria-live="polite">
-        Thanks for the feedback!
       </div>
-      <% } %>
-      <% if (!latestOrderId) { %>
-      <p class="feedback-muted">No recent order found to rate.</p>
-      <% } else if (feedbackSubmitted) { %>
-      <p class="feedback-muted">You already submitted feedback for this order.</p>
-      <% } else { %>
-      <form class="feedback-form" action="/teacher/feedback" method="POST">
-        <input type="hidden" name="orderId" value="<%= latestOrderId %>" />
-        <fieldset class="rating-group">
-          <legend>Rating</legend>
-          <div class="stars" role="radiogroup" aria-label="Rating from 1 to 5">
-            <input type="radio" id="star5" name="rating" value="5" required />
-            <label for="star5" aria-label="5 stars">&#9733;</label>
-            <input type="radio" id="star4" name="rating" value="4" />
-            <label for="star4" aria-label="4 stars">&#9733;</label>
-            <input type="radio" id="star3" name="rating" value="3" />
-            <label for="star3" aria-label="3 stars">&#9733;</label>
-            <input type="radio" id="star2" name="rating" value="2" />
-            <label for="star2" aria-label="2 stars">&#9733;</label>
-            <input type="radio" id="star1" name="rating" value="1" />
-            <label for="star1" aria-label="1 star">&#9733;</label>
-          </div>
-        </fieldset>
-        <label class="feedback-label" for="feedback-comment">Tell us more</label>
-        <textarea
-          id="feedback-comment"
-          name="comment"
-          rows="5"
-          placeholder="Share anything that went well or could be improved..."
-          required
-        ></textarea>
-        <button class="feedback-submit" type="submit">Send feedback</button>
-      </form>
-      <% } %>
-    </section>
+    </div>
   </main>
 </div>
 

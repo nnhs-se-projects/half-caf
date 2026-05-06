@@ -1,0 +1,97 @@
+<%- include('include/_adminHeader') %>
+
+<div id="mainContent">
+  <h1 class="page-title">Order Feedback</h1>
+
+  <% if (!feedbackEntries || feedbackEntries.length === 0) { %>
+  <p class="empty-state">No feedback submitted yet.</p>
+  <% } else { %>
+  <div class="table-wrapper">
+    <table class="feedback-table">
+      <thead>
+        <tr>
+          <th>Submitted</th>
+          <th>Rating</th>
+          <th>Comment</th>
+          <th>Order</th>
+          <th>Customer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% feedbackEntries.forEach((entry) => { %>
+        <tr>
+          <td><%= new Date(entry.createdAt).toLocaleString() %></td>
+          <td class="rating-cell"><%= entry.rating %> / 5</td>
+          <td class="comment-cell"><%= entry.comment %></td>
+          <td>
+            <% if (entry.order) { %>
+            <div>Room <%= entry.order.room %></div>
+            <div><%= entry.order.timestamp %></div>
+            <div>Total: $<%= entry.order.totalPrice ? entry.order.totalPrice.toFixed(2) : '0.00' %></div>
+            <% } else { %>
+            <div>Order unavailable</div>
+            <% } %>
+          </td>
+          <td><%= entry.email %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<style>
+  .page-title {
+    color: var(--coffee-dark);
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state {
+    color: #5c4a3f;
+    font-size: 1.1rem;
+  }
+
+  .table-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(60, 42, 33, 0.1);
+    overflow: auto;
+  }
+
+  .feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .feedback-table thead {
+    background: var(--coffee-dark, #3c2a21);
+    color: #fff;
+  }
+
+  .feedback-table th,
+  .feedback-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e6ddd3;
+    vertical-align: top;
+  }
+
+  .feedback-table tbody tr:hover {
+    background: #faf6f1;
+  }
+
+  .rating-cell {
+    font-weight: 600;
+    color: #c97a3a;
+    white-space: nowrap;
+  }
+
+  .comment-cell {
+    min-width: 220px;
+    max-width: 460px;
+    word-break: break-word;
+  }
+</style>
+
+<%- include('include/_footer') %>

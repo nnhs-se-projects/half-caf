@@ -11,6 +11,7 @@ const Period = require("../model/period");
 const Announcement = require("../model/announcement");
 const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
+const Feedback = require("../model/feedback");
 const webPush = require("web-push");
 const { emitAnnouncementCreated } = require("../socket/socket");
 
@@ -950,6 +951,25 @@ route.get("/sendAnnouncement", async (req, res) => {
 
   const announcements = await Announcement.find().sort({ date: -1 });
   res.render("sendAnnouncement", { announcements });
+});
+
+route.get("/feedback", async (req, res) => {
+  const role = await getUserRoles(req.session.email);
+  if (role !== "admin") {
+    return res.status(403).send("Forbidden");
+  }
+
+  try {
+    const feedbackEntries = await Feedback.find()
+      .sort({ createdAt: -1 })
+      .populate("order")
+      .lean();
+
+    res.render("feedback", { feedbackEntries });
+  } catch (error) {
+    console.error("Error loading feedback:", error);
+    res.status(500).send("Error loading feedback");
+  }
 });
 
 route.post("/sendAnnouncement", async (req, res) => {
