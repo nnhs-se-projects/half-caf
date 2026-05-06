@@ -274,6 +274,25 @@ route.get("/api/orderTimings", async (req, res) => {
   }
 });
 
+route.delete("/clearAnalytics", async (req, res) => {
+  try {
+    await Order.updateMany(
+      {},
+      {
+        $unset: {
+          startTime: "",
+          endTime: "",
+        },
+      },
+    );
+
+    res.status(200).json({ message: "Analytics data cleared." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // API route to get a single menu item
 route.get("/api/menuItem/:id", async (req, res) => {
   try {

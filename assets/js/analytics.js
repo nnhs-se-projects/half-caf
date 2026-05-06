@@ -61,6 +61,29 @@ function applyFilter(rows, filter) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+    const deleteButton = document.getElementById("deleteAnalyticsData");
+    if (deleteButton) {
+      deleteButton.addEventListener("click", async () => {
+        if (
+          !confirm(
+            "Are you sure you want to clear analytics data? This removes timing fields used by the analytics page only.",
+          )
+        ) {
+          return;
+        }
+
+        const response = await fetch("/admin/clearAnalytics", {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert("Failed to clear analytics data.");
+        }
+      });
+    }
+
     const data = await fetchTimings();
     let rows = data.data || [];
     const filterInput = document.getElementById("filterInput");
