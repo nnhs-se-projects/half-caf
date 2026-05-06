@@ -21,12 +21,16 @@
   <div class="barista-header">
     <h1 class="page-title">Completed Orders</h1>
     <% let totalCompleted = 0; %>
+    <% const today = new Date().toLocaleDateString('en-US'); %>
     <% for (let order of orders){ %>
-    <% if(order.complete === true){ %>
+    <% if(order.complete === true && order.timestamp){ %>
+    <% const orderDate = order.timestamp.split("/")[0]; %>
+    <% if(orderDate === today){ %>
     <% totalCompleted++; %>
     <% } %>
     <% } %>
-    <p class="total-count">Total Completed Orders: <%= totalCompleted %></p>
+    <% } %>
+    <p class="total-count">Total Orders Completed Today: <%= totalCompleted %></p>
     <a href="/barista/cancelledOrders"
       ><input type="submit" value="View Cancelled Orders"
     /></a>
