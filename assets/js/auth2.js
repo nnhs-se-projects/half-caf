@@ -113,8 +113,7 @@ function showMobileAppHologram() {
       </div>
       
       <div class="hologram-body">
-        <div class="scanner-line"></div>
-        
+                
         <h3>Get The Full Experience On Your Phone</h3>
         <p>Install our web app on your mobile device for easy coffee ordering!</p>
         
@@ -208,8 +207,6 @@ function showMobileAppHologram() {
         0 0 25px rgba(167, 114, 76, 0.5),
         0 0 40px rgba(167, 114, 76, 0.3),
         inset 0 0 20px rgba(167, 114, 76, 0.3);
-      animation: float 6s infinite ease-in-out;
-      transform: perspective(800px) rotateX(3deg);
       overflow: hidden;
     }
     
@@ -476,7 +473,6 @@ function showMobileAppHologram() {
           transparent 3px,
           transparent 6px
         );
-      animation: qrRotate 8s infinite linear;
       border: 2px solid rgba(167, 114, 76, 0.5);
       box-shadow: 0 0 15px rgba(167, 114, 76, 0.4);
       position: relative;
