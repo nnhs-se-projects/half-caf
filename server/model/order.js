@@ -66,6 +66,15 @@ const schema = new mongoose.Schema({
     type: Date,
     required: false,
   },
+  feedbackSubmitted: {
+    type: Boolean,
+    required: false,
+  },
+  feedback: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Feedback",
+    required: false,
+  },
 });
 
 const Order = mongoose.model("Order", schema);

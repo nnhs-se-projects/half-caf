@@ -5,6 +5,7 @@ const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
+const Feedback = require("../model/feedback");
 const {
   computeRequiredFromCart,
   checkInventory,
@@ -482,6 +483,8 @@ route.get("/orderConfirmation", async (req, res) => {
 
   // Fetch the most recent order to display total price
   let totalPrice = 0;
+  let latestOrderId = null;
+  let feedbackSubmitted = false;
   try {
     const latestOrder = await Order.findOne({
       email: req.session.email,
@@ -489,6 +492,15 @@ route.get("/orderConfirmation", async (req, res) => {
     }).sort({ confirmedAt: -1 });
     if (latestOrder) {
       totalPrice = latestOrder.totalPrice;
+      latestOrderId = latestOrder._id;
+      if (latestOrder.feedbackSubmitted) {
+        feedbackSubmitted = true;
+      } else {
+        const existingFeedback = await Feedback.findOne({
+          order: latestOrder._id,
+        }).lean();
+        feedbackSubmitted = Boolean(existingFeedback);
+      }
     }
   } catch (err) {
     console.error("Error fetching order total:", err);
@@ -500,7 +512,53 @@ route.get("/orderConfirmation", async (req, res) => {
     image: dogImageUrl,
     joke: dogCoffeeJokes[Math.floor(Math.random() * dogCoffeeJokes.length)],
     totalPrice,
+    latestOrderId,
+    feedbackSubmitted,
+    feedbackSuccess: req.query.submitted === "1",
   });
+});
+
+route.post("/feedback", async (req, res) => {
+  const { orderId, rating, comment } = req.body;
+  const parsedRating = parseInt(rating, 10);
+
+  if (!orderId || Number.isNaN(parsedRating) || !comment) {
+    return res.status(400).send("Missing feedback details.");
+  }
+
+  if (parsedRating < 1 || parsedRating > 5) {
+    return res.status(400).send("Rating must be between 1 and 5.");
+  }
+
+  try {
+    const order = await Order.findById(orderId);
+    if (!order || order.email !== req.session.email) {
+      return res.status(403).send("Unauthorized.");
+    }
+
+    const existingFeedback = await Feedback.findOne({ order: orderId });
+    if (existingFeedback) {
+      return res.redirect("/teacher/orderConfirmation?submitted=1");
+    }
+
+    const feedback = new Feedback({
+      order: orderId,
+      email: req.session.email,
+      rating: parsedRating,
+      comment: comment.trim(),
+    });
+
+    await feedback.save();
+
+    order.feedbackSubmitted = true;
+    order.feedback = feedback._id;
+    await order.save();
+
+    return res.redirect("/teacher/orderConfirmation?submitted=1");
+  } catch (error) {
+    console.error("Error saving feedback:", error);
+    return res.status(500).send("Could not save feedback.");
+  }
 });
 
 route.post("/updateRoom", async (req, res) => {
