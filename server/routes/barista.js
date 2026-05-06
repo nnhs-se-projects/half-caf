@@ -217,7 +217,9 @@ route.post("/orders/:id", async (req, res) => {
   order.timer = Math.round(timerSeconds / 60).toString();
   // ensure startTime exists; fallback to confirmedAt or timestamp
   if (!order.startTime) {
-    order.startTime = order.confirmedAt || (order.timestamp ? new Date(order.timestamp) : new Date());
+    order.startTime =
+      order.confirmedAt ||
+      (order.timestamp ? new Date(order.timestamp) : new Date());
   }
   order.endTime = new Date();
   await order.save();

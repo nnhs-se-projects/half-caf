@@ -254,7 +254,8 @@ route.get("/api/orderTimings", async (req, res) => {
     const timings = orders.map((o) => {
       const start = o.startTime ? new Date(o.startTime) : null;
       const end = o.endTime ? new Date(o.endTime) : null;
-      const durationSec = start && end ? Math.round((end - start) / 1000) : null;
+      const durationSec =
+        start && end ? Math.round((end - start) / 1000) : null;
       return {
         id: o._id,
         email: o.email,

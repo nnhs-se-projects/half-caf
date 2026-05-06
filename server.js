@@ -141,7 +141,9 @@ app.all("*", (req, res) => {
 // start the server on port PORT_NUM from .env file when run directly
 if (require.main === module) {
   server.listen(process.env.PORT_NUM, () => {
-    console.log("server is listening on http://localhost:" + process.env.PORT_NUM);
+    console.log(
+      "server is listening on http://localhost:" + process.env.PORT_NUM,
+    );
   });
 }
 
