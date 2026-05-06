@@ -242,6 +242,57 @@ route.get("/drinks", async (req, res) => {
   }
 });
 
+// Analytics page
+route.get("/analytics", async (req, res) => {
+  res.render("analytics");
+});
+
+// API endpoint to fetch order timing data
+route.get("/api/orderTimings", async (req, res) => {
+  try {
+    const orders = await Order.find({}).lean();
+    const timings = orders.map((o) => {
+      const start = o.startTime ? new Date(o.startTime) : null;
+      const end = o.endTime ? new Date(o.endTime) : null;
+      const durationSec =
+        start && end ? Math.round((end - start) / 1000) : null;
+      return {
+        id: o._id,
+        email: o.email,
+        room: o.room,
+        startTime: start,
+        endTime: end,
+        durationSec,
+        complete: o.complete,
+        cancelled: o.cancelled,
+      };
+    });
+    res.json({ data: timings });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+route.delete("/clearAnalytics", async (req, res) => {
+  try {
+    await Order.updateMany(
+      {},
+      {
+        $unset: {
+          startTime: "",
+          endTime: "",
+        },
+      },
+    );
+
+    res.status(200).json({ message: "Analytics data cleared." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // API route to get a single menu item
 route.get("/api/menuItem/:id", async (req, res) => {
   try {

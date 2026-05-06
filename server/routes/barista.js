@@ -215,6 +215,13 @@ route.post("/orders/:id", async (req, res) => {
   order.claimed = false;
   const timerSeconds = Number(req.body.t) || 0;
   order.timer = Math.round(timerSeconds / 60).toString();
+  // ensure startTime exists; fallback to confirmedAt or timestamp
+  if (!order.startTime) {
+    order.startTime =
+      order.confirmedAt ||
+      (order.timestamp ? new Date(order.timestamp) : new Date());
+  }
+  order.endTime = new Date();
   await order.save();
 
   emitOrderCompleted({ orderId: order.id });
@@ -418,6 +425,7 @@ route.post("/pointOfSale", async (req, res) => {
     timer: "uncompleted",
     name: req.session.name,
     isAdmin: role === "admin",
+    startTime: new Date(),
   });
   await order.save();
   const drinks = await Drink.find({ _id: { $in: drinkIdCart } });
