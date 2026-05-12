@@ -1,5 +1,6 @@
 const express = require("express");
 const route = express.Router();
+const PDFDocument = require("pdfkit");
 const User = require("../model/user");
 const Ingredient = require("../model/ingredient");
 const MenuItem = require("../model/menuItem");
@@ -483,6 +484,7 @@ route.get("/orderConfirmation", async (req, res) => {
 
   // Fetch the most recent order to display total price
   let totalPrice = 0;
+  let orderId = null;
   try {
     const latestOrder = await Order.findOne({
       email: req.session.email,
@@ -490,6 +492,7 @@ route.get("/orderConfirmation", async (req, res) => {
     }).sort({ confirmedAt: -1 });
     if (latestOrder) {
       totalPrice = latestOrder.totalPrice;
+      orderId = latestOrder._id;
     }
   } catch (err) {
     console.error("Error fetching order total:", err);
@@ -501,6 +504,7 @@ route.get("/orderConfirmation", async (req, res) => {
     image: dogImageUrl,
     joke: dogCoffeeJokes[Math.floor(Math.random() * dogCoffeeJokes.length)],
     totalPrice,
+    orderId,
   });
 });
 
@@ -611,6 +615,134 @@ route.delete("/cancelOrder/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+route.get("/receipt/:orderId", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId).populate({
+      path: "drinks",
+      populate: [{ path: "ingredients", model: "Ingredient" }],
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Verify the order belongs to the current user
+    if (order.email !== req.session.email) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    // Create PDF
+    const doc = new PDFDocument({ margin: 40 });
+
+    // Set response headers for PDF download
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="receipt-${order._id}.pdf"`,
+    );
+
+    // Pipe to response
+    doc.pipe(res);
+
+    // Header
+    doc.fontSize(24).font("Helvetica-Bold").text("HALF CAF RECEIPT", {
+      align: "center",
+    });
+    doc.moveDown(0.3);
+    doc.fontSize(10).font("Helvetica").text("Thank you for your order!", {
+      align: "center",
+    });
+
+    // Order details
+    doc.moveDown(1);
+    doc.fontSize(12).font("Helvetica-Bold").text("Order Information", {
+      underline: true,
+    });
+    doc.fontSize(10).font("Helvetica");
+    doc.text(`Order ID: ${order._id}`, { width: 300 });
+    doc.text(`Date: ${new Date(order.confirmedAt).toLocaleString()}`);
+    doc.text(`Customer: ${order.name}`);
+    doc.text(`Room: ${order.room}`);
+    doc.text(`Email: ${order.email}`);
+
+    // Items
+    doc.moveDown(1);
+    doc.fontSize(12).font("Helvetica-Bold").text("Items Ordered", {
+      underline: true,
+    });
+    doc.fontSize(10).font("Helvetica");
+
+    for (let i = 0; i < order.drinks.length; i++) {
+      const drink = order.drinks[i];
+      doc.text(`\n${i + 1}. ${drink.name}`, { width: 250 });
+
+      if (drink.ingredients && drink.ingredients.length > 0) {
+        for (const ingredient of drink.ingredients) {
+          doc.fontSize(9).text(`   • ${ingredient.name}`, { width: 250 });
+        }
+      }
+
+      if (drink.temps) {
+        doc.fontSize(9).text(`   Temperature: ${drink.temps}`, { width: 250 });
+      }
+
+      if (drink.instructions) {
+        doc.fontSize(9).text(`   Special Instructions: ${drink.instructions}`, {
+          width: 250,
+        });
+      }
+
+      doc.fontSize(10);
+      doc.text(`   Price: $${drink.price.toFixed(2)}`);
+    }
+
+    // Summary
+    doc.moveDown(1);
+    doc.fontSize(12).font("Helvetica-Bold").text("Order Summary", {
+      underline: true,
+    });
+    doc.fontSize(10).font("Helvetica");
+
+    // Items total
+    let itemsTotal = 0;
+    for (const drink of order.drinks) {
+      itemsTotal += drink.price;
+    }
+    doc.text(`Subtotal: $${itemsTotal.toFixed(2)}`);
+
+    // Total with tax (if needed)
+    doc.moveDown(0.3);
+    doc.fontSize(12).font("Helvetica-Bold");
+    doc.text(`Total: $${order.totalPrice.toFixed(2)}`, { align: "right" });
+
+    // Order status
+    doc.moveDown(1);
+    doc.fontSize(10).font("Helvetica");
+    const statusText = order.complete
+      ? "Completed"
+      : order.claimed
+        ? "Claimed by Barista"
+        : "Pending";
+    doc.text(`Status: ${statusText}`);
+
+    // Footer
+    doc.moveDown(1.5);
+    doc
+      .fontSize(9)
+      .font("Helvetica")
+      .text("Thank you for supporting the Half Caf!", { align: "center" });
+    doc.text("Please contact us with any questions or feedback.", {
+      align: "center",
+    });
+
+    // Finalize PDF
+    doc.end();
+  } catch (error) {
+    console.error("Error generating receipt:", error);
+    res.status(500).json({ error: "Failed to generate receipt" });
   }
 });
 
