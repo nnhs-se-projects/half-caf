@@ -72,7 +72,6 @@ To explain the image more, each arrow shows a different dependency. The beginnin
 
 Enabled is on its own because it's a separate class. That is the boolean value that the app references to see if ordering is turned on or off. During passing periods or outside of the Half Caf's hours, the baristas and admin can turn ordering off to prevent people from ordering and waiting for a drink that's not being made. Enabled uses a Websocket to check and see if it's been updated every second, and if it has, it reloads every page to either disable ordering or to sync the slider on the admin and barista side. ** Enabled is mainly controlled by the scheduler. **
 
-
 ## Google Authentication Implementation
 
 ### Overview
@@ -81,7 +80,7 @@ This Node.js application integrates Google Authentication using the Google Sign-
 
 ### `server.js` (Middleware Setup)
 
-This is the core of the application's backend. It includes middleware that checks if a user is logged in before allowing access to certain routes. If a user's session does not have an email stored (`req.session.email` is undefined), they are redirected to the `/auth` page for authentication. This prevents unauthorized access to sensitive routes. The middleware specifically allows unrestricted access to public endpoints like "/homePopularDrinks" and "/homeMenu".
+This is the core of the application's backend. It includes middleware that checks if a user is logged in before allowing access to certain routes. If a user's session does not have an email stored (`req.session.email` is undefined), they are redirected to the `/auth` page for authentication. This prevents unauthorized access to sensitive routes. The middleware specifically allows unrestricted access to public endpoints like "/homePopularDrinks" and "/homeMenu", and routing now ensures users go straight to authentication when required.
 
 ### `auth.js` (Google Authentication Routes)
 
@@ -104,7 +103,7 @@ The auth2.js script runs in the user's browser and handles:
 After authentication, router.js takes over:
 
 - It defines a route /redirectUser which checks the user's role based on the email stored in the session.
-- Depending on the role fetched from the database (admin, barista, teacher), it redirects the user to the appropriate route.
+- Depending on the role fetched from the database (admin, barista, teacher), it redirects the user to the appropriate route. The redirect flow has been tightened so the auth page is the first stop when a session is missing.
 
 ### Authentication View (`auth.ejs`)
 
@@ -127,7 +126,7 @@ The app works as a mobile app as well as on the computer website. To get the app
 
 All of these files are within the 'public' folder -- needed for mobile setup to work.
 
-Mobile Notifications are implemented with the service worker, and the subscription endpoints(the place where notifications are sent to) for every user are stored in the MongoDB database under user. When adding visual changes, check changes it causes on both mobile and computer screens.
+Mobile Notifications are implemented with the service worker, and the subscription endpoints(the place where notifications are sent to) for every user are stored in the MongoDB database under user. When adding visual changes, check changes it causes on both mobile and computer screens. Period countdown warnings are now surfaced in the shared header, so test both layouts for timing visibility.
 
 ## Inventory System
 
@@ -135,7 +134,8 @@ The inventory system is used to track all ingredients that go into each drink or
 If an ingredient is customizable, it means that a user can choose to add it (or remove it) from any drink they want to order. For each menu item, there
 is a list of ingredients and an amount of those ingredients. These are the default ingredients, meaning that they are automatically checked when a
 user goes to order (however they can be unchecked if the ingredient is customizable). Adding additional ingredient to a drink does not change the
-price of the drink for the user, although the increased expense will be noted in the inventory manager.
+price of the drink for the user, although the increased expense will be noted in the inventory manager. Ingredient quantities are rounded consistently
+when recorded, and the ingredients manager includes expanded support for adding new items and defaults.
 
 ## Flow of Control:
 
@@ -147,3 +147,4 @@ price of the drink for the user, although the increased expense will be noted in
 6. Token Verification: auth2.js sends this token to the server via the route defined in auth.js.
 7. Session Update: Upon successful token verification, the user’s email is stored in the session.
 8. Role-Based Redirection: The user is then redirected to /redirectUser, where router.js checks the user's role and redirects them accordingly.
+9. Ordering Context: The header provides a period countdown warning, and ordering views keep cart state stable when navigating back.
