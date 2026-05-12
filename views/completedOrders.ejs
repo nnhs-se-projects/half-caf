@@ -31,6 +31,13 @@
     <% } %>
     <% } %>
     <p class="total-count">Total Orders Completed Today: <%= totalCompleted %></p>
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" id="orderSearch" placeholder="Search by room or teacher name..." class="search-input">
+      <button id="clearSearch" class="clear-search-btn">Clear</button>
+    </div>
+    
     <a href="/barista/cancelledOrders"
       ><input type="submit" value="View Cancelled Orders"
     /></a>
@@ -149,6 +156,43 @@
     font-weight: bold;
     color: var(--coffee-dark);
     margin: 0.5rem 0;
+  }
+
+  /* Search Bar Styles */
+  .search-container {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+    gap: 0.5rem;
+  }
+
+  .search-input {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--coffee-light);
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 300px;
+    transition: border-color 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--coffee-medium);
+  }
+
+  .clear-search-btn {
+    padding: 0.5rem 1rem;
+    background: var(--coffee-medium);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .clear-search-btn:hover {
+    background: var(--coffee-dark);
   }
 </style>
 
