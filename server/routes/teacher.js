@@ -342,6 +342,7 @@ route.get("/reorder/:id", async (req, res) => {
     name: drink.name,
     price: drink.price,
     ingredients: drink.ingredients,
+    ingredientCounts: drink.ingredientCounts,
     temps: drink.temps,
     caffeinated: drink.caffeinated,
     instructions: drink.instructions,
