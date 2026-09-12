@@ -18,6 +18,7 @@
           <th>Temp</th>
           <th>Ingredients</th>
           <th>Decaf</th>
+          <th>Sugar Free</th>
           <th>Special Instructions</th>
           <th>Time</th>
           <th>Action</th>
@@ -47,6 +48,7 @@
           </td>
           <td><%=tempDrink.ingredients%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
+          <td><%=tempDrink.sugarFree ? "Yes" : "No"%></td>
           <td><%=tempDrink.instructions%></td>
           <% } %>
           <td><%=order.timestamp.split('/')[0]%></td>

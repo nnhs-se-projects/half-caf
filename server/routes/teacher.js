@@ -134,6 +134,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       ingredientCounts: req.body.ingredientCounts,
       temps: req.body.temp,
       caffeinated: req.body.caf,
+      sugarFree: req.body.sugarFree,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
       completed: false,
@@ -202,6 +203,7 @@ route.get("/outgoingOrders", async (req, res) => {
         temps: [],
         instructions: "",
         caffeinated: drink.caffeinated,
+        sugarFree: drink.sugarFree,
       };
       drinkObject.name = drink.name;
       drinkObject.temps = drink.temps;
@@ -284,6 +286,7 @@ route.post("/myCart", async (req, res) => {
         ingredients: [],
         temp: "",
         caffeinated: false,
+        sugarFree: false,
         instructions: "",
       };
       const drink = drinks.find((d) => d._id.equals(order.drinks[n]));
@@ -307,6 +310,7 @@ route.post("/myCart", async (req, res) => {
       formattedDrink.name = drink.name;
       formattedDrink.temp = drink.temps;
       formattedDrink.caffeinated = drink.caffeinated;
+      formattedDrink.sugarFree = drink.sugarFree;
       formattedDrink.instructions = drink.instructions;
       drinkArray.push(formattedDrink);
     }
@@ -344,6 +348,7 @@ route.get("/reorder/:id", async (req, res) => {
     ingredients: drink.ingredients,
     temps: drink.temps,
     caffeinated: drink.caffeinated,
+    sugarFree: drink.sugarFree,
     instructions: drink.instructions,
     favorite: false,
     completed: false,

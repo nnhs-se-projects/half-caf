@@ -53,6 +53,7 @@
           <th>Temp</th>
           <th>Ingredients</th>
           <th>Decaf</th>
+          <th>Sugar Free</th>
           <th>Special Instructions</th>
           <th>Order Time</th>
           <th>Duration</th>
@@ -84,6 +85,7 @@
           </td>
           <td><%=tempDrink.ingredients%></td>
           <td><%=tempDrink.caffeinated ? "No" : "Yes"%></td>
+          <td><%=tempDrink.sugarFree ? "Yes" : "No"%></td>
           <td><%=tempDrink.instructions%></td>
           <td><%=getOrderTime(order.timestamp)%></td>
           <td><%=order.timer && order.timer !== 'uncompleted' ? order.timer + ' min' : 'N/A'%></td>

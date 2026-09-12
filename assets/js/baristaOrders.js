@@ -405,6 +405,7 @@ window.io().on("New order placed", (data) => {
           <td>${tempBadge}</td>
           <td>${drink.ingredients}</td>
           <td>${drink.caffeinated === false ? "Decaf" : "Caffeinated"}</td>
+          <td>${drink.sugarFree ? "Sugar Free" : "Regular"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>
@@ -437,6 +438,7 @@ window.io().on("New order placed", (data) => {
           <td>${tempBadge}</td>
           <td>${drink.ingredients}</td>
           <td>${drink.caffeinated === false ? "Decaf" : "Caffeinated"}</td>
+          <td>${drink.sugarFree ? "Sugar Free" : "Regular"}</td>
           <td>${drink.instructions}</td>
           <td>${data.order.timestamp.split("/")[0]}</td>
           <td>

@@ -30,6 +30,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  sugarFree: {
+    type: Boolean,
+    required: false,
+  },
   instructions: {
     type: String,
     required: false,
