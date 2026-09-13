@@ -126,6 +126,21 @@ route.post("/customizeDrink/:name", async (req, res) => {
   // drink user is adding to order
   let quantity = req.body.quantity;
   quantity = quantity < 1 ? 1 : quantity > 9 ? 9 : quantity;
+
+  // decaf is only the teacher's choice to make when the menu item offers it.
+  //  otherwise the menu item's own caffeination wins, so hiding the toggle
+  //  cannot be bypassed by posting to this route directly. clamped rather
+  //  than rejected, to match how quantity is handled above.
+  let caffeinated = req.body.caf;
+  const menuItem = await findDrinkByName(req.body.name);
+  if (menuItem) {
+    if (!menuItem.caffeination) {
+      caffeinated = false;
+    } else if (!menuItem.allowDecaf) {
+      caffeinated = true;
+    }
+  }
+
   for (let i = 0; i < quantity; i++) {
     const drink = new Drink({
       name: req.body.name,
@@ -133,7 +148,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       ingredients: req.body.ingredients,
       ingredientCounts: req.body.ingredientCounts,
       temps: req.body.temp,
-      caffeinated: req.body.caf,
+      caffeinated,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
       completed: false,
