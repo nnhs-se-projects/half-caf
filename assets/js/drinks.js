@@ -161,6 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
         checkedTemps,
         caf: document.getElementById("addCaffeinated").checked,
         allowDecaf: document.getElementById("addAllowDecaf").checked,
+        allowSugarFree: document.getElementById("addAllowSugarFree").checked,
         imageData: addSrcData,
         allowedIngredientCategories: Array.from(
           document.querySelectorAll(".add-allowed-category:checked"),
@@ -283,6 +284,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById("editAllowDecaf").checked = Boolean(
           drink.allowDecaf,
+        );
+
+        document.getElementById("editAllowSugarFree").checked = Boolean(
+          drink.allowSugarFree,
         );
 
         // Populate allowed ingredient categories
@@ -419,6 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
         checkedTemps,
         caf: document.getElementById("editCaffeinated").checked,
         allowDecaf: document.getElementById("editAllowDecaf").checked,
+        allowSugarFree: document.getElementById("editAllowSugarFree").checked,
         imageData: editSrcData,
         allowedIngredientCategories: Array.from(
           document.querySelectorAll(".edit-allowed-category:checked"),
