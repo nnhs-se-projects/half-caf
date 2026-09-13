@@ -126,6 +126,17 @@ route.post("/customizeDrink/:name", async (req, res) => {
   // drink user is adding to order
   let quantity = req.body.quantity;
   quantity = quantity < 1 ? 1 : quantity > 9 ? 9 : quantity;
+
+  // sugar free is only the teacher's choice to make when the menu item offers
+  //  it, so hiding the toggle cannot be bypassed by posting to this route
+  //  directly. clamped rather than rejected, to match how quantity is
+  //  handled above.
+  let sugarFree = req.body.sugarFree;
+  const menuItem = await findDrinkByName(req.body.name);
+  if (menuItem && !menuItem.allowSugarFree) {
+    sugarFree = false;
+  }
+
   for (let i = 0; i < quantity; i++) {
     const drink = new Drink({
       name: req.body.name,
@@ -134,7 +145,7 @@ route.post("/customizeDrink/:name", async (req, res) => {
       ingredientCounts: req.body.ingredientCounts,
       temps: req.body.temp,
       caffeinated: req.body.caf,
-      sugarFree: req.body.sugarFree,
+      sugarFree,
       instructions: req.body.instructions,
       favorite: req.body.favorite,
       completed: false,
