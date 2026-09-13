@@ -227,6 +227,9 @@ addToOrderButton.addEventListener("click", async () => {
       : caffeineBadge !== null &&
         caffeineBadge.classList.contains("caffeinated");
 
+  const isSugarFreeInput = document.getElementById("isSugarFree");
+  const isSugarFree = isSugarFreeInput !== null && isSugarFreeInput.checked;
+
   const drink = {
     name,
     price,
@@ -234,6 +237,7 @@ addToOrderButton.addEventListener("click", async () => {
     ingredientCounts,
     temp,
     caf: isCaffeinated,
+    sugarFree: isSugarFree,
     instructions,
     favorite,
     quantity,

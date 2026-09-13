@@ -41,6 +41,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  allowSugarFree: {
+    type: Boolean,
+    required: false,
+  },
   special: {
     type: Boolean,
     required: false,

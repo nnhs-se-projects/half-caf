@@ -321,6 +321,7 @@ route.post("/addDrink", async (req, res) => {
     temps: req.body.checkedTemps,
     caffeination: req.body.caf,
     allowDecaf: req.body.allowDecaf,
+    allowSugarFree: req.body.allowSugarFree,
     special: req.body.special,
     allowedIngredientCategories: req.body.allowedIngredientCategories || [],
   };
@@ -352,6 +353,7 @@ route.post("/modifyDrink/:id", async (req, res) => {
     menuItem.temps = req.body.checkedTemps;
     menuItem.caffeination = req.body.caf;
     menuItem.allowDecaf = req.body.allowDecaf;
+    menuItem.allowSugarFree = req.body.allowSugarFree;
     menuItem.special = req.body.special;
     menuItem.popular = req.body.popular;
     menuItem.allowedIngredientCategories =

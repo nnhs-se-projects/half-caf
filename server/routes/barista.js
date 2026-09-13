@@ -84,6 +84,7 @@ route.get("/orders", async (req, res) => {
         ingredients: [],
         temp: "",
         caffeinated: false,
+        sugarFree: false,
         instructions: "",
       };
       const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
@@ -91,6 +92,7 @@ route.get("/orders", async (req, res) => {
         break;
       }
       formattedDrink.caffeinated = drink.caffeinated;
+      formattedDrink.sugarFree = drink.sugarFree;
       if (drink.ingredients.length === 0) {
         formattedDrink.ingredients.push("None");
       } else {
@@ -517,10 +519,12 @@ route.get("/completedOrders", async (req, res) => {
         ingredients: [],
         temp: "",
         caffeinated: false,
+        sugarFree: false,
         instructions: "",
       };
 
       formattedDrink.caffeinated = drink.caffeinated;
+      formattedDrink.sugarFree = drink.sugarFree;
       if (drink.ingredients.length === 0) {
         formattedDrink.ingredients.push("None");
       } else {
@@ -596,6 +600,7 @@ route.get("/cancelledOrders", async (req, res) => {
         ingredients: [],
         temp: "",
         caffeinated: false,
+        sugarFree: false,
         instructions: "",
       };
       const drink = drinks.find((d) => d._id.equals(orders[i].drinks[n]));
@@ -603,6 +608,7 @@ route.get("/cancelledOrders", async (req, res) => {
         break;
       }
       formattedDrink.caffeinated = drink.caffeinated;
+      formattedDrink.sugarFree = drink.sugarFree;
       if (drink.ingredients.length === 0) {
         formattedDrink.ingredients.push("None");
       } else {

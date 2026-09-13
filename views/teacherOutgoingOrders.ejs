@@ -84,9 +84,14 @@
                     <span class="temp-badge <%= drink.temps %>">
                       <%= drink.temps %>
                     </span>
-                    <span class="caffeination-badge <%= drink.caffeinated ? 'caffeinated' : 'decaf' %>">
+                    <span class="drink-badge <%= drink.caffeinated ? 'caffeinated' : 'decaf' %>">
                       <%= drink.caffeinated ? "☕ Caffeinated" : "😌 Decaf" %>
                     </span>
+                    <% if (drink.sugarFree) { %>
+                    <span class="drink-badge sugar-free">
+                      🌿 Sugar Free
+                    </span>
+                    <% } %>
 
                     <% if (drink.ingredients && drink.ingredients.length) { %>
                     <% let allIngredients = ""; %> <% for(let i = 0; i <
@@ -444,7 +449,10 @@
       color: white;
     }
 
-    .caffeination-badge {
+    /* Shared pill used for each drink attribute below the drink name.
+       The base class is layout only -- every colour variant is an explicit
+       modifier, so a new badge type never inherits another one's colours. */
+    .drink-badge {
       display: inline-block;
       padding: 0.2rem 0.6rem;
       border-radius: 4px;
@@ -452,13 +460,21 @@
       font-weight: 600;
       margin-right: 0.5rem;
       margin-bottom: 0.5rem;
+    }
+
+    .drink-badge.caffeinated {
       background: #fff3e0;
       color: #e65100;
     }
 
-    .caffeination-badge.decaf {
+    .drink-badge.decaf {
       background: #f3e5f5;
       color: #6a1b9a;
+    }
+
+    .drink-badge.sugar-free {
+      background: #e8f5e9;
+      color: #1b5e20;
     }
 
     .drink-ingredients {

@@ -20,6 +20,9 @@
 
           <li><%=drink.temps%></li>
           <li><%= drink.caffeinated ? "Caffeinated" : "Decaf" %></li>
+          <% if (drink.sugarFree) { %>
+          <li>Sugar Free</li>
+          <% } %>
         </ul>
         <%if(drink.instructions.length > 40) { %>
         <p><%=drink.instructions.slice(0,40) + "..."%></p>
