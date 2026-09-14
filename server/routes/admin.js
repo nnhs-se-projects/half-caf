@@ -14,6 +14,10 @@ const DeliveryPerson = require("../model/deliveryPerson");
 const Feedback = require("../model/feedback");
 const webPush = require("web-push");
 const { emitAnnouncementCreated } = require("../socket/socket");
+const {
+  parseTimeToMinutes,
+  isValidPeriodTime,
+} = require("../utils/periodTime");
 
 async function getUserRoles(email) {
   try {
@@ -99,6 +103,114 @@ route.delete("/deleteSchedule", async (req, res) => {
   await Period.deleteMany({ _id: { $in: schedule.periods } });
   await Schedule.findByIdAndRemove(req.body.id);
   res.end();
+});
+
+/**
+ * keeps a schedule's periods in chronological order, so a period added later
+ *  still appears in the right place on the scheduler page. periods whose time
+ *  can't be parsed are left at the end rather than dropped.
+ */
+async function sortSchedulePeriods(schedule) {
+  const periods = await Period.find({ _id: { $in: schedule.periods } });
+  const startById = new Map(
+    periods.map((p) => [String(p._id), parseTimeToMinutes(p.start)]),
+  );
+
+  schedule.periods.sort((a, b) => {
+    const aStart = startById.get(String(a));
+    const bStart = startById.get(String(b));
+    if (aStart === null || aStart === undefined) return 1;
+    if (bStart === null || bStart === undefined) return -1;
+    return aStart - bStart;
+  });
+
+  await schedule.save();
+}
+
+// adds a single period to an existing schedule
+route.post("/addPeriod", async (req, res) => {
+  const { scheduleId, name, start, end } = req.body;
+
+  if (!name || !name.trim()) {
+    return res.status(400).json({ message: "Period name is required." });
+  }
+  if (!isValidPeriodTime(start) || !isValidPeriodTime(end)) {
+    return res.status(400).json({ message: "Start and end times are required." });
+  }
+  if (parseTimeToMinutes(start) >= parseTimeToMinutes(end)) {
+    return res
+      .status(400)
+      .json({ message: "The end time must be after the start time." });
+  }
+
+  const schedule = await Schedule.findById(scheduleId);
+  if (!schedule) {
+    return res.status(404).json({ message: "Schedule not found." });
+  }
+
+  const period = new Period({
+    name: name.trim(),
+    start,
+    end,
+    hasDisabledOrdering: false,
+  });
+  await period.save();
+
+  schedule.periods.push(period._id);
+  await sortSchedulePeriods(schedule);
+
+  res.status(201).json({ message: "Period added." });
+});
+
+// updates the name and times of an existing period
+route.post("/editPeriod/:id", async (req, res) => {
+  const { name, start, end } = req.body;
+
+  if (!name || !name.trim()) {
+    return res.status(400).json({ message: "Period name is required." });
+  }
+  if (!isValidPeriodTime(start) || !isValidPeriodTime(end)) {
+    return res.status(400).json({ message: "Start and end times are required." });
+  }
+  if (parseTimeToMinutes(start) >= parseTimeToMinutes(end)) {
+    return res
+      .status(400)
+      .json({ message: "The end time must be after the start time." });
+  }
+
+  const period = await Period.findById(req.params.id);
+  if (!period) {
+    return res.status(404).json({ message: "Period not found." });
+  }
+
+  period.name = name.trim();
+  period.start = start;
+  period.end = end;
+  await period.save();
+
+  // the new start time may move it within the schedule
+  const schedule = await Schedule.findOne({ periods: period._id });
+  if (schedule) {
+    await sortSchedulePeriods(schedule);
+  }
+
+  res.status(200).json({ message: "Period updated." });
+});
+
+// removes a period from its schedule and deletes it
+route.delete("/deletePeriod/:id", async (req, res) => {
+  const period = await Period.findById(req.params.id);
+  if (!period) {
+    return res.status(404).json({ message: "Period not found." });
+  }
+
+  await Schedule.updateMany(
+    { periods: period._id },
+    { $pull: { periods: period._id } },
+  );
+  await Period.findByIdAndRemove(period._id);
+
+  res.status(200).json({ message: "Period deleted." });
 });
 
 route.get("/scheduler", async (req, res) => {

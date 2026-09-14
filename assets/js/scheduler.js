@@ -73,6 +73,155 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- period add / edit / delete (admin only; the buttons are not rendered
+  //     for other roles, so every lookup below is guarded) ---
+
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add("show");
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove("show");
+  }
+
+  document.querySelectorAll(".modal").forEach((modal) => {
+    modal.addEventListener("click", function (e) {
+      if (e.target === this) {
+        closeModal(this.id);
+      }
+    });
+  });
+
+  document.querySelectorAll(".close, .btn-cancel").forEach((button) => {
+    button.addEventListener("click", function () {
+      closeModal(this.getAttribute("data-modal"));
+    });
+  });
+
+  // times come back from the form as "HH:MM" and are stored as "7:05 AM"
+  function readPeriodForm(prefix) {
+    const start = document.getElementById(prefix + "PeriodStart").value;
+    const end = document.getElementById(prefix + "PeriodEnd").value;
+    return {
+      name: document.getElementById(prefix + "PeriodName").value.trim(),
+      start: convertTimeToAmPm(start),
+      end: convertTimeToAmPm(end),
+    };
+  }
+
+  async function submitPeriod(url, body, button) {
+    button.disabled = true;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        window.location.reload();
+        return;
+      }
+
+      const error = await response.json().catch(() => ({}));
+      alert(error.message || "Could not save the period.");
+    } catch (error) {
+      console.error("Error saving period: ", error);
+      alert("A network error occurred while saving the period.");
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  const addPeriodBtn = document.getElementById("addPeriodBtn");
+  if (addPeriodBtn) {
+    addPeriodBtn.addEventListener("click", () => openModal("addPeriodModal"));
+  }
+
+  const addPeriodForm = document.getElementById("addPeriodForm");
+  if (addPeriodForm) {
+    addPeriodForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const period = readPeriodForm("add");
+      period.scheduleId = selectedScheduleIdInput
+        ? selectedScheduleIdInput.value
+        : "";
+
+      if (!period.scheduleId) {
+        alert("No schedule selected");
+        return;
+      }
+
+      await submitPeriod(
+        "/admin/addPeriod",
+        period,
+        addPeriodForm.querySelector(".btn-submit"),
+      );
+    });
+  }
+
+  document.querySelectorAll(".edit-period").forEach((button) => {
+    button.addEventListener("click", function () {
+      document.getElementById("editPeriodId").value =
+        this.getAttribute("data-period-id");
+      document.getElementById("editPeriodName").value =
+        this.getAttribute("data-period-name");
+      document.getElementById("editPeriodStart").value = convertAmPmToTime(
+        this.getAttribute("data-period-start"),
+      );
+      document.getElementById("editPeriodEnd").value = convertAmPmToTime(
+        this.getAttribute("data-period-end"),
+      );
+      openModal("editPeriodModal");
+    });
+  });
+
+  const editPeriodForm = document.getElementById("editPeriodForm");
+  if (editPeriodForm) {
+    editPeriodForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("editPeriodId").value;
+      await submitPeriod(
+        `/admin/editPeriod/${id}`,
+        readPeriodForm("edit"),
+        editPeriodForm.querySelector(".btn-submit"),
+      );
+    });
+  }
+
+  document.querySelectorAll(".delete-period").forEach((button) => {
+    button.addEventListener("click", async function () {
+      const id = this.getAttribute("data-period-id");
+      const name = this.getAttribute("data-period-name");
+
+      if (!confirm(`Delete the "${name}" period from this schedule?`)) {
+        return;
+      }
+
+      this.disabled = true;
+      try {
+        const response = await fetch(`/admin/deletePeriod/${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          window.location.reload();
+          return;
+        }
+
+        const error = await response.json().catch(() => ({}));
+        alert(error.message || "Could not delete the period.");
+      } catch (error) {
+        console.error("Error deleting period: ", error);
+        alert("A network error occurred while deleting the period.");
+      } finally {
+        this.disabled = false;
+      }
+    });
+  });
+
   if (deleteButton) {
     if (!selectedScheduleIdInput || !selectedScheduleIdInput.value) {
       deleteButton.disabled = true;

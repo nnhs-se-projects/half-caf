@@ -43,7 +43,15 @@
     </div>
 
     <div class="periods-section">
-      <h2 class="section-title">Periods</h2>
+      <div class="periods-header">
+        <h2 class="section-title">Periods</h2>
+        <% if (role === 'admin' && selectedSchedule) { %>
+          <button class="action-button create" id="addPeriodBtn">
+            <span class="button-icon">+</span>
+            Add Period
+          </button>
+        <% } %>
+      </div>
       <% if (selectedPeriods.length > 0) { %>
         <div class="periods-grid">
           <% for (let period of selectedPeriods) { %>
@@ -73,6 +81,22 @@
                   <span class="time-value"><%=period.end%></span>
                 </div>
             </div>
+            <% if (role === 'admin') { %>
+              <div class="period-actions">
+                <button
+                  class="action-button small edit-period"
+                  data-period-id="<%=period._id%>"
+                  data-period-name="<%=period.name%>"
+                  data-period-start="<%=period.start%>"
+                  data-period-end="<%=period.end%>"
+                >Edit</button>
+                <button
+                  class="action-button small delete delete-period"
+                  data-period-id="<%=period._id%>"
+                  data-period-name="<%=period.name%>"
+                >Delete</button>
+              </div>
+            <% } %>
           </div>
           <% } %>
         </div>
@@ -81,6 +105,71 @@
           No schedule periods are available yet. Create a schedule to use the scheduler.
         </div>
       <% } %>
+  </div>
+</div>
+
+<!-- Add Period Modal -->
+<div id="addPeriodModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add Period</h2>
+      <span class="close" data-modal="addPeriodModal">&times;</span>
+    </div>
+    <form id="addPeriodForm">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="addPeriodName">Period Name</label>
+          <input type="text" id="addPeriodName" placeholder="Before School" required />
+        </div>
+        <div class="form-group">
+          <label for="addPeriodStart">Start Time</label>
+          <input type="time" id="addPeriodStart" required />
+        </div>
+        <div class="form-group">
+          <label for="addPeriodEnd">End Time</label>
+          <input type="time" id="addPeriodEnd" required />
+        </div>
+        <p class="modal-hint">
+          Ordering is automatically disabled for the last 10 minutes of every
+          period, and stays off until the next period begins.
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" data-modal="addPeriodModal">Cancel</button>
+        <button type="submit" class="btn-submit">Add Period</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Period Modal -->
+<div id="editPeriodModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Edit Period</h2>
+      <span class="close" data-modal="editPeriodModal">&times;</span>
+    </div>
+    <form id="editPeriodForm">
+      <div class="modal-body">
+        <input type="hidden" id="editPeriodId" />
+        <div class="form-group">
+          <label for="editPeriodName">Period Name</label>
+          <input type="text" id="editPeriodName" required />
+        </div>
+        <div class="form-group">
+          <label for="editPeriodStart">Start Time</label>
+          <input type="time" id="editPeriodStart" required />
+        </div>
+        <div class="form-group">
+          <label for="editPeriodEnd">End Time</label>
+          <input type="time" id="editPeriodEnd" required />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" data-modal="editPeriodModal">Cancel</button>
+        <button type="submit" class="btn-submit">Save Changes</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -274,8 +363,156 @@
     color: var(--coffee-dark);
     font-weight: 500;
   }
+
+  .periods-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .period-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .action-button.small {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .action-button.edit-period {
+    background: var(--coffee-medium);
+    color: white;
+  }
+
+  /* --- modals: same pattern as the drinks and ingredients pages --- */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: var(--coffee-dark, #3c2a21);
+    color: white;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+  }
+
+  .close {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .close:hover {
+    color: var(--accent, #f5ae43);
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .modal-hint {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--coffee-medium, #6b4f3f);
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-cancel {
+    background: #e0e0e0;
+    color: var(--coffee-dark, #3c2a21);
+  }
+
+  .btn-submit {
+    background: var(--accent);
+    color: white;
+  }
+
+  @media screen and (max-width: 768px) {
+    .periods-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 </style>
 
+<script src="/js/periodTime.js"></script>
 <script src="/js/scheduler.js"></script>
 
 <%- include('include/_footer') %>
