@@ -66,22 +66,4 @@ document.querySelector(".submit").addEventListener("click", async () => {
   }
 });
 
-function convertTimeToAmPm(timeStr) {
-  const timeSplit = timeStr.split(":");
-  let hours = Number(timeSplit[0]);
-  let meridian;
-
-  if (hours > 12) {
-    meridian = "PM";
-    hours -= 12;
-  } else if (hours < 12) {
-    meridian = "AM";
-    if (hours === 0) {
-      hours = 12;
-    }
-  } else {
-    meridian = "PM";
-  }
-
-  return hours + ":" + timeSplit[1] + " " + meridian;
-}
+// convertTimeToAmPm comes from /js/periodTime.js
