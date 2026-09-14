@@ -24,13 +24,22 @@ route.get("/", (req, res) => {
 
 route.post("/", async (req, res) => {
   const token = req.body.token;
-  const ticket = await oAuth2.verifyIdToken({
-    idToken: token,
-    audience: CLIENT_ID,
-  });
 
-  // extract payload now with name -- can use for baristas
-  const payload = ticket.getPayload();
+  // verification throws for a missing, malformed or expired token. express 4
+  //  does not catch a rejected promise from an async handler, so without this
+  //  try/catch the rejection is unhandled and takes the whole server down.
+  let payload;
+  try {
+    const ticket = await oAuth2.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+  } catch (error) {
+    console.error("Google ID token verification failed:", error.message);
+    return res.status(401).json({ message: "Invalid or missing ID token." });
+  }
+
   const { email, name } = payload; // name, given_name, family_name (also available)
   req.session.email = email;
   req.session.name = name; // store user's full name

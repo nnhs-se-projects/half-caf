@@ -6,6 +6,7 @@ const MenuItem = require("../model/menuItem");
 const Drink = require("../model/drink");
 const Order = require("../model/order");
 const Feedback = require("../model/feedback");
+const { formatImageData } = require("../utils/imageData");
 const {
   computeRequiredFromCart,
   checkInventory,
@@ -48,23 +49,10 @@ async function findIngredientById(id) {
   }
 }
 
-function formatDrinkImageData(drink) {
-  if (drink && drink.imageData && drink.imageData.buffer) {
-    const buffer = drink.imageData.buffer;
-    const potentialDataUrl = buffer.toString("utf8");
-
-    if (potentialDataUrl.startsWith("data:image")) {
-      drink.imageData = potentialDataUrl;
-    } else {
-      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
-    }
-  }
-  return drink;
-}
 
 route.get("/menu", async (req, res) => {
   let menu = await MenuItem.find().lean();
-  menu = menu.map(formatDrinkImageData);
+  menu = menu.map(formatImageData);
   const role = await getUserRoles(req.session.email);
   res.render("teacherMenu", {
     menuItems: menu,
@@ -387,7 +375,7 @@ route.get("/reorder/:id", async (req, res) => {
 route.get("/popularDrinks", async (req, res) => {
   console.log("Route /teacher/popularDrinks hit");
   let menuItems = await MenuItem.find().lean();
-  menuItems = menuItems.map(formatDrinkImageData);
+  menuItems = menuItems.map(formatImageData);
   const popularMenu = [];
   for (let i = 0; i < menuItems.length; i++) {
     if (menuItems[i].popular === true) {

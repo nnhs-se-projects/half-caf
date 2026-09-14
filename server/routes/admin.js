@@ -13,6 +13,7 @@ const Weekday = require("../model/weekdays");
 const DeliveryPerson = require("../model/deliveryPerson");
 const Feedback = require("../model/feedback");
 const webPush = require("web-push");
+const { formatImageData } = require("../utils/imageData");
 const { emitAnnouncementCreated } = require("../socket/socket");
 const {
   parseTimeToMinutes,
@@ -316,23 +317,6 @@ route.post("/modifyUser/:id", async (req, res) => {
   res.status(201).end();
 });
 
-function formatDrinkImageData(drink) {
-  if (drink && drink.imageData && drink.imageData.buffer) {
-    const buffer = drink.imageData.buffer;
-    // Try to decode as a string to check for the old format
-    const potentialDataUrl = buffer.toString("utf8");
-
-    if (potentialDataUrl.startsWith("data:image")) {
-      // It's the old format, return the full data URL string
-      drink.imageData = potentialDataUrl;
-    } else {
-      // It's the new format (raw image data).
-      // Assume PNG and construct the data URL.
-      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
-    }
-  }
-  return drink;
-}
 
 // --- Drink Routes ---
 route.get("/drinks", async (req, res) => {
@@ -342,7 +326,7 @@ route.get("/drinks", async (req, res) => {
     let menuItems = await MenuItem.find().lean();
 
     // Loop through all menu items and format their image data correctly
-    menuItems = menuItems.map(formatDrinkImageData);
+    menuItems = menuItems.map(formatImageData);
 
     res.render("drinks", {
       users: users,
@@ -413,7 +397,7 @@ route.get("/api/menuItem/:id", async (req, res) => {
     if (!drink) return res.status(404).json({ error: "Not found" });
 
     // Use the same helper to correctly format image data
-    drink = formatDrinkImageData(drink);
+    drink = formatImageData(drink);
 
     res.json(drink);
   } catch (error) {

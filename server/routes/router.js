@@ -9,6 +9,7 @@ const Enabled = require("../model/enabled");
 const Weekday = require("../model/weekdays");
 
 const { emitToggleChange } = require("../socket/socket");
+const { formatImageData } = require("../utils/imageData");
 
 async function getUserRoles(email) {
   try {
@@ -387,7 +388,7 @@ route.get("/homePopularDrinks", async (req, res) => {
   console.log("Route /homePopularDrinks hit");
   try {
     let menuItems = await MenuItem.find().lean();
-    menuItems = menuItems.map(formatMenuImageData);
+    menuItems = menuItems.map(formatImageData);
     const popularMenu = [];
     for (let i = 0; i < menuItems.length; i++) {
       if (menuItems[i].popular === true) {
@@ -405,11 +406,16 @@ route.get("/homePopularDrinks", async (req, res) => {
 });
 
 route.get("/homeMenu", async (req, res) => {
-  let menu = await MenuItem.find().lean();
-  menu = menu.map(formatMenuImageData);
-  res.render("homeMenu", {
-    menuItems: menu,
-  });
+  try {
+    let menu = await MenuItem.find().lean();
+    menu = menu.map(formatImageData);
+    res.render("homeMenu", {
+      menuItems: menu,
+    });
+  } catch (error) {
+    console.error("Error in /homeMenu:", error);
+    res.status(500).send("Server error");
+  }
 });
 
 // Add route to handle push subscriptions for mobile web notifications

@@ -8,6 +8,7 @@ const Drink = require("../model/drink");
 const Order = require("../model/order");
 const CashCount = require("../model/cashCount");
 const webPush = require("web-push");
+const { formatImageData } = require("../utils/imageData");
 
 webPush.setVapidDetails(
   "mailto:admin@example.com",
@@ -48,20 +49,6 @@ async function getUserRoles(email) {
   }
 }
 
-function formatMenuImageData(drink) {
-  if (drink && drink.imageData && drink.imageData.buffer) {
-    const buffer = drink.imageData.buffer;
-    const potentialDataUrl = buffer.toString("utf8");
-
-    if (potentialDataUrl.startsWith("data:image")) {
-      drink.imageData = potentialDataUrl;
-    } else {
-      drink.imageData = `data:image/png;base64,${buffer.toString("base64")}`;
-    }
-  }
-
-  return drink;
-}
 
 route.get("/orders", async (req, res) => {
   const orders = await Order.find();
@@ -277,7 +264,7 @@ route.post("/orders/:id", async (req, res) => {
 
 route.get("/pointOfSale", async (req, res) => {
   let menuItems = await MenuItem.find().lean();
-  menuItems = menuItems.map(formatMenuImageData);
+  menuItems = menuItems.map(formatImageData);
   const ingredients = await Ingredient.find();
   const temps = TempJson;
   const orders = await Order.find();
